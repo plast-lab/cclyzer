@@ -1,0 +1,44 @@
+// Types
+
+Type(type), Type:Value(type:name) -> string(name).
+PrimitiveType(type) -> Type(type).
+ArrayType(type) -> Type(type).
+VectorType(type) -> Type(type).
+IntegerType(type) -> PrimitiveType(type).
+Int32Type[] = type -> IntegerType(type).
+Int64Type[] = type -> IntegerType(type).
+
+// Vector Type
+VectorType:Component[type] = componentType -> VectorType(type), Type(componentType).
+VectorType:Size[type] = size -> VectorType(type), int[64](size).
+
+Int32Type[] = type <- IntegerType(type), Type:Value(type:"i32").
+Int64Type[] = type <- IntegerType(type), Type:Value(type:"i64").
+
+Variable(var), Variable:Id(var:id) -> string(id).
+Immediate(imm), Immediate:Value(imm:value) -> string(value).
+
+// Instructions
+Instruction(insn), Instruction:Value(insn:id) -> string(id).
+AddInstruction(insn) -> Instruction(insn).
+
+// Operand as union
+Operand(operand) -> .
+Operand:byVariable[var] = operand -> Variable(var), Operand(operand).
+Operand:byImmediate[imm] = operand -> Immediate(imm), Operand(operand).
+
+lang:physical:storageModel[`Operand] = "ScalableSparse".
+lang:constructor(`Operand:byVariable).
+lang:constructor(`Operand:byImmediate).
+
+
+// add(id, to, left, right, type) -> InstructionRef(id), Variable(to), Variable(left), Variable(right), Type(type).
+
+AddInstruction:Type[insn] = type -> AddInstruction(insn), Type(type).
+AddInstruction:LeftOperand[insn] = left -> AddInstruction(insn), Operand(left).
+AddInstruction:RightOperand[insn] = right -> AddInstruction(insn), Operand(right).
+AddInstruction:To[insn] = to -> AddInstruction(insn), Variable(to).
+
+// Constraints
+AddInstruction:Type[_] = type -> VectorType(type); Int32Type[] = type.
+AddInstruction:Type[_] = type, VectorType:Component[type] = comp -> Int32Type[] = comp.
