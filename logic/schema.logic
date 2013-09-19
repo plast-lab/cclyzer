@@ -2,18 +2,35 @@
 
 Type(type), Type:Value(type:name) -> string(name).
 PrimitiveType(type) -> Type(type).
-ArrayType(type) -> Type(type).
-VectorType(type) -> Type(type).
+DerivedType(type) -> Type(type).
+AggregateType(type) -> DerivedType(type).
+ArrayType(type) -> AggregateType(type).
+VectorType(type) -> DerivedType(type).
 IntegerType(type) -> PrimitiveType(type).
+FloatingPointType(type) -> PrimitiveType(type).
+Int8Type[] = type -> IntegerType(type).
 Int32Type[] = type -> IntegerType(type).
 Int64Type[] = type -> IntegerType(type).
+DoubleType[] = type -> FloatingPointType(type).
+StructType(type) -> AggregateType(type).
+
+// Array Type
+ArrayType:Component[type] = componentType -> ArrayType(type), Type(componentType).
+ArrayType:Size[type] = size -> ArrayType(type), int[64](size).
 
 // Vector Type
 VectorType:Component[type] = componentType -> VectorType(type), Type(componentType).
 VectorType:Size[type] = size -> VectorType(type), int[64](size).
 
+// Struct Types
+StructType:Field[type, index] = field -> StructType(type), int[64](index), Type(field).
+StructType:nFields[type] = total -> StructType(type), int[64](total).
+
+// Standard types as constants
+Int8Type[] = type <- IntegerType(type), Type:Value(type:"i8").
 Int32Type[] = type <- IntegerType(type), Type:Value(type:"i32").
 Int64Type[] = type <- IntegerType(type), Type:Value(type:"i64").
+DoubleType[] = type <- FloatingPointType(type), Type:Value(type:"double").
 
 Variable(var), Variable:Id(var:id) -> string(id).
 Immediate(imm), Immediate:Value(imm:value) -> string(value).
@@ -21,6 +38,7 @@ Immediate(imm), Immediate:Value(imm:value) -> string(value).
 // Instructions
 Instruction(insn), Instruction:Value(insn:id) -> string(id).
 AddInstruction(insn) -> Instruction(insn).
+AllocaInstruction(insn) -> Instruction(insn).
 
 // Operand as union
 Operand(operand) -> .
@@ -39,6 +57,15 @@ AddInstruction:LeftOperand[insn] = left -> AddInstruction(insn), Operand(left).
 AddInstruction:RightOperand[insn] = right -> AddInstruction(insn), Operand(right).
 AddInstruction:To[insn] = to -> AddInstruction(insn), Variable(to).
 
+
+// Alloca Instruction
+AllocaInstruction:Type[insn] = type -> AllocaInstruction(insn), Type(type).
+AllocaInstruction:Size:Type[insn] = type -> AllocaInstruction(insn), IntegerType(type).
+AllocaInstruction:Size:Value[insn] = size -> AllocaInstruction(insn), Operand(size).
+AllocaInstruction:Align[insn] = alignment -> AllocaInstruction(insn), Immediate(alignment).
+
 // Constraints
 AddInstruction:Type[_] = type -> VectorType(type); Int32Type[] = type.
 AddInstruction:Type[_] = type, VectorType:Component[type] = comp -> Int32Type[] = comp.
+
+AllocaInstruction(insn) -> AllocaInstruction:Type[insn] = _.
