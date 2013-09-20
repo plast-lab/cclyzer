@@ -2,6 +2,12 @@ DB = test
 DATA   = ./facts
 IMPORT = ./import
 LOGIC  = ./logic
+EXAMPLES = ./examples
+
+TESTS = $(wildcard $(EXAMPLES)/*.c)
+TESTBUILD = $(EXAMPLES)/build
+TESTOUT = $(TESTS:$(EXAMPLES)/%.c=$(TESTBUILD)/%.s)
+
 SCHEMA = $(LOGIC)/schema.logic
 IMPORT_BLOCK = $(LOGIC)/parse.logic
 GEN = ./generate-import.sh
@@ -54,6 +60,13 @@ $(PREDICATE_SCRIPT): $(PREDICATE_IMPORTS)
 	@echo "option,hasColumnNames,false" >> $@
 	@cat $^ >> $@
 
+# Unit tests in C
+
+$(TESTOUT): $(TESTBUILD)/%.s : $(EXAMPLES)/%.c
+	@mkdir -p $(@D)
+	clang -S -emit-llvm $< -o $@
+
+tests: $(TESTOUT)
 
 # Additional dependencies
 import-predicates: import-entities
@@ -63,4 +76,4 @@ $(ENTITY_IMPORTS): $(GEN)
 $(PREDICATE_IMPORTS): $(GEN)
 
 
-.PHONY: all create delete import-entities import-predicates
+.PHONY: all create delete import-entities import-predicates tests
