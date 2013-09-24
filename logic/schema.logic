@@ -12,6 +12,7 @@ Int8Type[] = type -> IntegerType(type).
 Int32Type[] = type -> IntegerType(type).
 Int64Type[] = type -> IntegerType(type).
 DoubleType[] = type -> FloatingPointType(type).
+VoidType[] = type -> PrimitiveType(type).
 StructType(type) -> AggregateType(type).
 
 // Array Type
