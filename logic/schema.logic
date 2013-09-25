@@ -18,14 +18,14 @@ FloatType[] = type -> FloatingPointType(type).
 HalfType[] = type -> FloatingPointType(type).
 Fp128Type[] = type -> FloatingPointType(type).
 VoidType[] = type -> PrimitiveType(type).
-LabelType[[] = type -> PrimitiveType(type).
+LabelType[] = type -> PrimitiveType(type).
 MetaDataType[] = type -> PrimitiveType(type).
-FunctionType(type) = type -> DerivedType(type).
+FunctionType(type) -> DerivedType(type).
 StructType(type) -> AggregateType(type).
 //FirstClassType
 
 //Pointer Type
-PointerType:Component[type] = componentType -> PrimitiveType(type); DerivedType(type), Type(componentType).
+PointerType:Component[type] = componentType -> PointerType(type), Type(componentType).
 
 //Function Type***
 FunctionType:Arg[type, index] = arg -> FunctionType(type), int[64](index), Type(arg).
@@ -53,11 +53,13 @@ FloatType[] = type <- FloatingPointType(type), Type:Value(type:"float").
 HalfType[] = type <- FloatingPointType(type), Type:Value(type:"half").
 Fp128Type[] = type <- FloatingPointType(type), Type:Value(type:"fp128").
 VoidType[] = type <- PrimitiveType(type), Type:Value(type:"void").
-LabelType = type <- PrimitiveType(type), Type:Value(type:"label").
-MetadataType = type <- PrimitiveType(type), Type:Value(type:"metadata").
+LabelType[] = type <- PrimitiveType(type), Type:Value(type:"label").
+MetadataType[] = type <- PrimitiveType(type), Type:Value(type:"metadata").
 
 Variable(var), Variable:Id(var:id) -> string(id).
+Variable:Type[var] = type -> Variable(var), Type(type).
 Immediate(imm), Immediate:Value(imm:value) -> string(value).
+Immediate:Type[imm] = type -> Immediate(imm), Type(type).
 
 // Instructions
 Instruction(insn), Instruction:Value(insn:id) -> string(id).
@@ -104,7 +106,7 @@ IcmpInstruction(insn) -> Instruction(insn).
 Operand(operand) -> .
 Operand:byVariable[var] = operand -> Variable(var), Operand(operand).
 Operand:byImmediate[imm] = operand -> Immediate(imm), Operand(operand).
-DerivedType(type).
+
 lang:physical:storageModel[`Operand] = "ScalableSparse".
 lang:constructor(`Operand:byVariable).
 lang:constructor(`Operand:byImmediate).
@@ -198,11 +200,9 @@ LoadInstruction:Align[insn] = alignment -> LoadInstruction(insn), Immediate(alig
 LoadInstruction:To[insn] = to -> LoadInstruction(insn), Variable(to).
 
 //Store Instruction
-StoreInstruction:Type[insn] = type -> StoreInstruction(insn), Type(type). //////////
-StoreInstruction:LeftOperand:Type[insn] = type -> StoreInstruction(insn), Type(type).
-StoreInstruction:LeftOperand:Value[insn] = lvalue -> StoreInstruction(insn), Operand(lvalue).
-StoreInstruction:RightOperand:Type[insn] = type -> StoreInstruction(insn), PointerType(type).
-StoreInstruction:RightOperand:Value[insn] = rvalue -> StoreInstruction(insn), Variable(rvalue).
+StoreInstruction:Type[insn] = type -> StoreInstruction(insn), Type(type).
+StoreInstruction:LeftOperand[insn] = left -> StoreInstruction(insn), Operand(left).
+StoreInstruction:RightOperand[insn] = right -> StoreInstruction(insn), Variable(right).
 StoreInstruction:Align[insn] = alignment -> StoreInstruction(insn), Immediate(alignment).
 
 //Gep Instruction
@@ -245,14 +245,9 @@ FPToUIInstruction:To[insn] = to -> FPToUIInstruction(insn), Variable(to).
 
 //Icmp Instruction
 IcmpInstruction:Type[insn] = type -> IcmpInstruction(insn), Type(type).
-IcmpInstruction:LeftOperand:Type[insn] = type -> IcmpInstruction(insn), Type(type).
-IcmpInstruction:LeftOperand:Value[insn] = lvalue -> IcmpInstruction(insn), Operand(lvalue).
-IcmpInstruction:RightOperand:Type[insn] = type -> IcmpInstruction(insn), Type(type).
-IcmpInstruction:RightOperand:Value[insn] = rvalue -> IcmpInstruction(insn), Operand(rvalue).
+IcmpInstruction:LeftOperand[insn] = left -> IcmpInstruction(insn), Operand(left).
+IcmpInstruction:RightOperand[insn] = right -> IcmpInstruction(insn), Operand(right).
 IcmpInstruction:To[insn] = to -> IcmpInstruction(insn), Variable(to).
-
-
-
 
 // Constraints
 AddInstruction:Type[_] = type -> VectorType(type); Int32Type[] = type.
@@ -298,7 +293,7 @@ LoadInstruction:Type[_] = type -> PointerType(type).
 LoadInstruction:Type[_] = type -> VoidType[] = type.
 
 GepInstruction:Base:Type[_] = type -> PointerType(type); VectorType(type).
-GepInstruction:Base:Type[_] = type -> VectorType:Component[type] = comp -> PointerType(comp).
+GepInstruction:Base:Type[_] = type, VectorType:Component[type] = comp -> PointerType(comp).
 
 //+VectorSize
 TruncInstruction:LeftOperand:Type[_] = type -> IntegerType(type); VectorType(type).
@@ -307,12 +302,29 @@ TruncInstruction:RightOperand:Type[_] = type -> IntegerType(type); VectorType(ty
 ZextInstruction:LeftOperand:Type[_] = type -> IntegerType(type); VectorType(type).
 ZextInstruction:RightOperand:Type[_] = type -> IntegerType(type); VectorType(type). 
 
-IcmpInstruction:Type[_] = type -> VectorTye(type); Int1Type[] = type.
+IcmpInstruction:Type[_] = type -> VectorType(type); Int1Type[] = type.
 IcmpInstruction:Type[_] = type, VectorType:Component[type] = comp -> Int1Type[] = comp.
-IcmpInstruction:LeftOperand:Type[_] = type -> IntegerType(type); VectorType(type); PointerType(type).
-IcmpInstruction:LeftOperand:Type[_] = type, VectorType:Component[type] = comp -> Int32Type[] = comp.////;
-IcmpInstruction:LeftOperand:Type[_] = type, VectorType:Component[type] = comp -> PointerType(comp).
-IcmpInstruction:RightOperand:Type[_] = type -> IntegerType(type); VectorType(type); PointerType(type).
-IcmpInstruction:RightOperand:Type[_] = type, VectorType:Component[type] = comp -> Int32Type[] = comp.
-IcmpInstruction:RightOperand:Type[_] = type, VectorType:Component[type] = comp -> PointerType(comp).
+// IcmpInstruction:LeftOperand:Type[_] = type -> IntegerType(type); VectorType(type); PointerType(type).
+// IcmpInstruction:LeftOperand:Type[_] = type, VectorType:Component[type] = comp -> Int32Type[] = comp.////;
+// IcmpInstruction:LeftOperand:Type[_] = type, VectorType:Component[type] = comp -> PointerType(comp).
+// IcmpInstruction:RightOperand:Type[_] = type -> IntegerType(type); VectorType(type); PointerType(type).
+// IcmpInstruction:RightOperand:Type[_] = type, VectorType:Component[type] = comp -> Int32Type[] = comp.
+// IcmpInstruction:RightOperand:Type[_] = type, VectorType:Component[type] = comp -> PointerType(comp).
+
+PointerType:Component[_] = componentType -> componentType != LabelType[].
+
+
+StoreInstruction:Type[_] = type -> VoidType[] = type.
+
+AddInstruction:LeftOperand[_] = left, 
+Operand:byVariable[var] = left, 
+Variable:Type[var] = type 
+-> 
+   IntegerType(type).
+
+AddInstruction:LeftOperand[_] = left, 
+Operand:byImmediate[imm] = left, 
+Immediate:Type[imm] = type 
+-> 
+   IntegerType(type).
 
