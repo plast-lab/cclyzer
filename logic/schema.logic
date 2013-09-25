@@ -27,9 +27,30 @@ StructType(type) -> AggregateType(type).
 //Pointer Type
 PointerType:Component[type] = componentType -> PointerType(type), Type(componentType).
 
-//Function Type***
+//Function Type
+FunctionType:Return[type] = return -> FunctionType(type), Type(return).
 FunctionType:Arg[type, index] = arg -> FunctionType(type), int[64](index), Type(arg).
 FunctionType:nArgs[type] = total -> FunctionType(type), int[64](total).
+
+// Function
+Function(func), Function:id(func:id) -> string(id).
+
+Function:Name[func] = name -> Function(func), string(name).
+Function:Type[func] = type -> Function(func), FunctionType(type).
+Function:Arg[func, index] = arg -> Function(func), int[64](index), Variable(arg).
+
+Function:nArgs[func] = total -> Function(func), int[64](total).
+Function:nArgs[func] = total
+<- 
+   Function:Type[func] = type,
+   FunctionType:nArgs[type] = total.
+
+Function:Type[func] = type, 
+FunctionType:Arg[type, index] = argType,
+Function:Arg[func, index] = arg
+->
+   Variable:Type[arg] = argType.
+
 
 // Array Type
 ArrayType:Component[type] = componentType -> ArrayType(type), Type(componentType).
