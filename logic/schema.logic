@@ -84,6 +84,7 @@ Immediate:Type[imm] = type -> Immediate(imm), Type(type).
 
 // Instructions
 Instruction(insn), Instruction:Value(insn:id) -> string(id).
+//*** Instruction:Type[insn] = type -> Instruction(insn), Type(type).
 
 // Binary Operations
 AddInstruction(insn) -> Instruction(insn).
