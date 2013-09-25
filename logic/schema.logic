@@ -5,15 +5,31 @@ PrimitiveType(type) -> Type(type).
 DerivedType(type) -> Type(type).
 AggregateType(type) -> DerivedType(type).
 ArrayType(type) -> AggregateType(type).
+PointerType(type) -> DerivedType(type).
 VectorType(type) -> DerivedType(type).
 IntegerType(type) -> PrimitiveType(type).
 FloatingPointType(type) -> PrimitiveType(type).
+Int1Type[] = type -> IntegerType(type).
 Int8Type[] = type -> IntegerType(type).
 Int32Type[] = type -> IntegerType(type).
 Int64Type[] = type -> IntegerType(type).
 DoubleType[] = type -> FloatingPointType(type).
+FloatType[] = type -> FloatingPointType(type).
+HalfType[] = type -> FloatingPointType(type).
+Fp128Type[] = type -> FloatingPointType(type).
 VoidType[] = type -> PrimitiveType(type).
+LabelType[[] = type -> PrimitiveType(type).
+MetaDataType[] = type -> PrimitiveType(type).
+FunctionType(type) = type -> DerivedType(type).
 StructType(type) -> AggregateType(type).
+//FirstClassType
+
+//Pointer Type
+PointerType:Component[type] = componentType -> PrimitiveType(type); DerivedType(type), Type(componentType).
+
+//Function Type***
+FunctionType:Arg[type, index] = arg -> FunctionType(type), int[64](index), Type(arg).
+FunctionType:nArgs[type] = total -> FunctionType(type), int[64](total).
 
 // Array Type
 ArrayType:Component[type] = componentType -> ArrayType(type), Type(componentType).
@@ -23,29 +39,72 @@ ArrayType:Size[type] = size -> ArrayType(type), int[64](size).
 VectorType:Component[type] = componentType -> VectorType(type), Type(componentType).
 VectorType:Size[type] = size -> VectorType(type), int[64](size).
 
-// Struct Types
+// Struct Types***
 StructType:Field[type, index] = field -> StructType(type), int[64](index), Type(field).
 StructType:nFields[type] = total -> StructType(type), int[64](total).
 
 // Standard types as constants
+Int8Type[] = type <- IntegerType(type), Type:Value(type:"i1").
 Int8Type[] = type <- IntegerType(type), Type:Value(type:"i8").
 Int32Type[] = type <- IntegerType(type), Type:Value(type:"i32").
 Int64Type[] = type <- IntegerType(type), Type:Value(type:"i64").
 DoubleType[] = type <- FloatingPointType(type), Type:Value(type:"double").
+FloatType[] = type <- FloatingPointType(type), Type:Value(type:"float").
+HalfType[] = type <- FloatingPointType(type), Type:Value(type:"half").
+Fp128Type[] = type <- FloatingPointType(type), Type:Value(type:"fp128").
+VoidType[] = type <- PrimitiveType(type), Type:Value(type:"void").
+LabelType = type <- PrimitiveType(type), Type:Value(type:"label").
+MetadataType = type <- PrimitiveType(type), Type:Value(type:"metadata").
 
 Variable(var), Variable:Id(var:id) -> string(id).
 Immediate(imm), Immediate:Value(imm:value) -> string(value).
 
 // Instructions
 Instruction(insn), Instruction:Value(insn:id) -> string(id).
+
+// Binary Operations
 AddInstruction(insn) -> Instruction(insn).
+SubInstruction(insn) -> Instruction(insn).
+MulInstruction(insn) -> Instruction(insn).
+FAddInstruction(insn) -> Instruction(insn).
+FSubInstruction(insn) -> Instruction(insn).
+FMulInstruction(insn) -> Instruction(insn).
+UDivInstruction(insn) -> Instruction(insn).
+SDivInstruction(insn) -> Instruction(insn).
+FDivInstruction(insn) -> Instruction(insn).
+URemInstruction(insn) -> Instruction(insn).
+SRemInstruction(insn) -> Instruction(insn).
+FRemInstruction(insn) -> Instruction(insn).
+
+//Bitwise Binary Operations
+ShlInstruction(insn) -> Instruction(insn).
+LshrInstruction(insn) -> Instruction(insn).
+AshrInstruction(insn) -> Instruction(insn).
+AndInstruction(insn) -> Instruction(insn).
+OrInstruction(insn) -> Instruction(insn).
+XorInstruction(insn) -> Instruction(insn).
+
+//Memory Operations
 AllocaInstruction(insn) -> Instruction(insn).
+LoadInstruction(insn) -> Instruction(insn).
+StoreInstruction(insn) -> Instruction(insn).
+GepInstruction(insn) -> Instruction(insn).
+
+//Conversion Operations
+TruncInstruction(insn) -> Instruction(insn).
+ZextInstruction(insn) -> Instruction(insn).
+FPTruncInstruction(insn) -> Instruction(insn).
+FPToUIInstruction(insn) -> Instruction(insn).
+
+//Other
+IcmpInstruction(insn) -> Instruction(insn).
+
 
 // Operand as union
 Operand(operand) -> .
 Operand:byVariable[var] = operand -> Variable(var), Operand(operand).
 Operand:byImmediate[imm] = operand -> Immediate(imm), Operand(operand).
-
+DerivedType(type).
 lang:physical:storageModel[`Operand] = "ScalableSparse".
 lang:constructor(`Operand:byVariable).
 lang:constructor(`Operand:byImmediate).
@@ -58,15 +117,202 @@ AddInstruction:LeftOperand[insn] = left -> AddInstruction(insn), Operand(left).
 AddInstruction:RightOperand[insn] = right -> AddInstruction(insn), Operand(right).
 AddInstruction:To[insn] = to -> AddInstruction(insn), Variable(to).
 
+//Sub Instruction
+SubInstruction:Type[insn] = type -> SubInstruction(insn), Type(type).
+SubInstruction:LeftOperand[insn] = left -> SubInstruction(insn), Operand(left).
+SubInstruction:RightOperand[insn] = right -> SubInstruction(insn), Operand(right).
+SubInstruction:To[insn] = to -> SubInstruction(insn), Variable(to).
+
+//Mul Instruction
+MulInstruction:Type[insn] = type -> MulInstruction(insn), Type(type).
+MulInstruction:LeftOperand[insn] = left -> MulInstruction(insn), Operand(left).
+MulInstruction:RightOperand[insn] = right -> MulInstruction(insn), Operand(right).
+MulInstruction:To[insn] = to -> MulInstruction(insn), Variable(to).
+
+//FAdd Instruction
+FAddInstruction:Type[insn] = type -> FAddInstruction(insn), Type(type).
+FAddInstruction:LeftOperand[insn] = left -> FAddInstruction(insn), Operand(left).
+FAddInstruction:RightOperand[insn] = right -> FAddInstruction(insn), Operand(right).
+FAddInstruction:To[insn] = to -> FAddInstruction(insn), Variable(to).
+
+//FSub Instruction
+FSubInstruction:Type[insn] = type -> FSubInstruction(insn), Type(type).
+FSubInstruction:LeftOperand[insn] = left -> FSubInstruction(insn), Operand(left).
+FSubInstruction:RightOperand[insn] = right -> FSubInstruction(insn), Operand(right).
+FSubInstruction:To[insn] = to -> FSubInstruction(insn), Variable(to).
+
+//FMul Instruction
+FMulInstruction:Type[insn] = type -> FMulInstruction(insn), Type(type).
+FMulInstruction:LeftOperand[insn] = left -> FMulInstruction(insn), Operand(left).
+FMulInstruction:RightOperand[insn] = right -> FMulInstruction(insn), Operand(right).
+FMulInstruction:To[insn] = to -> FMulInstruction(insn), Variable(to).
+
+//UDiv Instruction
+UDivInstruction:Type[insn] = type -> UDivInstruction(insn), Type(type).
+UDivInstruction:LeftOperand[insn] = left -> UDivInstruction(insn), Operand(left).
+UDivInstruction:RightOperand[insn] = right -> UDivInstruction(insn), Operand(right).
+UDivInstruction:To[insn] = to -> UDivInstruction(insn), Variable(to).
+
+//SDiv Instruction
+SDivInstruction:Type[insn] = type -> SDivInstruction(insn), Type(type).
+SDivInstruction:LeftOperand[insn] = left -> SDivInstruction(insn), Operand(left).
+SDivInstruction:RightOperand[insn] = right -> SDivInstruction(insn), Operand(right).
+SDivInstruction:To[insn] = to -> SDivInstruction(insn), Variable(to).
+
+//FDiv Instruction
+FDivInstruction:Type[insn] = type -> FDivInstruction(insn), Type(type).
+FDivInstruction:LeftOperand[insn] = left -> FDivInstruction(insn), Operand(left).
+FDivInstruction:RightOperand[insn] = right -> FDivInstruction(insn), Operand(right).
+FDivInstruction:To[insn] = to -> FDivInstruction(insn), Variable(to).
+
+//URem Instruction
+URemInstruction:Type[insn] = type -> URemInstruction(insn), Type(type).
+URemInstruction:LeftOperand[insn] = left -> URemInstruction(insn), Operand(left).
+URemInstruction:RightOperand[insn] = right -> URemInstruction(insn), Operand(right).
+URemInstruction:To[insn] = to -> URemInstruction(insn), Variable(to).
+
+//SRem Instruction
+SRemInstruction:Type[insn] = type -> SRemInstruction(insn), Type(type).
+SRemInstruction:LeftOperand[insn] = left -> SRemInstruction(insn), Operand(left).
+SRemInstruction:RightOperand[insn] = right -> SRemInstruction(insn), Operand(right).
+SRemInstruction:To[insn] = to -> SRemInstruction(insn), Variable(to).
+
+//FRem Instruction
+FRemInstruction:Type[insn] = type -> FRemInstruction(insn), Type(type).
+FRemInstruction:LeftOperand[insn] = left -> FRemInstruction(insn), Operand(left).
+FRemInstruction:RightOperand[insn] = right -> FRemInstruction(insn), Operand(right).
+FRemInstruction:To[insn] = to -> FRemInstruction(insn), Variable(to).
 
 // Alloca Instruction
 AllocaInstruction:Type[insn] = type -> AllocaInstruction(insn), Type(type).
 AllocaInstruction:Size:Type[insn] = type -> AllocaInstruction(insn), IntegerType(type).
 AllocaInstruction:Size:Value[insn] = size -> AllocaInstruction(insn), Operand(size).
 AllocaInstruction:Align[insn] = alignment -> AllocaInstruction(insn), Immediate(alignment).
+AllocaInstruction:To[insn] = to -> AllocaInstruction(insn), Variable(to).
+
+//Load Instruction
+LoadInstruction:Type[insn] = type -> LoadInstruction(insn), Type(type).
+LoadInstruction:Operand:Type[insn] = type -> LoadInstruction(insn), PointerType(type).
+LoadInstruction:Operand:Value[insn] = value -> LoadInstruction(insn), Variable(value).
+LoadInstruction:Align[insn] = alignment -> LoadInstruction(insn), Immediate(alignment).
+LoadInstruction:To[insn] = to -> LoadInstruction(insn), Variable(to).
+
+//Store Instruction
+StoreInstruction:Type[insn] = type -> StoreInstruction(insn), Type(type). //////////
+StoreInstruction:LeftOperand:Type[insn] = type -> StoreInstruction(insn), Type(type).
+StoreInstruction:LeftOperand:Value[insn] = lvalue -> StoreInstruction(insn), Operand(lvalue).
+StoreInstruction:RightOperand:Type[insn] = type -> StoreInstruction(insn), PointerType(type).
+StoreInstruction:RightOperand:Value[insn] = rvalue -> StoreInstruction(insn), Variable(rvalue).
+StoreInstruction:Align[insn] = alignment -> StoreInstruction(insn), Immediate(alignment).
+
+//Gep Instruction
+GepInstruction:Type[insn] = type -> GepInstruction(insn), Type(type).
+GepInstruction:Base:Type[insn] = type -> GepInstruction(insn), Type(type).
+GepInstruction:Base:Value[insn] = value -> GepInstruction(insn), Variable(value).
+GepInstruction:LeftIndex:Type[insn] = type -> GepInstruction(insn), IntegerType(type).
+GepInstruction:LeftIndex:Value[insn] = lvalue -> GepInstruction(insn), Operand(lvalue).
+GepInstruction:RightIndex:Type[insn] = type -> GepInstruction(insn), IntegerType(type).
+GepInstruction:RightIndex:Value[insn] = rvalue -> GepInstruction(insn), Operand(rvalue).
+GepInstruction:To[insn] = to -> GepInstruction(insn), Variable(to).
+
+//Trunc Instruction
+TruncInstruction:Type[insn] = type -> TruncInstruction(insn), Type(type).
+TruncInstruction:LeftOperand:Type[insn] = type -> TruncInstruction(insn), Type(type).
+TruncInstruction:LeftOperand:Value[insn] = value -> TruncInstruction(insn), Operand(value).
+TruncInstruction:RightOperand:Type[insn] = type -> TruncInstruction(insn), Type(type).
+TruncInstruction:To[insn] = to -> TruncInstruction(insn), Variable(to).
+
+//Zext Instruction
+ZextInstruction:Type[insn] = type -> ZextInstruction(insn), Type(type).
+ZextInstruction:LeftOperand:Type[insn] = type -> ZextInstruction(insn), Type(type).
+ZextInstruction:LeftOperand:Value[insn] = value -> ZextInstruction(insn), Operand(value).
+ZextInstruction:RightOperand:Type[insn] = type -> ZextInstruction(insn), Type(type).
+ZextInstruction:To[insn] = to -> ZextInstruction(insn), Variable(to).
+
+//FPTrunc Instruction
+FPTruncInstruction:Type[insn] = type -> FPTruncInstruction(insn), FloatingPointType(type).
+FPTruncInstruction:LeftOperand:Type[insn] = type -> FPTruncInstruction(insn), FloatingPointType(type).
+FPTruncInstruction:LeftOperand:Value[insn] = value -> FPTruncInstruction(insn), Operand(value).
+FPTruncInstruction:RightOperand:Type[insn] = type -> FPTruncInstruction(insn), FloatingPointType(type).
+FPTruncInstruction:To[insn] = to -> FPTruncInstruction(insn), Variable(to).
+
+//FPToUI Instruction
+FPToUIInstruction:Type[insn] = type -> FPToUIInstruction(insn), FloatingPointType(type).
+FPToUIInstruction:LeftOperand:Type[insn] = type -> FPToUIInstruction(insn), FloatingPointType(type).
+FPToUIInstruction:LeftOperand:Value[insn] = value -> FPToUIInstruction(insn), Operand(value).
+FPToUIInstruction:RightOperand:Type[insn] = type -> FPToUIInstruction(insn), IntegerType(type).
+FPToUIInstruction:To[insn] = to -> FPToUIInstruction(insn), Variable(to).
+
+//Icmp Instruction
+IcmpInstruction:Type[insn] = type -> IcmpInstruction(insn), Type(type).
+IcmpInstruction:LeftOperand:Type[insn] = type -> IcmpInstruction(insn), Type(type).
+IcmpInstruction:LeftOperand:Value[insn] = lvalue -> IcmpInstruction(insn), Operand(lvalue).
+IcmpInstruction:RightOperand:Type[insn] = type -> IcmpInstruction(insn), Type(type).
+IcmpInstruction:RightOperand:Value[insn] = rvalue -> IcmpInstruction(insn), Operand(rvalue).
+IcmpInstruction:To[insn] = to -> IcmpInstruction(insn), Variable(to).
+
+
+
 
 // Constraints
 AddInstruction:Type[_] = type -> VectorType(type); Int32Type[] = type.
 AddInstruction:Type[_] = type, VectorType:Component[type] = comp -> Int32Type[] = comp.
 
+SubInstruction:Type[_] = type -> VectorType(type); Int32Type[] = type.
+SubInstruction:Type[_] = type, VectorType:Component[type] = comp -> Int32Type[] = comp.
+
+MulInstruction:Type[_] = type -> VectorType(type); Int32Type[] = type.
+MulInstruction:Type[_] = type, VectorType:Component[type] = comp -> Int32Type[] = comp.
+
+FAddInstruction:Type[_] = type -> VectorType(type); FloatingPointType(type).
+FAddInstruction:Type[_] = type, VectorType:Component[type] = comp -> FloatingPointType(comp).
+
+FSubInstruction:Type[_] = type -> VectorType(type); FloatingPointType(type).
+FSubInstruction:Type[_] = type, VectorType:Component[type] = comp -> FloatingPointType(comp).
+
+FMulInstruction:Type[_] = type -> VectorType(type); FloatingPointType(type).
+FMulInstruction:Type[_] = type, VectorType:Component[type] = comp -> FloatingPointType(comp).
+
+UDivInstruction:Type[_] = type -> VectorType(type); Int32Type[] = type.
+UDivInstruction:Type[_] = type, VectorType:Component[type] = comp -> Int32Type[] = comp.
+
+SDivInstruction:Type[_] = type -> VectorType(type); Int32Type[] = type.
+SDivInstruction:Type[_] = type, VectorType:Component[type] = comp -> Int32Type[] = comp.
+
+FDivInstruction:Type[_] = type -> VectorType(type); FloatingPointType(type).
+FDivInstruction:Type[_] = type, VectorType:Component[type] = comp -> FloatingPointType(comp).
+
+URemInstruction:Type[_] = type -> VectorType(type); Int32Type[] = type.
+URemInstruction:Type[_] = type, VectorType:Component[type] = comp -> Int32Type[] = comp.
+
+SRemInstruction:Type[_] = type -> VectorType(type); Int32Type[] = type.
+SRemInstruction:Type[_] = type, VectorType:Component[type] = comp -> Int32Type[] = comp.
+
+FRemInstruction:Type[_] = type -> VectorType(type); FloatingPointType(type).
+FRemInstruction:Type[_] = type, VectorType:Component[type] = comp -> FloatingPointType(comp).
+
 AllocaInstruction(insn) -> AllocaInstruction:Type[insn] = _.
+
+LoadInstruction:Type[_] = type -> PointerType(type).
+
+LoadInstruction:Type[_] = type -> VoidType[] = type.
+
+GepInstruction:Base:Type[_] = type -> PointerType(type); VectorType(type).
+GepInstruction:Base:Type[_] = type -> VectorType:Component[type] = comp -> PointerType(comp).
+
+//+VectorSize
+TruncInstruction:LeftOperand:Type[_] = type -> IntegerType(type); VectorType(type).
+TruncInstruction:RightOperand:Type[_] = type -> IntegerType(type); VectorType(type). 
+
+ZextInstruction:LeftOperand:Type[_] = type -> IntegerType(type); VectorType(type).
+ZextInstruction:RightOperand:Type[_] = type -> IntegerType(type); VectorType(type). 
+
+IcmpInstruction:Type[_] = type -> VectorTye(type); Int1Type[] = type.
+IcmpInstruction:Type[_] = type, VectorType:Component[type] = comp -> Int1Type[] = comp.
+IcmpInstruction:LeftOperand:Type[_] = type -> IntegerType(type); VectorType(type); PointerType(type).
+IcmpInstruction:LeftOperand:Type[_] = type, VectorType:Component[type] = comp -> Int32Type[] = comp.////;
+IcmpInstruction:LeftOperand:Type[_] = type, VectorType:Component[type] = comp -> PointerType(comp).
+IcmpInstruction:RightOperand:Type[_] = type -> IntegerType(type); VectorType(type); PointerType(type).
+IcmpInstruction:RightOperand:Type[_] = type, VectorType:Component[type] = comp -> Int32Type[] = comp.
+IcmpInstruction:RightOperand:Type[_] = type, VectorType:Component[type] = comp -> PointerType(comp).
+
