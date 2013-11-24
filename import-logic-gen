@@ -1,0 +1,57 @@
+#!/bin/bash
+
+if [[ $# != 1 ]]; then
+    echo >&2 "Usage: $0 CSVDIR"
+    exit 1
+fi
+
+csvdir=$(dirname "$1/foo")
+
+while read pred; do
+    operand=${pred#*:}
+    insn=${pred%:*}
+
+    # Compute file predicate names
+    imm="_${insn}${operand/Operand/Imm}"
+    var="_${insn}${operand/Operand/Var}"
+
+    immfile="${csvdir}/${insn}-${operand/Operand/-Imm}.dlm"
+    varfile="${csvdir}/${insn}-${operand/Operand/-Var}.dlm"
+
+    cat <<EOF
+
+// Auto-generated import logic for ${pred}
+
+${imm}(insn, imm) ->
+    string(insn), string(imm).
+
+${var}(insn, var) ->
+    string(insn), string(var).
+
+lang:physical:delimiter[\`${imm}] = "\t".
+lang:physical:delimiter[\`${var}] = "\t".
+lang:physical:filePath[\`${imm}]  = "${immfile}".
+lang:physical:filePath[\`${var}]  = "${varfile}".
+
++Immediate(imm), 
++Immediate:Value(imm:value),
++Operand(operand),
++Operand:byImmediate[imm] = operand,
++${pred}[insn] = operand
+<-
+    Instruction:Value(insn:insnId),
+    ${insn}(insn),
+    ${imm}(insnId, value).
+
+
++Variable(var), 
++Variable:Id(var:varId),
++Operand(operand),
++Operand:byVariable[var] = operand,
++${pred}[insn] = operand
+<-
+    Instruction:Value(insn:insnId),
+    ${insn}(insn),
+    ${var}(insnId, varId).
+EOF
+done

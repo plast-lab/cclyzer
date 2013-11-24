@@ -4,13 +4,19 @@ IMPORT = ./import
 LOGIC  = ./logic
 EXAMPLES = ./examples
 
+OPERAND_PRED_LIST = ./operand-pred-list.txt
+
 TESTS = $(wildcard $(EXAMPLES)/*.c)
 TESTBUILD = $(EXAMPLES)/build
 TESTOUT = $(TESTS:$(EXAMPLES)/%.c=$(TESTBUILD)/%.s)
 
 SCHEMA = $(LOGIC)/schema.logic
 IMPORT_BLOCK = $(LOGIC)/parse.logic
+
+# Various scripts
 GEN = ./generate-import.sh
+LOGIC_GEN = ./import-logic-gen
+EXTRACTOR = ./extract-operand-predicates.sh
 
 # Entities
 ENTITIES = $(DATA)/entities
@@ -39,6 +45,13 @@ import-entities: $(ENTITY_SCRIPT)
 import-predicates: $(PREDICATE_SCRIPT)
 	bloxbatch -db $(DB) -import $<
 	bloxbatch -db $(DB) -execute -file $(IMPORT_BLOCK)
+
+# Generate import logic
+$(IMPORT_BLOCK): %.logic: %.logic.template
+	cat $(OPERAND_PRED_LIST) | $(LOGIC_GEN) "$(DATA)" | cat $< - > $@
+
+$(OPERAND_PRED_LIST):
+	$(EXTRACTOR) $(SCHEMA) > $@
 
 # Generate .import files
 
@@ -69,11 +82,12 @@ $(TESTOUT): $(TESTBUILD)/%.s : $(EXAMPLES)/%.c
 tests: $(TESTOUT)
 
 # Additional dependencies
-import-predicates: import-entities
+import-predicates: import-entities $(IMPORT_BLOCK)
 import-entities: create
 
 $(ENTITY_IMPORTS): $(GEN)
 $(PREDICATE_IMPORTS): $(GEN)
-
+$(IMPORT_BLOCK): $(OPERAND_PRED_LIST) $(LOGIC_GEN)
+$(OPERAND_PRED_LIST): $(EXTRACTOR) $(SCHEMA)
 
 .PHONY: all create delete import-entities import-predicates tests
