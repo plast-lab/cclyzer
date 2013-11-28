@@ -1,7 +1,7 @@
 #! /bin/bash
 
 PRED=$(basename $1 .dlm | sed "s/-/:/")
-ARITY=$(head -n 1 $1 | awk -F"$(echo -e "\t")" '{ print NF }')
+ARITY=$(head -n 1 $1 | awk -F$'\t' '{ print NF }')
 
 echo -n "fromFile,\"$1\""
 
