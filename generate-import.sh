@@ -1,6 +1,6 @@
 #! /bin/bash
 
-PRED=$(basename $1 .dlm | sed "s/-/:/")
+PRED=$(basename $1 .dlm | sed "s/-/:/g")
 ARITY=$(head -n 1 $1 | awk -F$'\t' '{ print NF }')
 
 echo -n "fromFile,\"$1\""
