@@ -32,6 +32,21 @@ PREDICATE_SCRIPT = $(IMPORT)/predicates.import
 
 all: import-predicates
 
+clean: clean-import clean-examples
+
+clean-import:
+	rm -rf $(IMPORT)
+	rm -f $(OPERAND_PRED_LIST) $(IMPORT_BLOCK)
+
+clean-examples:
+	rm -rf $(TESTBUILD)
+
+cleanall: clean
+	rm -rf $(DB)
+
+installdirs:
+	mkdir -p $(IMPORT) 
+
 create:
 	bloxbatch -db $(DB) -create -overwrite
 	bloxbatch -db $(DB) -addBlock -file $(SCHEMA)
@@ -66,12 +81,12 @@ $(PREDICATE_IMPORTS): $(IMPORT)/%.import: $(PREDICATES)/%.dlm
 $(ENTITY_SCRIPT): $(ENTITY_IMPORTS)
 	@echo "option,delimiter,\"	\"" > $@
 	@echo "option,hasColumnNames,false" >> $@
-	@cat $^ >> $@
+	cat $^ >> $@
 
 $(PREDICATE_SCRIPT): $(PREDICATE_IMPORTS)
 	@echo "option,delimiter,\"	\"" > $@
 	@echo "option,hasColumnNames,false" >> $@
-	@cat $^ >> $@
+	cat $^ >> $@
 
 # Unit tests in C
 
@@ -85,9 +100,9 @@ tests: $(TESTOUT)
 import-predicates: import-entities $(IMPORT_BLOCK)
 import-entities: create
 
-$(ENTITY_IMPORTS): $(GEN)
-$(PREDICATE_IMPORTS): $(GEN)
+$(ENTITY_IMPORTS): $(GEN) installdirs
+$(PREDICATE_IMPORTS): $(GEN) installdirs
 $(IMPORT_BLOCK): $(OPERAND_PRED_LIST) $(LOGIC_GEN)
 $(OPERAND_PRED_LIST): $(EXTRACTOR) $(SCHEMA)
 
-.PHONY: all create delete import-entities import-predicates tests
+.PHONY: all clean cleanall clean-import clean-examples create delete import-entities import-predicates tests
