@@ -98,7 +98,8 @@ Immediate:Type[imm] = type -> Immediate(imm), Type(type).
 
 ConstantExpression(imm) -> Immediate(imm).
 
-Attribute(attr), Attribute:Value(fn:value) -> string(value).
+// Attribute
+Attribute(attr), Attribute:Value(attr:value) -> string(value).
 
 
 // constraint
