@@ -7,7 +7,7 @@ ArrayType(type) -> AggregateType(type).
 PointerType(type) -> DerivedType(type).
 FunctionType(type) -> DerivedType(type).
 StructType(type) -> AggregateType(type).
-OpaqueType(type) -> StructType(type).
+OpaqueStructType(type) -> StructType(type).
 VectorType(type) -> DerivedType(type).
 IntegerType(type) -> PrimitiveType(type).
 FloatingPointType(type) -> PrimitiveType(type).
@@ -25,6 +25,7 @@ MetadataType[] = type -> PrimitiveType(type).
 
 //Pointer Type
 PointerType:Component[type] = componentType -> PointerType(type), Type(componentType).
+PointerType:AddrSpace[type] = addr -> PointerType(type), int[64](addr).
 
 // Array Type
 ArrayType:Component[type] = componentType -> ArrayType(type), Type(componentType).
@@ -42,9 +43,18 @@ FunctionType:nArgs[type] = total -> FunctionType(type), int[64](total).	//
 // Function
 Function(func), Function:id(func:id) -> string(id).
 
-Function:Name[func] = name -> Function(func), string(name).
+//Function:Name[func] = name -> Function(func), string(name).
 Function:Type[func] = type -> Function(func), FunctionType(type).
 Function:FormalArg[func, index] = arg -> Function(func), int[64](index), Variable(arg).
+Function:LinkageType[func] = link -> Function(func), LinkageType(link).
+Function:Visibility[func] = v -> Function(func), Visibility(v).
+Function:CallingConvention[func] = cc ->  Function(func), CallingConvention(cc).
+Function:Section[func] = sect -> Function(func), string(sect).
+Function:Align[func] = alignment -> Function(func), int[64](alignment).
+Function:Unnamed_Addr(func) -> Function(func).
+Function:GC[func] = gc -> Function(func), string(gc).
+Function:RetAttribute[func] = retAttr -> Function(func), string(retAttr).
+Function:FnAttributes(func, fnAttr) -> Function(func), string(fnAttr).
 
 Function:nArgs[func] = total -> Function(func), int[64](total).
 Function:nArgs[func] = total
@@ -71,9 +81,12 @@ DoubleType[] = type <- FloatingPointType(type), Type:Value(type:"double").
 FloatType[] = type <- FloatingPointType(type), Type:Value(type:"float").
 HalfType[] = type <- FloatingPointType(type), Type:Value(type:"half").
 Fp128Type[] = type <- FloatingPointType(type), Type:Value(type:"fp128").
+X86_Fp80Type[] = type <- FloatingPointType(type), Type:Value(type:"x86_fp80").
+Ppc_Fp128Type[] = type <- FloatingPointType(type), Type:Value(type:"ppc_fp128").
 VoidType[] = type <- PrimitiveType(type), Type:Value(type:"void").
 LabelType[] = type <- PrimitiveType(type), Type:Value(type:"label").
 MetadataType[] = type <- PrimitiveType(type), Type:Value(type:"metadata").
+X86mmxType[] = type <- PrimitiveType(type), Type:Value(type:"x86mmx").
 
 // Variable
 Variable(var), Variable:Id(var:id) -> string(id).
@@ -83,8 +96,62 @@ Variable:Type[var] = type -> Variable(var), Type(type).
 Immediate(imm), Immediate:Value(imm:value) -> string(value).
 Immediate:Type[imm] = type -> Immediate(imm), Type(type).
 
+ConstantExpression(imm) -> Immediate(imm).
+
 // constraint
 Immediate:Type[_] = type -> LabelType[] != type.
+
+
+//Global Variable
+//GlobalVariable(gv), GlobalVariable:Value(gv:value) -> string(value).
+GlobalVariable(gv) -> Immediate(gv).
+GlobalVariable:Type[gv] = type -> GlobalVariable(gv), Type(type).
+GlobalVariable:Initializer[gv] = init -> GlobalVariable(gv), string(init).
+GlobalVariable:Section[gv] = sect -> GlobalVariable(gv), string(sect).
+GlobalVariable:Align[gv] = alignment -> GlobalVariable(gv),  int[64](alignment).
+GlobalVariable:Flag(gv, flag) -> GlobalVariable(gv), string(flag).
+GlobalVariable:LinkageType[gv] = link -> GlobalVariable(gv), LinkageType(link).
+GlobalVariable:Visibility[gv] = v -> GlobalVariable(gv), Visibility(v).
+GlobalVariable:ThreadLocalMode[gv] = tlm -> GlobalVariable(gv), ThreadLocalMode(tlm).
+
+
+//Global Alias
+GlobalAlias(ga), GlobalAlias:Value(ga:value) -> string(value).
+GlobalAlias:Type[ga] = type -> GlobalAlias(ga), Type(type).
+GlobalAlias:LinkageType[ga] = link -> GlobalAlias(ga), LinkageType(link).
+GlobalAlias:Visibility[ga] = v -> GlobalAlias(ga), Visibility(v).
+GlobalAlias:Aliasee[ga] = aliasee -> GlobalAlias(ga), string(aliasee).
+
+
+//Linkage Type for Global Values
+LinkageType(link), LinkageType:Value(link:value) -> string(value).
+LinkageType:External[] = link <- LinkageType(link), LinkageType:Value(link:"external").
+LinkageType:Private[] = link <- LinkageType(link), LinkageType:Value(link:"private").
+LinkageType:Linker_private[] = link <- LinkageType(link), LinkageType:Value(link:"linker_private").
+LinkageType:Internal[] = link <- LinkageType(link), LinkageType:Value(link:"internal").
+LinkageType:Linkonce[] = link <- LinkageType(link), LinkageType:Value(link:"linkonce").
+LinkageType:Linkonce_odr[] = link <- LinkageType(link), LinkageType:Value(link:"linkonce_odr").
+LinkageType:Weak[] = link <- LinkageType(link), LinkageType:Value(link:"weak").
+LinkageType:Weak_odr[] = link <- LinkageType(link), LinkageType:Value(link:"weak_odr").
+LinkageType:Common[] = link <- LinkageType(link), LinkageType:Value(link:"common").
+LinkageType:Appending[] = link <- LinkageType(link), LinkageType:Value(link:"appending").
+LinkageType:Dllimport[] = link <- LinkageType(link), LinkageType:Value(link:"dllimport").
+LinkageType:Dllexport[] = link <- LinkageType(link), LinkageType:Value(link:"dllexport").
+LinkageType:Extern_weak[] = link <- LinkageType(link), LinkageType:Value(link:"extern_weak").
+LinkageType:Linker_private_weak[] = link <- LinkageType(link), LinkageType:Value(link:"linker_private_weak").
+LinkageType:Available_externally[] = link <- LinkageType(link), LinkageType:Value(link:"available_externally").
+
+//Visibility Style for Global Values
+Visibility(v), Visibility:Value(v:value) -> string(value).
+Visibility:Hidden[] = v <- Visibility(v), Visibility:Value(v:"hidden").
+Visibility:Protected[] = v <- Visibility(v), Visibility:Value(v:"protected").
+
+//Thread Local Mode for Global Values
+ThreadLocalMode(tlm), ThreadLocalMode:Value(tlm:value) -> string(value).
+ThreadLocalMode:Thread_local[] = tlm <- ThreadLocalMode(tlm), ThreadLocalMode:Value(tlm:"thread_local").
+ThreadLocalMode:Local_dynamic[] = tlm <- ThreadLocalMode(tlm), ThreadLocalMode:Value(tlm:"thread_local(localdynamic)").
+ThreadLocalMode:Initial_exec[] = tlm <- ThreadLocalMode(tlm), ThreadLocalMode:Value(tlm:"thread_local(initialexec)").
+ThreadLocalMode:Local_exec[] = tlm <- ThreadLocalMode(tlm), ThreadLocalMode:Value(tlm:"thread_local(localexec)").
 
 // Orderings
 Ordering(ord), Ordering:Value(ord:value) -> string(value).
@@ -94,6 +161,21 @@ Ordering:Acquire[] = ord <- Ordering(ord), Ordering:Value(ord:"acquire").
 Ordering:Release[] = ord <- Ordering(ord), Ordering:Value(ord:"release").
 Ordering:Acq_rel[] = ord <- Ordering(ord), Ordering:Value(ord:"acq_rel").
 Ordering:Seq_cst[] = ord <- Ordering(ord), Ordering:Value(ord:"seq_cst").
+
+// Operation for the 'AtomicRMW' Instruction
+Operation(op), Operation:Value(op:value) -> string(value).
+Operation:Xchg[] = op <- Operation(op), Operation:Value(op:"xchg").
+Operation:Add[] = op <- Operation(op), Operation:Value(op:"add").
+Operation:Sub[] = op <- Operation(op), Operation:Value(op:"sub").
+Operation:And[] = op <- Operation(op), Operation:Value(op:"and").
+Operation:Nand[] = op <- Operation(op), Operation:Value(op:"nand").
+Operation:Nor[] = op <- Operation(op), Operation:Value(op:"nor").
+Operation:Or[] = op <- Operation(op), Operation:Value(op:"or").
+Operation:Xor[] = op <- Operation(op), Operation:Value(op:"xor").
+Operation:Max[] = op <- Operation(op), Operation:Value(op:"max").
+Operation:Min[] = op <- Operation(op), Operation:Value(op:"min").
+Operation:Umax[] = op <- Operation(op), Operation:Value(op:"umax").
+Operation:Umin[] = op <- Operation(op), Operation:Value(op:"umin").
 
 // Condition Code for the 'Icmp' Instruction
 IcmpCondition(cond), IcmpCondition:Value(cond:value) -> string(value).
@@ -127,6 +209,24 @@ FcmpCondition:Ule[] = cond <- FcmpCondition(cond), FcmpCondition:Value(cond:"ule
 FcmpCondition:Une[] = cond <- FcmpCondition(cond), FcmpCondition:Value(cond:"une").
 FcmpCondition:Uno[] = cond <- FcmpCondition(cond), FcmpCondition:Value(cond:"uno").
 
+// Calling Conventions (Function, CallInstruction, InvokeInstruction)
+CallingConvention(cc), CallingConvention:Value(cc:value) -> string(value).
+CallingConvention:Fast[] = cc <- CallingConvention(cc), CallingConvention:Value(cc:"fastcc").
+CallingConvention:Cold[] = cc <- CallingConvention(cc), CallingConvention:Value(cc:"coldcc").
+CallingConvention:X86_FastCall[] = cc <- CallingConvention(cc), CallingConvention:Value(cc:"x86_fastcallcc").
+CallingConvention:X86_StdCall[] = cc <- CallingConvention(cc), CallingConvention:Value(cc:"x86_stdcallcc").
+CallingConvention:X86_ThisCall[] = cc <- CallingConvention(cc), CallingConvention:Value(cc:"x86_thiscallcc").
+CallingConvention:Intel_OCL_BI[] = cc <- CallingConvention(cc), CallingConvention:Value(cc:"intel_ocl_bicc").
+CallingConvention:ARM_AAPCS[] = cc <- CallingConvention(cc), CallingConvention:Value(cc:"arm_aapcscc").
+CallingConvention:ARM_AAPCS_VFP[] = cc <- CallingConvention(cc), CallingConvention:Value(cc:"arm_aapcs_vfpcc").
+CallingConvention:ARM_APCS[] = cc <- CallingConvention(cc), CallingConvention:Value(cc:"arm_apcscc").
+CallingConvention:MSP430_INTR[] = cc <- CallingConvention(cc), CallingConvention:Value(cc:"msp430_intrcc").
+CallingConvention:PTX_Device[] = cc <- CallingConvention(cc), CallingConvention:Value(cc:"ptx_device").
+CallingConvention:PTX_Kernel[] = cc <- CallingConvention(cc), CallingConvention:Value(cc:"ptx_kernel").
+//
+
+
+
 // Instruction
 Instruction(insn), Instruction:Value(insn:id) -> string(id).
 Instruction:To[insn] = to -> Instruction(insn), Variable(to).	// apart from the instructions with 'void' type
@@ -151,15 +251,15 @@ UnreachableInstruction(insn) -> Instruction(insn).
 AddInstruction(insn) -> Instruction(insn).
 SubInstruction(insn) -> Instruction(insn).
 MulInstruction(insn) -> Instruction(insn).
-FAddInstruction(insn) -> Instruction(insn).
-FSubInstruction(insn) -> Instruction(insn).
-FMulInstruction(insn) -> Instruction(insn).
-UDivInstruction(insn) -> Instruction(insn).
-SDivInstruction(insn) -> Instruction(insn).
-FDivInstruction(insn) -> Instruction(insn).
-URemInstruction(insn) -> Instruction(insn).
-SRemInstruction(insn) -> Instruction(insn).
-FRemInstruction(insn) -> Instruction(insn).
+FaddInstruction(insn) -> Instruction(insn).
+FsubInstruction(insn) -> Instruction(insn).
+FmulInstruction(insn) -> Instruction(insn).
+UdivInstruction(insn) -> Instruction(insn).
+SdivInstruction(insn) -> Instruction(insn).
+FdivInstruction(insn) -> Instruction(insn).
+UremInstruction(insn) -> Instruction(insn).
+SremInstruction(insn) -> Instruction(insn).
+FremInstruction(insn) -> Instruction(insn).
 
 // Bitwise Binary Operations
 ShlInstruction(insn) -> Instruction(insn).
@@ -189,17 +289,17 @@ GepInstruction(insn) -> Instruction(insn).
 
 // Conversion Operations
 TruncInstruction(insn) -> Instruction(insn).
-ZExtInstruction(insn) -> Instruction(insn).
-SExtInstruction(insn) -> Instruction(insn).
-FPTruncInstruction(insn) -> Instruction(insn).
-FPExtInstruction(insn) -> Instruction(insn).
-FPToUIInstruction(insn) -> Instruction(insn).
-FPToSIInstruction(insn) -> Instruction(insn).
-UIToFPInstruction(insn) -> Instruction(insn). 
-SIToFPInstruction(insn) -> Instruction(insn).
-PtrToIntInstruction(insn) -> Instruction(insn).
-IntToPtrInstruction(insn) -> Instruction(insn).
-BitCastInstruction(insn) -> Instruction(insn).
+ZextInstruction(insn) -> Instruction(insn).
+SextInstruction(insn) -> Instruction(insn).
+FptruncInstruction(insn) -> Instruction(insn).
+FpextInstruction(insn) -> Instruction(insn).
+FptouiInstruction(insn) -> Instruction(insn).
+FptosiInstruction(insn) -> Instruction(insn).
+UitofpInstruction(insn) -> Instruction(insn). 
+SitofpInstruction(insn) -> Instruction(insn).
+PtrtointInstruction(insn) -> Instruction(insn).
+InttoptrInstruction(insn) -> Instruction(insn).
+BitcastInstruction(insn) -> Instruction(insn).
 
 // Other
 IcmpInstruction(insn) -> Instruction(insn).
@@ -225,11 +325,11 @@ lang:constructor(`Operand:byImmediate).
 ReturnInstruction:Operand[insn] = operand -> ReturnInstruction(insn), Operand(operand).
 
 // Br Instruction
-BrInstruction:Unconditional:Operand[insn] = cond -> BrInstruction(insn), Operand(cond).
-BrInstruction:Unconditional:TrueLabel[insn] = truel -> BrInstruction(insn), Variable(truel).
-BrInstruction:Unconditional:FalseLabel[insn] = falsel -> BrInstruction(insn), Variable(falsel).
+BrInstruction:Conditional:Operand[insn] = cond -> BrInstruction(insn), Operand(cond).
+BrInstruction:Conditional:TrueLabel[insn] = truel -> BrInstruction(insn), Variable(truel).
+BrInstruction:Conditional:FalseLabel[insn] = falsel -> BrInstruction(insn), Variable(falsel).
 
-BrInstruction:Conditional:Label[insn] = label -> BrInstruction(insn), Variable(label).
+BrInstruction:Unconditional:Label[insn] = label -> BrInstruction(insn), Variable(label).
 
 // IndirectBr Instruction
 IndirectBrInstruction:Operand[insn] = address -> IndirectBrInstruction(insn), Operand(address).
@@ -255,6 +355,9 @@ InvokeInstruction:Direct:Name[insn] = name -> InvokeInstruction(insn), string(na
 InvokeInstruction:Direct:Type[insn] = type -> InvokeInstruction(insn), FunctionType(type).
 InvokeInstruction:NormalLabel[insn] = nlabel -> InvokeInstruction(insn), Variable(nlabel).
 InvokeInstruction:ExceptionLabel[insn] = elabel -> InvokeInstruction(insn), Variable(elabel).
+InvokeInstruction:RetAttribute[insn] = retAttr -> InvokeInstruction(insn), string(retAttr).
+InvokeInstruction:FnAttributes(insn, fnAttr) -> InvokeInstruction(insn), string(fnAttr).
+InvokeInstruction:CallingConv[insn] = cc -> InvokeInstruction(insn), CallingConvention(cc).
 
 // constraints
 InvokeInstruction:NormalLabel[_] = _, Variable:Type[_] = type -> type = LabelType[].
@@ -298,41 +401,41 @@ SubInstruction:RightOperand[insn] = right -> SubInstruction(insn), Operand(right
 MulInstruction:LeftOperand[insn] = left -> MulInstruction(insn), Operand(left).
 MulInstruction:RightOperand[insn] = right -> MulInstruction(insn), Operand(right).
 
-// FAdd Instruction
-FAddInstruction:LeftOperand[insn] = left -> FAddInstruction(insn), Operand(left).
-FAddInstruction:RightOperand[insn] = right -> FAddInstruction(insn), Operand(right).
+// Fadd Instruction
+FaddInstruction:LeftOperand[insn] = left -> FaddInstruction(insn), Operand(left).
+FaddInstruction:RightOperand[insn] = right -> FaddInstruction(insn), Operand(right).
 
-// FSub Instruction
-FSubInstruction:LeftOperand[insn] = left -> FSubInstruction(insn), Operand(left).
-FSubInstruction:RightOperand[insn] = right -> FSubInstruction(insn), Operand(right).
+// Fsub Instruction
+FsubInstruction:LeftOperand[insn] = left -> FsubInstruction(insn), Operand(left).
+FsubInstruction:RightOperand[insn] = right -> FsubInstruction(insn), Operand(right).
 
-// FMul Instruction
-FMulInstruction:LeftOperand[insn] = left -> FMulInstruction(insn), Operand(left).
-FMulInstruction:RightOperand[insn] = right -> FMulInstruction(insn), Operand(right).
+// Fmul Instruction
+FmulInstruction:LeftOperand[insn] = left -> FmulInstruction(insn), Operand(left).
+FmulInstruction:RightOperand[insn] = right -> FmulInstruction(insn), Operand(right).
 
-// UDiv Instruction
-UDivInstruction:LeftOperand[insn] = left -> UDivInstruction(insn), Operand(left).
-UDivInstruction:RightOperand[insn] = right -> UDivInstruction(insn), Operand(right).
+// Udiv Instruction
+UdivInstruction:LeftOperand[insn] = left -> UdivInstruction(insn), Operand(left).
+UdivInstruction:RightOperand[insn] = right -> UdivInstruction(insn), Operand(right).
 
-// SDiv Instruction
-SDivInstruction:LeftOperand[insn] = left -> SDivInstruction(insn), Operand(left).
-SDivInstruction:RightOperand[insn] = right -> SDivInstruction(insn), Operand(right).
+// Sdiv Instruction
+SdivInstruction:LeftOperand[insn] = left -> SdivInstruction(insn), Operand(left).
+SdivInstruction:RightOperand[insn] = right -> SdivInstruction(insn), Operand(right).
 
-// FDiv Instruction
-FDivInstruction:LeftOperand[insn] = left -> FDivInstruction(insn), Operand(left).
-FDivInstruction:RightOperand[insn] = right -> FDivInstruction(insn), Operand(right).
+// Fdiv Instruction
+FdivInstruction:LeftOperand[insn] = left -> FdivInstruction(insn), Operand(left).
+FdivInstruction:RightOperand[insn] = right -> FdivInstruction(insn), Operand(right).
 
-// URem Instruction
-URemInstruction:LeftOperand[insn] = left -> URemInstruction(insn), Operand(left).
-URemInstruction:RightOperand[insn] = right -> URemInstruction(insn), Operand(right).
+// Urem Instruction
+UremInstruction:LeftOperand[insn] = left -> UremInstruction(insn), Operand(left).
+UremInstruction:RightOperand[insn] = right -> UremInstruction(insn), Operand(right).
 
-// SRem Instruction
-SRemInstruction:LeftOperand[insn] = left -> SRemInstruction(insn), Operand(left).
-SRemInstruction:RightOperand[insn] = right -> SRemInstruction(insn), Operand(right).
+// Srem Instruction
+SremInstruction:LeftOperand[insn] = left -> SremInstruction(insn), Operand(left).
+SremInstruction:RightOperand[insn] = right -> SremInstruction(insn), Operand(right).
 
-// FRem Instruction
-FRemInstruction:LeftOperand[insn] = left -> FRemInstruction(insn), Operand(left).
-FRemInstruction:RightOperand[insn] = right -> FRemInstruction(insn), Operand(right).
+// Frem Instruction
+FremInstruction:LeftOperand[insn] = left -> FremInstruction(insn), Operand(left).
+FremInstruction:RightOperand[insn] = right -> FremInstruction(insn), Operand(right).
 
 // Shl Instruction
 ShlInstruction:LeftOperand[insn] = left -> ShlInstruction(insn), Operand(left).
@@ -386,11 +489,11 @@ InsertValueInstruction:nIndices[insn] = total -> InsertValueInstruction(insn), i
 // Alloca Instruction
 AllocaInstruction:Size:Type[insn] = type -> AllocaInstruction(insn), Type(type).
 AllocaInstruction:Size:Operand[insn] = size -> AllocaInstruction(insn), Operand(size).
-AllocaInstruction:Align[insn] = alignment -> AllocaInstruction(insn), Immediate(alignment).
+AllocaInstruction:Align[insn] = alignment -> AllocaInstruction(insn),  int[64](alignment).
 
 //Load Instruction
 LoadInstruction:Operand[insn] = operand -> LoadInstruction(insn), Variable(operand).
-LoadInstruction:Align[insn] = alignment -> LoadInstruction(insn), Immediate(alignment).
+LoadInstruction:Align[insn] = alignment -> LoadInstruction(insn),  int[64](alignment).
 LoadInstruction:Ordering[insn] = ord -> LoadInstruction(insn), Ordering(ord).
 
 // Constraints
@@ -404,7 +507,7 @@ LoadInstruction:Ordering[_] = ord ->
 // Store Instruction
 StoreInstruction:LeftOperand[insn] = left -> StoreInstruction(insn), Operand(left).
 StoreInstruction:RightOperand[insn] = right -> StoreInstruction(insn), Variable(right).
-StoreInstruction:Align[insn] = alignment -> StoreInstruction(insn), Immediate(alignment).
+StoreInstruction:Align[insn] = alignment -> StoreInstruction(insn),  int[64](alignment).
 StoreInstruction:Ordering[insn] = ord -> StoreInstruction(insn), Ordering(ord).
 
 // Constraints
@@ -482,7 +585,7 @@ Immediate:Type[imm] = type
    IntegerType(type).
 
 // AtomicRMW Instruction
-AtomicRMWInstruction:Operation[insn] = operation -> AtomicRMWInstruction(insn), string(operation).
+AtomicRMWInstruction:Operation[insn] = op -> AtomicRMWInstruction(insn), Operation(op).
 AtomicRMWInstruction:LeftOperand[insn] = left -> AtomicRMWInstruction(insn), Operand(left).
 AtomicRMWInstruction:RightOperand[insn] = right -> AtomicRMWInstruction(insn), Operand(right).
 AtomicRMWInstruction:Ordering[insn] = ord -> AtomicRMWInstruction(insn), Ordering(ord).
@@ -552,49 +655,49 @@ Immediate:Type[imm] = type
 TruncInstruction:Type[_] = type -> IntegerType(type); VectorType(type). 
 TruncInstruction:Type[_] = type, VectorType:Component[type] = comp -> IntegerType(comp).
 
-//ZExt Instruction
-ZExtInstruction:Operand[insn] = value -> ZExtInstruction(insn), Operand(value).
-ZExtInstruction:Type[insn] = type -> ZExtInstruction(insn), Type(type).
+//Zext Instruction
+ZextInstruction:Operand[insn] = value -> ZextInstruction(insn), Operand(value).
+ZextInstruction:Type[insn] = type -> ZextInstruction(insn), Type(type).
 
-//SExt Instruction
-SExtInstruction:Operand[insn] = value -> SExtInstruction(insn), Operand(value).
-SExtInstruction:Type[insn] = type -> SExtInstruction(insn), Type(type).
+//Sext Instruction
+SextInstruction:Operand[insn] = value -> SextInstruction(insn), Operand(value).
+SextInstruction:Type[insn] = type -> SextInstruction(insn), Type(type).
 
-//FPTrunc Instruction
-FPTruncInstruction:Operand[insn] = value -> FPTruncInstruction(insn), Operand(value).
-FPTruncInstruction:Type[insn] = type -> FPTruncInstruction(insn), FloatingPointType(type).
+//Fptrunc Instruction
+FptruncInstruction:Operand[insn] = value -> FptruncInstruction(insn), Operand(value).
+FptruncInstruction:Type[insn] = type -> FptruncInstruction(insn), FloatingPointType(type).
 
-// FPExt Instruction
-FPExtInstruction:Operand[insn] = value -> FPExtInstruction(insn), Operand(value).
-FPExtInstruction:Type[insn] = type -> FPExtInstruction(insn), IntegerType(type).
+// Fpext Instruction
+FpextInstruction:Operand[insn] = value -> FpextInstruction(insn), Operand(value).
+FpextInstruction:Type[insn] = type -> FpextInstruction(insn), IntegerType(type).
 
-// FPToUI Instruction
-FPToUIInstruction:Operand[insn] = value -> FPToUIInstruction(insn), Operand(value).
-FPToUIInstruction:Type[insn] = type -> FPToUIInstruction(insn), IntegerType(type).
+// Fptoui Instruction
+FptouiInstruction:Operand[insn] = value -> FptouiInstruction(insn), Operand(value).
+FptouiInstruction:Type[insn] = type -> FptouiInstruction(insn), IntegerType(type).
 
-// FPToSI Instruction
-FPToSIInstruction:Operand[insn] = value -> FPToSIInstruction(insn), Operand(value).
-FPToSIInstruction:Type[insn] = type -> FPToSIInstruction(insn), IntegerType(type).
+// Fptosi Instruction
+FptosiInstruction:Operand[insn] = value -> FptosiInstruction(insn), Operand(value).
+FptosiInstruction:Type[insn] = type -> FptosiInstruction(insn), IntegerType(type).
 
-// UIToFP Instruction
-UIToFPInstruction:Operand[insn] = value -> UIToFPInstruction(insn), Operand(value).
-UIToFPInstruction:Type[insn] = type -> UIToFPInstruction(insn), FloatingPointType(type).
+// Uitofp Instruction
+UitofpInstruction:Operand[insn] = value -> UitofpInstruction(insn), Operand(value).
+UitofpInstruction:Type[insn] = type -> UitofpInstruction(insn), FloatingPointType(type).
 
-// SIToFP Instruction
-SIToFPInstruction:Operand[insn] = value -> SIToFPInstruction(insn), Operand(value).
-SIToFPInstruction:Type[insn] = type -> SIToFPInstruction(insn), FloatingPointType(type).
+// Sitofp Instruction
+SitofpInstruction:Operand[insn] = value -> SitofpInstruction(insn), Operand(value).
+SitofpInstruction:Type[insn] = type -> SitofpInstruction(insn), FloatingPointType(type).
 
-// PtrToInt Instruction
-PtrToIntInstruction:Operand[insn] = value -> PtrToIntInstruction(insn), Operand(value).
-PtrToIntInstruction:Type[insn] = type -> PtrToIntInstruction(insn), IntegerType(type).
+// Ptrtoint Instruction
+PtrtointInstruction:Operand[insn] = value -> PtrtointInstruction(insn), Operand(value).
+PtrtointInstruction:Type[insn] = type -> PtrtointInstruction(insn), IntegerType(type).
 
-// IntTo PtrInstruction
-IntToPtrInstruction:Operand[insn] = value -> IntToPtrInstruction(insn), Operand(value).
-IntToPtrInstruction:Type[insn] = type -> IntToPtrInstruction(insn), PointerType(type).
+// Inttoptr Instruction
+InttoptrInstruction:Operand[insn] = value -> InttoptrInstruction(insn), Operand(value).
+InttoptrInstruction:Type[insn] = type -> InttoptrInstruction(insn), PointerType(type).
 
-// BitCast Instruction
-BitCastInstruction:Operand[insn] = value -> BitCastInstruction(insn), Operand(value).
-BitCastInstruction:Type[insn] = type -> BitCastInstruction(insn), Type(type).
+// Bitcast Instruction
+BitcastInstruction:Operand[insn] = value -> BitcastInstruction(insn), Operand(value).
+BitcastInstruction:Type[insn] = type -> BitcastInstruction(insn), Type(type).
 
 //Icmp Instruction
 IcmpInstruction:Cond[insn] = cond -> IcmpInstruction(insn), IcmpCondition(cond).
@@ -672,12 +775,16 @@ Operand:byImmediate[imm] = cond,
 Immediate:Type[imm] = type, VectorType:Component[type] = comp -> Int1Type[] = comp.
 
 // Call Instruction
-CallInstruction:ActualArg[insn, index] = arg -> CallInstruction(insn), int[64](index), Operand(arg).
+//CallInstruction:ActualArg[insn, index] = arg -> CallInstruction(insn), int[64](index), Operand(arg).
+CallInstruction:ActualArg(insn, index, arg) -> CallInstruction(insn), string(index), Operand(arg).
 CallInstruction:Indirect:Pointer[insn] = ptr -> CallInstruction(insn), Variable(ptr).
 
 // CallInstruction:Direct:Immediate[insn] = imm -> CallInstruction(insn), Immediate(imm).
 CallInstruction:Direct:Name[insn] = name -> CallInstruction(insn), string(name).
 CallInstruction:Direct:Type[insn] = type -> CallInstruction(insn), FunctionType(type).
+CallInstruction:CallingConvention[insn] = cc -> CallInstruction(insn), CallingConvention(cc).
+CallInstruction:RetAttribute[insn] = retAttr -> CallInstruction(insn), string(retAttr).
+CallInstruction:FnAttributes(insn, fnAttr) -> CallInstruction(insn), string(fnAttr).
 
 // VAArg Instruction
 VAArgInstruction:Operand[insn] = left -> VAArgInstruction(insn), Variable(left).
@@ -690,5 +797,4 @@ LandingpadInstruction:Type[insn] = type -> LandingpadInstruction(insn), Type(typ
 LandingpadInstruction:FunctionOperand[insn] = func -> LandingpadInstruction(insn), Operand(func).
 LandingpadInstruction:Clause:Catch[insn] = catch -> LandingpadInstruction(insn), Operand(catch).
 LandingpadInstruction:Clause:Filter[insn] = filter -> LandingpadInstruction(insn), Immediate(filter).
-
 
