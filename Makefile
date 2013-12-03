@@ -44,8 +44,7 @@ clean-examples:
 cleanall: clean
 	rm -rf $(DB)
 
-installdirs:
-	mkdir -p $(IMPORT) 
+# Deployment
 
 create:
 	bloxbatch -db $(DB) -create -overwrite
@@ -61,7 +60,11 @@ import-predicates: $(PREDICATE_SCRIPT)
 	bloxbatch -db $(DB) -import $<
 	bloxbatch -db $(DB) -execute -file $(IMPORT_BLOCK)
 
+extract:
+	tar xvf $(EXAMPLES)/$(notdir $(DATA)).tar.gz
+
 # Generate import logic
+
 $(IMPORT_BLOCK): %.logic: %.logic.template
 	cat $(OPERAND_PRED_LIST) | $(LOGIC_GEN) "$(DATA)" | cat $< - > $@
 
@@ -71,19 +74,23 @@ $(OPERAND_PRED_LIST):
 # Generate .import files
 
 $(ENTITY_IMPORTS): $(IMPORT)/%.import: $(ENTITIES)/%.dlm
+	@mkdir -p $(@D) 
 	$(GEN) $< > $@
 
 $(PREDICATE_IMPORTS): $(IMPORT)/%.import: $(PREDICATES)/%.dlm
+	@mkdir -p $(@D) 
 	$(GEN) $< > $@
 
 # Collect all generated .import files into one
 
 $(ENTITY_SCRIPT): $(ENTITY_IMPORTS)
+	@mkdir -p $(@D) 
 	@echo "option,delimiter,\"	\"" > $@
 	@echo "option,hasColumnNames,false" >> $@
 	cat $^ >> $@
 
 $(PREDICATE_SCRIPT): $(PREDICATE_IMPORTS)
+	@mkdir -p $(@D) 
 	@echo "option,delimiter,\"	\"" > $@
 	@echo "option,hasColumnNames,false" >> $@
 	cat $^ >> $@
@@ -100,8 +107,8 @@ tests: $(TESTOUT)
 import-predicates: import-entities $(IMPORT_BLOCK)
 import-entities: create
 
-$(ENTITY_IMPORTS): $(GEN) installdirs
-$(PREDICATE_IMPORTS): $(GEN) installdirs
+$(ENTITY_IMPORTS): $(GEN)
+$(PREDICATE_IMPORTS): $(GEN)
 $(IMPORT_BLOCK): $(OPERAND_PRED_LIST) $(LOGIC_GEN)
 $(OPERAND_PRED_LIST): $(EXTRACTOR) $(SCHEMA)
 
