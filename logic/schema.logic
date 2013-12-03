@@ -36,7 +36,7 @@ VectorType:Component[type] = componentType -> VectorType(type), Type(componentTy
 VectorType:Size[type] = size -> VectorType(type), int[64](size).
 
 //Function Type
-FunctionType:Return[type] = ret -> FunctionType(type), Type(ret).
+FunctionType:ReturnType[type] = ret -> FunctionType(type), Type(ret).
 FunctionType:Arg[type, index] = arg -> FunctionType(type), int[64](index), Type(arg).
 FunctionType:nArgs[type] = total -> FunctionType(type), int[64](total).	//
 
@@ -775,8 +775,8 @@ Operand:byImmediate[imm] = cond,
 Immediate:Type[imm] = type, VectorType:Component[type] = comp -> Int1Type[] = comp.
 
 // Call Instruction
-//CallInstruction:ActualArg[insn, index] = arg -> CallInstruction(insn), int[64](index), Operand(arg).
-CallInstruction:ActualArg(insn, index, arg) -> CallInstruction(insn), string(index), Operand(arg).
+CallInstruction:ActualArg[insn, index] = arg -> CallInstruction(insn), int[64](index), Operand(arg).
+//CallInstruction:ActualArg(insn, index, arg) -> CallInstruction(insn), int[64](index), Operand(arg).
 CallInstruction:Indirect:Pointer[insn] = ptr -> CallInstruction(insn), Variable(ptr).
 
 // CallInstruction:Direct:Immediate[insn] = imm -> CallInstruction(insn), Immediate(imm).
