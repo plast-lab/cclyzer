@@ -53,8 +53,8 @@ Function:Section[func] = sect -> Function(func), string(sect).
 Function:Align[func] = alignment -> Function(func), int[64](alignment).
 Function:Unnamed_Addr(func) -> Function(func).
 Function:GC[func] = gc -> Function(func), string(gc).
-Function:RetAttribute[func] = retAttr -> Function(func), string(retAttr).
-Function:FnAttributes(func, fnAttr) -> Function(func), string(fnAttr).
+Function:RetAttribute[func] = retAttr -> Function(func), Attribute(retAttr).
+Function:FnAttributes(func, fnAttr) -> Function(func), Attribute(fnAttr).
 
 Function:nArgs[func] = total -> Function(func), int[64](total).
 Function:nArgs[func] = total
@@ -98,9 +98,11 @@ Immediate:Type[imm] = type -> Immediate(imm), Type(type).
 
 ConstantExpression(imm) -> Immediate(imm).
 
+Attribute(attr), Attribute:Value(fn:value) -> string(value).
+
+
 // constraint
 Immediate:Type[_] = type -> LabelType[] != type.
-
 
 //Global Variable
 //GlobalVariable(gv), GlobalVariable:Value(gv:value) -> string(value).
@@ -355,8 +357,8 @@ InvokeInstruction:Direct:Name[insn] = name -> InvokeInstruction(insn), string(na
 InvokeInstruction:Direct:Type[insn] = type -> InvokeInstruction(insn), FunctionType(type).
 InvokeInstruction:NormalLabel[insn] = nlabel -> InvokeInstruction(insn), Variable(nlabel).
 InvokeInstruction:ExceptionLabel[insn] = elabel -> InvokeInstruction(insn), Variable(elabel).
-InvokeInstruction:RetAttribute[insn] = retAttr -> InvokeInstruction(insn), string(retAttr).
-InvokeInstruction:FnAttributes(insn, fnAttr) -> InvokeInstruction(insn), string(fnAttr).
+InvokeInstruction:RetAttribute[insn] = retAttr -> InvokeInstruction(insn), Attribute(retAttr).
+InvokeInstruction:FnAttributes(insn, fnAttr) -> InvokeInstruction(insn), Attribute(fnAttr).
 InvokeInstruction:CallingConv[insn] = cc -> InvokeInstruction(insn), CallingConvention(cc).
 
 // constraints
@@ -774,6 +776,7 @@ SelectInstruction:ConditionOperand[_] = cond,
 Operand:byImmediate[imm] = cond,
 Immediate:Type[imm] = type, VectorType:Component[type] = comp -> Int1Type[] = comp.
 
+
 // Call Instruction
 CallInstruction:ActualArg[insn, index] = arg -> CallInstruction(insn), int[64](index), Operand(arg).
 //CallInstruction:ActualArg(insn, index, arg) -> CallInstruction(insn), int[64](index), Operand(arg).
@@ -783,8 +786,9 @@ CallInstruction:Indirect:Pointer[insn] = ptr -> CallInstruction(insn), Variable(
 CallInstruction:Direct:Name[insn] = name -> CallInstruction(insn), string(name).
 CallInstruction:Direct:Type[insn] = type -> CallInstruction(insn), FunctionType(type).
 CallInstruction:CallingConvention[insn] = cc -> CallInstruction(insn), CallingConvention(cc).
-CallInstruction:RetAttribute[insn] = retAttr -> CallInstruction(insn), string(retAttr).
-CallInstruction:FnAttributes(insn, fnAttr) -> CallInstruction(insn), string(fnAttr).
+CallInstruction:RetAttribute[insn] = retAttr -> CallInstruction(insn), Attribute(retAttr).
+CallInstruction:FnAttributes(insn, fnAttr) -> CallInstruction(insn), Attribute(fnAttr).
+//CallInstruction:FnAttributes[insn] = fnAttr -> CallInstruction(insn), string(fnAttr).
 
 // VAArg Instruction
 VAArgInstruction:Operand[insn] = left -> VAArgInstruction(insn), Variable(left).
