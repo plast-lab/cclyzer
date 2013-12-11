@@ -43,7 +43,7 @@ SCHEMA TODO LIST // -*- mode: org -*-
 * DONE ordering
 * TODO or-instruction
 * DONE phi-instruction
-* TODO primitive-type
+* DONE primitive-type
 * TODO ptrtoint-instruction
 * TODO resume-instruction
 * TODO return-instruction
@@ -64,4 +64,4 @@ SCHEMA TODO LIST // -*- mode: org -*-
 * TODO urem-instruction
 * TODO va_arg-instruction
 * TODO xor-instruction
-* TODO zext
+* TODO zext-instruction

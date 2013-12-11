@@ -63,3 +63,10 @@ vector:eq_size_3(t1, t2, t3) <-
    vector_type:size[t1] = size,
    vector_type:size[t2] = size,
    vector_type:size[t3] = size.
+
+// First Class Types
+
+type:firstclass(Type) <-
+   type(Type),
+   !function_type(Type),
+   !void_type[] = Type.

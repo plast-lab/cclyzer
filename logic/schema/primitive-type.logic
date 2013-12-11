@@ -1,39 +1,35 @@
-PrimitiveType(type) -> Type(type).
+primitive_type(Type) -> type(Type).
 
-IntegerType(type) -> PrimitiveType(type).
-FloatingPointType(type) -> PrimitiveType(type).
-MetadataType[] = type -> PrimitiveType(type).
+integer_type(Type)     -> primitive_type(Type).
+fp_type(Type)          -> primitive_type(Type).
+void_type[] = Type     -> primitive_type(Type).
+label_type[] = Type    -> primitive_type(Type).
+metadata_type[] = Type -> primitive_type(Type).
 
-VoidType[] = type -> PrimitiveType(type).
-LabelType[] = type -> PrimitiveType(type).
+int1_type[]  = Type -> integer_type(Type).
+int8_type[]  = Type -> integer_type(Type).
+int32_type[] = Type -> integer_type(Type).
+int64_type[] = Type -> integer_type(Type).
 
-Int1Type[] = type -> IntegerType(type).
-Int8Type[] = type -> IntegerType(type).
-Int32Type[] = type -> IntegerType(type).
-Int64Type[] = type -> IntegerType(type).
-
-DoubleType[] = type -> FloatingPointType(type).
-FloatType[] = type -> FloatingPointType(type).
-HalfType[] = type -> FloatingPointType(type).
-Fp128Type[] = type -> FloatingPointType(type).
-
-// TODO: add firstClassType??
+double_type[] = Type -> fp_type(Type).
+float_type[]  = Type -> fp_type(Type).
+half_type[]   = Type -> fp_type(Type).
+fp128_type[]  = Type -> fp_type(Type).
 
 // Standard types as constants
-Int1Type[] = type <- IntegerType(type), Type:Value(type:"i1").
-Int8Type[] = type <- IntegerType(type), Type:Value(type:"i8").
-Int32Type[] = type <- IntegerType(type), Type:Value(type:"i32").
-Int64Type[] = type <- IntegerType(type), Type:Value(type:"i64").
+int1_type[]  = Type <- integer_type(Type), type:id(Type:"i1").
+int8_type[]  = Type <- integer_type(Type), type:id(Type:"i8").
+int32_type[] = Type <- integer_type(Type), type:id(Type:"i32").
+int64_type[] = Type <- integer_type(Type), type:id(Type:"i64").
 
-DoubleType[] = type <- FloatingPointType(type), Type:Value(type:"double").
-FloatType[] = type <- FloatingPointType(type), Type:Value(type:"float").
-HalfType[] = type <- FloatingPointType(type), Type:Value(type:"half").
-Fp128Type[] = type <- FloatingPointType(type), Type:Value(type:"fp128").
-X86_Fp80Type[] = type <- FloatingPointType(type), Type:Value(type:"x86_fp80").
-Ppc_Fp128Type[] = type <- FloatingPointType(type), Type:Value(type:"ppc_fp128").
+double_type[] = Type <- fp_type(Type), type:id(Type:"double").
+float_type[]  = Type <- fp_type(Type), type:id(Type:"float").
+half_type[]   = Type <- fp_type(Type), type:id(Type:"half").
+fp128_type[]  = Type <- fp_type(Type), type:id(Type:"fp128").
+x86_fp80_type[]  = Type <- fp_type(Type), type:id(Type:"x86_fp80").
+ppc_fp128_type[] = Type <- fp_type(Type), type:id(Type:"ppc_fp128").
 
-VoidType[] = type <- PrimitiveType(type), Type:Value(type:"void").
-LabelType[] = type <- PrimitiveType(type), Type:Value(type:"label").
-MetadataType[] = type <- PrimitiveType(type), Type:Value(type:"metadata").
-X86mmxType[] = type <- PrimitiveType(type), Type:Value(type:"x86mmx").
-
+void_type[]  = Type <- primitive_type(Type), type:id(Type:"void").
+label_type[] = Type <- primitive_type(Type), type:id(Type:"label").
+metadata_type[] = Type <- primitive_type(Type), type:id(Type:"metadata").
+x86mmx_type[]   = Type <- primitive_type(Type), type:id(Type:"x86mmx").
