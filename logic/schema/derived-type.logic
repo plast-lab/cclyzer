@@ -1,63 +1,65 @@
-DerivedType(type) -> Type(type).
-FunctionType(type) -> DerivedType(type).
-VectorType(type) -> DerivedType(type).
-PointerType(type) -> DerivedType(type).
-AggregateType(type) -> DerivedType(type).
-ArrayType(type) -> AggregateType(type).
-StructType(type) -> AggregateType(type).
-OpaqueStructType(type) -> StructType(type).
+// Type Hierarchy under derived types
+
+derived_type(Type)   -> type(Type).
+function_type(Type)  -> derived_type(Type).
+vector_type(Type)    -> derived_type(Type).
+pointer_type(Type)   -> derived_type(Type).
+aggregate_type(Type) -> derived_type(Type).
+array_type(Type)     -> aggregate_type(Type).
+struct_type(Type)    -> aggregate_type(Type).
+opaque_struct_type(Type) -> struct_type(Type).
 
 // Function Type
 
-FunctionType:ReturnType[type] = ret -> 
-   FunctionType(type), Type(ret).
+function_type:return[Type] = Ret -> 
+   function_type(Type), type(Ret).
 
-FunctionType:Arg[type, index] = arg -> 
-   FunctionType(type), int[64](index), Type(arg).
+function_type:arg[Type, Index] = Arg -> 
+   function_type(Type), int[64](Index), type(Arg).
 
-FunctionType:nArgs[type] = total -> 
-   FunctionType(type), int[64](total).	//
+function_type:nargs[Type] = Total -> 
+   function_type(Type), int[64](Total).
 
 // Pointer Type
 
-PointerType:Component[type] = componentType -> 
-   PointerType(type), Type(componentType).
+pointer_type:component[Type] = Comp -> 
+   pointer_type(Type), type(Comp).
 
-PointerType:AddrSpace[type] = addr -> 
-   PointerType(type), int[64](addr).
+pointer_type:addr_space[Type] = Addr -> 
+   pointer_type(Type), int[64](Addr).
 
 // Vector Type
 
-VectorType:Component[type] = componentType -> 
-   VectorType(type), Type(componentType).
+vector_type:component[Type] = Comp -> 
+   vector_type(Type), Type(Comp).
 
-VectorType:Size[type] = size ->
-   VectorType(type), int[64](size).
+vector_type:size[Type] = Size ->
+   vector_type(Type), int[64](Size).
 
 // Array Type
 
-ArrayType:Component[type] = componentType -> 
-   ArrayType(type), Type(componentType).
+array_type:component[Type] = Comp -> 
+   array_type(Type), type(Comp).
 
-ArrayType:Size[type] = size -> 
-   ArrayType(type), int[64](size).
+array_type:size[Type] = Size -> 
+   array_type(Type), int[64](Size).
 
 // Struct Type
 
-StructType:Field[type, index] = field -> 
-   StructType(type), int[64](index), Type(field).
+struct_type:Field[Type, Index] = Field -> 
+   struct_type(Type), int[64](Index), type(Field).
 
-StructType:nFields[type] = total -> 
-   StructType(type), int[64](total).
+struct_type:nfields[Type] = Total -> 
+   struct_type(Type), int[64](Total).
 
 
 // Helper predicate
 
-Vector:eq_size_2(t1, t2) <-
-   VectorType:Size[t1] = size,
-   VectorType:Size[t2] = size.
+vector:eq_size_2(t1, t2) <-
+   vector_type:size[t1] = size,
+   vector_type:size[t2] = size.
 
-Vector:eq_size_3(t1, t2, t3) <-
-   VectorType:Size[t1] = size,
-   VectorType:Size[t2] = size,
-   VectorType:Size[t3] = size.
+vector:eq_size_3(t1, t2, t3) <-
+   vector_type:size[t1] = size,
+   vector_type:size[t2] = size,
+   vector_type:size[t3] = size.

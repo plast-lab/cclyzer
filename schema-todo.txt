@@ -5,13 +5,13 @@ SCHEMA TODO LIST // -*- mode: org -*-
 * TODO and-instruction
 * TODO ashr-instruction
 * TODO atomicrmw-instruction
-* TODO attribute
+* DONE attribute
 * TODO bitcast-instruction
 * TODO br-instruction
 * TODO calling-convention
 * TODO call-instruction
 * TODO cmpxchg-instruction
-* TODO derived-type
+* DONE derived-type
 * TODO extractelement-instruction
 * TODO extractvalue-instruction
 * TODO fadd-instruction
