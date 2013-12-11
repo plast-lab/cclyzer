@@ -46,7 +46,7 @@ array_type:size[Type] = Size ->
 
 // Struct Type
 
-struct_type:Field[Type, Index] = Field -> 
+struct_type:field[Type, Index] = Field -> 
    struct_type(Type), int[64](Index), type(Field).
 
 struct_type:nfields[Type] = Total -> 
