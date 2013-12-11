@@ -19,13 +19,13 @@ fmul_instruction(Insn) -> fmul_instruction:first_operand[Insn] = _.
 fmul_instruction(Insn) -> fmul_instruction:second_operand[Insn] = _.
 
 fmul_instruction(Insn),
-   fmul_instruction:first_operand[_] = Left, 
+   fmul_instruction:first_operand[Insn] = Left, 
    operand:type[Left] = Type
  -> 
    fp_type(Type); vector_type(Type).
 
 fmul_instruction(Insn),
-   fmul_instruction:first_operand[_] = Left, 
+   fmul_instruction:first_operand[Insn] = Left, 
    operand:type[Left] = Type,
    vector_type:component[Type] = Comp
  -> 

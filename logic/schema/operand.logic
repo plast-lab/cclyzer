@@ -34,10 +34,10 @@ operand:type[Operand] = Type <-
 
 // View predicates
 operand:as_variable[Operand] = Var <-
-   variable(Var), operand(Operand).
+   operand:by_variable[Var] = Operand.
 
 operand:as_immediate[Operand] = Imm <-
-   immediate(Imm), operand(Operand).
+   operand:by_immediate[Imm] = Operand.
 
 // Helper functions
 variable:label(Var) <-
