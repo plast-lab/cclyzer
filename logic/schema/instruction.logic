@@ -13,3 +13,12 @@ instruction:to[Insn] = Var -> instruction(Insn), variable(Var).
 instruction:type[Insn] = Type <-
    instruction:to[Insn] = Var,
    variable:type[Var] = Type.
+
+
+// Sequence of instructions
+
+// The next instruction in the source file.
+instruction:next[Insn] = Next -> instruction(Insn), instruction(Next).
+
+instruction:prev[Insn] = Prev <-
+   instruction:next[Prev] = Insn.
