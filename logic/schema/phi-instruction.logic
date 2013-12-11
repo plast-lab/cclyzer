@@ -3,7 +3,6 @@
 
 phi_instruction(Insn) -> instruction(Insn).
 
-// TODO: remove
 phi_instruction:type[Insn] = Type -> phi_instruction(Insn), type(Type).
 
 phi_instruction:pair:value[Insn, Index] = Value -> 
@@ -25,6 +24,11 @@ phi_instruction:npairs[Insn] = Total ->
 phi_instruction(Insn) -> phi_instruction:npairs[Insn] = _.
 phi_instruction:pair:label[_, _] = Label -> variable:label(Label).
 phi_instruction:pair:value[_, _] = Value -> variable:firstclass(Value).
+
+phi_instruction:type[Insn] = Type,
+   phi_instruction:pair:value[Insn, _] = Operand,
+ -> 
+   operand:type[Operand] = Type.
 
 phi_instruction:pair:label[Insn, Index] = _,
    phi_instruction:npairs[Insn] = Total
