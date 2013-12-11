@@ -2,5 +2,4 @@
 // keywords: conversion; unary; instruction
 FptouiInstruction(insn) -> Instruction(insn).
 FptouiInstruction:Operand[insn] = value -> FptouiInstruction(insn), Operand(value).
-// TODO: same as in the other conversions
 FptouiInstruction:Type[insn] = type -> FptouiInstruction(insn), IntegerType(type).

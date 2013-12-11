@@ -2,5 +2,4 @@
 // keywords: conversion; unary; instruction
 BitcastInstruction(insn) -> Instruction(insn).
 BitcastInstruction:Operand[insn] = value -> BitcastInstruction(insn), Operand(value).
-// TODO: same as in the other conversions
 BitcastInstruction:Type[insn] = type -> BitcastInstruction(insn), Type(type).

@@ -2,5 +2,4 @@
 // keywords: conversion; unary; instruction
 FptruncInstruction(insn) -> Instruction(insn).
 FptruncInstruction:Operand[insn] = value -> FptruncInstruction(insn), Operand(value).
-// TODO: same as in the other conversions
 FptruncInstruction:Type[insn] = type -> FptruncInstruction(insn), FloatingPointType(type).

@@ -22,6 +22,7 @@ phi_instruction:npairs[Insn] = Total ->
 // (ii) Only labels may be used as the label arguments.
 
 phi_instruction(Insn) -> phi_instruction:npairs[Insn] = _.
+phi_instruction:type[Insn] = Type -> instruction:type[Insn] = Type.
 phi_instruction:pair:label[_, _] = Label -> variable:label(Label).
 phi_instruction:pair:value[_, _] = Value -> variable:firstclass(Value).
 

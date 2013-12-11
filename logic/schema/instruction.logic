@@ -8,6 +8,3 @@ Instruction:To[insn] = to -> Instruction(insn), Variable(to).
 
 Instruction:Flag(insn, flag) -> Instruction(insn), string(flag).
 // Instruction:Type[insn] = type -> Instruction(insn), Type(type).
-
-
-// TODO: add ConversionInstruction, BinaryInstruction, etc??

@@ -2,5 +2,4 @@
 // keywords: conversion; unary; instruction
 ZextInstruction(insn) -> Instruction(insn).
 ZextInstruction:Operand[insn] = value -> ZextInstruction(insn), Operand(value).
-// TODO: same as in the other conversions
 ZextInstruction:Type[insn] = type -> ZextInstruction(insn), Type(type).

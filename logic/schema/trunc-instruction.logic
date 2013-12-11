@@ -2,7 +2,6 @@
 // keywords: conversion; unary; instruction
 TruncInstruction(insn) -> Instruction(insn).
 TruncInstruction:Operand[insn] = value -> TruncInstruction(insn), Operand(value).
-// TODO: isn't Type inherited by Instruction now??? 
 TruncInstruction:Type[insn] = type -> TruncInstruction(insn), Type(type).
 
 // Constraints:
