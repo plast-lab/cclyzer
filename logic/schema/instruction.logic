@@ -1,10 +1,15 @@
-// Instruction
+// Instruction represented as entity
 
-Instruction(insn), Instruction:id(insn:id) -> string(id).
-UnreachableInstruction(insn) -> Instruction(insn).
+instruction(Insn), instruction:id(Insn:Ref) -> string(Ref).
+instruction:unreachable(Insn) -> instruction(Insn).
 
-// apart from the instructions with 'void' type
-Instruction:To[insn] = to -> Instruction(insn), Variable(to).
+instruction:flag(Insn, Flag) -> instruction(Insn), string(Flag).
 
-Instruction:Flag(insn, flag) -> Instruction(insn), string(flag).
-// Instruction:Type[insn] = type -> Instruction(insn), Type(type).
+// Apart from the instructions with 'void' type,
+// every instruction assigns its result to a variable.
+instruction:to[Insn] = Var -> instruction(Insn), variable(Var).
+
+// Helper predicate that holds the instruction's return type
+instruction:type[Insn] = Type <-
+   instruction:to[Insn] = Var,
+   variable:type[Var] = Type.

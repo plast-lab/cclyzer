@@ -32,7 +32,7 @@ SCHEMA TODO LIST // -*- mode: org -*-
 * TODO indirectbr-instruction
 * TODO insertelement-instruction
 * TODO insertvalue-instruction
-* TODO instruction
+* DONE instruction
 * TODO inttoptr-instruction
 * TODO invoke-instruction
 * TODO landingpad-instruction
