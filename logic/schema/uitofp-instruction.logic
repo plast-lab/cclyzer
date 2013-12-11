@@ -1,0 +1,6 @@
+// Uitofp Instruction
+// keywords: conversion; unary; instruction
+UitofpInstruction(insn) -> Instruction(insn).
+UitofpInstruction:Operand[insn] = value -> UitofpInstruction(insn), Operand(value).
+// TODO: same as in the other conversions
+UitofpInstruction:Type[insn] = type -> UitofpInstruction(insn), FloatingPointType(type).

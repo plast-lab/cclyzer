@@ -1,0 +1,5 @@
+// And Instruction
+// keywords: bitwise; binary; instruction
+AndInstruction(insn) -> Instruction(insn).
+AndInstruction:LeftOperand[insn] = left -> AndInstruction(insn), Operand(left).
+AndInstruction:RightOperand[insn] = right -> AndInstruction(insn), Operand(right).

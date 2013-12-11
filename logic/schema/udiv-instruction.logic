@@ -1,0 +1,5 @@
+// Udiv Instruction
+// keywords: arithmetic; binary; instruction
+UdivInstruction(insn) -> Instruction(insn).
+UdivInstruction:LeftOperand[insn] = left -> UdivInstruction(insn), Operand(left).
+UdivInstruction:RightOperand[insn] = right -> UdivInstruction(insn), Operand(right).

@@ -1,0 +1,5 @@
+// Frem Instruction
+// keywords: arithmetic; binary; instruction
+FremInstruction(insn) -> Instruction(insn).
+FremInstruction:LeftOperand[insn] = left -> FremInstruction(insn), Operand(left).
+FremInstruction:RightOperand[insn] = right -> FremInstruction(insn), Operand(right).

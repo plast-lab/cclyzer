@@ -1,0 +1,10 @@
+// Sitofp Instruction
+// keywords: conversion; unary; instruction
+SitofpInstruction(insn) -> Instruction(insn).
+
+SitofpInstruction:Operand[insn] = value -> 
+   SitofpInstruction(insn), Operand(value).
+
+// TODO: same as in the other conversions
+SitofpInstruction:Type[insn] = type -> 
+   SitofpInstruction(insn), FloatingPointType(type).

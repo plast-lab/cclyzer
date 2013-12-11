@@ -1,0 +1,50 @@
+// select - instruction
+SelectInstruction(insn) -> Instruction(insn).
+
+SelectInstruction:condition[insn] = cond -> 
+   SelectInstruction(insn), Operand(cond).
+
+SelectInstruction:firstOperand[insn] = value -> 
+   SelectInstruction(insn), Operand(value).
+
+SelectInstruction:secondOperand[insn] = value -> 
+   SelectInstruction(insn), Operand(value).
+
+
+// Constraints:
+//
+// Condition type must be either 
+// (i) i1, or 
+// (ii) vector of i1
+
+   Int1Type[] = i1_type,
+   SelectInstruction:condition[_] = cond,
+   Operand:type[cond] = type
+-> 
+   type = i1_type ; 
+   VectorType:Component[type] = i1_type.
+
+
+// The two operands must be of the same
+// first-class type.
+
+   SelectInstruction:firstOperand[insn] = op1,
+   SelectInstruction:secondOperand[insn] = op2,
+   Operand:type[op1] = type1,
+   Operand:type[op2] = type2
+-> 
+   type1 = type2.
+
+
+// If the condition is of type vector. then
+// all operands must have the same size.
+
+   SelectInstruction:firstOperand[insn] = op1,
+   SelectInstruction:secondOperand[insn] = op2,
+   SelectInstruction:condition[insn] = op3,
+   Operand:type[op1] = t1,
+   Operand:type[op2] = t2,
+   Operand:type[op2] = t3,
+   VectorType(t3)
+-> 
+   VectorType:eq_size_3(t1, t2, t3).

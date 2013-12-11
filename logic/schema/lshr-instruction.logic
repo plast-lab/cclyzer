@@ -1,0 +1,5 @@
+// Lshr Instruction
+// keywords: bitwise; binary; instruction
+LshrInstruction(insn) -> Instruction(insn).
+LshrInstruction:LeftOperand[insn] = left -> LshrInstruction(insn), Operand(left).
+LshrInstruction:RightOperand[insn] = right -> LshrInstruction(insn), Operand(right).

@@ -1,0 +1,5 @@
+// Sub Instruction
+// keywords: arithmetic; binary; instruction
+SubInstruction(insn) -> Instruction(insn).
+SubInstruction:LeftOperand[insn] = left -> SubInstruction(insn), Operand(left).
+SubInstruction:RightOperand[insn] = right -> SubInstruction(insn), Operand(right).

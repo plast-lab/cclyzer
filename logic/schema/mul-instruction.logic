@@ -1,0 +1,33 @@
+// http://llvm.org/docs/LangRef.html#mul-instruction
+// keywords: arithmetic; binary; instruction
+
+mul_instruction(Insn) -> instruction(Insn).
+
+mul_instruction:first_operand[Insn] = Left -> 
+   mul_instruction(Insn), operand(Left).
+
+mul_instruction:second_operand[Insn] = Right -> 
+   mul_instruction(Insn), operand(Right).
+
+// Constraints:
+// The two arguments to the ‘mul‘ instruction must be:
+//    (i)  integer or 
+//    (ii) vector of integer values. 
+// Both arguments must have identical types.
+
+mul_instruction(Insn) -> mul_instruction:first_operand[Insn] = _.
+mul_instruction(Insn) -> mul_instruction:second_operand[Insn] = _.
+
+mul_instruction(Insn),
+   mul_instruction:first_operand[_] = Left, 
+   operand:type[Left] = Type,
+   int32_type[] = i32
+ -> 
+   Type = i32; vector_type:component[Type] = i32.
+
+mul_instruction(Insn),
+   mul_instruction:first_operand[Insn] = Left,
+   mul_instruction:second_operand[Insn] = Right,
+   operand:type[Left] = Type,
+ ->
+   operand:type[Right] = Type.

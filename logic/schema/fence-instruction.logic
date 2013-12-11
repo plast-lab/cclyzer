@@ -1,0 +1,10 @@
+// Fence Instruction
+// fence [singlethread] <ordering>
+// keywords: memory; instruction
+FenceInstruction(insn) -> Instruction(insn).
+FenceInstruction:Ordering[insn] = ord -> FenceInstruction(insn), Ordering(ord).
+
+// Constraint
+FenceInstruction:Ordering[_] = ord ->
+    Ordering:acquire[] = ord ; Ordering:release[] = ord ;
+    Ordering:acq_rel[] = ord ; Ordering:seq_cst[] = ord. 

@@ -1,0 +1,6 @@
+// Fpext Instruction
+// keywords: conversion; unary; instruction
+FpextInstruction(insn) -> Instruction(insn).
+FpextInstruction:Operand[insn] = value -> FpextInstruction(insn), Operand(value).
+// TODO: same as in the other conversions
+FpextInstruction:Type[insn] = type -> FpextInstruction(insn), IntegerType(type).

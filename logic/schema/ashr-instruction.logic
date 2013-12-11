@@ -1,0 +1,5 @@
+// Ashr Instruction
+// keywords: bitwise; binary; instruction
+AshrInstruction(insn) -> Instruction(insn).
+AshrInstruction:LeftOperand[insn] = left -> AshrInstruction(insn), Operand(left).
+AshrInstruction:RightOperand[insn] = right -> AshrInstruction(insn), Operand(right).

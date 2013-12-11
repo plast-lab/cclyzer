@@ -1,0 +1,70 @@
+// Icmp Instruction
+// keywords: comparison; binary; instruction
+IcmpInstruction(insn) -> Instruction(insn).
+
+IcmpInstruction:Cond[insn] = cond -> IcmpInstruction(insn), IcmpCondition(cond).
+IcmpInstruction:LeftOperand[insn] = left -> IcmpInstruction(insn), Operand(left).
+IcmpInstruction:RightOperand[insn] = right -> IcmpInstruction(insn), Operand(right).
+
+// Condition Code and selectors for the 'Icmp' Instruction, as enum
+IcmpCondition(cond), IcmpCondition:Value(cond:value) -> string(value).
+IcmpCondition:Eq[] = cond <- IcmpCondition(cond), IcmpCondition:Value(cond:"eq").
+IcmpCondition:Ne[] = cond <- IcmpCondition(cond), IcmpCondition:Value(cond:"ne").
+IcmpCondition:Sgt[] = cond <- IcmpCondition(cond), IcmpCondition:Value(cond:"sgt").
+IcmpCondition:Sge[] = cond <- IcmpCondition(cond), IcmpCondition:Value(cond:"sge").
+IcmpCondition:Slt[] = cond <- IcmpCondition(cond), IcmpCondition:Value(cond:"slt").
+IcmpCondition:Sle[] = cond <- IcmpCondition(cond), IcmpCondition:Value(cond:"sle").
+IcmpCondition:Ugt[] = cond <- IcmpCondition(cond), IcmpCondition:Value(cond:"ugt").
+IcmpCondition:Ule[] = cond <- IcmpCondition(cond), IcmpCondition:Value(cond:"ule").
+IcmpCondition:Uge[] = cond <- IcmpCondition(cond), IcmpCondition:Value(cond:"uge").
+IcmpCondition:Ult[] = cond <- IcmpCondition(cond), IcmpCondition:Value(cond:"ult").
+
+IcmpCondition(cond)
+->
+   IcmpCondition:Eq[] = cond;  IcmpCondition:Ne[] = cond;
+   IcmpCondition:Sgt[] = cond; IcmpCondition:Sge[] = cond;
+   IcmpCondition:Slt[] = cond; IcmpCondition:Sle[] = cond;
+   IcmpCondition:Ugt[] = cond; IcmpCondition:Ule[] = cond;
+   IcmpCondition:Uge[] = cond; IcmpCondition:Ult[] = cond.
+
+// Constraints:
+// The operands must be either 
+// (*) variables of type 
+//     (i) integer, (ii) pointer, or (iii) vector (of integer or pointer)
+// (*) immediates of type
+//     (i) integer, or (ii) pointer
+
+   IcmpInstruction:LeftOperand[_] = left, 
+   Operand:type[left] = type 
+-> 
+   IntegerType(type); PointerType(type); VectorType(type).
+
+   IcmpInstruction:RightOperand[_] = right, 
+   Operand:type[right] = type
+-> 
+   IntegerType(type); PointerType(type); VectorType(type).
+
+   IcmpInstruction:LeftOperand[_] = left,
+   Operand:type[left] = type,
+   VectorType:Component[type] = comp 
+->
+   IntegerType(comp); PointerType(type).
+
+   IcmpInstruction:RightOperand[_] = right,
+   Operand:type[right] = type,
+   VectorType:Component[type] = comp 
+->
+   IntegerType(comp); PointerType(type).
+
+
+   IcmpInstruction:LeftOperand[_] = left, 
+   Operand:type[left] = type, 
+   VectorType(type)
+-> 
+   Operand:byVariable[_] = left.
+
+   IcmpInstruction:RightOperand[_] = right, 
+   Operand:type[right] = type, 
+   VectorType(type)
+-> 
+   Operand:byVariable[_] = right.

@@ -1,0 +1,13 @@
+// Instruction
+
+Instruction(insn), Instruction:id(insn:id) -> string(id).
+UnreachableInstruction(insn) -> Instruction(insn).
+
+// apart from the instructions with 'void' type
+Instruction:To[insn] = to -> Instruction(insn), Variable(to).
+
+Instruction:Flag(insn, flag) -> Instruction(insn), string(flag).
+// Instruction:Type[insn] = type -> Instruction(insn), Type(type).
+
+
+// TODO: add ConversionInstruction, BinaryInstruction, etc??

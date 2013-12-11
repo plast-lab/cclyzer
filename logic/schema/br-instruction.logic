@@ -1,0 +1,19 @@
+// branch - instruction
+// keywords: terminator; instruction
+BrInstruction(insn) -> Instruction(insn).
+BrInstruction:Unconditional(insn) -> BrInstruction(insn).
+BrInstruction:Conditional(insn) -> BrInstruction(insn).
+
+// TODO: change names
+
+BrInstruction:Conditional:Operand[insn] = cond -> 
+   BrInstruction(insn), Operand(cond).
+
+BrInstruction:Conditional:TrueLabel[insn] = label -> 
+   BrInstruction(insn), Variable(label).
+
+BrInstruction:Conditional:FalseLabel[insn] = label -> 
+   BrInstruction(insn), Variable(label).
+
+BrInstruction:Unconditional:Label[insn] = label -> 
+   BrInstruction(insn), Variable(label).

@@ -1,0 +1,15 @@
+// Landingpad Instruction
+
+LandingpadInstruction(insn) -> Instruction(insn).
+
+LandingpadInstruction:Type[insn] = type ->
+   LandingpadInstruction(insn), Type(type).
+
+LandingpadInstruction:FunctionOperand[insn] = func -> 
+   LandingpadInstruction(insn), Operand(func).
+
+LandingpadInstruction:Clause:Catch[insn] = catch -> 
+   LandingpadInstruction(insn), Operand(catch).
+
+LandingpadInstruction:Clause:Filter[insn] = filter -> 
+   LandingpadInstruction(insn), Immediate(filter).

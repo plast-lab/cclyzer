@@ -1,0 +1,14 @@
+// Calling Conventions (Function, CallInstruction, InvokeInstruction)
+CallingConvention(cc), CallingConvention:Value(cc:value) -> string(value).
+CallingConvention:Fast[] = cc <- CallingConvention(cc), CallingConvention:Value(cc:"fastcc").
+CallingConvention:Cold[] = cc <- CallingConvention(cc), CallingConvention:Value(cc:"coldcc").
+CallingConvention:X86_FastCall[] = cc <- CallingConvention(cc), CallingConvention:Value(cc:"x86_fastcallcc").
+CallingConvention:X86_StdCall[] = cc <- CallingConvention(cc), CallingConvention:Value(cc:"x86_stdcallcc").
+CallingConvention:X86_ThisCall[] = cc <- CallingConvention(cc), CallingConvention:Value(cc:"x86_thiscallcc").
+CallingConvention:Intel_OCL_BI[] = cc <- CallingConvention(cc), CallingConvention:Value(cc:"intel_ocl_bicc").
+CallingConvention:ARM_AAPCS[] = cc <- CallingConvention(cc), CallingConvention:Value(cc:"arm_aapcscc").
+CallingConvention:ARM_AAPCS_VFP[] = cc <- CallingConvention(cc), CallingConvention:Value(cc:"arm_aapcs_vfpcc").
+CallingConvention:ARM_APCS[] = cc <- CallingConvention(cc), CallingConvention:Value(cc:"arm_apcscc").
+CallingConvention:MSP430_INTR[] = cc <- CallingConvention(cc), CallingConvention:Value(cc:"msp430_intrcc").
+CallingConvention:PTX_Device[] = cc <- CallingConvention(cc), CallingConvention:Value(cc:"ptx_device").
+CallingConvention:PTX_Kernel[] = cc <- CallingConvention(cc), CallingConvention:Value(cc:"ptx_kernel").

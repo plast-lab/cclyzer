@@ -1,0 +1,2 @@
+// Types
+type(Type), type:id(Type:Ref) -> string(Ref).

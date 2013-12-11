@@ -1,0 +1,9 @@
+// ExtractElement Instruction
+// keywords: vector; instruction
+ExtractElementInstruction(insn) -> Instruction(insn).
+
+ExtractElementInstruction:vector[insn] = left -> 
+   ExtractElementInstruction(insn), Operand(left).
+
+ExtractElementInstruction:index[insn] = right -> 
+   ExtractElementInstruction(insn), Operand(right).

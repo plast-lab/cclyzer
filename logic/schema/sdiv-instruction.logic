@@ -1,0 +1,5 @@
+// Sdiv Instruction
+// keywords: arithmetic; binary; instruction
+SdivInstruction(insn) -> Instruction(insn).
+SdivInstruction:LeftOperand[insn] = left -> SdivInstruction(insn), Operand(left).
+SdivInstruction:RightOperand[insn] = right -> SdivInstruction(insn), Operand(right).

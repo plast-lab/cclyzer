@@ -1,0 +1,15 @@
+// Store Instruction
+// keywords: memory; instruction
+StoreInstruction(insn) -> Instruction(insn).
+StoreInstruction:value[insn] = value -> StoreInstruction(insn), Operand(value).
+StoreInstruction:address[insn] = addr -> StoreInstruction(insn), Variable(addr).
+StoreInstruction:Align[insn] = alignment -> StoreInstruction(insn),  int[64](alignment).
+StoreInstruction:Ordering[insn] = ord -> StoreInstruction(insn), Ordering(ord).
+
+// Constraints
+StoreInstruction(insn) -> !Instruction:To[insn] = _.
+StoreInstruction:address[_] = var, Variable:Type[var] = type -> PointerType(type).
+
+StoreInstruction:Ordering[_] = ord ->
+    Ordering:Release[]   = ord ; Ordering:Unordered[] = ord ;
+    Ordering:Monotonic[] = ord ; Ordering:Seq_cst[]   = ord.

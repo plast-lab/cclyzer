@@ -1,0 +1,5 @@
+// Fadd Instruction
+// keywords: arithmetic; binary; instruction
+FaddInstruction(insn) -> Instruction(insn).
+FaddInstruction:LeftOperand[insn] = left -> FaddInstruction(insn), Operand(left).
+FaddInstruction:RightOperand[insn] = right -> FaddInstruction(insn), Operand(right).

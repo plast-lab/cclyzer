@@ -1,0 +1,2 @@
+// Attribute
+attribute(Attr), attribute:value(Attr:Ref) -> string(Ref).

@@ -1,0 +1,6 @@
+// Inttoptr Instruction
+// keywords: conversion; unary; instruction
+InttoptrInstruction(insn) -> Instruction(insn).
+InttoptrInstruction:Operand[insn] = value -> InttoptrInstruction(insn), Operand(value).
+// TODO: same as in the other conversions
+InttoptrInstruction:Type[insn] = type -> InttoptrInstruction(insn), PointerType(type).

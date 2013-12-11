@@ -1,0 +1,6 @@
+// Sext Instruction
+// keywords: conversion; unary; instruction
+SextInstruction(insn) -> Instruction(insn).
+SextInstruction:Operand[insn] = value -> SextInstruction(insn), Operand(value).
+// TODO: same as in the other conversions
+SextInstruction:Type[insn] = type -> SextInstruction(insn), Type(type).

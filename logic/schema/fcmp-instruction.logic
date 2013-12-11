@@ -1,0 +1,36 @@
+// Fcmp Instruction
+// keywords: comparison; binary; instruction
+FcmpInstruction(insn) -> Instruction(insn).
+FcmpInstruction:Cond[insn] = cond -> FcmpInstruction(insn), FcmpCondition(cond).
+FcmpInstruction:LeftOperand[insn] = left -> FcmpInstruction(insn), Operand(left).
+FcmpInstruction:RightOperand[insn] = right -> FcmpInstruction(insn), Operand(right).
+
+// Condition Code and selectors for the 'Fcmp' Instruction, as enum
+FcmpCondition(cond), FcmpCondition:Value(cond:value) -> string(value).
+FcmpCondition:False[] = cond <- FcmpCondition(cond), FcmpCondition:Value(cond:"false").
+FcmpCondition:True[] = cond <- FcmpCondition(cond), FcmpCondition:Value(cond:"true").
+FcmpCondition:Oeq[] = cond <- FcmpCondition(cond), FcmpCondition:Value(cond:"oeq").
+FcmpCondition:Ogt[] = cond <- FcmpCondition(cond), FcmpCondition:Value(cond:"ogt").
+FcmpCondition:Oge[] = cond <- FcmpCondition(cond), FcmpCondition:Value(cond:"oge").
+FcmpCondition:Olt[] = cond <- FcmpCondition(cond), FcmpCondition:Value(cond:"ol").
+FcmpCondition:Ole[] = cond <- FcmpCondition(cond), FcmpCondition:Value(cond:"ole").
+FcmpCondition:One[] = cond <- FcmpCondition(cond), FcmpCondition:Value(cond:"one").
+FcmpCondition:Ord[] = cond <- FcmpCondition(cond), FcmpCondition:Value(cond:"ord").
+FcmpCondition:Ueq[] = cond <- FcmpCondition(cond), FcmpCondition:Value(cond:"ueq").
+FcmpCondition:Ugt[] = cond <- FcmpCondition(cond), FcmpCondition:Value(cond:"ugt").
+FcmpCondition:Uge[] = cond <- FcmpCondition(cond), FcmpCondition:Value(cond:"uge").
+FcmpCondition:Ult[] = cond <- FcmpCondition(cond), FcmpCondition:Value(cond:"ult").
+FcmpCondition:Ule[] = cond <- FcmpCondition(cond), FcmpCondition:Value(cond:"ule").
+FcmpCondition:Une[] = cond <- FcmpCondition(cond), FcmpCondition:Value(cond:"une").
+FcmpCondition:Uno[] = cond <- FcmpCondition(cond), FcmpCondition:Value(cond:"uno").
+
+FcmpCondition(cond)
+->
+   FcmpCondition:False[] = cond; FcmpCondition:True[] = cond;
+   FcmpCondition:Oeq[] = cond; FcmpCondition:Ogt[] = cond;
+   FcmpCondition:Oge[] = cond; FcmpCondition:Olt[] = cond;
+   FcmpCondition:Ole[] = cond; FcmpCondition:One[] = cond;
+   FcmpCondition:Ord[] = cond; FcmpCondition:Ueq[] = cond;
+   FcmpCondition:Ugt[] = cond; FcmpCondition:Uge[] = cond;
+   FcmpCondition:Ult[] = cond; FcmpCondition:Ule[] = cond;
+   FcmpCondition:Une[] = cond; FcmpCondition:Uno[] = cond.

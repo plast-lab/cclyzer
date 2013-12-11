@@ -1,0 +1,31 @@
+// Call Instruction
+CallInstruction(insn) -> Instruction(insn).
+CallInstruction:Direct(insn) -> CallInstruction(insn).
+CallInstruction:Indirect(insn) -> CallInstruction(insn).
+
+CallInstruction:ActualArg[insn, index] = arg -> 
+   CallInstruction(insn), int[64](index), Operand(arg).
+
+CallInstruction:Indirect:Pointer[insn] = ptr -> 
+   CallInstruction(insn), Variable(ptr).
+
+// CallInstruction:Direct:Immediate[insn] = imm -> 
+//    CallInstruction(insn), Immediate(imm).
+
+CallInstruction:Direct:Name[insn] = name -> 
+   CallInstruction(insn), string(name).
+
+CallInstruction:Direct:Type[insn] = type -> 
+   CallInstruction(insn), FunctionType(type).
+
+CallInstruction:CallingConvention[insn] = cc -> 
+   CallInstruction(insn), CallingConvention(cc).
+
+CallInstruction:RetAttribute[insn] = retAttr -> 
+   CallInstruction(insn), Attribute(retAttr).
+
+CallInstruction:FnAttributes(insn, fnAttr) -> 
+   CallInstruction(insn), Attribute(fnAttr).
+
+// CallInstruction:FnAttributes[insn] = fnAttr -> 
+//   CallInstruction(insn), string(fnAttr).

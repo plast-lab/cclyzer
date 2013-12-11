@@ -1,0 +1,36 @@
+// Trunc Instruction
+// keywords: conversion; unary; instruction
+TruncInstruction(insn) -> Instruction(insn).
+TruncInstruction:Operand[insn] = value -> TruncInstruction(insn), Operand(value).
+// TODO: isn't Type inherited by Instruction now??? 
+TruncInstruction:Type[insn] = type -> TruncInstruction(insn), Type(type).
+
+// Constraints:
+// Single operand must be either
+// (*) a variable of type
+//     (i) integer or (ii) integer vector
+// (*) an immediate of type integer
+
+   TruncInstruction:Operand[_] = value, 
+   Operand:byVariable[var] = value, 
+   Variable:Type[var] = type 
+-> 
+   IntegerType(type); VectorType(type).
+
+   TruncInstruction:Operand[_] = left,
+   Operand:Type[left] = type, 
+   VectorType:Component[type] = comp
+->
+   IntegerType(comp).
+
+   TruncInstruction:Operand[_] = value, 
+   Operand:byImmediate[imm] = value, 
+   Immediate:Type[imm] = type 
+-> 
+   IntegerType(type).
+
+// TODO: see about Type above
+// TruncInstruction(insn), Instruction:Type[insn] = type -> IntegerType(type); VectorType(type).
+// TruncInstruction(insn), Instruction:Type[_] = type, VectorType:Component[type] = comp -> IntegerType(comp).
+TruncInstruction:Type[_] = type -> IntegerType(type); VectorType(type). 
+TruncInstruction:Type[_] = type, VectorType:Component[type] = comp -> IntegerType(comp).

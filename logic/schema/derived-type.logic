@@ -1,0 +1,63 @@
+DerivedType(type) -> Type(type).
+FunctionType(type) -> DerivedType(type).
+VectorType(type) -> DerivedType(type).
+PointerType(type) -> DerivedType(type).
+AggregateType(type) -> DerivedType(type).
+ArrayType(type) -> AggregateType(type).
+StructType(type) -> AggregateType(type).
+OpaqueStructType(type) -> StructType(type).
+
+// Function Type
+
+FunctionType:ReturnType[type] = ret -> 
+   FunctionType(type), Type(ret).
+
+FunctionType:Arg[type, index] = arg -> 
+   FunctionType(type), int[64](index), Type(arg).
+
+FunctionType:nArgs[type] = total -> 
+   FunctionType(type), int[64](total).	//
+
+// Pointer Type
+
+PointerType:Component[type] = componentType -> 
+   PointerType(type), Type(componentType).
+
+PointerType:AddrSpace[type] = addr -> 
+   PointerType(type), int[64](addr).
+
+// Vector Type
+
+VectorType:Component[type] = componentType -> 
+   VectorType(type), Type(componentType).
+
+VectorType:Size[type] = size ->
+   VectorType(type), int[64](size).
+
+// Array Type
+
+ArrayType:Component[type] = componentType -> 
+   ArrayType(type), Type(componentType).
+
+ArrayType:Size[type] = size -> 
+   ArrayType(type), int[64](size).
+
+// Struct Type
+
+StructType:Field[type, index] = field -> 
+   StructType(type), int[64](index), Type(field).
+
+StructType:nFields[type] = total -> 
+   StructType(type), int[64](total).
+
+
+// Helper predicate
+
+Vector:eq_size_2(t1, t2) <-
+   VectorType:Size[t1] = size,
+   VectorType:Size[t2] = size.
+
+Vector:eq_size_3(t1, t2, t3) <-
+   VectorType:Size[t1] = size,
+   VectorType:Size[t2] = size,
+   VectorType:Size[t3] = size.

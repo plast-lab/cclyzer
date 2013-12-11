@@ -1,0 +1,22 @@
+// insertvalue - instruction
+// keywords: aggregate; instruction
+InsertValueInstruction(insn) -> Instruction(insn).
+
+InsertValueInstruction:LeftOperand[insn] = left -> 
+   InsertValueInstruction(insn), Operand(left).
+
+InsertValueInstruction:RightOperand[insn] = right -> 
+   InsertValueInstruction(insn), Operand(right).
+
+InsertValueInstruction:Indices[insn, index] = idx -> 
+   InsertValueInstruction(insn), int[64](index), Immediate(idx).
+
+InsertValueInstruction:nIndices[insn] = total -> 
+   InsertValueInstruction(insn), int[64](total).
+
+// Constraints
+
+InsertValueInstruction:LeftOperand[_] = value, 
+   Operand:type[value] = type
+->
+   AggregateType(type).

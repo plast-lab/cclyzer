@@ -1,0 +1,30 @@
+// Add Instruction
+// keywords: arithmetic; binary; instruction
+AddInstruction(insn) -> Instruction(insn).
+AddInstruction:LeftOperand[insn] = left -> AddInstruction(insn), Operand(left).
+AddInstruction:RightOperand[insn] = right -> AddInstruction(insn), Operand(right).
+
+
+// Constraints
+
+   AddInstruction:LeftOperand[_] = left, 
+   Operand:Type[left] = type,
+   Int32Type[] = i32
+-> 
+   type = i32; VectorType:Component[type] = i32.
+
+
+   AddInstruction:RightOperand[_] = right, 
+   Operand:Type[right] = type,
+   Int32Type[] = i32
+-> 
+   type = i32; VectorType:Component[type] = i32.
+
+
+// TODO: check
+// AddInstruction(insn), Instruction:Type[insn] = type
+// -> type = Int32Type[]; VectorType(type).
+
+// AddInstruction(insn), Instruction:Type[_] = type, 
+// VectorType:Component[type] = comp 
+// -> Int32Type[] = comp.

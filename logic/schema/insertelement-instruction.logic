@@ -1,0 +1,12 @@
+// InsertElement Instruction
+// keywords: vector; instruction
+InsertElementInstruction(insn) -> Instruction(insn).
+
+InsertElementInstruction:vector[insn] = vec -> 
+   InsertElementInstruction(insn), Operand(vec).
+
+InsertElementInstruction:value[insn] = value -> 
+   InsertElementInstruction(insn), Operand(value).
+
+InsertElementInstruction:index[insn] = idx -> 
+   InsertElementInstruction(insn), Operand(idx).

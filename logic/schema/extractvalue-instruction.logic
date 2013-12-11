@@ -1,0 +1,18 @@
+// extractvalue - instruction
+// keywords: aggregate; instruction
+ExtractValueInstruction(insn) -> Instruction(insn).
+
+ExtractValueInstruction:Operand[insn] = value -> 
+   ExtractValueInstruction(insn), Operand(value).
+
+ExtractValueInstruction:Indices[insn, index] = idx -> 
+   ExtractValueInstruction(insn), int[64](index), Immediate(idx).
+
+ExtractValueInstruction:nIndices[insn] = total -> 
+   ExtractValueInstruction(insn), int[64](total).
+
+// Constraints
+ExtractValueInstruction:Operand[_] = value, 
+Operand:type[value] = type
+->
+   AggregateType(type).

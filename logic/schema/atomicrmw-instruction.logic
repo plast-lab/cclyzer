@@ -1,0 +1,52 @@
+// AtomicRMW Instruction
+// keywords: binary; instruction
+AtomicRMWInstruction(insn) -> Instruction(insn).
+
+AtomicRMWInstruction:Operation[insn] = op -> 
+   AtomicRMWInstruction(insn), Operation(op).
+
+AtomicRMWInstruction:LeftOperand[insn] = left -> 
+   AtomicRMWInstruction(insn), Operand(left).
+
+AtomicRMWInstruction:RightOperand[insn] = right -> 
+   AtomicRMWInstruction(insn), Operand(right).
+
+AtomicRMWInstruction:Ordering[insn] = ord -> 
+   AtomicRMWInstruction(insn), Ordering(ord).
+
+// Operation for the 'AtomicRMW' Instruction
+// TODO: should we change the name to something more specific 
+// (e.g. AtomicOperation)???
+Operation(op), Operation:Value(op:value) -> string(value).
+Operation:Xchg[] = op <- Operation(op), Operation:Value(op:"xchg").
+Operation:Add[] = op <- Operation(op), Operation:Value(op:"add").
+Operation:Sub[] = op <- Operation(op), Operation:Value(op:"sub").
+Operation:And[] = op <- Operation(op), Operation:Value(op:"and").
+Operation:Nand[] = op <- Operation(op), Operation:Value(op:"nand").
+Operation:Nor[] = op <- Operation(op), Operation:Value(op:"nor").
+Operation:Or[] = op <- Operation(op), Operation:Value(op:"or").
+Operation:Xor[] = op <- Operation(op), Operation:Value(op:"xor").
+Operation:Max[] = op <- Operation(op), Operation:Value(op:"max").
+Operation:Min[] = op <- Operation(op), Operation:Value(op:"min").
+Operation:Umax[] = op <- Operation(op), Operation:Value(op:"umax").
+Operation:Umin[] = op <- Operation(op), Operation:Value(op:"umin").
+
+// Constraints:
+// (i)  Left operand must be a pointer to integer.
+// (ii) Right operand must be an integer
+
+AtomicRMWInstruction:LeftOperand[_] = left,
+   Operand:type[left] = type
+-> 
+   PointerType(type).
+
+AtomicRMWInstruction:LeftOperand[_] = left,
+   Operand:type[left] = type,
+   PointerType:Component[type] = comp 
+->
+   IntegerType(comp).
+
+AtomicRMWInstruction:RightOperand[_] = right, 
+   Operand:Type[right] = type 
+-> 
+   IntegerType(type).

@@ -1,0 +1,51 @@
+// Global Variable
+// GlobalVariable(gv), GlobalVariable:Value(gv:value) -> string(value).
+GlobalVariable(gv) -> Immediate(gv).
+GlobalVariable:Type[gv] = type -> GlobalVariable(gv), Type(type).
+GlobalVariable:Initializer[gv] = init -> GlobalVariable(gv), string(init).
+GlobalVariable:Section[gv] = sect -> GlobalVariable(gv), string(sect).
+GlobalVariable:Align[gv] = alignment -> GlobalVariable(gv),  int[64](alignment).
+GlobalVariable:Flag(gv, flag) -> GlobalVariable(gv), string(flag).
+GlobalVariable:LinkageType[gv] = link -> GlobalVariable(gv), LinkageType(link).
+GlobalVariable:Visibility[gv] = v -> GlobalVariable(gv), Visibility(v).
+GlobalVariable:ThreadLocalMode[gv] = tlm -> GlobalVariable(gv), ThreadLocalMode(tlm).
+
+
+// Global Alias
+GlobalAlias(ga), GlobalAlias:Value(ga:value) -> string(value).
+GlobalAlias:Type[ga] = type -> GlobalAlias(ga), Type(type).
+GlobalAlias:LinkageType[ga] = link -> GlobalAlias(ga), LinkageType(link).
+GlobalAlias:Visibility[ga] = v -> GlobalAlias(ga), Visibility(v).
+GlobalAlias:Aliasee[ga] = aliasee -> GlobalAlias(ga), string(aliasee).
+
+
+// Linkage Type for Global Values and selectors
+LinkageType(link), LinkageType:Value(link:value) -> string(value).
+
+LinkageType:external[] = link <- LinkageType:Value(link:"external").
+LinkageType:private[] = link <- LinkageType:Value(link:"private").
+LinkageType:linker_private[] = link <- LinkageType:Value(link:"linker_private").
+LinkageType:internal[] = link <- LinkageType:Value(link:"internal").
+LinkageType:linkonce[] = link <- LinkageType:Value(link:"linkonce").
+LinkageType:linkonce_odr[] = link <- LinkageType:Value(link:"linkonce_odr").
+LinkageType:weak[] = link <- LinkageType:Value(link:"weak").
+LinkageType:weak_odr[] = link <- LinkageType:Value(link:"weak_odr").
+LinkageType:common[] = link <- LinkageType(link), LinkageType:Value(link:"common").
+LinkageType:appending[] = link <- LinkageType:Value(link:"appending").
+LinkageType:dllimport[] = link <- LinkageType:Value(link:"dllimport").
+LinkageType:dllexport[] = link <- LinkageType:Value(link:"dllexport").
+LinkageType:extern_weak[] = link <- LinkageType:Value(link:"extern_weak").
+LinkageType:linker_private_weak[] = link <- LinkageType:Value(link:"linker_private_weak").
+LinkageType:available_externally[] = link <- LinkageType:Value(link:"available_externally").
+
+// Visibility Style for Global Values
+Visibility(v), Visibility:Value(v:value) -> string(value).
+Visibility:Hidden[] = v    <- Visibility(v), Visibility:Value(v:"hidden").
+Visibility:Protected[] = v <- Visibility(v), Visibility:Value(v:"protected").
+
+// Thread Local Mode for Global Values
+ThreadLocalMode(tlm), ThreadLocalMode:Value(tlm:value) -> string(value).
+ThreadLocalMode:thread_local[] = tlm <- ThreadLocalMode:Value(tlm:"thread_local").
+ThreadLocalMode:local_dynamic[] = tlm <- ThreadLocalMode:Value(tlm:"thread_local(localdynamic)").
+ThreadLocalMode:initial_exec[] = tlm <- ThreadLocalMode:Value(tlm:"thread_local(initialexec)").
+ThreadLocalMode:local_exec[] = tlm <- ThreadLocalMode:Value(tlm:"thread_local(localexec)").

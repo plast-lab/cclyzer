@@ -1,0 +1,6 @@
+// VAArg Instruction
+VAArgInstruction(insn) -> Instruction(insn).
+VAArgInstruction:Operand[insn] = left -> VAArgInstruction(insn), Variable(left).
+VAArgInstruction:Type[insn] = right -> VAArgInstruction(insn), Type(right).
+
+VAArgInstruction:Operand[_] = var, Variable:Type[var] = type -> PointerType(type).

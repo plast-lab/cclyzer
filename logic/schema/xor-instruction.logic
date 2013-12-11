@@ -1,0 +1,5 @@
+// Xor Instruction
+// keywords: bitwise; binary; instruction
+XorInstruction(insn) -> Instruction(insn).
+XorInstruction:LeftOperand[insn] = left -> XorInstruction(insn), Operand(left).
+XorInstruction:RightOperand[insn] = right -> XorInstruction(insn), Operand(right).

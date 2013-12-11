@@ -1,0 +1,5 @@
+// Urem Instruction
+// keywords: arithmetic; binary; instruction
+UremInstruction(insn) -> Instruction(insn).
+UremInstruction:LeftOperand[insn] = left -> UremInstruction(insn), Operand(left).
+UremInstruction:RightOperand[insn] = right -> UremInstruction(insn), Operand(right).

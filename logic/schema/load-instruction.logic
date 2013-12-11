@@ -1,0 +1,28 @@
+// Load Instruction
+// keywords: memory; instruction
+LoadInstruction(insn) -> Instruction(insn).
+
+LoadInstruction:Operand[insn] = operand -> 
+   LoadInstruction(insn), Operand(operand).
+
+LoadInstruction:Align[insn] = alignment -> 
+   LoadInstruction(insn), int[64](alignment).
+
+LoadInstruction:Ordering[insn] = ord -> 
+   LoadInstruction(insn), Ordering(ord).
+
+// Helper predicate
+LoadInstruction:from[insn] = var -> LoadInstruction(insn), Variable(var).
+LoadInstruction:from[insn] = var <-
+   LoadInstruction:Operand[insn] = op,
+   Operand:asVariable[op] = var.
+
+// Constraints
+LoadInstruction:from[_] = var, Variable:Type[var] = type -> PointerType(type).
+
+LoadInstruction:Ordering[_] = ord
+->
+   Ordering:acquire[] = ord ;
+   Ordering:unordered[] = ord ;
+   Ordering:monotonic[] = ord ;
+   Ordering:seq_cst[] = ord.

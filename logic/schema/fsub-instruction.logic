@@ -1,0 +1,5 @@
+// Fsub Instruction
+// keywords: arithmetic; binary; instruction
+FsubInstruction(insn) -> Instruction(insn).
+FsubInstruction:LeftOperand[insn] = left -> FsubInstruction(insn), Operand(left).
+FsubInstruction:RightOperand[insn] = right -> FsubInstruction(insn), Operand(right).

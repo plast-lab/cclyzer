@@ -1,0 +1,10 @@
+// Alloca Instruction
+// keywords: memory; unary; instruction
+AllocaInstruction(insn) -> Instruction(insn).
+AllocaInstruction:Size:Type[insn] = type -> AllocaInstruction(insn), Type(type).
+AllocaInstruction:Size:Operand[insn] = size -> AllocaInstruction(insn), Operand(size).
+AllocaInstruction:Align[insn] = alignment -> AllocaInstruction(insn),  int[64](alignment).
+
+// TODO: change the Size:* predicate names; they are unclear right now
+// Size:Type seems redundant
+// Size or SizeOperand maybe?

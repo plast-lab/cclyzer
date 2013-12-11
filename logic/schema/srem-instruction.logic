@@ -1,0 +1,5 @@
+// Srem Instruction
+// keywords: arithmetic; binary; instruction
+SremInstruction(insn) -> Instruction(insn).
+SremInstruction:LeftOperand[insn] = left -> SremInstruction(insn), Operand(left).
+SremInstruction:RightOperand[insn] = right -> SremInstruction(insn), Operand(right).

@@ -1,0 +1,5 @@
+// Shl Instruction
+// keywords: bitwise; binary; instruction
+ShlInstruction(insn) -> Instruction(insn).
+ShlInstruction:LeftOperand[insn] = left -> ShlInstruction(insn), Operand(left).
+ShlInstruction:RightOperand[insn] = right -> ShlInstruction(insn), Operand(right).

@@ -1,0 +1,6 @@
+// Ptrtoint Instruction
+// keywords: conversion; unary; instruction
+PtrtointInstruction(insn) -> Instruction(insn).
+PtrtointInstruction:Operand[insn] = value -> PtrtointInstruction(insn), Operand(value).
+// TODO: same as in the other conversions
+PtrtointInstruction:Type[insn] = type -> PtrtointInstruction(insn), IntegerType(type).

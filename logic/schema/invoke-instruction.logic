@@ -1,0 +1,35 @@
+// Invoke Instruction
+InvokeInstruction(insn) -> Instruction(insn).
+InvokeInstruction:Direct(insn) -> InvokeInstruction(insn).
+InvokeInstruction:Indirect(insn) -> InvokeInstruction(insn).
+
+InvokeInstruction:ActualArg[insn, index] = arg ->
+   InvokeInstruction(insn), int[64](index), Operand(arg).
+
+InvokeInstruction:Indirect:Pointer[insn] = ptr ->
+   InvokeInstruction(insn), Variable(ptr).
+
+InvokeInstruction:Direct:Name[insn] = name -> 
+   InvokeInstruction(insn), string(name).
+
+InvokeInstruction:Direct:Type[insn] = type -> 
+   InvokeInstruction(insn), FunctionType(type).
+
+InvokeInstruction:NormalLabel[insn] = nlabel -> 
+   InvokeInstruction(insn), Variable(nlabel).
+
+InvokeInstruction:ExceptionLabel[insn] = elabel -> 
+   InvokeInstruction(insn), Variable(elabel).
+
+InvokeInstruction:RetAttribute[insn] = retAttr -> 
+   InvokeInstruction(insn), Attribute(retAttr).
+
+InvokeInstruction:FnAttributes(insn, fnAttr) -> 
+   InvokeInstruction(insn), Attribute(fnAttr).
+
+InvokeInstruction:CallingConv[insn] = cc -> 
+   InvokeInstruction(insn), CallingConvention(cc).
+
+// constraints
+InvokeInstruction:NormalLabel[_] = var -> variable:is_label(var).
+InvokeInstruction:ExceptionLabel[_] = var -> variable:is_label(var).

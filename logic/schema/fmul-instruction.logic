@@ -1,0 +1,39 @@
+// http://llvm.org/docs/LangRef.html#fmul-instruction
+// keywords: arithmetic; binary; instruction
+
+fmul_instruction(Insn) -> instruction(Insn).
+
+fmul_instruction:first_operand[Insn] = Left -> 
+   fmul_instruction(Insn), operand(Left).
+
+fmul_instruction:second_operand[Insn] = Right -> 
+   fmul_instruction(Insn), operand(Right).
+
+// Constraints:
+// The two arguments to the ‘fmul‘ instruction must be:
+//    (i)  floating point or 
+//    (ii) vector of floating point values. 
+// Both arguments must have identical types.
+
+fmul_instruction(Insn) -> fmul_instruction:first_operand[Insn] = _.
+fmul_instruction(Insn) -> fmul_instruction:second_operand[Insn] = _.
+
+fmul_instruction(Insn),
+   fmul_instruction:first_operand[_] = Left, 
+   operand:type[Left] = Type
+ -> 
+   fp_type(Type); vector_type(Type).
+
+fmul_instruction(Insn),
+   fmul_instruction:first_operand[_] = Left, 
+   operand:type[Left] = Type,
+   vector_type:component[Type] = Comp
+ -> 
+   fp_type(Comp).
+
+fmul_instruction(Insn),
+   fmul_instruction:first_operand[Insn] = Left,
+   fmul_instruction:second_operand[Insn] = Right,
+   operand:type[Left] = Type,
+ ->
+   operand:type[Right] = Type.

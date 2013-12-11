@@ -1,0 +1,5 @@
+// Fdiv Instruction
+// keywords: arithmetic; binary; instruction
+FdivInstruction(insn) -> Instruction(insn).
+FdivInstruction:LeftOperand[insn] = left -> FdivInstruction(insn), Operand(left).
+FdivInstruction:RightOperand[insn] = right -> FdivInstruction(insn), Operand(right).

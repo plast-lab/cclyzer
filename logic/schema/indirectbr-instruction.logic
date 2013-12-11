@@ -1,0 +1,16 @@
+// IndirectBr Instruction
+// keywords: terminator; instruction
+
+IndirectBrInstruction(insn) -> Instruction(insn).
+
+IndirectBrInstruction:Operand[insn] = address -> 
+   IndirectBrInstruction(insn), Operand(address).
+
+IndirectBrInstruction:Label[insn, index] = label -> 
+   IndirectBrInstruction(insn), int[64](index), Variable(label).
+
+IndirectBrInstruction:nLabels[insn] = total -> 
+   IndirectBrInstruction(insn), int[64](total).
+
+// Constraint
+IndirectBrInstruction:Label[_, _] = var -> variable:is_label(var).

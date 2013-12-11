@@ -1,0 +1,45 @@
+// AtomicCmpXchg Instruction
+// keywords: atomic; memory; instruction
+AtomicCmpXchgInstruction(insn) -> Instruction(insn).
+
+AtomicCmpXchgInstruction:address[insn] = ptr -> 
+   AtomicCmpXchgInstruction(insn), Operand(ptr).
+
+AtomicCmpXchgInstruction:cmp[insn] = cmp -> 
+   AtomicCmpXchgInstruction(insn), Operand(cmp).
+
+AtomicCmpXchgInstruction:new[insn] = new -> 
+   AtomicCmpXchgInstruction(insn), Operand(new).
+
+AtomicCmpXchgInstruction:ordering[insn] = ord -> 
+   AtomicCmpXchgInstruction(insn), Ordering(ord).
+
+
+// Constraints:
+
+// AtomicCmpXchgInstruction(insn), 
+// Instruction:Type[insn] = type 
+// -> 
+// IntegerType(type).
+
+AtomicCmpXchgInstruction:address[_] = ptr, 
+   Operand:type[ptr] = type 
+-> 
+   PointerType(type).
+
+AtomicCmpXchgInstruction:address[_] = ptr, 
+   Operand:type[ptr] = type,
+   PointerType:Component[type] = comp
+-> 
+   IntegerType(comp).
+
+AtomicCmpXchgInstruction:cmp[insn] = cmp, 
+   AtomicCmpXchgInstruction:new[insn] = new, 
+   AtomicCmpXchgInstruction:address[insn] = ptr, 
+   Operand:Type[cmp] = cmptype,
+   Operand:Type[new] = newtype,
+   Operand:Type[ptr] = ptrtype,
+   PointerType:Component[ptrtype] = type
+-> 
+   type = newtype,
+   type = cmptype.

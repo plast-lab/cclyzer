@@ -1,0 +1,13 @@
+// ShuffleVector Instruction
+// keywords: vector; instruction
+
+ShuffleVectorInstruction(insn) -> Instruction(insn).
+
+ShuffleVectorInstruction:firstOperand[insn] = left -> 
+   ShuffleVectorInstruction(insn), Operand(left).
+
+ShuffleVectorInstruction:secondOperand[insn] = right -> 
+   ShuffleVectorInstruction(insn), Operand(right).
+
+ShuffleVectorInstruction:mask[insn] = mask -> 
+   ShuffleVectorInstruction(insn), Immediate(mask).

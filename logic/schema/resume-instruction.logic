@@ -1,0 +1,4 @@
+// resume - instruction
+// keywords: terminator; instruction
+ResumeInstruction(insn) -> Instruction(insn).
+ResumeInstruction:Operand[insn] = operand -> ResumeInstruction(insn), Operand(operand).

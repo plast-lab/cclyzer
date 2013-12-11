@@ -1,0 +1,5 @@
+// Or Instruction
+// keywords: bitwise; binary; instruction
+OrInstruction(insn) -> Instruction(insn).
+OrInstruction:LeftOperand[insn] = left -> OrInstruction(insn), Operand(left).
+OrInstruction:RightOperand[insn] = right -> OrInstruction(insn), Operand(right).

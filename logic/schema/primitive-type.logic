@@ -1,0 +1,39 @@
+PrimitiveType(type) -> Type(type).
+
+IntegerType(type) -> PrimitiveType(type).
+FloatingPointType(type) -> PrimitiveType(type).
+MetadataType[] = type -> PrimitiveType(type).
+
+VoidType[] = type -> PrimitiveType(type).
+LabelType[] = type -> PrimitiveType(type).
+
+Int1Type[] = type -> IntegerType(type).
+Int8Type[] = type -> IntegerType(type).
+Int32Type[] = type -> IntegerType(type).
+Int64Type[] = type -> IntegerType(type).
+
+DoubleType[] = type -> FloatingPointType(type).
+FloatType[] = type -> FloatingPointType(type).
+HalfType[] = type -> FloatingPointType(type).
+Fp128Type[] = type -> FloatingPointType(type).
+
+// TODO: add firstClassType??
+
+// Standard types as constants
+Int1Type[] = type <- IntegerType(type), Type:Value(type:"i1").
+Int8Type[] = type <- IntegerType(type), Type:Value(type:"i8").
+Int32Type[] = type <- IntegerType(type), Type:Value(type:"i32").
+Int64Type[] = type <- IntegerType(type), Type:Value(type:"i64").
+
+DoubleType[] = type <- FloatingPointType(type), Type:Value(type:"double").
+FloatType[] = type <- FloatingPointType(type), Type:Value(type:"float").
+HalfType[] = type <- FloatingPointType(type), Type:Value(type:"half").
+Fp128Type[] = type <- FloatingPointType(type), Type:Value(type:"fp128").
+X86_Fp80Type[] = type <- FloatingPointType(type), Type:Value(type:"x86_fp80").
+Ppc_Fp128Type[] = type <- FloatingPointType(type), Type:Value(type:"ppc_fp128").
+
+VoidType[] = type <- PrimitiveType(type), Type:Value(type:"void").
+LabelType[] = type <- PrimitiveType(type), Type:Value(type:"label").
+MetadataType[] = type <- PrimitiveType(type), Type:Value(type:"metadata").
+X86mmxType[] = type <- PrimitiveType(type), Type:Value(type:"x86mmx").
+

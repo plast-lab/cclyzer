@@ -1,0 +1,9 @@
+// Ordering as an enum
+ordering(Ord), ordering:id(Ord:Ref) -> string(Ref).
+
+ordering:unordered[] = Ord <- ordering(Ord), ordering:id(Ord:"unordered").
+ordering:monotonic[] = Ord <- ordering(Ord), ordering:id(Ord:"monotonic").
+ordering:acquire[]   = Ord <- ordering(Ord), ordering:id(Ord:"acquire").
+ordering:release[]   = Ord <- ordering(Ord), ordering:id(Ord:"release").
+ordering:acq_rel[]   = Ord <- ordering(Ord), ordering:id(Ord:"acq_rel").
+ordering:seq_cst[]   = Ord <- ordering(Ord), ordering:id(Ord:"seq_cst").

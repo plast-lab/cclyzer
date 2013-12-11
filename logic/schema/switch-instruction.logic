@@ -1,0 +1,30 @@
+// Switch Instruction
+SwitchInstruction(insn) -> Instruction(insn).
+
+SwitchInstruction:Operand[insn] = value -> 
+   SwitchInstruction(insn), Operand(value).
+
+SwitchInstruction:default_label[insn] = label -> 
+   SwitchInstruction(insn), Variable(label).
+
+SwitchInstruction:case_value[insn, index] = value -> 
+   SwitchInstruction(insn), int[64](index), Immediate(value).
+
+SwitchInstruction:case_label[insn, index] = label -> 
+   SwitchInstruction(insn), int[64](index), Variable(label).
+
+SwitchInstruction:nCases[insn] = cases -> 
+   SwitchInstruction(insn), int[64](cases).
+
+
+// Constraints
+
+   SwitchInstruction:default_label[_] = var, 
+   Variable:Type[var] = type 
+->
+   LabelType[] = type.
+
+   SwitchInstruction:case_label[_, _] = var, 
+   Variable:Type[var] = type
+->
+   LabelType[] = type.

@@ -1,0 +1,28 @@
+// Function
+Function(func), Function:id(func:id) -> string(id).
+
+//Function:Name[func] = name -> Function(func), string(name).
+Function:Type[func] = type -> Function(func), FunctionType(type).
+Function:FormalArg[func, index] = arg -> Function(func), int[64](index), Variable(arg).
+Function:LinkageType[func] = link -> Function(func), LinkageType(link).
+Function:Visibility[func] = v -> Function(func), Visibility(v).
+Function:CallingConvention[func] = cc ->  Function(func), CallingConvention(cc).
+Function:Section[func] = sect -> Function(func), string(sect).
+Function:Align[func] = alignment -> Function(func), int[64](alignment).
+Function:Unnamed_Addr(func) -> Function(func).
+Function:GC[func] = gc -> Function(func), string(gc).
+Function:RetAttribute[func] = retAttr -> Function(func), Attribute(retAttr).
+Function:FnAttributes(func, fnAttr) -> Function(func), Attribute(fnAttr).
+
+Function:nArgs[func] = total -> Function(func), int[64](total).
+Function:nArgs[func] = total
+<- 
+   Function:Type[func] = type,
+   FunctionType:nArgs[type] = total.
+
+Function:Type[func] = type, 
+FunctionType:Arg[type, index] = argType,
+Function:FormalArg[func, index] = arg
+->
+   Variable:Type[arg] = argType.
+
