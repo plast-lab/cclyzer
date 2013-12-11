@@ -19,15 +19,22 @@ mul_instruction(Insn) -> mul_instruction:first_operand[Insn] = _.
 mul_instruction(Insn) -> mul_instruction:second_operand[Insn] = _.
 
 mul_instruction(Insn),
-   mul_instruction:first_operand[_] = Left, 
-   operand:type[Left] = Type,
-   int32_type[] = i32
+   instruction:type[Insn] = Type
  -> 
-   Type = i32; vector_type:component[Type] = i32.
+   integer_type(Type); vector_type(Type).
 
 mul_instruction(Insn),
-   mul_instruction:first_operand[Insn] = Left,
-   mul_instruction:second_operand[Insn] = Right,
-   operand:type[Left] = Type,
+   instruction:type[Insn] = Type,
+   vector_type:component[Type] = Comp
+ -> 
+   integer_type(Comp).
+
+instruction:type[Insn] = Type,
+   mul_instruction:first_operand[Insn] = Left
+ ->
+   operand:type[Left] = Type.
+
+instruction:type[Insn] = Type,
+   mul_instruction:second_operand[Insn] = Right
  ->
    operand:type[Right] = Type.
