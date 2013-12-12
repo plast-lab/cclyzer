@@ -8,7 +8,7 @@ SCHEMA TODO LIST // -*- mode: org -*-
 * DONE attribute
 * TODO bitcast-instruction
 * TODO br-instruction
-* TODO calling-convention
+* DONE calling-convention
 * TODO call-instruction
 * TODO cmpxchg-instruction
 * DONE derived-type

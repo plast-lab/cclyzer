@@ -1,14 +1,17 @@
-// Calling Conventions (Function, CallInstruction, InvokeInstruction)
-CallingConvention(cc), CallingConvention:Value(cc:value) -> string(value).
-CallingConvention:Fast[] = cc <- CallingConvention(cc), CallingConvention:Value(cc:"fastcc").
-CallingConvention:Cold[] = cc <- CallingConvention(cc), CallingConvention:Value(cc:"coldcc").
-CallingConvention:X86_FastCall[] = cc <- CallingConvention(cc), CallingConvention:Value(cc:"x86_fastcallcc").
-CallingConvention:X86_StdCall[] = cc <- CallingConvention(cc), CallingConvention:Value(cc:"x86_stdcallcc").
-CallingConvention:X86_ThisCall[] = cc <- CallingConvention(cc), CallingConvention:Value(cc:"x86_thiscallcc").
-CallingConvention:Intel_OCL_BI[] = cc <- CallingConvention(cc), CallingConvention:Value(cc:"intel_ocl_bicc").
-CallingConvention:ARM_AAPCS[] = cc <- CallingConvention(cc), CallingConvention:Value(cc:"arm_aapcscc").
-CallingConvention:ARM_AAPCS_VFP[] = cc <- CallingConvention(cc), CallingConvention:Value(cc:"arm_aapcs_vfpcc").
-CallingConvention:ARM_APCS[] = cc <- CallingConvention(cc), CallingConvention:Value(cc:"arm_apcscc").
-CallingConvention:MSP430_INTR[] = cc <- CallingConvention(cc), CallingConvention:Value(cc:"msp430_intrcc").
-CallingConvention:PTX_Device[] = cc <- CallingConvention(cc), CallingConvention:Value(cc:"ptx_device").
-CallingConvention:PTX_Kernel[] = cc <- CallingConvention(cc), CallingConvention:Value(cc:"ptx_kernel").
+// http://llvm.org/docs/LangRef.html#callingconv
+// keywords: function_instruction; call_instruction; invoke_instruction
+
+calling_convention(Conv), calling_convention:value(Conv:Ref) -> string(Ref).
+
+calling_convention:fast[] = Conv <- calling_convention:value(Conv:"fastcc").
+calling_convention:cold[] = Conv <- calling_convention:value(Conv:"coldcc").
+calling_convention:x86_fastcall[] = Conv <- calling_convention:value(Conv:"x86_fastcallcc").
+calling_convention:x86_stdcall[] = Conv <- calling_convention:value(Conv:"x86_stdcallcc").
+calling_convention:x86_thiscall[] = Conv <- calling_convention:value(Conv:"x86_thiscallcc").
+calling_convention:intel_ocl_bi[] = Conv <- calling_convention:value(Conv:"intel_ocl_bicc").
+calling_convention:arm_aapcs[] = Conv <- calling_convention:value(Conv:"arm_aapcscc").
+calling_convention:arm_aapcs_vfp[] = Conv <- calling_convention:value(Conv:"arm_aapcs_vfpcc").
+calling_convention:arm_apcs[] = Conv <- calling_convention:value(Conv:"arm_apcscc").
+calling_convention:msp430_intr[] = Conv <- calling_convention:value(Conv:"msp430_intrcc").
+calling_convention:ptx_device[] = Conv <- calling_convention:value(Conv:"ptx_device").
+calling_convention:ptx_kernel[] = Conv <- calling_convention:value(Conv:"ptx_kernel").
