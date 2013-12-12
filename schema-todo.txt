@@ -52,7 +52,7 @@ SCHEMA TODO LIST // -*- mode: org -*-
 * TODO sext-instruction
 * TODO shl-instruction
 * TODO shufflevector-instruction
-* TODO sitofp-instruction
+* DONE sitofp-instruction
 * TODO srem-instruction
 * TODO store-instruction
 * TODO sub-instruction

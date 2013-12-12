@@ -36,6 +36,14 @@ vector_type:component[Type] = Comp ->
 vector_type:size[Type] = Size ->
    vector_type(Type), int[64](Size).
 
+vector_type:integer(Type) <-
+   vector_type:component[Type] = Comp,
+   integer_type(Comp).
+
+vector_type:fp(Type) <-
+   vector_type:component[Type] = Comp,
+   fp_type(Comp).
+
 // Array Type
 
 array_type:component[Type] = Comp -> 
@@ -55,14 +63,14 @@ struct_type:nfields[Type] = Total ->
 
 // Helper predicate
 
-vector:eq_size_2(t1, t2) <-
-   vector_type:size[t1] = size,
-   vector_type:size[t2] = size.
+vector:eq_size_2(Type1, Type2) <-
+   vector_type:size[Type1] = Size,
+   vector_type:size[Type2] = Size.
 
-vector:eq_size_3(t1, t2, t3) <-
-   vector_type:size[t1] = size,
-   vector_type:size[t2] = size,
-   vector_type:size[t3] = size.
+vector:eq_size_3(Type1, Type2, Type3) <-
+   vector_type:size[Type1] = Size,
+   vector_type:size[Type2] = Size,
+   vector_type:size[Type3] = Size.
 
 // First Class Types
 
