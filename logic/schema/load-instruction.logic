@@ -1,28 +1,67 @@
-// Load Instruction
+// http://llvm.org/docs/LangRef.html#load-instruction
 // keywords: memory; instruction
-LoadInstruction(insn) -> Instruction(insn).
 
-LoadInstruction:Operand[insn] = operand -> 
-   LoadInstruction(insn), Operand(operand).
+load_instruction(Insn) -> instruction(Insn).
 
-LoadInstruction:Align[insn] = alignment -> 
-   LoadInstruction(insn), int[64](alignment).
+load_instruction:alignment[Insn] = Alignment -> 
+   load_instruction(Insn), int[64](Alignment).
 
-LoadInstruction:Ordering[insn] = ord -> 
-   LoadInstruction(insn), Ordering(ord).
+load_instruction:ordering[Insn] = Ord -> 
+   load_instruction(Insn), ordering(Ord).
 
-// Helper predicate
-LoadInstruction:from[insn] = var -> LoadInstruction(insn), Variable(var).
-LoadInstruction:from[insn] = var <-
-   LoadInstruction:Operand[insn] = op,
-   Operand:asVariable[op] = var.
+// If the load is marked as volatile, then the optimizer is not allowed 
+// to modify the number or order of execution of this load with other 
+// volatile operations.
 
-// Constraints
-LoadInstruction:from[_] = var, Variable:Type[var] = type -> PointerType(type).
+load_instruction:volatile(Insn) ->
+   load_instruction(Insn).
 
-LoadInstruction:Ordering[_] = ord
-->
-   Ordering:acquire[] = ord ;
-   Ordering:unordered[] = ord ;
-   Ordering:monotonic[] = ord ;
-   Ordering:seq_cst[] = ord.
+// If the load is marked as atomic, it takes an extra ordering 
+// and optional singlethread argument.
+
+load_instruction:atomic(Insn) <-
+   load_instruction:ordering[Insn] = _.
+
+// The argument to the load instruction specifies the memory address 
+// from which to load.
+
+load_instruction:from[Insn] = Pointer -> 
+   load_instruction(Insn), operand(Pointer).
+
+
+// Helper predicates
+
+load_instruction:from_type[Insn] = Type <-
+   load_instruction:from[Insn] = Pointer,
+   operand:type[Pointer] = Type.
+
+// load_instruction:pointer[Insn] = Var -> load_instruction(Insn), variable(Var).
+// load_instruction:pointer[Insn] = Var <-
+//    load_instruction:from[Insn] = Operand,
+//    operand:as_variable[Operand] = Var,
+//    variable:pointer(Var).
+
+
+// Constraints:
+//  (i)  The pointer must point to a first class type.
+//  (ii) The release and acq_rel orderings are not valid on load instructions. 
+
+load_instruction(Insn) -> load_instruction:from[Insn] = _.
+
+load_instruction:from_type[_] = Type
+ ->
+   pointer_type:firstclass(Type).
+
+
+load_instruction:ordering[_] = Ord
+ ->
+   ordering:acquire[]   = Ord ;
+   ordering:unordered[] = Ord ;
+   ordering:monotonic[] = Ord ;
+   ordering:seq_cst[]   = Ord.
+
+
+load_instruction:from_type[Insn] = Type,
+   pointer_type:component[Type]  = Comp
+ ->
+   instruction:type[Insn] = Comp.

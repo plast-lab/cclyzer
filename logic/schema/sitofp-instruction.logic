@@ -3,14 +3,14 @@
 
 sitofp_instruction(Insn) -> instruction(Insn).
 
-sitofp_instruction:operand[Insn] = Value -> 
+sitofp_instruction:from[Insn] = Value -> 
    sitofp_instruction(Insn), operand(Value).
 
 sitofp_instruction:to_type[Insn] = Type -> 
    sitofp_instruction(Insn), type(Type).
 
 sitofp_instruction:from_type[Insn] = Type <-
-   sitofp_instruction:operand[Insn] = Value,
+   sitofp_instruction:from[Insn] = Value,
    operand:type[Value] = Type.
 
 // Constraints:
@@ -23,7 +23,7 @@ sitofp_instruction:from_type[Insn] = Type <-
 //  (i)  the type must be a vector floating point type, 
 //  (ii) with the same number of elements.
 
-sitofp_instruction(Insn) -> sitofp_instruction:operand[Insn] = _.
+sitofp_instruction(Insn) -> sitofp_instruction:from[Insn] = _.
 sitofp_instruction(Insn) -> sitofp_instruction:to_type[Insn] = _.
 
 sitofp_instruction:to_type[Insn] = Type

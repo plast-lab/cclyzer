@@ -78,3 +78,7 @@ type:firstclass(Type) <-
    type(Type),
    !function_type(Type),
    !void_type[] = Type.
+
+pointer_type:firstclass(Type) <-
+   pointer_type:component[Type] = Comp,
+   type:firstclass(Comp).
