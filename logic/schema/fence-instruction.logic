@@ -1,10 +1,17 @@
-// Fence Instruction
-// fence [singlethread] <ordering>
+// http://llvm.org/docs/LangRef.html#fence-instruction
 // keywords: memory; instruction
-FenceInstruction(insn) -> Instruction(insn).
-FenceInstruction:Ordering[insn] = ord -> FenceInstruction(insn), Ordering(ord).
 
-// Constraint
-FenceInstruction:Ordering[_] = ord ->
-    Ordering:acquire[] = ord ; Ordering:release[] = ord ;
-    Ordering:acq_rel[] = ord ; Ordering:seq_cst[] = ord. 
+fence_instruction(Insn) -> instruction(Insn).
+
+fence_instruction:ordering[Insn] = Ord -> 
+   fence_instruction(Insn), ordering(Ord).
+
+// Constraints:
+// They can only be given acquire, release, acq_rel, and seq_cst orderings.
+
+fence_instruction(Insn) -> fence_instruction:ordering[Insn] = _.
+
+fence_instruction:ordering[_] = Ord
+ ->
+   ordering:acquire[] = Ord ; ordering:release[] = Ord ;
+   ordering:acq_rel[] = Ord ; ordering:seq_cst[] = Ord. 
