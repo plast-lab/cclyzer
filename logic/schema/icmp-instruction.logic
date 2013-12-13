@@ -1,70 +1,87 @@
-// Icmp Instruction
+// http://llvm.org/docs/LangRef.html#icmp-instruction
 // keywords: comparison; binary; instruction
-IcmpInstruction(insn) -> Instruction(insn).
+icmp_instruction(Insn) -> instruction(Insn).
 
-IcmpInstruction:Cond[insn] = cond -> IcmpInstruction(insn), IcmpCondition(cond).
-IcmpInstruction:LeftOperand[insn] = left -> IcmpInstruction(insn), Operand(left).
-IcmpInstruction:RightOperand[insn] = right -> IcmpInstruction(insn), Operand(right).
+icmp_instruction:condition[Insn] = Cond -> 
+   icmp_instruction(Insn), icmp_condition(Cond).
 
-// Condition Code and selectors for the 'Icmp' Instruction, as enum
-IcmpCondition(cond), IcmpCondition:Value(cond:value) -> string(value).
-IcmpCondition:Eq[] = cond <- IcmpCondition(cond), IcmpCondition:Value(cond:"eq").
-IcmpCondition:Ne[] = cond <- IcmpCondition(cond), IcmpCondition:Value(cond:"ne").
-IcmpCondition:Sgt[] = cond <- IcmpCondition(cond), IcmpCondition:Value(cond:"sgt").
-IcmpCondition:Sge[] = cond <- IcmpCondition(cond), IcmpCondition:Value(cond:"sge").
-IcmpCondition:Slt[] = cond <- IcmpCondition(cond), IcmpCondition:Value(cond:"slt").
-IcmpCondition:Sle[] = cond <- IcmpCondition(cond), IcmpCondition:Value(cond:"sle").
-IcmpCondition:Ugt[] = cond <- IcmpCondition(cond), IcmpCondition:Value(cond:"ugt").
-IcmpCondition:Ule[] = cond <- IcmpCondition(cond), IcmpCondition:Value(cond:"ule").
-IcmpCondition:Uge[] = cond <- IcmpCondition(cond), IcmpCondition:Value(cond:"uge").
-IcmpCondition:Ult[] = cond <- IcmpCondition(cond), IcmpCondition:Value(cond:"ult").
+icmp_instruction:first_operand[Insn] = Left -> 
+   icmp_instruction(Insn), operand(Left).
 
-IcmpCondition(cond)
-->
-   IcmpCondition:Eq[] = cond;  IcmpCondition:Ne[] = cond;
-   IcmpCondition:Sgt[] = cond; IcmpCondition:Sge[] = cond;
-   IcmpCondition:Slt[] = cond; IcmpCondition:Sle[] = cond;
-   IcmpCondition:Ugt[] = cond; IcmpCondition:Ule[] = cond;
-   IcmpCondition:Uge[] = cond; IcmpCondition:Ult[] = cond.
+icmp_instruction:second_operand[Insn] = Right -> 
+   icmp_instruction(Insn), operand(Right).
+
+// Condition code and selectors for the ‘icmp‘ Instruction, as enum
+
+icmp_condition(Cond), icmp_condition:id(Cond:Ref) -> string(Ref).
+
+icmp_condition:eq[]  = Cond <- icmp_condition:id(Cond:"eq").
+icmp_condition:ne[]  = Cond <- icmp_condition:id(Cond:"ne").
+icmp_condition:sgt[] = Cond <- icmp_condition:id(Cond:"sgt").
+icmp_condition:sge[] = Cond <- icmp_condition:id(Cond:"sge").
+icmp_condition:slt[] = Cond <- icmp_condition:id(Cond:"slt").
+icmp_condition:sle[] = Cond <- icmp_condition:id(Cond:"sle").
+icmp_condition:ugt[] = Cond <- icmp_condition:id(Cond:"ugt").
+icmp_condition:ule[] = Cond <- icmp_condition:id(Cond:"ule").
+icmp_condition:uge[] = Cond <- icmp_condition:id(Cond:"uge").
+icmp_condition:ult[] = Cond <- icmp_condition:id(Cond:"ult").
+
+icmp_condition(Cond)
+ ->
+   icmp_condition:eq[]  = Cond; icmp_condition:ne[]  = Cond;
+   icmp_condition:sgt[] = Cond; icmp_condition:sge[] = Cond;
+   icmp_condition:slt[] = Cond; icmp_condition:sle[] = Cond;
+   icmp_condition:ugt[] = Cond; icmp_condition:ule[] = Cond;
+   icmp_condition:uge[] = Cond; icmp_condition:ult[] = Cond.
+
+// Abbreviations
+
+icmp_instruction:from_type[Insn]  = Type <-
+   icmp_instruction:first_operand[Insn]  = Operand,
+   operand:type[Operand] = Type.
+
+icmp_instruction:to_type[Insn]  = Type <-
+   icmp_instruction(Insn),
+   instruction:type[Insn] = Type.
+
 
 // Constraints:
-// The operands must be either 
-// (*) variables of type 
-//     (i) integer, (ii) pointer, or (iii) vector (of integer or pointer)
-// (*) immediates of type
-//     (i) integer, or (ii) pointer
+// The ‘icmp‘ instruction returns:
+//  (i)  a boolean value or 
+//  (ii) a vector of boolean values 
+// based on comparison of its two:
+//  (i)   integer, 
+//  (ii)  integer vector, 
+//  (iii) pointer, or 
+//  (iv)  pointer vector operands.
+// They must also be identical types.
 
-   IcmpInstruction:LeftOperand[_] = left, 
-   Operand:type[left] = type 
--> 
-   IntegerType(type); PointerType(type); VectorType(type).
+icmp_instruction(Insn) -> icmp_instruction:condition[Insn] = _.
+icmp_instruction(Insn) -> icmp_instruction:first_operand[Insn] = _.
+icmp_instruction(Insn) -> icmp_instruction:second_operand[Insn] = _.
 
-   IcmpInstruction:RightOperand[_] = right, 
-   Operand:type[right] = type
--> 
-   IntegerType(type); PointerType(type); VectorType(type).
-
-   IcmpInstruction:LeftOperand[_] = left,
-   Operand:type[left] = type,
-   VectorType:Component[type] = comp 
-->
-   IntegerType(comp); PointerType(type).
-
-   IcmpInstruction:RightOperand[_] = right,
-   Operand:type[right] = type,
-   VectorType:Component[type] = comp 
-->
-   IntegerType(comp); PointerType(type).
+icmp_instruction:to_type[_] = Type
+ -> 
+   boolean_type(Type); vector_type:boolean(Type).
 
 
-   IcmpInstruction:LeftOperand[_] = left, 
-   Operand:type[left] = type, 
-   VectorType(type)
--> 
-   Operand:byVariable[_] = left.
+icmp_instruction:from_type[_] = Type
+ -> 
+   integer_type(Type) ; vector_type:integer(Type);
+   pointer_type(Type) ; vector_type:pointer(Type).
 
-   IcmpInstruction:RightOperand[_] = right, 
-   Operand:type[right] = type, 
-   VectorType(type)
--> 
-   Operand:byVariable[_] = right.
+
+icmp_instruction(Insn),
+   icmp_instruction:first_operand[Insn]  = Left,
+   icmp_instruction:second_operand[Insn] = Right, 
+   operand:type[Left]  = Type1,
+   operand:type[Right] = Type2
+ ->
+   Type1 = Type2.
+
+
+icmp_instruction(Insn),
+   icmp_instruction:from_type[Insn] = From,
+   icmp_instruction:to_type[Insn] = To
+ -> 
+   vector:compatible(From, To).

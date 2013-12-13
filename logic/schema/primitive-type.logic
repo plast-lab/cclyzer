@@ -33,3 +33,7 @@ void_type[]  = Type <- primitive_type(Type), type:id(Type:"void").
 label_type[] = Type <- primitive_type(Type), type:id(Type:"label").
 metadata_type[] = Type <- primitive_type(Type), type:id(Type:"metadata").
 x86mmx_type[]   = Type <- primitive_type(Type), type:id(Type:"x86mmx").
+
+// Boolean alias
+boolean_type(Type) <-
+   int1_type[]  = Type.

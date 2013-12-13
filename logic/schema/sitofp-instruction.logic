@@ -26,6 +26,7 @@ sitofp_instruction:from_type[Insn] = Type <-
 sitofp_instruction(Insn) -> sitofp_instruction:from[Insn] = _.
 sitofp_instruction(Insn) -> sitofp_instruction:to_type[Insn] = _.
 
+
 sitofp_instruction:to_type[Insn] = Type
  ->
    instruction:type[Insn] = Type.
@@ -41,23 +42,8 @@ sitofp_instruction:to_type[_] = Type
    fp_type(Type); vector_type:fp(Type).
 
 
-integer_type(From),
-   sitofp_instruction:from_type[Insn] = From,
-   sitofp_instruction:to_type[Insn] = To
- -> 
-   fp_type(To).
-
-vector_type:integer(From),
-   sitofp_instruction:from_type[Insn] = From,
-   sitofp_instruction:to_type[Insn] = To
- -> 
-   vector_type:fp(To).
-
-
 sitofp_instruction(Insn),
-   vector_type:integer(From),
-   vector_type:fp(To),
    sitofp_instruction:from_type[Insn] = From,
    sitofp_instruction:to_type[Insn] = To
  -> 
-   vector:eq_size_2(From, To).
+   vector:compatible(From, To).
