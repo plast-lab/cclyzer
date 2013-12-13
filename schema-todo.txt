@@ -1,7 +1,7 @@
 SCHEMA TODO LIST // -*- mode: org -*-
 
 * TODO add-instruction
-* TODO alloca-instruction
+* DONE alloca-instruction
 * TODO and-instruction
 * TODO ashr-instruction
 * TODO atomicrmw-instruction

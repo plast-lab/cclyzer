@@ -1,10 +1,23 @@
-// Alloca Instruction
+// http://llvm.org/docs/LangRef.html#alloca-instruction
 // keywords: memory; unary; instruction
-AllocaInstruction(insn) -> Instruction(insn).
-AllocaInstruction:Size:Type[insn] = type -> AllocaInstruction(insn), Type(type).
-AllocaInstruction:Size:Operand[insn] = size -> AllocaInstruction(insn), Operand(size).
-AllocaInstruction:Align[insn] = alignment -> AllocaInstruction(insn),  int[64](alignment).
 
-// TODO: change the Size:* predicate names; they are unclear right now
-// Size:Type seems redundant
-// Size or SizeOperand maybe?
+alloca_instruction(Insn) -> Instruction(Insn).
+
+alloca_instruction:alignment[Insn] = Alignment -> 
+   alloca_instruction(Insn),  int[64](Alignment).
+
+alloca_instruction:size[Insn] = Size -> 
+   alloca_instruction(Insn), operand(Size).
+
+alloca_instruction:type[Insn] = Type ->
+   alloca_instruction(Insn), type(Type).
+
+// Constraints:
+// The ‘alloca‘ instruction returns a pointer.
+
+alloca_instruction(Insn) -> alloca_instruction:type[Insn] = _.
+
+alloca_instruction:type[Insn] = Type,
+   instruction:type[Insn] = Pointer,
+ ->
+   pointer_type:component[Pointer] = Type.
