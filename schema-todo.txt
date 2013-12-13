@@ -45,7 +45,7 @@ SCHEMA TODO LIST // -*- mode: org -*-
 * DONE phi-instruction
 * DONE primitive-type
 * TODO ptrtoint-instruction
-* TODO resume-instruction
+* DONE resume-instruction
 * TODO return-instruction
 * TODO sdiv-instruction
 * TODO select-instruction

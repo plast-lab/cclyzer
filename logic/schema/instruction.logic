@@ -17,6 +17,9 @@ instruction:type[Insn] = Type <-
 
 // Sequence of instructions
 
+instruction:function[Insn] = Func ->
+   instruction(Insn), function(Func).
+
 // The next instruction in the source file.
 instruction:next[Insn] = Next -> instruction(Insn), instruction(Next).
 
