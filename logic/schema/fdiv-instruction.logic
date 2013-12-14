@@ -1,5 +1,34 @@
-// Fdiv Instruction
+// http://llvm.org/docs/LangRef.html#fdiv-instruction
 // keywords: arithmetic; binary; instruction
-FdivInstruction(insn) -> Instruction(insn).
-FdivInstruction:LeftOperand[insn] = left -> FdivInstruction(insn), Operand(left).
-FdivInstruction:RightOperand[insn] = right -> FdivInstruction(insn), Operand(right).
+
+fdiv_instruction(Insn) -> instruction(Insn).
+
+fdiv_instruction:first_operand[Insn] = Left -> 
+   fdiv_instruction(Insn), operand(Left).
+
+fdiv_instruction:second_operand[Insn] = Right -> 
+   fdiv_instruction(Insn), operand(Right).
+
+// Constraints:
+// The two arguments to the ‘fdiv‘ instruction must be:
+//    (i)  floating point or 
+//    (ii) vector of floating point values. 
+// Both arguments must have identical types.
+
+fdiv_instruction(Insn) -> fdiv_instruction:first_operand[Insn] = _.
+fdiv_instruction(Insn) -> fdiv_instruction:second_operand[Insn] = _.
+
+fdiv_instruction(Insn),
+   instruction:type[Insn] = Type
+ -> 
+   fp_type(Type); vector_type:fp(Type).
+
+instruction:type[Insn] = Type,
+   fdiv_instruction:first_operand[Insn] = Left
+ ->
+   operand:type[Left] = Type.
+
+instruction:type[Insn] = Type,
+   fdiv_instruction:second_operand[Insn] = Right
+ ->
+   operand:type[Right] = Type.
