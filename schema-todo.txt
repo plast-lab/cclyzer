@@ -8,7 +8,7 @@ SCHEMA TODO LIST // -*- mode: org -*-
 * DONE atomicrmw-instruction
 * DONE attribute
 * TODO bitcast-instruction
-* TODO br-instruction
+* DONE br-instruction
 * DONE calling-convention
 * TODO call-instruction
 * TODO cmpxchg-instruction
@@ -63,6 +63,6 @@ SCHEMA TODO LIST // -*- mode: org -*-
 * TODO udiv-instruction
 * TODO uitofp-instruction
 * TODO urem-instruction
-* TODO va_arg-instruction
+* TODO va-arg-instruction
 * TODO xor-instruction
 * TODO zext-instruction
