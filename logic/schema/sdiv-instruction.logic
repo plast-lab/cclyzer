@@ -1,5 +1,34 @@
-// Sdiv Instruction
+// http://llvm.org/docs/LangRef.html#sdiv-instruction
 // keywords: arithmetic; binary; instruction
-SdivInstruction(insn) -> Instruction(insn).
-SdivInstruction:LeftOperand[insn] = left -> SdivInstruction(insn), Operand(left).
-SdivInstruction:RightOperand[insn] = right -> SdivInstruction(insn), Operand(right).
+
+sdiv_instruction(Insn) -> instruction(Insn).
+
+sdiv_instruction:first_operand[Insn] = Left -> 
+   sdiv_instruction(Insn), operand(Left).
+
+sdiv_instruction:second_operand[Insn] = Right -> 
+   sdiv_instruction(Insn), operand(Right).
+
+// Constraints:
+// The two arguments to the ‘sdiv‘ instruction must be:
+//    (i)  integer or 
+//    (ii) vector of integer values. 
+// Both arguments must have identical types.
+
+sdiv_instruction(Insn) -> sdiv_instruction:first_operand[Insn] = _.
+sdiv_instruction(Insn) -> sdiv_instruction:second_operand[Insn] = _.
+
+sdiv_instruction(Insn),
+   instruction:type[Insn] = Type
+ -> 
+   integer_type(Type); vector_type:integer(Type).
+
+instruction:type[Insn] = Type,
+   sdiv_instruction:first_operand[Insn] = Left
+ ->
+   operand:type[Left] = Type.
+
+instruction:type[Insn] = Type,
+   sdiv_instruction:second_operand[Insn] = Right
+ ->
+   operand:type[Right] = Type.
