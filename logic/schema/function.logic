@@ -25,4 +25,3 @@ FunctionType:Arg[type, index] = argType,
 Function:FormalArg[func, index] = arg
 ->
    Variable:Type[arg] = argType.
-
