@@ -1,52 +1,85 @@
-// AtomicRMW Instruction
-// keywords: binary; instruction
-AtomicRMWInstruction(insn) -> Instruction(insn).
+// http://llvm.org/docs/LangRef.html#atomicrmw-instruction
+// keywords: memory; instruction
 
-AtomicRMWInstruction:Operation[insn] = op -> 
-   AtomicRMWInstruction(insn), Operation(op).
+atomicrmw_instruction(Insn) -> instruction(Insn).
 
-AtomicRMWInstruction:LeftOperand[insn] = left -> 
-   AtomicRMWInstruction(insn), Operand(left).
+atomicrmw_instruction:ordering[Insn] = Ord -> 
+   atomicrmw_instruction(Insn), ordering(Ord).
 
-AtomicRMWInstruction:RightOperand[insn] = right -> 
-   AtomicRMWInstruction(insn), Operand(right).
+// If the atomicrmw is marked as volatile, then the optimizer is not allowed 
+// to modify the number or order of execution of this atomirmw with other 
+// volatile operations.
 
-AtomicRMWInstruction:Ordering[insn] = ord -> 
-   AtomicRMWInstruction(insn), Ordering(ord).
+atomicrmw_instruction:volatile(Insn) ->
+   atomicrmw_instruction(Insn).
 
-// Operation for the 'AtomicRMW' Instruction
-// TODO: should we change the name to something more specific 
-// (e.g. AtomicOperation)???
-Operation(op), Operation:Value(op:value) -> string(value).
-Operation:Xchg[] = op <- Operation(op), Operation:Value(op:"xchg").
-Operation:Add[] = op <- Operation(op), Operation:Value(op:"add").
-Operation:Sub[] = op <- Operation(op), Operation:Value(op:"sub").
-Operation:And[] = op <- Operation(op), Operation:Value(op:"and").
-Operation:Nand[] = op <- Operation(op), Operation:Value(op:"nand").
-Operation:Nor[] = op <- Operation(op), Operation:Value(op:"nor").
-Operation:Or[] = op <- Operation(op), Operation:Value(op:"or").
-Operation:Xor[] = op <- Operation(op), Operation:Value(op:"xor").
-Operation:Max[] = op <- Operation(op), Operation:Value(op:"max").
-Operation:Min[] = op <- Operation(op), Operation:Value(op:"min").
-Operation:Umax[] = op <- Operation(op), Operation:Value(op:"umax").
-Operation:Umin[] = op <- Operation(op), Operation:Value(op:"umin").
+// There are three arguments to the atomicrmw instruction: 
+//  (i)   an operation to apply, 
+//  (ii)  an address whose value to modify, 
+//  (iii) an argument to the operation.
+
+atomicrmw_instruction:operation[Insn] = Op -> 
+   atomicrmw_instruction(Insn), operation(Op).
+
+atomicrmw_instruction:address[Insn] = Pointer -> 
+   atomicrmw_instruction(Insn), operand(Pointer).
+
+atomicrmw_instruction:value[Insn] = Value -> 
+   atomicrmw_instruction(Insn), operand(Value).
+
+// The operation to apply for the ‘atomicrmw‘ instruction
+// must be one of the following:
+
+operation(Op), operation:id(Op:Ref) -> string(Ref).
+operation:xchg[] = Op <- operation:id(Op:"xchg").
+operation:add[]  = Op <- operation:id(Op:"add").
+operation:sub[]  = Op <- operation:id(Op:"sub").
+operation:and[]  = Op <- operation:id(Op:"and").
+operation:nand[] = Op <- operation:id(Op:"nand").
+operation:nor[]  = Op <- operation:id(Op:"nor").
+operation:or[]   = Op <- operation:id(Op:"or").
+operation:xor[]  = Op <- operation:id(Op:"xor").
+operation:max[]  = Op <- operation:id(Op:"max").
+operation:min[]  = Op <- operation:id(Op:"min").
+operation:umax[] = Op <- operation:id(Op:"umax").
+operation:umin[] = Op <- operation:id(Op:"umin").
+
+operation(Op)
+ ->
+   operation:xchg[] = Op ; operation:add[]  = Op
+ ; operation:sub[]  = Op ; operation:and[]  = Op
+ ; operation:nand[] = Op ; operation:nor[]  = Op
+ ; operation:or[]   = Op ; operation:xor[]  = Op
+ ; operation:max[]  = Op ; operation:min[]  = Op
+ ; operation:umax[] = Op ; operation:umin[] = Op.
+
 
 // Constraints:
-// (i)  Left operand must be a pointer to integer.
-// (ii) Right operand must be an integer
+// (i)  The type of ‘<value>’ must be an integer type.
+// (ii) The type of the ‘<pointer>‘ operand must be a pointer to that type. 
 
-AtomicRMWInstruction:LeftOperand[_] = left,
-   Operand:type[left] = type
--> 
-   PointerType(type).
+atomicrmw_instruction[Insn] -> atomicrmw_instruction:ordering[Insn] = _.
+atomicrmw_instruction[Insn] -> atomicrmw_instruction:operation[Insn] = _.
+atomicrmw_instruction[Insn] -> atomicrmw_instruction:address[Insn] = _.
+atomicrmw_instruction[Insn] -> atomicrmw_instruction:value[Insn] = _.
 
-AtomicRMWInstruction:LeftOperand[_] = left,
-   Operand:type[left] = type,
-   PointerType:Component[type] = comp 
-->
-   IntegerType(comp).
 
-AtomicRMWInstruction:RightOperand[_] = right, 
-   Operand:Type[right] = type 
--> 
-   IntegerType(type).
+atomicrmw_instruction:value[_] = Value, 
+   operand:type[Value] = Type 
+ -> 
+   integer_type(Type).
+
+
+atomicrmw_instruction:address[_] = Pointer,
+   operand:type[Pointer] = Type
+ -> 
+   pointer_type(Type).
+
+
+atomicrmw_instruction(Insn),
+   atomicrmw_instruction:address[Insn] = Pointer,
+   atomicrmw_instruction:value[Insn] = Value,
+   operand:type[Pointer] = Type,
+   pointer_type:component[Type] = Comp
+ ->
+   operand:type[Value] = Comp.

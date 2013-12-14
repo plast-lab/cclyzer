@@ -5,7 +5,7 @@ SCHEMA TODO LIST // -*- mode: org -*-
 * DONE alloca-instruction
 * TODO and-instruction
 * TODO ashr-instruction
-* TODO atomicrmw-instruction
+* DONE atomicrmw-instruction
 * DONE attribute
 * TODO bitcast-instruction
 * TODO br-instruction
