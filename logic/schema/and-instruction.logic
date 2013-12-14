@@ -14,6 +14,7 @@ and_instruction:second_operand[Insn] = Right ->
 //    (i)  integer or 
 //    (ii) vector of integer values. 
 // Both arguments must have identical types.
+// The resulting value is the same type as its operands.
 
 and_instruction(Insn) -> and_instruction:first_operand[Insn] = _.
 and_instruction(Insn) -> and_instruction:second_operand[Insn] = _.

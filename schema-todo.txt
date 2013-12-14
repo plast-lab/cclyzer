@@ -3,7 +3,7 @@ SCHEMA TODO LIST // -*- mode: org -*-
 * TODO basic-blocks
 * TODO add-instruction
 * DONE alloca-instruction
-* TODO and-instruction
+* DONE and-instruction
 * TODO ashr-instruction
 * DONE atomicrmw-instruction
 * DONE attribute
@@ -42,7 +42,7 @@ SCHEMA TODO LIST // -*- mode: org -*-
 * DONE mul-instruction
 * DONE operand
 * DONE ordering
-* TODO or-instruction
+* DONE or-instruction
 * DONE phi-instruction
 * DONE primitive-type
 * TODO ptrtoint-instruction
@@ -64,5 +64,5 @@ SCHEMA TODO LIST // -*- mode: org -*-
 * TODO uitofp-instruction
 * TODO urem-instruction
 * TODO va-arg-instruction
-* TODO xor-instruction
+* DONE xor-instruction
 * TODO zext-instruction
