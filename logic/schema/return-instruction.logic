@@ -1,9 +1,0 @@
-// Return Instruction
-ReturnInstruction(insn) -> Instruction(insn).
-ReturnInstruction:Void(insn) -> ReturnInstruction(insn).
-
-ReturnInstruction:Operand[insn] = operand -> 
-   ReturnInstruction(insn), Operand(operand).
-
-// Constraint
-ReturnInstruction:Void(insn) -> !ReturnInstruction:Operand[insn] = _.
