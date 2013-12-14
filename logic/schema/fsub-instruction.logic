@@ -1,5 +1,34 @@
-// Fsub Instruction
+// http://llvm.org/docs/LangRef.html#fsub-instruction
 // keywords: arithmetic; binary; instruction
-FsubInstruction(insn) -> Instruction(insn).
-FsubInstruction:LeftOperand[insn] = left -> FsubInstruction(insn), Operand(left).
-FsubInstruction:RightOperand[insn] = right -> FsubInstruction(insn), Operand(right).
+
+fsub_instruction(Insn) -> instruction(Insn).
+
+fsub_instruction:first_operand[Insn] = Left -> 
+   fsub_instruction(Insn), operand(Left).
+
+fsub_instruction:second_operand[Insn] = Right -> 
+   fsub_instruction(Insn), operand(Right).
+
+// Constraints:
+// The two arguments to the ‘fsub‘ instruction must be:
+//    (i)  floating point or 
+//    (ii) vector of floating point values. 
+// Both arguments must have identical types.
+
+fsub_instruction(Insn) -> fsub_instruction:first_operand[Insn] = _.
+fsub_instruction(Insn) -> fsub_instruction:second_operand[Insn] = _.
+
+fsub_instruction(Insn),
+   instruction:type[Insn] = Type
+ -> 
+   fp_type(Type); vector_type:fp(Type).
+
+instruction:type[Insn] = Type,
+   fsub_instruction:first_operand[Insn] = Left
+ ->
+   operand:type[Left] = Type.
+
+instruction:type[Insn] = Type,
+   fsub_instruction:second_operand[Insn] = Right
+ ->
+   operand:type[Right] = Type.
