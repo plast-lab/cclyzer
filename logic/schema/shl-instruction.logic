@@ -14,6 +14,7 @@ shl_instruction:second_operand[Insn] = Right ->
 //    (i)  integer or 
 //    (ii) vector of integer values. 
 // Both arguments must have identical types.
+// The resulting value is the same type as its operands.
 
 shl_instruction(Insn) -> shl_instruction:first_operand[Insn] = _.
 shl_instruction(Insn) -> shl_instruction:second_operand[Insn] = _.

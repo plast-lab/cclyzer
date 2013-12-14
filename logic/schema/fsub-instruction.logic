@@ -14,6 +14,7 @@ fsub_instruction:second_operand[Insn] = Right ->
 //    (i)  floating point or 
 //    (ii) vector of floating point values. 
 // Both arguments must have identical types.
+// The resulting value is the same type as its operands.
 
 fsub_instruction(Insn) -> fsub_instruction:first_operand[Insn] = _.
 fsub_instruction(Insn) -> fsub_instruction:second_operand[Insn] = _.

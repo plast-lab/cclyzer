@@ -14,6 +14,7 @@ frem_instruction:second_operand[Insn] = Right ->
 //    (i)  floating point or 
 //    (ii) vector of floating point values. 
 // Both arguments must have identical types.
+// The resulting value is the same type as its operands.
 
 frem_instruction(Insn) -> frem_instruction:first_operand[Insn] = _.
 frem_instruction(Insn) -> frem_instruction:second_operand[Insn] = _.
