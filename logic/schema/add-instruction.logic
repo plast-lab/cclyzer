@@ -21,7 +21,7 @@ add_instruction(Insn) -> add_instruction:second_operand[Insn] = _.
 add_instruction(Insn),
    instruction:type[Insn] = Type
  -> 
-   integer_type(Type); vector_type:fp(Type).
+   integer_type(Type); vector_type:integer(Type).
 
 instruction:type[Insn] = Type,
    add_instruction:first_operand[Insn] = Left
