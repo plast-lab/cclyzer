@@ -1,16 +1,16 @@
 // http://llvm.org/docs/LangRef.html#ret-instruction
 // keywords: terminator; instruction
 
-return_instruction(Insn) -> instruction(Insn).
+ret_instruction(Insn) -> instruction(Insn).
 
 // The ‘ret‘ instruction optionally accepts a single 
 // argument, the return value.
 
-return_instruction:value[Insn] = Value -> 
-   return_instruction(Insn), operand(Value).
+ret_instruction:value[Insn] = Value -> 
+   ret_instruction(Insn), operand(Value).
 
-return_instruction:void(Insn) -> return_instruction(Insn).
-return_instruction:void(Insn) -> !return_instruction:value[Insn] = _.
+ret_instruction:void(Insn) -> ret_instruction(Insn).
+ret_instruction:void(Insn) -> !ret_instruction:value[Insn] = _.
 
 
 // A function is not well formed if: 
@@ -27,7 +27,7 @@ function:illformed(Func) <-
    void_type[] = Void,
    function:type[Func] = Type,
    function_type:return[Type] != Void,
-   return_instruction:void(Insn),
+   ret_instruction:void(Insn),
    instruction:function[Insn] = Func.
 
 function:illformed(Func) <-
@@ -35,7 +35,7 @@ function:illformed(Func) <-
    function:type[Func] = Type,
    function_type:return[Type] = Ret,
    Ret != Void,
-   return_instruction[Insn] = Value,
+   ret_instruction[Insn] = Value,
    operand:type[Value] != Ret,
    instruction:function[Insn] = Func.
 
@@ -43,15 +43,15 @@ function:illformed(Func) <-
    void_type[] = Void,
    function:type[Func] = Type,
    function_type:return[Type] = Void,
-   return_instruction(Insn),
-   !return_instruction:void(Insn),
+   ret_instruction(Insn),
+   !ret_instruction:void(Insn),
    instruction:function[Insn] = Func.
 
 
 // Constraints:
 //  (i) The type of the return value must be a ‘first class‘ type.
 
-return_instruction:value[Insn] = Value,
+ret_instruction:value[Insn] = Value,
    operand:type[Value] = Type
  ->
    type:firstclass(Type).
