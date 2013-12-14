@@ -1,5 +1,34 @@
-// Srem Instruction
+// http://llvm.org/docs/LangRef.html#srem-instruction
 // keywords: arithmetic; binary; instruction
-SremInstruction(insn) -> Instruction(insn).
-SremInstruction:LeftOperand[insn] = left -> SremInstruction(insn), Operand(left).
-SremInstruction:RightOperand[insn] = right -> SremInstruction(insn), Operand(right).
+
+srem_instruction(Insn) -> instruction(Insn).
+
+srem_instruction:first_operand[Insn] = Left -> 
+   srem_instruction(Insn), operand(Left).
+
+srem_instruction:second_operand[Insn] = Right -> 
+   srem_instruction(Insn), operand(Right).
+
+// Constraints:
+// The two arguments to the ‘srem‘ instruction must be:
+//    (i)  integer or 
+//    (ii) vector of integer values. 
+// Both arguments must have identical types.
+
+srem_instruction(Insn) -> srem_instruction:first_operand[Insn] = _.
+srem_instruction(Insn) -> srem_instruction:second_operand[Insn] = _.
+
+srem_instruction(Insn),
+   instruction:type[Insn] = Type
+ -> 
+   integer_type(Type); vector_type:integer(Type).
+
+instruction:type[Insn] = Type,
+   srem_instruction:first_operand[Insn] = Left
+ ->
+   operand:type[Left] = Type.
+
+instruction:type[Insn] = Type,
+   srem_instruction:second_operand[Insn] = Right
+ ->
+   operand:type[Right] = Type.
