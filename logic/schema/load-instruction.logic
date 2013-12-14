@@ -25,43 +25,35 @@ load_instruction:atomic(Insn) <-
 // The argument to the load instruction specifies the memory address 
 // from which to load.
 
-load_instruction:from[Insn] = Pointer -> 
+load_instruction:address[Insn] = Pointer -> 
    load_instruction(Insn), operand(Pointer).
 
 
 // Helper predicates
 
-load_instruction:from_type[Insn] = Type <-
-   load_instruction:from[Insn] = Pointer,
+load_instruction:ptr_type[Insn] = Type <-
+   load_instruction:address[Insn] = Pointer,
    operand:type[Pointer] = Type.
-
-// load_instruction:pointer[Insn] = Var -> load_instruction(Insn), variable(Var).
-// load_instruction:pointer[Insn] = Var <-
-//    load_instruction:from[Insn] = Operand,
-//    operand:as_variable[Operand] = Var,
-//    variable:pointer(Var).
 
 
 // Constraints:
 //  (i)  The pointer must point to a first class type.
 //  (ii) The release and acq_rel orderings are not valid on load instructions. 
 
-load_instruction(Insn) -> load_instruction:from[Insn] = _.
+load_instruction(Insn) -> load_instruction:address[Insn] = _.
 
-load_instruction:from_type[_] = Type
+load_instruction:ptr_type[_] = Type
  ->
    pointer_type:firstclass(Type).
 
 
-load_instruction:ordering[_] = Ord
- ->
-   ordering:acquire[]   = Ord ;
-   ordering:unordered[] = Ord ;
-   ordering:monotonic[] = Ord ;
-   ordering:seq_cst[]   = Ord.
-
-
-load_instruction:from_type[Insn] = Type,
+load_instruction:ptr_type[Insn] = Type,
    pointer_type:component[Type]  = Comp
  ->
    instruction:type[Insn] = Comp.
+
+
+load_instruction:ordering[_] = Ord
+ ->
+   !ordering:release[] = Ord,
+   !ordering:acq_rel[] = Ord.

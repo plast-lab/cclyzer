@@ -1,15 +1,74 @@
-// Store Instruction
+// http://llvm.org/docs/LangRef.html#store-instruction
 // keywords: memory; instruction
-StoreInstruction(insn) -> Instruction(insn).
-StoreInstruction:value[insn] = value -> StoreInstruction(insn), Operand(value).
-StoreInstruction:address[insn] = addr -> StoreInstruction(insn), Variable(addr).
-StoreInstruction:Align[insn] = alignment -> StoreInstruction(insn),  int[64](alignment).
-StoreInstruction:Ordering[insn] = ord -> StoreInstruction(insn), Ordering(ord).
 
-// Constraints
-StoreInstruction(insn) -> !Instruction:To[insn] = _.
-StoreInstruction:address[_] = var, Variable:Type[var] = type -> PointerType(type).
+store_instruction(Insn) -> instruction(Insn).
 
-StoreInstruction:Ordering[_] = ord ->
-    Ordering:Release[]   = ord ; Ordering:Unordered[] = ord ;
-    Ordering:Monotonic[] = ord ; Ordering:Seq_cst[]   = ord.
+store_instruction:alignment[Insn] = Alignment -> 
+   store_instruction(Insn),  int[64](Alignment).
+
+store_instruction:ordering[Insn] = Ord -> 
+   store_instruction(Insn), ordering(Ord).
+
+
+// If the store is marked as volatile, then the optimizer is not allowed 
+// to modify the number or order of execution of this store with other 
+// volatile operations.
+
+store_instruction:volatile(Insn) ->
+   store_instruction(Insn).
+
+
+// If the store is marked as atomic, it takes an extra ordering 
+// and optional singlethread argument.
+
+store_instruction:atomic(Insn) <-
+   store_instruction:ordering[Insn] = _.
+
+
+// There are two arguments to the store instruction: 
+//  (i)  a value to store and 
+//  (ii) an address at which to store it.
+
+store_instruction:value[Insn] = Value -> 
+   store_instruction(Insn), operand(Value).
+
+store_instruction:address[Insn] = Pointer -> 
+   store_instruction(Insn), operand(Pointer).
+
+
+// Helper predicates
+
+store_instruction:ptr_type[Insn] = Type <-
+   store_instruction:address[Insn] = Pointer,
+   operand:type[Pointer] = Type.
+
+store_instruction:val_type[Insn] = Type <-
+   store_instruction:value[Insn] = Value,
+   operand:type[Value] = Type.
+
+
+// Constraints:
+//  (i)  The type of the <pointer> operand must be a pointer to 
+//       the first class type of the <value> operand. 
+//  (ii) The acquire and acq_rel orderings aren’t valid on store instructions.
+
+store_instruction(Insn) -> !instruction:to[Insn] = _.
+store_instruction(Insn) -> store_instruction:address[Insn] = _.
+store_instruction(Insn) -> store_instruction:value[Insn] = _.
+
+
+store_instruction:ptr_type[_] = Type
+ ->
+   pointer_type:firstclass(Type).
+
+
+store_instruction:ptr_type[Insn] = Type,
+   pointer_type:component[Type]  = Comp   
+ ->
+   store_instruction:val_type[Insn] = Comp.
+
+
+store_instruction:ordering[_] = Ord
+ ->
+   !ordering:acquire[] = Ord,
+   !ordering:acq_rel[] = Ord.

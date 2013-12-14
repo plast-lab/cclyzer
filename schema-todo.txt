@@ -54,7 +54,7 @@ SCHEMA TODO LIST // -*- mode: org -*-
 * TODO shufflevector-instruction
 * DONE sitofp-instruction
 * TODO srem-instruction
-* TODO store-instruction
+* DONE store-instruction
 * TODO sub-instruction
 * TODO switch-instruction
 * TODO trunc-instruction
