@@ -30,7 +30,7 @@ SCHEMA TODO LIST // -*- mode: org -*-
 * TODO gep-instruction
 * TODO global
 * DONE icmp-instruction
-* TODO indirectbr-instruction
+* DONE indirectbr-instruction
 * TODO insertelement-instruction
 * TODO insertvalue-instruction
 * DONE instruction
