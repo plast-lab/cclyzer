@@ -1,5 +1,34 @@
-// Frem Instruction
+// http://llvm.org/docs/LangRef.html#frem-instruction
 // keywords: arithmetic; binary; instruction
-FremInstruction(insn) -> Instruction(insn).
-FremInstruction:LeftOperand[insn] = left -> FremInstruction(insn), Operand(left).
-FremInstruction:RightOperand[insn] = right -> FremInstruction(insn), Operand(right).
+
+frem_instruction(Insn) -> instruction(Insn).
+
+frem_instruction:first_operand[Insn] = Left -> 
+   frem_instruction(Insn), operand(Left).
+
+frem_instruction:second_operand[Insn] = Right -> 
+   frem_instruction(Insn), operand(Right).
+
+// Constraints:
+// The two arguments to the ‘frem‘ instruction must be:
+//    (i)  floating point or 
+//    (ii) vector of floating point values. 
+// Both arguments must have identical types.
+
+frem_instruction(Insn) -> frem_instruction:first_operand[Insn] = _.
+frem_instruction(Insn) -> frem_instruction:second_operand[Insn] = _.
+
+frem_instruction(Insn),
+   instruction:type[Insn] = Type
+ -> 
+   fp_type(Type); vector_type:fp(Type).
+
+instruction:type[Insn] = Type,
+   frem_instruction:first_operand[Insn] = Left
+ ->
+   operand:type[Left] = Type.
+
+instruction:type[Insn] = Type,
+   frem_instruction:second_operand[Insn] = Right
+ ->
+   operand:type[Right] = Type.
