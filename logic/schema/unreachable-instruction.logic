@@ -1,0 +1,6 @@
+// llvm.org/docs/LangRef.html#unreachable-instruction
+// keywords: terminator; instruction
+
+unreachable_instruction(Insn) -> instruction(Insn).
+
+// The 'unreachable' instruction has no defined semantics.
