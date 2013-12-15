@@ -1,5 +1,49 @@
-// Sext Instruction
+// http://llvm.org/docs/LangRef.html#sext-to-instruction
 // keywords: conversion; unary; instruction
-SextInstruction(insn) -> Instruction(insn).
-SextInstruction:Operand[insn] = value -> SextInstruction(insn), Operand(value).
-SextInstruction:Type[insn] = type -> SextInstruction(insn), Type(type).
+
+sext_instruction(Insn) -> instruction(Insn).
+
+sext_instruction:from[Insn] = Value -> 
+   sext_instruction(Insn), operand(Value).
+
+sext_instruction:to_type[Insn] = Type -> 
+   sext_instruction(Insn), type(Type).
+
+sext_instruction:from_type[Insn] = Type <-
+   sext_instruction:from[Insn] = Value,
+   operand:type[Value] = Type.
+
+// Constraints:
+//
+// The ‘sext‘ instruction takes:
+//  (i)  a value to cast,
+//  (ii) and a type to cast it to
+//
+// Both arguments must be: 	
+//  (i)  integers or
+//  (ii) vectors of the same number of integers.
+
+sext_instruction(Insn) -> sext_instruction:from[Insn] = _.
+sext_instruction(Insn) -> sext_instruction:to_type[Insn] = _.
+
+
+sext_instruction:to_type[Insn] = Type
+ ->
+   instruction:type[Insn] = Type.
+
+
+sext_instruction:from_type[_] = Type
+ -> 
+   integer_type(Type); vector_type:integer(Type).
+
+
+sext_instruction:to_type[Insn] = Type
+ ->
+   integer_type(Type); vector_type:integer(Type).
+
+
+sext_instruction(Insn),
+   sext_instruction:from_type[Insn] = From,
+   sext_instruction:to_type[Insn] = To
+ -> 
+   vector:compatible(From, To).
