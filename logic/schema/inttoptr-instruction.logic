@@ -17,7 +17,8 @@ inttoptr_instruction:from_type[Insn] = Type <-
 //
 // The ‘inttoptr‘ instruction takes:
 //  (i)  a value to cast, which must be integer or vector of integer values,
-//  (ii) and a type to cast it to, which must be a pointer or a vector of pointers type. 
+//  (ii) and a type to cast it to, which must be a pointer or a vector of 
+//       pointers type. 
 //
 // If the value to be casted is a vector integer type:
 //  (i)  the type must be a vector pointer type, 

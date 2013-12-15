@@ -17,11 +17,13 @@ trunc_instruction:from_type[Insn] = Type <-
 //
 // The ‘trunc‘ instruction takes:
 //  (i)  a value to trunc,
-//  (ii) and a type to trunc it to
+//  (ii) and a type to trunc it to.
 //
-// Both arguments must be: 	
+// Both source and destination types must be:
 //  (i)  integers or
 //  (ii) vectors of the same number of integers.
+//
+// The source type must be larger than the destination type.
 
 trunc_instruction(Insn) -> trunc_instruction:from[Insn] = _.
 trunc_instruction(Insn) -> trunc_instruction:to_type[Insn] = _.
@@ -37,7 +39,7 @@ trunc_instruction:from_type[_] = Type
    integer_type(Type); vector_type:integer(Type).
 
 
-trunc_instruction:to_type[Insn] = Type
+trunc_instruction:to_type[_] = Type
  ->
    integer_type(Type); vector_type:integer(Type).
 

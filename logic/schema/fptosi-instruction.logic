@@ -16,7 +16,8 @@ fptosi_instruction:from_type[Insn] = Type <-
 // Constraints:
 //
 // The ‘fptosi‘ instruction takes:
-//  (i)  a value to cast, which must be a scalar or vector floating point value, 
+//  (i)  a value to cast, which must be a scalar or vector 
+//       floating point value, 
 //  (ii) and a type to cast it to, which must be an integer type. 
 //
 // If the value to be casted is a vector floating point type:

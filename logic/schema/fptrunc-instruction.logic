@@ -17,7 +17,9 @@ fptrunc_instruction:from_type[Insn] = Type <-
 //
 // The ‘fptrunc‘ instruction takes:
 //  (i)  a floating point value to cast,
-//  (ii) and a floating point type to cast it to
+//  (ii) and a floating point type to cast it to.
+//
+// The source type must be larger than the destination type.
 
 fptrunc_instruction(Insn) -> fptrunc_instruction:from[Insn] = _.
 fptrunc_instruction(Insn) -> fptrunc_instruction:to_type[Insn] = _.
@@ -33,6 +35,6 @@ fptrunc_instruction:from_type[_] = Type
    fp_type(Type).
 
 
-fptrunc_instruction:to_type[Insn] = Type
+fptrunc_instruction:to_type[_] = Type
  ->
    fp_type(Type).

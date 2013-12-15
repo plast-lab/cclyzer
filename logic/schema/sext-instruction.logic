@@ -17,11 +17,13 @@ sext_instruction:from_type[Insn] = Type <-
 //
 // The ‘sext‘ instruction takes:
 //  (i)  a value to cast,
-//  (ii) and a type to cast it to
+//  (ii) and a type to cast it to.
 //
-// Both arguments must be: 	
+// Both source and destination types must be:
 //  (i)  integers or
 //  (ii) vectors of the same number of integers.
+//
+// The source type must be smaller than the destination type.
 
 sext_instruction(Insn) -> sext_instruction:from[Insn] = _.
 sext_instruction(Insn) -> sext_instruction:to_type[Insn] = _.
@@ -37,7 +39,7 @@ sext_instruction:from_type[_] = Type
    integer_type(Type); vector_type:integer(Type).
 
 
-sext_instruction:to_type[Insn] = Type
+sext_instruction:to_type[_] = Type
  ->
    integer_type(Type); vector_type:integer(Type).
 

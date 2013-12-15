@@ -1,8 +1,6 @@
 // Instruction represented as entity
 
 instruction(Insn), instruction:id(Insn:Ref) -> string(Ref).
-instruction:unreachable(Insn) -> instruction(Insn).
-
 instruction:flag(Insn, Flag) -> instruction(Insn), string(Flag).
 
 // Apart from the instructions with 'void' type,

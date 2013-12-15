@@ -100,10 +100,6 @@ type:firstclass(Type) <-
    type(Type),
    !function_type(Type),
    !void_type[] = Type.
-
-non_aggregate:firstclass(Type) <-
-   type:firstclass(Type),
-   !aggregate_type(Type).
    
 pointer_type:firstclass(Type) <-
    pointer_type:component[Type] = Comp,
