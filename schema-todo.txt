@@ -57,7 +57,7 @@ SCHEMA TODO LIST // -*- mode: org -*-
 * DONE srem-instruction
 * DONE store-instruction
 * DONE sub-instruction
-* TODO switch-instruction
+* DONE switch-instruction
 * TODO trunc-instruction
 * DONE type
 * DONE udiv-instruction

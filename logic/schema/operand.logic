@@ -8,6 +8,16 @@ immediate:type[Imm] = Type -> immediate(Imm), type(Type).
 
 constant_expression(Imm) -> immediate(Imm).
 
+immediate:eq(Imm1, Imm2) <-
+   immediate:value(Imm1:Val1),
+   immediate:value(Imm2:Val2),
+   Val1 = Val2. // is this enough??
+
+immediate:ne(Imm1, Imm2) <-
+   immediate(Imm1),
+   immediate(Imm2),
+   !immediate:eq(Imm1, Imm2).
+
 // Operand as union of {variable, immediate}.
 operand(Operand) -> .
 
