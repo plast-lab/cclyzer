@@ -1,5 +1,38 @@
-// Fptrunc Instruction
+// http://llvm.org/docs/LangRef.html#fptrunc-to-instruction
 // keywords: conversion; unary; instruction
-FptruncInstruction(insn) -> Instruction(insn).
-FptruncInstruction:Operand[insn] = value -> FptruncInstruction(insn), Operand(value).
-FptruncInstruction:Type[insn] = type -> FptruncInstruction(insn), FloatingPointType(type).
+
+fptrunc_instruction(Insn) -> instruction(Insn).
+
+fptrunc_instruction:from[Insn] = Value -> 
+   fptrunc_instruction(Insn), operand(Value).
+
+fptrunc_instruction:to_type[Insn] = Type -> 
+   fptrunc_instruction(Insn), type(Type).
+
+fptrunc_instruction:from_type[Insn] = Type <-
+   ftrunc_instruction:from[Insn] = Value,
+   operand:type[Value] = Type.
+
+// Constraints:
+//
+// The ‘fptrunc‘ instruction takes:
+//  (i)  a floating point value to cast,
+//  (ii) and a floating point type to cast it to
+
+fptrunc_instruction(Insn) -> fptrunc_instruction:from[Insn] = _.
+fptrunc_instruction(Insn) -> fptrunc_instruction:to_type[Insn] = _.
+
+
+fptrunc_instruction:to_type[Insn] = Type
+ ->
+   instruction:type[Insn] = Type.
+
+
+fptrunc_instruction:from_type[_] = Type
+ -> 
+   fp_type(Type).
+
+
+fptrunc_instruction:to_type[Insn] = Type
+ ->
+   fp_type(Type).
