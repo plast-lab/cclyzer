@@ -1,5 +1,38 @@
-// Fpext Instruction
+// http://llvm.org/docs/LangRef.html#fpext-to-instruction
 // keywords: conversion; unary; instruction
-FpextInstruction(insn) -> Instruction(insn).
-FpextInstruction:Operand[insn] = value -> FpextInstruction(insn), Operand(value).
-FpextInstruction:Type[insn] = type -> FpextInstruction(insn), IntegerType(type).
+
+fpext_instruction(Insn) -> instruction(Insn).
+
+fpext_instruction:from[Insn] = Value -> 
+   fpext_instruction(Insn), operand(Value).
+
+fpext_instruction:to_type[Insn] = Type -> 
+   fpext_instruction(Insn), type(Type).
+
+fpext_instruction:from_type[Insn] = Type <-
+   fpext_instruction:from[Insn] = Value,
+   operand:type[Value] = Type.
+
+// Constraints:
+//
+// The ‘fpext‘ instruction takes:
+//  (i)  a floating point value to cast,
+//  (ii) and a floating point type to cast it to
+
+fpext_instruction(Insn) -> fpext_instruction:from[Insn] = _.
+fpext_instruction(Insn) -> fpext_instruction:to_type[Insn] = _.
+
+
+fpext_instruction:to_type[Insn] = Type
+ ->
+   instruction:type[Insn] = Type.
+
+
+fpext_instruction:from_type[_] = Type
+ -> 
+   fp_type(Type).
+
+
+fpext_instruction:to_type[Insn] = Type
+ ->
+   fp_type(Type).
