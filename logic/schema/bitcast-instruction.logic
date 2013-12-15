@@ -1,5 +1,49 @@
-// Bitcast Instruction
+// http://llvm.org/docs/LangRef.html#bitcast-to-instruction
 // keywords: conversion; unary; instruction
-BitcastInstruction(insn) -> Instruction(insn).
-BitcastInstruction:Operand[insn] = value -> BitcastInstruction(insn), Operand(value).
-BitcastInstruction:Type[insn] = type -> BitcastInstruction(insn), Type(type).
+
+bitcast_instruction(Insn) -> instruction(Insn).
+
+bitcast_instruction:from[Insn] = Value -> 
+   bitcast_instruction(Insn), operand(Value).
+
+bitcast_instruction:to_type[Insn] = Type -> 
+   bitcast_instruction(Insn), type(Type).
+
+bitcast_instruction:from_type[Insn] = Type <-
+   bitcast_instruction:from[Insn] = Value,
+   operand:type[Value] = Type.
+
+// Constraints:
+//
+// The ‘bitcast‘ instruction takes:
+//  (i)  a value to cast, which must be a non aggregate first class value,
+//  (ii) and a type to cast it to, which must also be a non aggregate first class type.
+//
+// If the value to be casted is of pointer type:
+//  (i)  the type must also be a pointer of the same size.
+
+bitcast_instruction(Insn) -> bitcast_instruction:from[Insn] = _.
+bitcast_instruction(Insn) -> bitcast_instruction:to_type[Insn] = _.
+
+
+bitcast_instruction:to_type[Insn] = Type
+ ->
+   instruction:type[Insn] = Type.
+
+
+bitcast_instruction:from_type[_] = Type
+ -> 
+   non_aggregate:firstclass(Type).
+
+
+bitcast_instruction:to_type[_] = Type
+ -> 
+   non_aggregate:firstclass(Type).
+
+
+bitcast_instruction(Insn),
+   bitcast_instruction:from_type[Insn] = From,
+   bitcast_instruction:to_type[Insn] = To,
+   pointer_type(From)
+ -> 
+   pointer_type(To).
