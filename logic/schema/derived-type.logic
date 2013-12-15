@@ -48,6 +48,10 @@ vector_type:boolean(Type) <-
    vector_type:component[Type] = Comp,
    boolean_type(Comp).
 
+vector_type:pointer(Type) <-
+   vector_type:component[Type] = Comp,
+   pointer_type(Comp).
+
 // Array Type
 
 array_type:component[Type] = Comp -> 
@@ -97,6 +101,10 @@ type:firstclass(Type) <-
    !function_type(Type),
    !void_type[] = Type.
 
+non_aggregate:firstclass(Type) <-
+   type:firstclass(Type),
+   !aggregate_type(Type).
+   
 pointer_type:firstclass(Type) <-
    pointer_type:component[Type] = Comp,
    type:firstclass(Comp).
