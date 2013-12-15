@@ -1,35 +1,49 @@
-// Trunc Instruction
+// http://llvm.org/docs/LangRef.html#trunc-to-instruction
 // keywords: conversion; unary; instruction
-TruncInstruction(insn) -> Instruction(insn).
-TruncInstruction:Operand[insn] = value -> TruncInstruction(insn), Operand(value).
-TruncInstruction:Type[insn] = type -> TruncInstruction(insn), Type(type).
+
+trunc_instruction(Insn) -> instruction(Insn).
+
+trunc_instruction:from[Insn] = Value -> 
+   trunc_instruction(Insn), operand(Value).
+
+trunc_instruction:to_type[Insn] = Type -> 
+   trunc_instruction(Insn), type(Type).
+
+trunc_instruction:from_type[Insn] = Type <-
+   trunc_instruction:from[Insn] = Value,
+   operand:type[Value] = Type.
 
 // Constraints:
-// Single operand must be either
-// (*) a variable of type
-//     (i) integer or (ii) integer vector
-// (*) an immediate of type integer
+//
+// The ‘trunc‘ instruction takes:
+//  (i)  a value to trunc,
+//  (ii) and a type to trunc it to
+//
+// Both arguments must be: 	
+//  (i)  integers or
+//  (ii) vectors of the same number of integers.
 
-   TruncInstruction:Operand[_] = value, 
-   Operand:byVariable[var] = value, 
-   Variable:Type[var] = type 
--> 
-   IntegerType(type); VectorType(type).
+trunc_instruction(Insn) -> trunc_instruction:from[Insn] = _.
+trunc_instruction(Insn) -> trunc_instruction:to_type[Insn] = _.
 
-   TruncInstruction:Operand[_] = left,
-   Operand:Type[left] = type, 
-   VectorType:Component[type] = comp
-->
-   IntegerType(comp).
 
-   TruncInstruction:Operand[_] = value, 
-   Operand:byImmediate[imm] = value, 
-   Immediate:Type[imm] = type 
--> 
-   IntegerType(type).
+trunc_instruction:to_type[Insn] = Type
+ ->
+   instruction:type[Insn] = Type.
 
-// TODO: see about Type above
-// TruncInstruction(insn), Instruction:Type[insn] = type -> IntegerType(type); VectorType(type).
-// TruncInstruction(insn), Instruction:Type[_] = type, VectorType:Component[type] = comp -> IntegerType(comp).
-TruncInstruction:Type[_] = type -> IntegerType(type); VectorType(type). 
-TruncInstruction:Type[_] = type, VectorType:Component[type] = comp -> IntegerType(comp).
+
+trunc_instruction:from_type[_] = Type
+ -> 
+   integer_type(Type); vector_type:integer(Type).
+
+
+trunc_instruction:to_type[Insn] = Type
+ ->
+   integer_type(Type); vector_type:integer(Type).
+
+
+trunc_instruction(Insn),
+   trunc_instruction:from_type[Insn] = From,
+   trunc_instruction:to_type[Insn] = To
+ -> 
+   vector:compatible(From, To).
