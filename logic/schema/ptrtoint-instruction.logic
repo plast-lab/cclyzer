@@ -1,5 +1,49 @@
-// Ptrtoint Instruction
+// http://llvm.org/docs/LangRef.html#ptrtoint-to-instruction
 // keywords: conversion; unary; instruction
-PtrtointInstruction(insn) -> Instruction(insn).
-PtrtointInstruction:Operand[insn] = value -> PtrtointInstruction(insn), Operand(value).
-PtrtointInstruction:Type[insn] = type -> PtrtointInstruction(insn), IntegerType(type).
+
+ptrtoint_instruction(Insn) -> instruction(Insn).
+
+ptrtoint_instruction:from[Insn] = Value -> 
+   ptrtoint_instruction(Insn), operand(Value).
+
+ptrtoint_instruction:to_type[Insn] = Type -> 
+   ptrtoint_instruction(Insn), type(Type).
+
+ptrtoint_instruction:from_type[Insn] = Type <-
+   ptrtoint_instruction:from[Insn] = Value,
+   operand:type[Value] = Type.
+
+// Constraints:
+//
+// The ‘ptrtoint‘ instruction takes:
+//  (i)  a value to cast, which must be pointer or vector of pointer values,
+//  (ii) and a type to cast it to, which must be an integer or a vector of integers type. 
+//
+// If the value to be casted is a vector pointer type:
+//  (i)  the type must be a vector integer type, 
+//  (ii) with the same number of elements.
+
+ptrtoint_instruction(Insn) -> ptrtoint_instruction:from[Insn] = _.
+ptrtoint_instruction(Insn) -> ptrtoint_instruction:to_type[Insn] = _.
+
+
+ptrtoint_instruction:to_type[Insn] = Type
+ ->
+   instruction:type[Insn] = Type.
+
+
+ptrtoint_instruction:from_type[_] = Type
+ -> 
+   pointer_type(Type); vector_type:pointer(Type).
+
+
+ptrtoint_instruction:to_type[_] = Type
+ -> 
+   integer_type(Type); vector_type:integer(Type).
+
+
+ptrtoint_instruction(Insn),
+   ptrtoint_instruction:from_type[Insn] = From,
+   ptrtoint_instruction:to_type[Insn] = To
+ -> 
+   vector:compatible(From, To).
