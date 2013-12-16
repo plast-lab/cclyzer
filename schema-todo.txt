@@ -49,7 +49,7 @@ SCHEMA TODO LIST // -*- mode: org -*-
 * DONE resume-instruction
 * DONE ret-instruction
 * DONE sdiv-instruction
-* TODO select-instruction
+* DONE select-instruction
 * DONE sext-instruction
 * DONE shl-instruction
 * TODO shufflevector-instruction

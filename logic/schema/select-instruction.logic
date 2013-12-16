@@ -1,50 +1,67 @@
-// select - instruction
-SelectInstruction(insn) -> Instruction(insn).
+// http://llvm.org/docs/LangRef.html#select-instruction
+// keywords: instruction
 
-SelectInstruction:condition[insn] = cond -> 
-   SelectInstruction(insn), Operand(cond).
+select_instruction(Insn) -> instruction(Insn).
 
-SelectInstruction:firstOperand[insn] = value -> 
-   SelectInstruction(insn), Operand(value).
+// The ‘select‘ instruction is used to choose one value 
+// based on a condition, without branching.
 
-SelectInstruction:secondOperand[insn] = value -> 
-   SelectInstruction(insn), Operand(value).
+select_instruction:condition[Insn] = Cond -> 
+   select_instruction(Insn), operand(Cond).
+
+select_instruction:first_operand[Insn] = Value -> 
+   select_instruction(Insn), operand(Value).
+
+select_instruction:second_operand[Insn] = Value -> 
+   select_instruction(Insn), operand(Value).
 
 
 // Constraints:
 //
-// Condition type must be either 
-// (i) i1, or 
-// (ii) vector of i1
+// The ‘select‘ instruction requires: 
+//  (i)  an ‘i1’ value or a vector of ‘i1’ values 
+//       indicating the condition, and 
+//  (ii) two values of the same first class type. 
+//
+// If the condition is a vector of i1, then: 
+//  (i)  the value arguments must be vectors of the same size, and 
+//  (ii) the selection is done element by element.
+//
+// If the condition is a scalar, the value arguments can still be 
+// vectors, in which case the entire vectors are selected, instead 
+// of individual elements.
 
-   Int1Type[] = i1_type,
-   SelectInstruction:condition[_] = cond,
-   Operand:type[cond] = type
--> 
-   type = i1_type ; 
-   VectorType:Component[type] = i1_type.
+select_instruction(Insn) -> select_instruction:condition[Insn] = _.
+select_instruction(Insn) -> select_instruction:first_operand[Insn] = _.
+select_instruction(Insn) -> select_instruction:second_operand[Insn] = _.
 
+select_instruction:condition[_] = Cond,
+   operand:type[Cond] = Type
+ ->
+   boolean_type(Type); vector_type:boolean(Type).
 
-// The two operands must be of the same
-// first-class type.
+// The two operands must be of the same first-class type.
 
-   SelectInstruction:firstOperand[insn] = op1,
-   SelectInstruction:secondOperand[insn] = op2,
-   Operand:type[op1] = type1,
-   Operand:type[op2] = type2
--> 
-   type1 = type2.
+select_instruction(Insn),
+   instruction:type[Insn] = Type
+ -> 
+   type:firstclass(Type).
 
+instruction:type[Insn] = Type,
+   select_instruction:first_operand[Insn] = Left
+ ->
+   operand:type[Left] = Type.
 
-// If the condition is of type vector. then
-// all operands must have the same size.
+instruction:type[Insn] = Type,
+   select_instruction:second_operand[Insn] = Right
+ ->
+   operand:type[Right] = Type.
 
-   SelectInstruction:firstOperand[insn] = op1,
-   SelectInstruction:secondOperand[insn] = op2,
-   SelectInstruction:condition[insn] = op3,
-   Operand:type[op1] = t1,
-   Operand:type[op2] = t2,
-   Operand:type[op2] = t3,
-   VectorType(t3)
--> 
-   VectorType:eq_size_3(t1, t2, t3).
+// If the condition is of type vector, then all operands 
+// must have the same size.
+
+instruction:type[Insn] = Type,
+   select_instruction:condition[Insn] = Cond,
+   operand:type[Cond] = CType
+ -> 
+   vector:compatible(CType, Type).
