@@ -1,6 +1,33 @@
-// VAArg Instruction
-VAArgInstruction(insn) -> Instruction(insn).
-VAArgInstruction:Operand[insn] = left -> VAArgInstruction(insn), Variable(left).
-VAArgInstruction:Type[insn] = right -> VAArgInstruction(insn), Type(right).
+// http://llvm.org/docs/LangRef.html#va-arg-instruction
+// keywords: unary; instruction
 
-VAArgInstruction:Operand[_] = var, Variable:Type[var] = type -> PointerType(type).
+va_arg_instruction(Insn) -> instruction(Insn).
+
+va_arg_instruction:va_list[Insn] = List -> 
+   va_arg_instruction(Insn), operand(Value).
+
+va_arg_instruction:arg_type[Insn] = Type -> 
+   va_arg_instruction(Insn), type(Type).
+
+va_arg_instruction:va_list_type[Insn] = Type <-
+   va_arg_instruction:va_list[Insn] = Value,
+   operand:type[List] = Type.
+
+// Constraints:
+//
+// The ‘va-arg‘ instruction takes:
+//  (i) a va_list* value and the type of the argument, 
+//  (ii) it returns a value of the specified argument type.
+
+va_arg_instruction(Insn) -> va_arg_instruction:va_list[Insn] = _.
+va_arg_instruction(Insn) -> va_arg_instruction:arg_type[Insn] = _.
+
+
+va_arg_instruction:va_list_type[_] = Type
+ ->
+   pointer_type(Type).
+
+
+va_arg_instruction:arg_type[_] = Type
+ ->
+   instruction:type[Insn] = Type.
