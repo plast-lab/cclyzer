@@ -28,7 +28,7 @@ SCHEMA TODO LIST // -*- mode: org -*-
 * DONE fsub-instruction
 * TODO function
 * TODO gep-instruction
-* TODO global
+* DONE global
 * DONE icmp-instruction
 * DONE indirectbr-instruction
 * TODO insertelement-instruction
