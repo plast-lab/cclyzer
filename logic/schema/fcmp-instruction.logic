@@ -1,36 +1,97 @@
-// Fcmp Instruction
+// http://llvm.org/docs/LangRef.html#fcmp-instruction
 // keywords: comparison; binary; instruction
-FcmpInstruction(insn) -> Instruction(insn).
-FcmpInstruction:Cond[insn] = cond -> FcmpInstruction(insn), FcmpCondition(cond).
-FcmpInstruction:LeftOperand[insn] = left -> FcmpInstruction(insn), Operand(left).
-FcmpInstruction:RightOperand[insn] = right -> FcmpInstruction(insn), Operand(right).
 
-// Condition Code and selectors for the 'Fcmp' Instruction, as enum
-FcmpCondition(cond), FcmpCondition:Value(cond:value) -> string(value).
-FcmpCondition:False[] = cond <- FcmpCondition(cond), FcmpCondition:Value(cond:"false").
-FcmpCondition:True[] = cond <- FcmpCondition(cond), FcmpCondition:Value(cond:"true").
-FcmpCondition:Oeq[] = cond <- FcmpCondition(cond), FcmpCondition:Value(cond:"oeq").
-FcmpCondition:Ogt[] = cond <- FcmpCondition(cond), FcmpCondition:Value(cond:"ogt").
-FcmpCondition:Oge[] = cond <- FcmpCondition(cond), FcmpCondition:Value(cond:"oge").
-FcmpCondition:Olt[] = cond <- FcmpCondition(cond), FcmpCondition:Value(cond:"ol").
-FcmpCondition:Ole[] = cond <- FcmpCondition(cond), FcmpCondition:Value(cond:"ole").
-FcmpCondition:One[] = cond <- FcmpCondition(cond), FcmpCondition:Value(cond:"one").
-FcmpCondition:Ord[] = cond <- FcmpCondition(cond), FcmpCondition:Value(cond:"ord").
-FcmpCondition:Ueq[] = cond <- FcmpCondition(cond), FcmpCondition:Value(cond:"ueq").
-FcmpCondition:Ugt[] = cond <- FcmpCondition(cond), FcmpCondition:Value(cond:"ugt").
-FcmpCondition:Uge[] = cond <- FcmpCondition(cond), FcmpCondition:Value(cond:"uge").
-FcmpCondition:Ult[] = cond <- FcmpCondition(cond), FcmpCondition:Value(cond:"ult").
-FcmpCondition:Ule[] = cond <- FcmpCondition(cond), FcmpCondition:Value(cond:"ule").
-FcmpCondition:Une[] = cond <- FcmpCondition(cond), FcmpCondition:Value(cond:"une").
-FcmpCondition:Uno[] = cond <- FcmpCondition(cond), FcmpCondition:Value(cond:"uno").
+fcmp_instruction(Insn) -> instruction(Insn).
 
-FcmpCondition(cond)
+fcmp_instruction:condition[Insn] = Cond -> 
+   fcmp_instruction(Insn), fcmp_condition(Cond).
+
+fcmp_instruction:first_operand[Insn] = Left -> 
+   fcmp_instruction(Insn), operand(Left).
+
+fcmp_instruction:second_operand[Insn] = Right -> 
+   fcmp_instruction(Insn), operand(Right).
+
+// Condition Code and selectors for the 'fcmp' Instruction, as enum
+
+fcmp_condition(Cond), fcmp_condition:id(Cond:Ref) -> string(Ref).
+
+fcmp_condition:false[] = Cond <- fcmp_condition:id(Cond:"false").
+fcmp_condition:true[]  = Cond <- fcmp_condition:id(Cond:"true").
+fcmp_condition:oeq[]   = Cond <- fcmp_condition:id(Cond:"oeq").
+fcmp_condition:ogt[]   = Cond <- fcmp_condition:id(Cond:"ogt").
+fcmp_condition:oge[]   = Cond <- fcmp_condition:id(Cond:"oge").
+fcmp_condition:olt[]   = Cond <- fcmp_condition:id(Cond:"ol").
+fcmp_condition:ole[]   = Cond <- fcmp_condition:id(Cond:"ole").
+fcmp_condition:one[]   = Cond <- fcmp_condition:id(Cond:"one").
+fcmp_condition:ord[]   = Cond <- fcmp_condition:id(Cond:"ord").
+fcmp_condition:ueq[]   = Cond <- fcmp_condition:id(Cond:"ueq").
+fcmp_condition:ugt[]   = Cond <- fcmp_condition:id(Cond:"ugt").
+fcmp_condition:uge[]   = Cond <- fcmp_condition:id(Cond:"uge").
+fcmp_condition:ult[]   = Cond <- fcmp_condition:id(Cond:"ult").
+fcmp_condition:ule[]   = Cond <- fcmp_condition:id(Cond:"ule").
+fcmp_condition:une[]   = Cond <- fcmp_condition:id(Cond:"une").
+fcmp_condition:uno[]   = Cond <- fcmp_condition:id(Cond:"uno").
+
+fcmp_condition(Cond)
 ->
-   FcmpCondition:False[] = cond; FcmpCondition:True[] = cond;
-   FcmpCondition:Oeq[] = cond; FcmpCondition:Ogt[] = cond;
-   FcmpCondition:Oge[] = cond; FcmpCondition:Olt[] = cond;
-   FcmpCondition:Ole[] = cond; FcmpCondition:One[] = cond;
-   FcmpCondition:Ord[] = cond; FcmpCondition:Ueq[] = cond;
-   FcmpCondition:Ugt[] = cond; FcmpCondition:Uge[] = cond;
-   FcmpCondition:Ult[] = cond; FcmpCondition:Ule[] = cond;
-   FcmpCondition:Une[] = cond; FcmpCondition:Uno[] = cond.
+   fcmp_condition:false[] = cond; fcmp_condition:true[] = cond;
+   fcmp_condition:oeq[]   = cond; fcmp_condition:ogt[]  = cond;
+   fcmp_condition:oge[]   = cond; fcmp_condition:olt[]  = cond;
+   fcmp_condition:ole[]   = cond; fcmp_condition:one[]  = cond;
+   fcmp_condition:ord[]   = cond; fcmp_condition:ueq[]  = cond;
+   fcmp_condition:ugt[]   = cond; fcmp_condition:uge[]  = cond;
+   fcmp_condition:ult[]   = cond; fcmp_condition:ule[]  = cond;
+   fcmp_condition:une[]   = cond; fcmp_condition:uno[]  = cond.
+
+// Abbreviations
+
+fcmp_instruction:from_type[Insn]  = Type <-
+   fcmp_instruction:first_operand[Insn]  = Operand,
+   operand:type[Operand] = Type.
+
+fcmp_instruction:to_type[Insn]  = Type <-
+   fcmp_instruction(Insn),
+   instruction:type[Insn] = Type.
+
+
+// Constraints:
+// The ‘fcmp‘ instruction returns:
+//  (i)  a boolean value or 
+//  (ii) a vector of boolean values 
+// based on comparison of its two:
+//  (i)  floating point or 
+//  (ii) floating point vector operands.
+// They must also be identical types.
+// If the operands are floating point vectors
+//  (i)  the result type is a vector of boolean 
+//       with the same number of elements.
+
+fcmp_instruction(Insn) -> fcmp_instruction:condition[Insn] = _.
+fcmp_instruction(Insn) -> fcmp_instruction:first_operand[Insn] = _.
+fcmp_instruction(Insn) -> fcmp_instruction:second_operand[Insn] = _.
+
+fcmp_instruction:to_type[_] = Type
+ -> 
+   boolean_type(Type); vector_type:boolean(Type).
+
+
+fcmp_instruction:from_type[_] = Type
+ -> 
+   fp_type(Type) ; vector_type:fp(Type).
+
+
+fcmp_instruction(Insn),
+   fcmp_instruction:first_operand[Insn]  = Left,
+   fcmp_instruction:second_operand[Insn] = Right, 
+   operand:type[Left]  = Type1,
+   operand:type[Right] = Type2
+ ->
+   Type1 = Type2.
+
+
+fcmp_instruction(Insn),
+   fcmp_instruction:from_type[Insn] = From,
+   fcmp_instruction:to_type[Insn] = To
+ -> 
+   vector:compatible(From, To).
