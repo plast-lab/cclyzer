@@ -4,14 +4,14 @@
 va_arg_instruction(Insn) -> instruction(Insn).
 
 va_arg_instruction:va_list[Insn] = List -> 
-   va_arg_instruction(Insn), operand(Value).
+   va_arg_instruction(Insn), operand(List).
 
 va_arg_instruction:arg_type[Insn] = Type -> 
    va_arg_instruction(Insn), type(Type).
 
 va_arg_instruction:va_list_type[Insn] = Type <-
    va_arg_instruction:va_list[Insn] = Value,
-   operand:type[List] = Type.
+   operand:type[Value] = Type.
 
 // Constraints:
 //
