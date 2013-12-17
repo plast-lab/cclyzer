@@ -20,7 +20,7 @@ extractelement_instruction:type[Insn] = Comp <-
 //
 // The 'extractelement' instruction takes two operands:
 //    (i)  the first operand is a value of vector type
-//    (ii) and the second operand is an index of i32-integer type
+//    (ii) and the second operand is an index of i32-integer type.
 //
 // The result is a scalar of the same type as the component type 
 // of the vector value.

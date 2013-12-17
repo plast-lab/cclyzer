@@ -31,7 +31,7 @@ SCHEMA TODO LIST // -*- mode: org -*-
 * DONE global
 * DONE icmp-instruction
 * DONE indirectbr-instruction
-* TODO insertelement-instruction
+* DONE insertelement-instruction
 * TODO insertvalue-instruction
 * DONE instruction
 * DONE inttoptr-instruction
