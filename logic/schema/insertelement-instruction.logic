@@ -4,13 +4,13 @@
 insertelement_instruction(Insn) -> instruction(Insn).
 
 insertelement_instruction:base[Insn] = Vector ->
-   instruction(Insn), operand(Vector).  
+   insertelement_instruction(Insn), operand(Vector).  
 
 insertelement_instruction:index[Insn] = Index ->
-   instruction(Insn), operand(Index).
+   insertelement_instruction(Insn), operand(Index).
 
 insertelement_instruction:value[Insn] = Value ->
-   instruction(Insn), operand(Value).  
+   insertelement_instruction(Insn), operand(Value).  
 
 // The type of the elements that the vector comprises.
 insertelement_instruction:type[Insn] = Comp <-

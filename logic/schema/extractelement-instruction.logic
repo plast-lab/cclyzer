@@ -4,10 +4,10 @@
 extractelement_instruction(Insn) -> instruction(Insn).
 
 extractelement_instruction:base[Insn] = Vector ->
-   instruction(Insn), operand(Vector).  
+   extractelement_instruction(Insn), operand(Vector).
 
 extractelement_instruction:index[Insn] = Index ->
-   instruction(Insn), operand(Index).
+   extractelement_instruction(Insn), operand(Index).
 
 // The type of the elements that the vector comprises.
 extractelement_instruction:type[Insn] = Comp <-
@@ -22,7 +22,7 @@ extractelement_instruction:type[Insn] = Comp <-
 //    (i)  the first operand is a value of vector type
 //    (ii) and the second operand is an index of i32-integer type.
 //
-// The result is a scalar of the same type as the component type 
+// The result is a scalar of the same type as the component type
 // of the vector value.
 
 extractelement_instruction(Insn) -> extractelement_instruction:base[Insn] = _.
@@ -41,5 +41,5 @@ extractelement_instruction:index[_] = Index,
 
 
 extractelement_instruction:type[Insn] = Type
- -> 
+ ->
    instruction:type[Insn] = Type.
