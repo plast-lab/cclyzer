@@ -1,5 +1,6 @@
 // http://llvm.org/docs/LangRef.html#icmp-instruction
 // keywords: comparison; binary; instruction
+
 icmp_instruction(Insn) -> instruction(Insn).
 
 icmp_instruction:condition[Insn] = Cond -> 

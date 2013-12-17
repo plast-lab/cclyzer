@@ -16,7 +16,7 @@ SCHEMA TODO LIST // -*- mode: org -*-
 * TODO extractelement-instruction
 * TODO extractvalue-instruction
 * DONE fadd-instruction
-* TODO fcmp-instruction
+* DONE fcmp-instruction
 * DONE fdiv-instruction
 * DONE fence-instruction
 * DONE fmul-instruction

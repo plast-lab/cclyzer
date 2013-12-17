@@ -35,14 +35,14 @@ fcmp_condition:uno[]   = Cond <- fcmp_condition:id(Cond:"uno").
 
 fcmp_condition(Cond)
 ->
-   fcmp_condition:false[] = cond; fcmp_condition:true[] = cond;
-   fcmp_condition:oeq[]   = cond; fcmp_condition:ogt[]  = cond;
-   fcmp_condition:oge[]   = cond; fcmp_condition:olt[]  = cond;
-   fcmp_condition:ole[]   = cond; fcmp_condition:one[]  = cond;
-   fcmp_condition:ord[]   = cond; fcmp_condition:ueq[]  = cond;
-   fcmp_condition:ugt[]   = cond; fcmp_condition:uge[]  = cond;
-   fcmp_condition:ult[]   = cond; fcmp_condition:ule[]  = cond;
-   fcmp_condition:une[]   = cond; fcmp_condition:uno[]  = cond.
+   fcmp_condition:false[] = Cond; fcmp_condition:true[] = Cond;
+   fcmp_condition:oeq[]   = Cond; fcmp_condition:ogt[]  = Cond;
+   fcmp_condition:oge[]   = Cond; fcmp_condition:olt[]  = Cond;
+   fcmp_condition:ole[]   = Cond; fcmp_condition:one[]  = Cond;
+   fcmp_condition:ord[]   = Cond; fcmp_condition:ueq[]  = Cond;
+   fcmp_condition:ugt[]   = Cond; fcmp_condition:uge[]  = Cond;
+   fcmp_condition:ult[]   = Cond; fcmp_condition:ule[]  = Cond;
+   fcmp_condition:une[]   = Cond; fcmp_condition:uno[]  = Cond.
 
 // Abbreviations
 
@@ -63,9 +63,10 @@ fcmp_instruction:to_type[Insn]  = Type <-
 //  (i)  floating point or 
 //  (ii) floating point vector operands.
 // They must also be identical types.
+// 
 // If the operands are floating point vectors
-//  (i)  the result type is a vector of boolean 
-//       with the same number of elements.
+//  (i)  the result type is a boolean vector
+//  (ii) with the same number of elements.
 
 fcmp_instruction(Insn) -> fcmp_instruction:condition[Insn] = _.
 fcmp_instruction(Insn) -> fcmp_instruction:first_operand[Insn] = _.
