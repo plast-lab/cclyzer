@@ -1,9 +1,39 @@
-// ExtractElement Instruction
+// http://llvm.org/docs/LangRef.html#extractelement-instruction
 // keywords: vector; instruction
-ExtractElementInstruction(insn) -> Instruction(insn).
 
-ExtractElementInstruction:vector[insn] = left -> 
-   ExtractElementInstruction(insn), Operand(left).
+extractelement_instruction(Insn) -> instruction(Insn).
 
-ExtractElementInstruction:index[insn] = right -> 
-   ExtractElementInstruction(insn), Operand(right).
+extractelement_instruction:first_operand[Insn] = Value ->
+   instruction(Insn), operand(Value).  
+
+extractelement_instruction:second_operand[Insn] = Index ->
+   instruction(Insn), operand(Index).
+
+// Constraints:
+// The 'extractelement' instruction takes two operands:
+//    (i)  the first operand is a value of vector type
+//    (ii) and the second operand is an index of i32-integer type
+// The result is a scalar of the same type as the component type of the vector value.
+
+extractelement_instruction(Insn) -> extractelement_instruction:first_operand[Insn] = _.
+extractelement_instruction(Insn) -> extractelement_instruction:second_operand[Insn] = _.
+
+extractelement_instruction:first_operand[_] = Value,
+   operand:type[Value] = Type
+ ->
+   vector_type(Type).
+
+
+extractelement_instruction:second_operand[_] = Index,
+   operand:type[Index] = Type
+ ->
+   int32_type[] = Type.
+
+
+extractelement_instruction(Insn),
+   extractelement_instruction:first_operand[Insn] = Value,
+   operand:type[Value] = Type1,
+   vector_type:component[Type1] = Comp,
+   instruction:type[Insn] = Type2
+ -> 
+   Comp = Type2.
