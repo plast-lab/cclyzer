@@ -63,6 +63,6 @@ SCHEMA TODO LIST // -*- mode: org -*-
 * DONE udiv-instruction
 * DONE uitofp-instruction
 * DONE urem-instruction
-* TODO va-arg-instruction
+* DONE va-arg-instruction
 * DONE xor-instruction
 * DONE zext-instruction
