@@ -3,37 +3,43 @@
 
 extractelement_instruction(Insn) -> instruction(Insn).
 
-extractelement_instruction:first_operand[Insn] = Value ->
-   instruction(Insn), operand(Value).  
+extractelement_instruction:base[Insn] = Vector ->
+   instruction(Insn), operand(Vector).  
 
-extractelement_instruction:second_operand[Insn] = Index ->
+extractelement_instruction:index[Insn] = Index ->
    instruction(Insn), operand(Index).
 
+// The type of the elements that the vector comprises.
+extractelement_instruction:type[Insn] = Comp <-
+   extractelement_instruction:base[Insn] = Vector,
+   operand:type[Vector] = Type,
+   vector_type:component[Type] = Comp.
+
+
 // Constraints:
+//
 // The 'extractelement' instruction takes two operands:
 //    (i)  the first operand is a value of vector type
 //    (ii) and the second operand is an index of i32-integer type
-// The result is a scalar of the same type as the component type of the vector value.
+//
+// The result is a scalar of the same type as the component type 
+// of the vector value.
 
-extractelement_instruction(Insn) -> extractelement_instruction:first_operand[Insn] = _.
-extractelement_instruction(Insn) -> extractelement_instruction:second_operand[Insn] = _.
+extractelement_instruction(Insn) -> extractelement_instruction:base[Insn] = _.
+extractelement_instruction(Insn) -> extractelement_instruction:index[Insn] = _.
 
-extractelement_instruction:first_operand[_] = Value,
-   operand:type[Value] = Type
+extractelement_instruction:base[_] = Vector,
+   operand:type[Vector] = Type
  ->
    vector_type(Type).
 
 
-extractelement_instruction:second_operand[_] = Index,
+extractelement_instruction:index[_] = Index,
    operand:type[Index] = Type
  ->
    int32_type[] = Type.
 
 
-extractelement_instruction(Insn),
-   extractelement_instruction:first_operand[Insn] = Value,
-   operand:type[Value] = Type1,
-   vector_type:component[Type1] = Comp,
-   instruction:type[Insn] = Type2
+extractelement_instruction:type[Insn] = Type
  -> 
-   Comp = Type2.
+   instruction:type[Insn] = Type.

@@ -13,7 +13,7 @@ SCHEMA TODO LIST // -*- mode: org -*-
 * TODO call-instruction
 * TODO cmpxchg-instruction
 * DONE derived-type
-* TODO extractelement-instruction
+* DONE extractelement-instruction
 * TODO extractvalue-instruction
 * DONE fadd-instruction
 * DONE fcmp-instruction
