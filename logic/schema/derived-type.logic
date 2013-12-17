@@ -40,6 +40,10 @@ vector_type:integer(Type) <-
    vector_type:component[Type] = Comp,
    integer_type(Comp).
 
+vector_type:i32(Type) <-
+   vector_type:component[Type] = Comp,
+   int32_type[] = Comp.
+
 vector_type:fp(Type) <-
    vector_type:component[Type] = Comp,
    fp_type(Comp).

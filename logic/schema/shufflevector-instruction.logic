@@ -13,36 +13,31 @@ shufflevector_instruction:mask[Insn] = Mask ->
    shufflevector_instruction(Insn), immediate(Mask).
 
 // The type of the two input vectors.
+// !! Functional dependency violation encodes (1.i) constraint !!
 shufflevector_instruction:input_type[Insn] = Type <-
    shufflevector_instruction:first_vector[Insn] = Vector,
    operand:type[Vector] = Type.
 
-// The type of the elements of the two input vectors.
-shufflevector_instruction:input_comp[Insn] = Comp <-
-   shufflevector_instruction:input_type[Insn] = Type,
-   vector_type:component[Type] = Comp.
+shufflevector_instruction:input_type[Insn] = Type <-
+   shufflevector_instruction:second_vector[Insn] = Vector,
+   operand:type[Vector] = Type.
 
 // The type of the shuffle mask.
 shufflevector_instruction:mask_type[Insn] = Type <-
    shufflevector_instruction:mask[Insn] = Mask,
-   operand:type[Mask] = Type.
-
-// The type of the elements of the shuffle mask.
-shufflevector_instruction:mask_comp[Insn] = Comp <-
-   shufflevector_instruction:mask_type[Insn] = Type,
-   vector_type:component[Type] = Comp.
+   immediate:type[Mask] = Type.
 
 
 // Constraints:
 //
-// The 'shufflevector' instruction takes three arguments:
-//  (i)  two vectors of the same type and
+// 1. The 'shufflevector' instruction takes three arguments:
+//  (i)  two vectors of the same type, and
 //  (ii) a shuffle mask argument.
-// The shuffle mask is required to be:
+// 2. The shuffle mask is required to be:
 //  (i) a constant vector
 //  (ii) with i32-integer component type.
 //
-// The result is a vector
+// 3. The result is a vector
 //  (i)  whose length is the same as the shuffle mask and
 //  (ii) whose element type is the same as the element type of the first two operands.
 
@@ -50,43 +45,27 @@ shufflevector_instruction(Insn) -> shufflevector_instruction:first_vector[Insn] 
 shufflevector_instruction(Insn) -> shufflevector_instruction:second_vector[Insn] = _.
 shufflevector_instruction(Insn) -> shufflevector_instruction:mask[Insn] = _.
 
-shufflevector_instruction:input_type[_] = Type 
+shufflevector_instruction:input_type[_] = Input
  ->
-   vector_type(Type).
+   vector_type(Input).
 
 
-shufflevector_instruction(Insn),
-   shufflevector_instruction:input_type[Insn] = Type1,  
-   shufflevector_instruction:second_vector[Insn] = Vector,
-   operand:type[Vector] = Type2
+shufflevector_instruction:mask_type[_] = Mask
  ->
-   Type1 = Type2.
+   vector_type:i32(Mask).
+
+// The type of the elements of the two input and one output vectors.
+// !! Functional dependency violation encodes (3.ii) constraint !!
+shufflevector_instruction:element_type[Insn] = Comp <-
+   shufflevector_instruction:input_type[Insn] = Type,
+   vector_type:component[Type] = Comp.
+
+shufflevector_instruction:element_type[Insn] = Comp <-
+   instruction:type[Insn] = Type,
+   vector_type:component[Type] = Comp.
 
 
-shufflevector_instruction:mask_type[_] = Type
+instruction:type[Insn] = Result,
+   shufflevector_instruction:mask_type[Insn] = Mask
  ->
-   vector_type(Type).
-
-
-shufflevector_instruction:mask_comp[_] = Type
- ->
-    Type = int32_type[].
-
-
-shufflevector:instruction(Insn),
-   instruction:type[Insn] = Type
- ->
-   vector_type(Type).
-
-
-instruction:type[Insn] = Type1,
-   shufflevector_instruction:mask_type[Insn] = Type2
- ->
-   vector:compatible(Type1, Type2).
-   
-
-instruction:type[Insn] = Type,
-   vector_type:component[Type] = Comp1,
-   shufflevector_instruction:input_comp[Insn] = Comp2
- ->
-   Comp1 = Comp2.
+   vector:compatible(Result, Mask).
