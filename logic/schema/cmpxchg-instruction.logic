@@ -1,45 +1,74 @@
-// AtomicCmpXchg Instruction
+// http://llvm.org/docs/LangRef.html#cmpxchg-instruction
 // keywords: atomic; memory; instruction
-AtomicCmpXchgInstruction(insn) -> Instruction(insn).
 
-AtomicCmpXchgInstruction:address[insn] = ptr -> 
-   AtomicCmpXchgInstruction(insn), Operand(ptr).
+cmpxchg_instruction(Insn) -> instruction(Insn).
 
-AtomicCmpXchgInstruction:cmp[insn] = cmp -> 
-   AtomicCmpXchgInstruction(insn), Operand(cmp).
+cmpxchg_instruction:ordering[Insn] = Ord -> 
+   cmpxchg_instruction(Insn), ordering(Ord).
 
-AtomicCmpXchgInstruction:new[insn] = new -> 
-   AtomicCmpXchgInstruction(insn), Operand(new).
+// If the cmpxchg is marked as volatile, then the optimizer is not allowed 
+// to modify the number or order of execution of this cmpxchg with other 
+// volatile operations.
 
-AtomicCmpXchgInstruction:ordering[insn] = ord -> 
-   AtomicCmpXchgInstruction(insn), Ordering(ord).
+cmpxchg_instruction:volatile(Insn) ->
+   cmpxchg_instruction(Insn).
 
+// There are three arguments to the cmpxchg instruction: 
+//  (i)   an address to operate on, 
+//  (ii)  a value to compare to the value currently be at 
+//        that address, and
+//  (iii) a new value to place at that address if the compared 
+//        values are equal.
+
+cmpxchg_instruction:address[Insn] = Ptr -> 
+   cmpxchg_instruction(Insn), operand(Ptr).
+
+cmpxchg_instruction:cmp[Insn] = Cmp -> 
+   cmpxchg_instruction(Insn), operand(Cmp).
+
+cmpxchg_instruction:new[Insn] = New -> 
+   cmpxchg_instruction(Insn), operand(New).
+
+// Auxiliary
+cmpxchg_instruction:type[Insn] = Type -> 
+   cmpxchg_instruction(Insn), type(Type).
 
 // Constraints:
+//  (i)   the type of ‘<cmp>’ must be an integer type
+//  (ii)  ‘<cmp>’ and ‘<new>’ must have the same type, and 
+//  (iii) the type of ‘<pointer>’ must be a pointer to that type  
+//  (iv)  the original value at the location is returned.
 
-// AtomicCmpXchgInstruction(insn), 
-// Instruction:Type[insn] = type 
-// -> 
-// IntegerType(type).
+cmpxchg_instruction(Insn) -> cmpxchg_instruction:ordering[Insn] = _.
+cmpxchg_instruction(Insn) -> cmpxchg_instruction:address[Insn] = _.
+cmpxchg_instruction(Insn) -> cmpxchg_instruction:cmp[Insn] = _.
+cmpxchg_instruction(Insn) -> cmpxchg_instruction:new[Insn] = _.
 
-AtomicCmpXchgInstruction:address[_] = ptr, 
-   Operand:type[ptr] = type 
--> 
-   PointerType(type).
+// !! We will encode the above constraints as 
+// functional violations to our auxiliary 
+// predicate !!
 
-AtomicCmpXchgInstruction:address[_] = ptr, 
-   Operand:type[ptr] = type,
-   PointerType:Component[type] = comp
--> 
-   IntegerType(comp).
+cmpxchg_instruction:type[Insn] = Type <-
+   cmpxchg_instruction:cmp[Insn] = Operand, 
+   operand:type[Operand] = Type.
 
-AtomicCmpXchgInstruction:cmp[insn] = cmp, 
-   AtomicCmpXchgInstruction:new[insn] = new, 
-   AtomicCmpXchgInstruction:address[insn] = ptr, 
-   Operand:Type[cmp] = cmptype,
-   Operand:Type[new] = newtype,
-   Operand:Type[ptr] = ptrtype,
-   PointerType:Component[ptrtype] = type
--> 
-   type = newtype,
-   type = cmptype.
+cmpxchg_instruction:type[Insn] = Type <-
+   cmpxchg_instruction:new[Insn] = Operand, 
+   operand:type[Operand] = Type.
+
+cmpxchg_instruction:type[Insn] = Comp <-
+   cmpxchg_instruction:address[Insn] = Ptr, 
+   operand:type[Ptr] = Type,
+   pointer_type:component[Type] = Comp.
+
+cmpxchg_instruction:type[Insn] = Type <-
+   cmpxchg_instruction(Insn),
+   instruction:to[Insn] = Type.
+
+cmpxchg_instruction:type[_] = Type
+ -> 
+   integer_type(Type).
+
+cmpxchg_instruction:address[_] = Ptr
+ -> 
+   operand:pointer(Ptr).

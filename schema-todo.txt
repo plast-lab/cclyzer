@@ -11,7 +11,7 @@ SCHEMA TODO LIST // -*- mode: org -*-
 * DONE br-instruction
 * DONE calling-convention
 * TODO call-instruction
-* TODO cmpxchg-instruction
+* DONE cmpxchg-instruction
 * DONE derived-type
 * DONE extractelement-instruction
 * TODO extractvalue-instruction

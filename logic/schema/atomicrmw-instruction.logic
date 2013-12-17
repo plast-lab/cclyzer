@@ -21,8 +21,8 @@ atomicrmw_instruction:volatile(Insn) ->
 atomicrmw_instruction:operation[Insn] = Op -> 
    atomicrmw_instruction(Insn), operation(Op).
 
-atomicrmw_instruction:address[Insn] = Pointer -> 
-   atomicrmw_instruction(Insn), operand(Pointer).
+atomicrmw_instruction:address[Insn] = Ptr -> 
+   atomicrmw_instruction(Insn), operand(Ptr).
 
 atomicrmw_instruction:value[Insn] = Value -> 
    atomicrmw_instruction(Insn), operand(Value).
@@ -58,10 +58,10 @@ operation(Op)
 // (i)  The type of ‘<value>’ must be an integer type.
 // (ii) The type of the ‘<pointer>‘ operand must be a pointer to that type. 
 
-atomicrmw_instruction[Insn] -> atomicrmw_instruction:ordering[Insn] = _.
-atomicrmw_instruction[Insn] -> atomicrmw_instruction:operation[Insn] = _.
-atomicrmw_instruction[Insn] -> atomicrmw_instruction:address[Insn] = _.
-atomicrmw_instruction[Insn] -> atomicrmw_instruction:value[Insn] = _.
+atomicrmw_instruction(Insn) -> atomicrmw_instruction:ordering[Insn] = _.
+atomicrmw_instruction(Insn) -> atomicrmw_instruction:operation[Insn] = _.
+atomicrmw_instruction(Insn) -> atomicrmw_instruction:address[Insn] = _.
+atomicrmw_instruction(Insn) -> atomicrmw_instruction:value[Insn] = _.
 
 
 atomicrmw_instruction:value[_] = Value, 
@@ -70,16 +70,16 @@ atomicrmw_instruction:value[_] = Value,
    integer_type(Type).
 
 
-atomicrmw_instruction:address[_] = Pointer,
-   operand:type[Pointer] = Type
+atomicrmw_instruction:address[_] = Ptr,
+   operand:type[Ptr] = Type
  -> 
    pointer_type(Type).
 
 
 atomicrmw_instruction(Insn),
-   atomicrmw_instruction:address[Insn] = Pointer,
+   atomicrmw_instruction:address[Insn] = Ptr,
    atomicrmw_instruction:value[Insn] = Value,
-   operand:type[Pointer] = Type,
+   operand:type[Ptr] = Type,
    pointer_type:component[Type] = Comp
  ->
    operand:type[Value] = Comp.

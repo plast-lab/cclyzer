@@ -58,5 +58,9 @@ variable:pointer(Var) <-
    variable:type[Var] = Type,
    pointer_type(Type).
 
+operand:pointer(Operand) <-
+   operand:type[Operand] = Type,
+   pointer_type(Type).
+
 // Constraint: immediates cannot be labels
 immediate:type[_] = type -> label_type[] != type.
