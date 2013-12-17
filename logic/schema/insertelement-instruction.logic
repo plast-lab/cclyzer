@@ -1,12 +1,56 @@
-// InsertElement Instruction
+// http://llvm.org/docs/LangRef.html#insertelement-instruction
 // keywords: vector; instruction
-InsertElementInstruction(insn) -> Instruction(insn).
 
-InsertElementInstruction:vector[insn] = vec -> 
-   InsertElementInstruction(insn), Operand(vec).
+insertelement_instruction(Insn) -> instruction(Insn).
 
-InsertElementInstruction:value[insn] = value -> 
-   InsertElementInstruction(insn), Operand(value).
+insertelement_instruction:vector[Insn] = Vector ->
+   insertelement_instruction(Insn), operand(Vector).
 
-InsertElementInstruction:index[insn] = idx -> 
-   InsertElementInstruction(insn), Operand(idx).
+insertelement_instruction:value[Insn] = Value ->
+   insertelement_instruction(Insn), operand(Value).
+
+insertelement_instruction:index[Insn] = Index ->
+   insertelement_instruction[Insn], operand(Index).
+
+insertelement_instruction:vector_type[Insn] = Type <-
+   insertelement_instruction:vector[Insn] = Operand,
+   operand:type[Operand] = Type.
+
+// Constraints:
+//
+// The 'insertelement' instruction takes three operands:
+//    (i)   a value of vector type,
+//    (ii)  a scalar value whose type must equal 
+//    	    the component type of the first operand and
+//    (iii) an index value of i32-integer type.  
+//
+// The result is a vector of the same type as the first operand.
+
+insertelement_instruction(Insn) -> insertelement_instruction:vector[Insn] = _.
+insertelement_instruction(Insn) -> insertelement_instruction:value[Insn]  = _.
+insertelement_instruction(Insn) -> insertelement_instruction:index[Insn]  = _.
+
+insertelement_instruction:vector_type[_] = Type
+ ->
+   vector_type(Type).
+
+
+insertelement_instruction:value[Insn] = Value,
+   operand:type[Value] = Type1,
+   insertelement_instruction:vector_type[Insn] = Type,
+   vector_type:component[Type] = Comp,
+ ->
+   Type1 = Comp.
+
+
+insertelement_instruction:index[Insn] = Index,
+   operand:type[Index] = Type
+ ->
+   Type = int32_type[].
+
+
+insertelement_instruction(Insn),
+   instruction:type[Insn] = Type1,
+   insertelement_instruction:vector_type[Insn] = Type2
+ ->
+   Type1 = Type2.
