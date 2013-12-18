@@ -1,27 +1,90 @@
-// Function
-Function(func), Function:id(func:id) -> string(id).
+// http://llvm.org/docs/LangRef.html#functions
 
-//Function:Name[func] = name -> Function(func), string(name).
-Function:Type[func] = type -> Function(func), FunctionType(type).
-Function:FormalArg[func, index] = arg -> Function(func), int[64](index), Variable(arg).
-Function:LinkageType[func] = link -> Function(func), LinkageType(link).
-Function:Visibility[func] = v -> Function(func), Visibility(v).
-Function:CallingConvention[func] = cc ->  Function(func), CallingConvention(cc).
-Function:Section[func] = sect -> Function(func), string(sect).
-Function:Align[func] = alignment -> Function(func), int[64](alignment).
-Function:Unnamed_Addr(func) -> Function(func).
-Function:GC[func] = gc -> Function(func), string(gc).
-Function:RetAttribute[func] = retAttr -> Function(func), Attribute(retAttr).
-Function:FnAttributes(func, fnAttr) -> Function(func), Attribute(fnAttr).
+function(Func), function:id(Func:Ref) -> string(Ref).
 
-Function:nArgs[func] = total -> Function(func), int[64](total).
-Function:nArgs[func] = total
-<- 
-   Function:Type[func] = type,
-   FunctionType:nArgs[type] = total.
+// Optional function attributes
 
-Function:Type[func] = type, 
-FunctionType:Arg[type, index] = argType,
-Function:FormalArg[func, index] = arg
-->
-   Variable:Type[arg] = argType.
+function:unnamed_addr(Func) -> function(Func).
+
+function:linkage_type[Func] = Link -> 
+   function(Func), linkage_type(Link).
+
+function:visibility[Func] = Vis -> 
+   function(Func), visibility(Vis).
+
+function:calling_convention[Func] = Con -> 
+   function(Func), calling_convention(Conv).
+
+function:section[Func] = Sect -> 
+   function(Func), string(Sect).
+
+function:alignment[Func] = Alignment -> 
+   function(Func), int[64](Alignment).
+
+function:attributes(Func, Attr) -> 
+   function(Func), attribute(Attr).
+
+function:gc[Func] = CollectorName -> 
+   function(Func), string(CollectorName).
+
+function:name[Func] = Name -> 
+   function(Func), string(Name).
+
+function:type[Func] = Type -> 
+   function(Func), function_type(Type).
+
+// Number of parameters
+function:nparams[Func] = Total -> function(Func), int[64](Total).
+function:nparams[Func] = Total <- 
+   function:type[Func] = Type,
+   function_type:nparams[Type] = Total.
+
+// Formal parameters
+function:param[Func, Index] = Param -> 
+   function(Func), int[64](Index), variable(Param).
+
+// [Parameter Attributes]
+//
+// The return type and each parameter of a function type may have 
+// a set of parameter attributes associated with them. 
+//
+// Parameter attributes are used to communicate additional information 
+// about the result or parameters of a function. 
+//
+// Parameter attributes are considered to be part of the function, 
+// not of the function type, so functions with different parameter 
+// attributes can have the same function type.
+//
+// Parameter attributes are simple keywords that follow the type specified. 
+// If multiple parameter attributes are needed, they are space separated.
+
+function:return_attribute(Func, Attr) -> 
+   function(Func), attribute(Attr).
+
+function:param_attribute(Func, Index, Atr) -> 
+   function(Func), int[64](Index), attribute(Attr).
+
+// Constraints:
+//
+// Number and types of parameters must match those declared
+// in the function type.
+//
+// The return type must also be compatible for the function
+// to be well-formed, but this is checked in ret-instruction 
+// logic.
+
+function:type[Func] = Type, 
+   function_type:param[Type, Index] = ParamType,
+   function:param[Func, Index] = Param
+ ->
+   variable:type[Param] = ParamType.
+
+function:type[Func] = Type, 
+   function_type:param[Type, Index] = _
+ ->
+   function:param[Func, Index] = _.
+
+function:type[Func] = Type, 
+   function:param[Func, Index] = _.
+ ->
+   function_type:param[Type, Index] = _

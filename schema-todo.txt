@@ -26,7 +26,7 @@ SCHEMA TODO LIST // -*- mode: org -*-
 * DONE fptrunc-instruction
 * DONE frem-instruction
 * DONE fsub-instruction
-* TODO function
+* DONE function
 * TODO gep-instruction
 * DONE global
 * DONE icmp-instruction

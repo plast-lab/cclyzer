@@ -14,10 +14,10 @@ opaque_struct_type(Type) -> struct_type(Type).
 function_type:return[Type] = Ret -> 
    function_type(Type), type(Ret).
 
-function_type:arg[Type, Index] = Arg -> 
-   function_type(Type), int[64](Index), type(Arg).
+function_type:params[Type, Index] = Param -> 
+   function_type(Type), int[64](Index), type(Param).
 
-function_type:nargs[Type] = Total -> 
+function_type:nparams[Type] = Total -> 
    function_type(Type), int[64](Total).
 
 // Pointer Type
