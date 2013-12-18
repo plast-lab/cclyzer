@@ -14,7 +14,7 @@ SCHEMA TODO LIST // -*- mode: org -*-
 * DONE cmpxchg-instruction
 * DONE derived-type
 * DONE extractelement-instruction
-* TODO extractvalue-instruction
+* DONE extractvalue-instruction
 * DONE fadd-instruction
 * DONE fcmp-instruction
 * DONE fdiv-instruction

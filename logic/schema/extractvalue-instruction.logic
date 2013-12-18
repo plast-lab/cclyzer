@@ -1,18 +1,82 @@
-// extractvalue - instruction
+// http://llvm.org/docs/LangRef.html#extractvalue-instruction
 // keywords: aggregate; instruction
-ExtractValueInstruction(insn) -> Instruction(insn).
 
-ExtractValueInstruction:Operand[insn] = value -> 
-   ExtractValueInstruction(insn), Operand(value).
+extractvalue_instruction(Insn) -> instruction(Insn).
 
-ExtractValueInstruction:Indices[insn, index] = idx -> 
-   ExtractValueInstruction(insn), int[64](index), Immediate(idx).
+extractvalue_instruction:base[Insn] = Aggregate ->
+   extractvalue_instruction(Insn), operand(Aggregate).
 
-ExtractValueInstruction:nIndices[insn] = total -> 
-   ExtractValueInstruction(insn), int[64](total).
+extractvalue_instruction:nindices[Insn] = Total -> 
+   extractvalue_instruction(Insn), int[64](Total).
 
-// Constraints
-ExtractValueInstruction:Operand[_] = value, 
-Operand:type[value] = type
-->
-   AggregateType(type).
+extractvalue_instruction:index[Insn, Index] = Idx -> 
+   extractvalue_instruction(Insn), int[64](Index), immediate(Idx).
+
+// [Determining Fields]
+//
+// !! In order to determine the exact field of the aggregate type
+// which we're trying to extract, we must be able to compute the
+// exact integer values that would be produced if we were to
+// evaluate the indexing constants, so that we can match against
+// the fields of the base argument !!
+//
+// TODO: Such a thing is not yet possible!
+// However, we assume a map of [constant -> int] exists,
+// so that we can introduce field-sensitivity in the future.
+
+constant:toInt[Constant] = Value ->
+   immediate(Constant), int[64](Value).
+
+// The resulting type for each dereference.
+extractvalue_instruction:interm_type[Insn, 0] = Type <-
+   extractvalue_instruction:base[Insn] = Aggregate,
+   operand:type[Aggregate] = Type.
+
+extractvalue_instruction:interm_type[Insn, Index + 1] = Comp <-
+   extractvalue_instruction:interm_type[Insn, Index] = Type,
+   extractvalue_instruction:index[Insn, Index] = Constant,
+   constant:toInt[Constant] = Value, // Note: read above comments
+   struct_type:field[Type, Value] = Comp.
+
+extractvalue_instruction:interm_type[Insn, Index + 1] = Comp <-
+   extractvalue_instruction:interm_type[Insn, Index] = Type,
+   array_type:component[Type] = Comp.
+
+extractvalue_instruction:type[Insn] = Type <-
+   extractvalue_instruction:nindices[Insn] = Total,
+   extractvalue_instruction:interm_type[Insn, Total] = Type.
+
+// Constraints:
+//
+//  (1) The first operand of an ‘extractvalue‘ instruction is
+//      a value of struct or array type. 
+//  (2) The operands are constant indices to specify which value 
+//      to extract in a similar manner as indices in a ‘getelementptr‘ 
+//      instruction.
+//  (3) At least one index must be specified.
+//
+// The result is the value at the position in the aggregate specified 
+// by the index operands.
+
+extractvalue_instruction(Insn) -> extractvalue_instruction:base[Insn] = _.
+extractvalue_instruction(Insn) -> extractvalue_instruction:nindices[Insn] = _.
+extractvalue_instruction(Insn) -> extractvalue_instruction:index[Insn, 0] = _.
+
+extractvalue_instruction:nindices[Insn] = Total
+ ->
+   Total > 0.
+
+extractvalue_instruction:base[_] = Aggregate,
+   operand:type[Aggregate] = Type
+ ->
+   aggregate_type(Type).
+
+// TODO: check if other integer types are allowed for non-structures
+extractvalue_instruction:index[_, _] = Index,
+   immediate:type[Index] = Type
+ ->
+   int32_type[] = Type.
+
+extractvalue_instruction:type[Insn] = Type
+ ->
+   instruction:type[Insn] = Type.
