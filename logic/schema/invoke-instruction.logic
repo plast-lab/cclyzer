@@ -1,35 +1,90 @@
-// Invoke Instruction
-InvokeInstruction(insn) -> Instruction(insn).
-InvokeInstruction:Direct(insn) -> InvokeInstruction(insn).
-InvokeInstruction:Indirect(insn) -> InvokeInstruction(insn).
+// http://llvm.org/docs/LangRef.html#invoke-instruction
+// keywords: terminator; instruction
 
-InvokeInstruction:ActualArg[insn, index] = arg ->
-   InvokeInstruction(insn), int[64](index), Operand(arg).
+invoke_instruction(Insn) -> instruction(Insn).
 
-InvokeInstruction:Indirect:Pointer[insn] = ptr ->
-   InvokeInstruction(insn), Variable(ptr).
+invoke_instruction:function[Insn] = Value ->
+   invoke_instruction(Insn), operand(Value).
 
-InvokeInstruction:Direct:Name[insn] = name -> 
-   InvokeInstruction(insn), string(name).
+// Actual parameters
+invoke_instruction:param[Insn, Index] = Param -> 
+   invoke_instruction(Insn), int[64](Index), operand(Param).
 
-InvokeInstruction:Direct:Type[insn] = type -> 
-   InvokeInstruction(insn), FunctionType(type).
+invoke_instruction:calling_convention[Insn] = Con ->
+   invoke_instruction(Insn), calling_convention(Con).
 
-InvokeInstruction:NormalLabel[insn] = nlabel -> 
-   InvokeInstruction(insn), Variable(nlabel).
+invoke_instruction:return_attribute[Insn] = Attr ->
+   invoke_instruction(Insn), parameter_attribute(Attr).
 
-InvokeInstruction:ExceptionLabel[insn] = elabel -> 
-   InvokeInstruction(insn), Variable(elabel).
+invoke_instruction:function_attribute(Insn, Index, Attr) ->
+   invoke_instruction(Insn), int[64](Index), function_attribute(Attr).
 
-InvokeInstruction:RetAttribute[insn] = retAttr -> 
-   InvokeInstruction(insn), Attribute(retAttr).
+invoke_instruction:normal_label[Insn] = Normal ->
+   invoke_instruction(Insn), variable(Normal).
 
-InvokeInstruction:FnAttributes(insn, fnAttr) -> 
-   InvokeInstruction(insn), Attribute(fnAttr).
+invoke_instruction:exception_label[Insn] = Exception ->
+   invoke_instruction(Insn), variable(Exception).
 
-InvokeInstruction:CallingConv[insn] = cc -> 
-   InvokeInstruction(insn), CallingConvention(cc).
+invoke_instruction:type[Insn] = Return <-
+   invoke_instruction:function[Insn] = Value,
+   operand:type[Value] = Type,
+   function_type:return[Type] = Return.
 
-// constraints
-InvokeInstruction:NormalLabel[_] = var -> variable:is_label(var).
-InvokeInstruction:ExceptionLabel[_] = var -> variable:is_label(var).
+
+// Constraints:
+//
+//  (1) Only ‘zeroext‘, ‘signext‘, and ‘inreg‘ attributes 
+//      are valid for return values.
+//  (2) The type of the invoke instruction is also the type of 
+//      the return value. Functions that return no value are 
+//      marked void.
+//  (3) The function type shall be the signature of the pointer 
+//      to function value being invoked. The argument types must 
+//      match the types implied by this signature.
+//  (4) All arguments must be of first class type.
+//  (5) Only ‘noreturn‘, ‘nounwind‘, ‘readonly‘ and ‘readnone‘ 
+//      attributes are valid as function attributes.
+//  (6) The 'invoke' instruction' takes a 'normal label' and
+//  (7) an 'exceptional label'.
+
+
+invoke_instruction(Insn) -> invoke_instruction:function[Insn] = _.
+invoke_instruction(Insn) -> invoke_instruction:normal_label[Insn] = _.
+invoke_instruction(Insn) -> invoke_instruction:exceptional_label[Insn] = _.
+
+invoke_instruction:return_attribute[_] = Attr ->
+   parameter_attribute:zeroext[] = Attr;
+   parameter_attribute:signext[] = Attr;
+   parameter_attribute::nreg[] = Attr. // c1
+
+
+invoke_instruction:type[Insn] = Type,
+   !void_type[] = Type
+ ->
+   instruction:Type[Insn] = Type. // c2
+
+
+invoke_instruction:function[Insn] = Value,
+   function_type[Value] = FuncType,
+   function_type:params[Type, Index] = ParamType,
+   invoke_instruction:param[Insn, Index] = Param 
+ ->
+   operand:type[Param] = ParamType. // c3
+
+
+invoke_instruction:param[_, _] = Param,
+   operand:type[Param] = Typeinvoke_instruction:
+ ->
+   type:firstclass(Type). // c4
+
+invoke_instruction:function_attribute(_, _, Attr) -> 
+   function_attribute:noreturn[] = Attr;
+   function_attribute:nounwind[] = Attr;
+   function_attribute:readonly[] = Attr;
+   function_attribute:readnone[] = Attr. // c5
+
+invoke_instruction:normal_label[_] = Normal ->
+   variable:label(Normal). // c6
+
+invoke_instruction:exceptional_label[_] = Exceptional ->
+   variable:label(Exceptional). // c7
