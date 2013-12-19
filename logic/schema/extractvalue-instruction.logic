@@ -42,9 +42,14 @@ extractvalue_instruction:interm_type[Insn, Index + 1] = Comp <-
    extractvalue_instruction:interm_type[Insn, Index] = Type,
    array_type:component[Type] = Comp.
 
-extractvalue_instruction:type[Insn] = Type <-
+extractvalue_instruction:value_type[Insn] = Type <-
    extractvalue_instruction:nindices[Insn] = Total,
    extractvalue_instruction:interm_type[Insn, Total] = Type.
+
+extractvalue_instruction:base_type[Insn] = Type <-
+   extractvalue_instruction:base[Insn] = Aggregate,
+   operand:type[Aggregate] = Type.
+
 
 // Constraints:
 //
@@ -61,22 +66,18 @@ extractvalue_instruction:type[Insn] = Type <-
 extractvalue_instruction(Insn) -> extractvalue_instruction:base[Insn] = _.
 extractvalue_instruction(Insn) -> extractvalue_instruction:nindices[Insn] = _.
 extractvalue_instruction(Insn) -> extractvalue_instruction:index[Insn, 0] = _.
+extractvalue_instruction:nindices[Insn] = Total -> Total > 0. // c3
 
-extractvalue_instruction:nindices[Insn] = Total
+extractvalue_instruction:base_type[_] = Type
  ->
-   Total > 0.
-
-extractvalue_instruction:base[_] = Aggregate,
-   operand:type[Aggregate] = Type
- ->
-   aggregate_type(Type).
+   aggregate_type(Type). // c1
 
 // TODO: check if other integer types are allowed for non-structures
 extractvalue_instruction:index[_, _] = Index,
    immediate:type[Index] = Type
  ->
-   int32_type[] = Type.
+   int32_type[] = Type. // c2
 
-extractvalue_instruction:type[Insn] = Type
+extractvalue_instruction:value_type[Insn] = Type
  ->
-   instruction:type[Insn] = Type.
+   instruction:type[Insn] = Type. // creturn
