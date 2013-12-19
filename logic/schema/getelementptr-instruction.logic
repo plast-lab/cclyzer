@@ -1,0 +1,120 @@
+// http://llvm.org/docs/LangRef.html#getelementptr-instruction
+// keywords: memory; instruction
+
+getelementptr_instruction(Insn) -> instruction(Insn).
+
+getelementptr_instruction:base[Insn] = Base ->
+   getelementptr_instruction(Insn), operand(Base).
+
+getelementptr_instruction:nindices[Insn] = Total ->
+   getelementptr_instruction(Insn), int[64](Total).
+
+getelementptr_instruction:index[Insn, Index] = Idx ->
+   getelementptr_instruction(Insn), int[64](Index), operand(Idx).
+
+
+// [Determining Fields] aytosxediazw :P
+//
+// In a similar manner as in a ‘extractvalue‘ instruction.
+//
+// We assume a map of [operand -> int] exists,
+// so that we can introduce field-sensitivity in the future.
+
+operand:toInt[Operand] = Value ->
+   operand(Operand), int[64](Value).
+
+// The resulting type for each dereference when the base type is a pointer.
+getelementptr_instruction:interm_type[Insn, 0] = Comp <-
+   getelementptr_instruction:base[Insn] = Base,
+   operand:type[Base] = Type,
+   pointer_type:component[Type] = Comp.
+
+// The resulting type for each dereference when the base type is a vector of pointers.
+getelementptr_instruction:interm_type[Insn, 0] = Type <-
+   getelementptr_instruction:base[Insn] = Base,
+   operand:type[Base] = Type.
+
+getelementptr_instruction:interm_type[Insn, Index + 1] = Comp <-
+   getelementptr_instruction:interm_type[Insn, Index] = Type,
+   getelementptr_instruction:index[Insn, Index] = Operand,
+   operand:toInt[Operand] = Value,
+   struct_type:field[Type, Value] = Comp.
+
+getelementptr_instruction:interm_type[Insn, Index + 1] = Comp <-
+   getelementptr_instruction:interm_type[Insn, Index] = Type,
+   array_type:component[Type] = Comp.
+
+getelementptr_instruction:interm_type[Insn, Index + 1] = Comp <-
+   getelementptr_instruction:interm_type[Insn, Index] = Type,
+   vector_type:component[Type] = Comp.
+
+getelementptr_instruction:value_type[Insn] = Type <-
+   getelementptr_instruction:nindices[Insn] = Total,
+   getelementptr_instruction:interm_type[Insn, Total] = Type.
+
+getelementptr_instruction:base_type[Insn] = Type <-
+   getelementptr_instruction:base[Insn] = Base,
+   operand:type[Base] = Type.
+
+
+// Constraints:
+//
+//  (1) The first operand of a ‘getelementptr' instruction is
+//      always a pointer or a vector of pointers.
+//  (2) The first type indexed into must be a pointer value, 
+//      subsequent types can be arrays, vectors, and structs. 
+//      Note that subsequent types being indexed into can never 
+//      be pointers, since that would require loading the pointer 
+//      before continuing calculation.
+//  (3) When indexing into a structure, only i32 integer constants 
+//      are allowed (when using a vector of indices they must all be 
+//      the same i32 integer constant).
+//  (4) When indexing into an array, pointer or vector, integers of 
+//      any width are allowed, and they are not required to be constant.
+//  (5) In cases where the pointer argument is a vector of pointers, 
+//      each index must be a vector with the same number of elements.
+//
+//  The ‘getelementptr‘ instruction returns a pointer to the element
+//  specified by the indices.
+
+getelementptr_instruction(Insn) -> getelementptr_instruction:base[Insn] = _.
+getelementptr_instruction(Insn) -> getelementptr_instruction:nindices[Insn] = _.
+getelementptr_instruction(Insn) -> getelementptr_instruction:index[Insn, Index] = _.
+
+getelementptr_instruction:base_type[_] = Type
+ ->
+   pointer_type:array(Type);  pointer_type:vector(Type);
+   pointer_type:struct(Type); vector_type:pointer(Type). // c1 + c2
+
+
+getelementptr_instruction:base_type[Insn] = Type,
+   pointer_type:struct(Type),   
+   getelementptr_instruction:index[Insn, Index] = Idx,
+   operand:type[Idx] = Type1
+ ->
+   int32_type[] = Type1. // c3 ????
+
+
+getelementptr_instruction:base_type[Insn] = Type,
+   !pointer:struct(Type),
+   !vector_type:pointer(Type),
+   getelementptr_instruction:index[Insn, Index] = Idx,
+   operand:type[Idx] = Type1
+ ->
+   integer_type(Type1). // c4
+
+
+getelementptr_instruction:base_type[Insn] = Type1,
+   vector:pointer(Type1),
+   getelementptr_instruction:index[Insn, Index] = Idx,
+   operand:type[Idx] = Type2,
+   vector_type(Type2)
+ ->
+   vector:compatible(Type1, Type2). // c5
+
+
+getelementptr_instruction:value_type[Insn] = Type1,
+   instruction:type[Insn] = Type2
+ ->
+   pointer_type:component[Type2] = Type1. // creturn
+
