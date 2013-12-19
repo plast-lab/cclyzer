@@ -1,22 +1,82 @@
-// insertvalue - instruction
+// http://llvm.org/docs/LangRef.html#insertvalue-instruction
 // keywords: aggregate; instruction
-InsertValueInstruction(insn) -> Instruction(insn).
 
-InsertValueInstruction:LeftOperand[insn] = left -> 
-   InsertValueInstruction(insn), Operand(left).
+insertvalue_instruction(Insn) -> instruction(Insn).
 
-InsertValueInstruction:RightOperand[insn] = right -> 
-   InsertValueInstruction(insn), Operand(right).
+insertvalue_instruction:base[Insn] = Aggregate ->
+   insertvalue_instruction(Insn), operand(Aggregate).
 
-InsertValueInstruction:Indices[insn, index] = idx -> 
-   InsertValueInstruction(insn), int[64](index), Immediate(idx).
+insertvalue_instruction:value[Insn] = Value ->
+   insertvalue_instruction(Insn), operand(Value).
 
-InsertValueInstruction:nIndices[insn] = total -> 
-   InsertValueInstruction(insn), int[64](total).
+insertvalue_instruction:nindices[Insn] = Total ->
+   insertvalue_instruction(Insn), int[64](Total).
 
-// Constraints
+insertvalue_instruction:index[Insn, Index] = Idx ->
+   insertvalue_instruction(Insn), int[64](Index), immediate(Idx).
 
-InsertValueInstruction:LeftOperand[_] = value, 
-   Operand:type[value] = type
-->
-   AggregateType(type).
+insertvalue_instruction:type[Insn] = Type <-
+   insertvalue_instruction:base[Insn] = Aggregate,
+   operand:type[Aggregate] = Type.
+
+
+// [Determining Fields]
+//
+// In a similar manner as in a ‘extractvalue‘ instruction.
+
+constant:toInt[Constant] = Value ->
+   immediate(Constant), int[64](Value).
+
+// The resulting type for each dereference.
+insertvalue_instruction:interm_type[Insn, 0] = Type <-
+   insertvalue_instruction:base[Insn] = Aggregate,
+   operand:type[Aggregate] = Type.
+
+insertvalue_instruction:interm_type[Insn, Index + 1] = Comp <-
+   insertvalue_instruction:interm_type[Insn, Index] = Type,
+   insertvalue_instruction:index[Insn, Index] = Constant,
+   constant:toInt[Constant] = Value,
+   struct_type:field[Type, Value] = Comp.
+
+insertvalue_instruction:interm_type[Insn, Index + 1] = Comp <-
+   insertvalue_instruction:interm_type[Insn, Index] = Type,
+   array_type:component[Type] = Comp.
+
+
+// Constraints:
+//
+//  (1) The first operand of an ‘insertvalue‘ instruction is
+//      a value of struct or array type.
+//  (2) The second operand is a first-class value to insert.
+//  (3) The following operands are constant indices indicating 
+//      the position at which to insert the value in a similar 
+//      manner as indices in a ‘extractvalue‘ instruction.
+//
+// The result is an aggregate of the same type as the first operand type.
+
+insertvalue_instruction(Insn) -> insertvalue_instruction:base[Insn] = _.
+insertvalue_instruction(Insn) -> insertvalue_instruction:value[Insn] = _.
+insertvalue_instruction(Insn) -> insertvalue_instruction:nindices[Insn] = _.
+insertvalue_instruction(Insn) -> insertvalue_instruction:index[Insn, 0] = _.
+
+
+insertvalue_instruction:base[_] = Aggregate,
+   operand:type[Aggregate] = Type
+ ->
+   aggregate_type(Type).
+
+
+insertvalue_instruction:value[_] = Value,
+   operand:type[Value] = Type
+ ->
+   type:firstclass(Type).
+
+
+insertvalue_instruction:nindices[_] = Total
+ ->
+   Total > 0.
+
+
+insertvalue_instruction:type[Insn] = Type
+ ->
+   instruction:type[Insn] = Type.
