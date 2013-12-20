@@ -28,15 +28,7 @@ instruction:next[Insn] = Next -> instruction(Insn), instruction(Next).
 instruction:prev[Insn] = Prev <-
    instruction:next[Prev] = Insn.
 
-
 // Instruction -> Basic Block
 
 instruction:basicblock[Insn] = BB ->
    instruction(Insn), basicblock(BB).
-
-instruction:bb_entry[Insn] = Label ->
-   instruction(Insn), variable:label(Label).
-
-instruction:basicblock[Insn] = BB <-
-   instruction:bb_entry[Insn] = Label,
-   basicblock:by_label[Label] = BB.

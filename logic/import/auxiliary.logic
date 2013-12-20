@@ -1,0 +1,15 @@
+basicblock:pred_aux(Label, Pred) <-
+   variable:label(Label), variable:label(Pred).
+
+basicblock:predecessors(Label, Pred) <-
+   basicblock:pred_aux(Label, Pred),
+   basicblock:by_label[Label] = BB1,
+   basicblock:by_label[Pred] = BB2.
+
+
+instruction:bb_entry[Insn] = Label ->
+   instruction(Insn), variable:label(Label).
+
+instruction:basicblock[Insn] = BB <-
+   instruction:bb_entry[Insn] = Label,
+   basicblock:by_label[Label] = BB.
