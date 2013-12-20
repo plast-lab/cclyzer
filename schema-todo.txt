@@ -35,7 +35,7 @@ SCHEMA TODO LIST // -*- mode: org -*-
 * DONE insertvalue-instruction
 * DONE instruction
 * DONE inttoptr-instruction
-* TODO invoke-instruction
+* DONE invoke-instruction
 * TODO landingpad-instruction
 * DONE load-instruction
 * DONE lshr-instruction

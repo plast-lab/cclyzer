@@ -41,7 +41,7 @@ call_instruction:param_attribute(Insn, Index, Attr) ->
    call_instruction(Insn), int[64](Index), attribute(Attr).
 
 call_instruction:function_attribute(Insn, Attr) ->
-   call_instruction(Insn), int[64](Index), attribute(Attr).
+   call_instruction(Insn), attribute(Attr).
 
 // Signature (function type)
 call_instruction:signature[Insn] = Type <-
@@ -80,9 +80,9 @@ call_instruction:return_attribute(_, Attr)
 
 call_instruction:function_attribute(_, Attr)
  -> 
-   function_attribute:noreturn[] = Attr;
-   function_attribute:nounwind[] = Attr;
-   function_attribute:readonly[] = Attr;
+   function_attribute:noreturn[] = Attr ;
+   function_attribute:nounwind[] = Attr ;
+   function_attribute:readonly[] = Attr ;
    function_attribute:readnone[] = Attr. // c6
 
 // cc compatibility
