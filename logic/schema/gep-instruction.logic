@@ -1,8 +1,0 @@
-// Gep Instruction
-// keywords: memory; instruction
-GepInstruction(insn) -> Instruction(insn).
-GepInstruction:Operand[insn] = ptr -> GepInstruction(insn), Operand(ptr).
-// GepInstruction:LeftIndex[insn] = lvalue -> GepInstruction(insn), Operand(lvalue).
-// GepInstruction:RightIndex[insn] = rvalue -> GepInstruction(insn), Operand(rvalue).
-GepInstruction:Indices[insn, index] = indice -> GepInstruction(insn), int[64](index), Operand(indice).
-GepInstruction:nIndices[insn] = total -> GepInstruction(insn), int[64](total).
