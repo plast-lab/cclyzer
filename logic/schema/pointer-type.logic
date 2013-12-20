@@ -1,0 +1,44 @@
+// http://llvm.org/docs/LangRef.html#pointer-type
+// keywords: derived; first class
+
+pointer_type(Type) -> derived_type(Type).
+
+pointer_type:component[Type] = Comp -> 
+   pointer_type(Type), type(Comp).
+
+pointer_type:addr_space[Type] = Addr -> 
+   pointer_type(Type), int[64](Addr).
+
+pointer_type:firstclass(Type) <-
+   pointer_type:component[Type] = Comp,
+   type:firstclass(Comp).
+
+pointer_type:integer(Type) <-
+   pointer_type:component[Type] = Comp,
+   integer_type(Comp).
+
+pointer_type:fp(Type) <-
+   pointer_type:component[Type] = Comp,
+   fp_type(Comp).
+
+pointer_type:struct(Type) <-
+   pointer_type:component[Type] = Comp,
+   struct_type(Comp).
+
+pointer_type:vector(Type) <-
+   pointer_type:component[Type] = Comp,
+   vector_type(Comp).
+
+pointer_type:array(Type) <-
+   pointer_type:component[Type] = Comp,
+   array_type(Comp).
+
+// Constraints:
+//
+//  (1) LLVM does not permit pointers to void and label.
+
+pointer_type(Type) -> pointer_type:component[Type] = _.
+
+pointer_type:component[_] = Comp ->
+   !void_type[] = Type,
+   !label_type[] = Type.
