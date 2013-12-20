@@ -25,18 +25,6 @@ getelementptr_instruction:nindices[Insn] = Total ->
 getelementptr_instruction:index[Insn, Index] = Idx ->
    getelementptr_instruction(Insn), int[64](Index), operand(Idx).
 
-// [Simplified IR]
-//
-// The following are for the case where we have transformed the
-// bitcode to a lower IR where each GEP instruction with many indices
-// is broken down into many GEP instructions with just 2 indices.
-
-getelementptr_instruction:first_index[Insn] = Left -> 
-   getelementptr_instruction(Insn), operand(Left).
-
-getelementptr_instruction:second_index[Insn] = Right -> 
-   getelementptr_instruction(Insn), operand(Right).
-
 // Auxiliary type predicates
 
 getelementptr_instruction:base_type[Insn] = Type <-
@@ -75,20 +63,8 @@ getelementptr_instruction:interm_type[Insn, 0] = Comp <-
 
 getelementptr_instruction:interm_type[Insn, Index + 1] = Comp <-
    getelementptr_instruction:interm_type[Insn, Index] = Type,
-   !getelementptr_instruction:vector_based(Insn),
    getelementptr_instruction:index[Insn, Index] = Idx,
    operand:as_immediate[Idx] = Constant,
-   constant:toInt[Constant] = Value, // Note: evaluated constant
-   int32_type[] = i32,
-   operand:type[Constant] = i32,     // c3
-   struct_type:field[Type, Value] = Comp.
-
-getelementptr_instruction:interm_type[Insn, Index + 1] = Comp <-
-   getelementptr_instruction:interm_type[Insn, Index] = Type,
-   getelementptr_instruction:vector_based(Insn),
-   getelementptr_instruction:index[Insn, Index] = Idx,
-   operand:as_immediate[Idx] = Vector,
-   vector_constant:get[Vector, 0] = Constant, // get first element
    constant:toInt[Constant] = Value, // Note: evaluated constant
    int32_type[] = i32,
    operand:type[Constant] = i32,     // c3
@@ -156,13 +132,13 @@ getelementptr_instruction(Insn),
    vector:compatible(Base, Idx). // c5
 
 
-getelementptr_instruction:vector_based(Insn),
-   getelementptr_instruction:value_type[Insn] = Value,
+getelementptr_instruction:value_type[Insn] = Value,
    instruction:type[Insn] = Ptr
  ->
+   getelementptr_instruction:vector_based(Insn) ;
    pointer_type:component[Ptr] = Value. // creturn
 
-!getelementptr_instruction:vector_based(Insn),
+getelementptr_instruction:vector_based(Insn),
    getelementptr_instruction:value_type[Insn] = Value,
    instruction:type[Insn] = Vector,
    vector_type:component[Vector] = Ptr,
