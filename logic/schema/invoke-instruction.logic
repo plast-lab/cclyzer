@@ -2,6 +2,7 @@
 // keywords: terminator; instruction
 
 invoke_instruction(Insn) -> instruction(Insn).
+invoke_instruction(Insn) -> terminator_instruction(Insn).
 
 invoke_instruction:function[Insn] = Value ->
    invoke_instruction(Insn), operand(Value).

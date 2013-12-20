@@ -1,6 +1,6 @@
 SCHEMA TODO LIST // -*- mode: org -*-
 
-* TODO basic-blocks
+* DONE basic-blocks
 * DONE add-instruction
 * DONE alloca-instruction
 * DONE and-instruction

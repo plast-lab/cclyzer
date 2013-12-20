@@ -1,0 +1,19 @@
+basicblock(BB) -> .
+
+basicblock:by_label[Label] = BB ->
+   variable:label(Label), basicblock(BB).
+
+basicblock(BB), basicblock:by_label[Label] = BB <-
+   variable:label(Label).
+
+lang:physical:storageModel[`basicblock] = "ScalableSparse".
+lang:constructor(`basicblock:by_label).
+
+basicblock:predecessors(BB, Pred) ->
+   basicblock(BB), basicblock(Pred).
+
+instruction:next[Insn] = Next,
+   instruction:basicblock[Insn] = BB1, 
+   instruction:basicblock[Next] = BB2
+ ->
+   BB1 = BB2 ; terminator_instruction(Insn).

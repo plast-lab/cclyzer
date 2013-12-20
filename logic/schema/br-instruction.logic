@@ -2,6 +2,7 @@
 // keywords: terminator; instruction
 
 br_instruction(Insn) -> instruction(Insn).
+br_instruction(Insn) -> terminator_instruction(Insn).
 
 br_cond_instruction(Insn) -> br_instruction(Insn).
 br_uncond_instruction(Insn) -> br_instruction(Insn).

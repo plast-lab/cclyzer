@@ -3,6 +3,8 @@
 instruction(Insn), instruction:id(Insn:Ref) -> string(Ref).
 instruction:flag(Insn, Flag) -> instruction(Insn), string(Flag).
 
+terminator_instruction(Insn) -> instruction(Insn).
+
 // Apart from the instructions with 'void' type,
 // every instruction assigns its result to a variable.
 instruction:to[Insn] = Var -> instruction(Insn), variable(Var).
@@ -25,3 +27,16 @@ instruction:next[Insn] = Next -> instruction(Insn), instruction(Next).
 
 instruction:prev[Insn] = Prev <-
    instruction:next[Prev] = Insn.
+
+
+// Instruction -> Basic Block
+
+instruction:basicblock[Insn] = BB ->
+   instruction(Insn), basicblock(BB).
+
+instruction:bb_entry[Insn] = Label ->
+   instruction(Insn), variable:label(Label).
+
+instruction:basicblock[Insn] = BB <-
+   instruction:bb_entry[Insn] = Label,
+   basicblock:by_label[Label] = BB.
