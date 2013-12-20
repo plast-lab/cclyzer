@@ -33,15 +33,15 @@ lang:physical:delimiter[\`${var}] = "\t".
 lang:physical:filePath[\`${imm}]  = "${immfile}".
 lang:physical:filePath[\`${var}]  = "${varfile}".
 
-+Immediate(imm), 
-+Immediate:Value(imm:value),
-+Operand(operand),
-+Operand:byImmediate[imm] = operand,
-+${pred}[insn] = operand
++immediate(Imm), 
++immediate:value(Imm:Value),
++operand(Operand),
++operand:by_immediate[imm] = Operand,
++${pred}[Insn] = Operand
 <-
-    Instruction:Value(insn:insnId),
-    ${insn}(insn),
-    ${imm}(insnId, value).
+    instruction:value(Insn:InsnId),
+    ${insn}(Insn),
+    ${imm}(InsnId, Value).
 
 
 +Variable(var), 

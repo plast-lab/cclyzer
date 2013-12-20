@@ -10,7 +10,7 @@ SCHEMA TODO LIST // -*- mode: org -*-
 * DONE bitcast-instruction
 * DONE br-instruction
 * DONE calling-convention
-* TODO call-instruction
+* DONE call-instruction
 * DONE cmpxchg-instruction
 * DONE derived-type
 * DONE extractelement-instruction
@@ -27,7 +27,7 @@ SCHEMA TODO LIST // -*- mode: org -*-
 * DONE frem-instruction
 * DONE fsub-instruction
 * DONE function
-* TODO gep-instruction
+* DONE gep-instruction
 * DONE global
 * DONE icmp-instruction
 * DONE indirectbr-instruction
