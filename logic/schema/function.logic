@@ -2,6 +2,8 @@
 
 function(Func), function:id(Func:Ref) -> string(Ref).
 
+// TODO: how are varargs represented here?
+
 // Optional function attributes
 
 function:unnamed_addr(Func) -> function(Func).

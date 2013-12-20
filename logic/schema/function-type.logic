@@ -2,6 +2,7 @@
 // keywords: derived
 
 function_type(Type) -> derived_type(Type).
+function_type:varargs(Type) -> function_type(Type).
 
 function_type:return[Type] = Ret -> 
    function_type(Type), type(Ret).

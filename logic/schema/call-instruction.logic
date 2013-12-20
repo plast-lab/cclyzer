@@ -103,6 +103,12 @@ call_instruction:signature[Insn] = Signature,
  ->
    operand:type[Arg] = Type. // c4
 
+call_instruction:signature[Insn] = Signature,
+   call_instruction:arg[Insn, Index] = _
+ ->
+   function_type:params[Signature, Index] = _ ;
+   function_type:varargs(Signature).
+
 call_instruction:return_type[Insn] = Type,
    void_type[] != Type
  ->
