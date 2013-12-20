@@ -1,0 +1,80 @@
+// http://llvm.org/docs/LangRef.html#vector-type
+// keywords: derived; first class
+
+vector_type(Type) -> derived_type(Type).
+
+vector_type:component[Type] = Comp -> 
+   vector_type(Type), Type(Comp).
+
+vector_type:size[Type] = Size ->
+   vector_type(Type), int[64](Size).
+
+vector_type:integer(Type) <-
+   vector_type:component[Type] = Comp,
+   integer_type(Comp).
+
+vector_type:i32(Type) <-
+   vector_type:component[Type] = Comp,
+   int32_type[] = Comp.
+
+vector_type:fp(Type) <-
+   vector_type:component[Type] = Comp,
+   fp_type(Comp).
+
+vector_type:boolean(Type) <-
+   vector_type:component[Type] = Comp,
+   boolean_type(Comp).
+
+vector_type:pointer(Type) <-
+   vector_type:component[Type] = Comp,
+   pointer_type(Comp).
+
+// Constraints:
+//
+//  (1) A vector type requires a size (number of elements) 
+//      and a component type. 
+//  (2) The number of elements is a constant integer value 
+//      larger than 0.
+//  (3) The component type can be any integer or floating point type, 
+//      or a pointer to these types. 
+
+
+vector_type(Type) -> vector_type:component[Type] = _.
+vector_type(Type) -> vector_type:size[Type] = _.
+
+
+vector_type:size[_] = Size ->
+   Size > 0.
+
+
+vector_type:component[_] = Comp ->
+   integer_type(Comp); 
+   fp_type(Comp);
+   pointer_type:integer(Comp);
+   pointer_type:fp(Comp).
+
+
+// Helper predicate
+
+vector:eq_size_2(Type1, Type2) <-
+   vector_type:size[Type1] = Size,
+   vector_type:size[Type2] = Size.
+
+vector:eq_size_3(Type1, Type2, Type3) <-
+   vector_type:size[Type1] = Size,
+   vector_type:size[Type2] = Size,
+   vector_type:size[Type3] = Size.
+
+// Two types are vector-compatible if:
+//  (i)  neither is a vector, or
+//  (ii) both are vectors of the same size.
+
+vector:compatible(Type1, Type2) -> type(Type1), type(Type2).   
+vector:compatible(Type1, Type2) <- 
+   type(Type1), 
+   type(Type2),
+   !vector_type(Type1),
+   !vector_type(Type2).
+
+vector:compatible(Type1, Type2) <- 
+   vector:eq_size_2(Type1, Type2).
