@@ -13,3 +13,101 @@ instruction:bb_entry[Insn] = Label ->
 instruction:basicblock[Insn] = BB <-
    instruction:bb_entry[Insn] = Label,
    basicblock:by_label[Label] = BB.
+
+
+index(Index), index:value(Index:Value) -> int[64](Value).
+
+// function_type
+function_type:params_tmp[Type, Index] = Arg -> 
+   function_type(Type), index(Index), type(Arg).
+
+function_type:params[Type, Index] = Arg <- 
+   function_type:params_tmp[Type, I] = Arg, 
+   index:value(I:Index).
+
+// function formal parameters
+function:param_tmp[Func, Index] = Arg -> 
+   function(func), index(Index), variable(Arg).
+
+function:param[Func, Index] = Arg <- 
+   function:param_tmp[Func, I] = arg, 
+   index:value(I:Index).
+
+// indirectbr_instruction
+indirectbr_instruction:label_tmp[insn, index] = Label -> 
+   indirectbr_instruction(Insn), index(Index), variable(Label).
+
+indirectbr_instruction:label[Insn, Index] = Label <- 
+   indirectbr_instruction:label_tmp[Insn, I] = Label, 
+   index:value(I:Index).
+
+// switch_instruction
+switch_instruction:case:value_tmp[Insn, Index] = Value -> 
+   switch_instruction(Insn), index(Index), immediate(Value).
+
+switch_instruction:case:value[Insn, Index] = Value <- 
+   switch_instruction:case:value_tmp[Insn, I] = Value, 
+   index:value(I:Index).
+
+switch_instruction:case:label_tmp[Insn, Index] = Label -> 
+   switch_instruction(Insn), index(Index), variable(Label).
+
+switch_instruction:case:label[Insn, Index] = Label <- 
+   switch_instruction:case:label_tmp[Insn, I] = Label, 
+   index:value(I:Index).
+
+// invoke_instruction
+invoke_instruction:arg_tmp[Insn, Index] = Arg -> 
+   invoke_instruction(Insn), index(Index), operand(Arg).
+
+invoke_instruction:arg[Insn, Index] = Arg <- 
+   invoke_instruction:arg_tmp[Insn, I] = Arg, 
+   index:value(I:Index).
+
+// extractvalue_instruction
+extractvalue_instruction:index_tmp[Insn, Index] = Idx -> 
+   extractvalue_instruction(Insn), index(Index), int[64](Idx).
+
+extractvalue_instruction:index[Insn, Index] = Idx <- 
+   extractvalue_instruction:index_tmp[Insn, I] = Idx, 
+   index:value(I:Index).
+
+// insertvalue_instruction
+insertvalue_instruction:index_tmp[Insn, Index] = Idx -> 
+   insertvalue_instruction(Insn), index(Index), int[64](Idx).
+
+insertvalue_instruction:index[Insn, Index] = Idx <- 
+   insertvalue_instruction:index_tmp[Insn, I] = Idx, 
+   index:value(I:Index).
+
+// getelementptr_instruction
+getelementptr_instruction:index_tmp[Insn, Index] = Idx -> 
+   getelementptr_instruction(Insn), index(Index), operand(Idx).
+
+getelementptr_instruction:index[Insn, Index] = Idx <- 
+   getelementptr_instruction:index_tmp[Insn, I] = Idx, 
+   index:value(I:Index).
+
+// phi_instruction
+phi_instruction:pair:value_tmp[Insn, Index] = Value -> 
+   phi_instruction(Insn), index(Index), operand(Value).
+
+phi_instruction:pair:value[Insn, Index] = Value <- 
+   phi_instruction:pair:value_tmp[Insn, I] = Value, 
+   index:value(I:Index).
+
+phi_instruction:pair:label_tmp[Insn, Index] = Label -> 
+   phi_instruction(Insn), index(Index), variable(Label).
+
+phi_instruction:pair:label[Insn, Index] = Label <- 
+   phi_instruction:pair:label_tmp[Insn, I] = Label, 
+   Index:value(I:Index).
+
+// call_instruction
+call_instruction:arg_tmp[Insn, Index] = Arg -> 
+   call_instruction(Insn), Index(Index), operand(Arg).
+
+call_instruction:arg[Insn, Index] = Arg <- 
+   call_instruction:arg_tmp[Insn, I] = Arg, 
+   index:value(I:Index).
+
