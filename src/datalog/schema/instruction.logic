@@ -1,0 +1,68 @@
+/////////////////
+// Instruction //
+/////////////////
+
+instruction(Insn), instruction:id(Insn:Ref) -> string(Ref).
+
+terminator_instruction(Insn) -> instruction(Insn).
+instruction:flag(Insn, Flag) -> instruction(Insn), string(Flag).
+
+// Apart from the instructions with 'void' type,
+// every instruction assigns its result to a variable.
+instruction:to[Insn] = Var -> instruction(Insn), variable(Var).
+
+// Auxiliary predicate that stores the instruction's return type
+instruction:type[Insn] = Type <-
+   instruction:to[Insn] = Var,
+   variable:type[Var] = Type.
+
+// helpful in avoiding non-termination warnings
+instruction:next_index[Insn, Index] = Next ->
+   instruction(Insn), int[64](Index), int[64](Next).
+
+
+//////////////////////////////
+// Sequence of instructions //
+//////////////////////////////
+
+// The next instruction in the source file.
+instruction:next[Insn] = Next -> 
+   instruction(Insn), instruction(Next).
+
+instruction:prev[Insn] = Prev <-
+   instruction:next[Prev] = Insn.
+
+// The function that contains the instruction
+instruction:function[Insn] = Func ->
+   instruction(Insn), function(Func).
+
+// The instruction's basic block
+instruction:basicblock[Insn] = BB ->
+   instruction(Insn), basicblock(BB).
+
+instruction(Insn) -> instruction:function[Insn] = _.
+instruction(Insn) -> instruction:basicblock[Insn] = _.
+
+//////////////////
+// Basic Blocks //
+//////////////////
+
+basicblock(BB) -> .
+
+basicblock:by_label[Label] = BB ->
+   variable(Label), basicblock(BB).
+
+basicblock(BB), basicblock:by_label[Label] = BB <-
+   variable:label(Label).
+
+lang:physical:storageModel[`basicblock] = "ScalableSparse".
+lang:constructor(`basicblock:by_label).
+
+basicblock:predecessors(BB, Pred) ->
+   basicblock(BB), basicblock(Pred).
+
+instruction:next[Insn] = Next,
+   instruction:basicblock[Insn] = BB1, 
+   instruction:basicblock[Next] = BB2
+ ->
+   BB1 = BB2 ; terminator_instruction(Insn).

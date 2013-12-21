@@ -1,115 +1,132 @@
-DB = test
-DATA   = ./facts
-IMPORT = ./import
-LOGIC  = ./logic
-EXAMPLES = ./examples
+# Directories
+SRCDIR  = ./src
+BINDIR  = ./bin
+OUTDIR  = ./build
+DATADIR = ./data
 
-OPERAND_PRED_LIST = ./operand-pred-list.txt
+# Datalog and misc tools
+LOGICRT     = bloxbatch
+LOGICC      = bloxcompiler
+LOGICCFLAGS = -compileProject
+INSTALL     = install
+SCRIPTGEN   = $(BINDIR)/generate-import.sh
+LOGICGEN    = $(BINDIR)/import-logic-gen
 
-TESTS = $(wildcard $(EXAMPLES)/*.c)
-TESTBUILD = $(EXAMPLES)/build
-TESTOUT = $(TESTS:$(EXAMPLES)/%.c=$(TESTBUILD)/%.s)
+# Database
+DB = $(OUTDIR)/db
 
-SCHEMA = $(LOGIC)/schema.logic
-IMPORT_BLOCK = $(LOGIC)/parse.logic
+###########
+# Datalog #
+###########
 
-# Various scripts
-GEN = ./generate-import.sh
-LOGIC_GEN = ./import-logic-gen
-EXTRACTOR = ./extract-operand-predicates.sh
+LOGIC_SRCDIR = $(SRCDIR)/datalog
+LOGIC_OUTDIR = $(OUTDIR)/datalog
+LOGIC_LBSPEC = $(LOGIC_SRCDIR)/llvm.project
+LOGIC_TARGET = $(LOGIC_OUTDIR)/.comp.lock
 
-# Entities
-ENTITIES = $(DATA)/entities
-ENTITY_FILES = $(wildcard $(ENTITIES)/*.dlm)
-ENTITY_IMPORTS = $(ENTITY_FILES:$(ENTITIES)/%.dlm=$(IMPORT)/%.import)
-ENTITY_SCRIPT = $(IMPORT)/entities.import
+LOGIC := $(wildcard $(LOGIC_SRCDIR)/schema/*.logic)
+LOGIC += $(wildcard $(LOGIC_SRCDIR)/import/*.logic)
 
-# Predicates
-PREDICATES=$(DATA)/predicates
-PREDICATE_FILES = $(wildcard $(PREDICATES)/*.dlm)
-PREDICATE_IMPORTS = $(PREDICATE_FILES:$(PREDICATES)/%.dlm=$(IMPORT)/%.import)
-PREDICATE_SCRIPT = $(IMPORT)/predicates.import
+###############################
+# CSV data and import scripts #
+###############################
 
-all: import-predicates
+IMPORTDIR  = $(OUTDIR)/import
 
-clean: clean-import clean-examples
+# For import scripts
+ENTCSV     = $(notdir $(wildcard $(DATADIR)/entities/*.dlm))
+PRDCSV     = $(notdir $(wildcard $(DATADIR)/predicates/*.dlm))
+ENTITIES   = $(IMPORTDIR)/entities.import
+PREDICATES = $(IMPORTDIR)/predicates.import
 
-clean-import:
-	rm -rf $(IMPORT)
-	rm -f $(OPERAND_PRED_LIST) $(IMPORT_BLOCK)
+# For file predicates
+AUTOPRED   = $(LOGIC_SRCDIR)/import/.autopred
+AUTOIMPORT = $(LOGIC_SRCDIR)/import/parse.logic
 
-clean-examples:
-	rm -rf $(TESTBUILD)
 
-cleanall: clean
-	rm -rf $(DB)
+all: compile
+compile: $(LOGIC_TARGET)
 
-# Deployment
+##############
+# Deployment #
+##############
 
-create:
-	bloxbatch -db $(DB) -create -overwrite
-	bloxbatch -db $(DB) -addBlock -file $(SCHEMA)
+# TODO: fix by adding script
+deploy: $(AUTOIMPORT)
+	$(LOGICRT) -db $(DB) -create -overwrite
+	$(LOGICRT) -db $(DB) -addProject $(LOGIC_OUTDIR)
+	$(LOGICRT) -db $(DB) -import $(ENTITIES)
+	$(LOGICRT) -db $(DB) -import $(PREDICATES)
+	$(LOGICRT) -db $(DB) -execute -file $(AUTOIMPORT)
 
-delete:
+cleandb:
 	rm -rf $(DB)/
 
-import-entities: $(ENTITY_SCRIPT)
-	bloxbatch -db $(DB) -import $<
+############################
+# Import scripts and logic #
+############################
 
-import-predicates: $(PREDICATE_SCRIPT)
-	bloxbatch -db $(DB) -import $<
-	bloxbatch -db $(DB) -execute -file $(IMPORT_BLOCK)
+# Generate import logic (file predicates)
 
-extract:
-	tar xvf $(EXAMPLES)/$(notdir $(DATA)).tar.gz
+$(AUTOIMPORT): %.logic: $(AUTOPRED) $(LOGICGEN)
+	cat $< | $(LOGICGEN) "$(DATADIR)" > $@
 
-# Generate import logic
+# Generate .import scripts
 
-$(IMPORT_BLOCK): %.logic: %.logic.template
-	cat $(OPERAND_PRED_LIST) | $(LOGIC_GEN) "$(DATA)" | cat $< - > $@
+$(IMPORTDIR)/%.import: $(DATADIR)/entities/%.dlm 
+	$(SCRIPTGEN) $< > $@
 
-$(OPERAND_PRED_LIST):
-	$(EXTRACTOR) $(SCHEMA) > $@
+$(IMPORTDIR)/%.import: $(DATADIR)/predicates/%.dlm
+	$(SCRIPTGEN) $< > $@
 
-# Generate .import files
-
-$(ENTITY_IMPORTS): $(IMPORT)/%.import: $(ENTITIES)/%.dlm
-	@mkdir -p $(@D) 
-	$(GEN) $< > $@
-
-$(PREDICATE_IMPORTS): $(IMPORT)/%.import: $(PREDICATES)/%.dlm
-	@mkdir -p $(@D) 
-	$(GEN) $< > $@
+$(ENTCSV:%.dlm=$(IMPORTDIR)/%.import): $(SCRIPTGEN) | $(IMPORTDIR)
+$(PRDCSV:%.dlm=$(IMPORTDIR)/%.import): $(SCRIPTGEN) | $(IMPORTDIR)
 
 # Collect all generated .import files into one
 
-$(ENTITY_SCRIPT): $(ENTITY_IMPORTS)
-	@mkdir -p $(@D) 
+$(ENTITIES): $(ENTCSV:%.dlm=$(IMPORTDIR)/%.import)
 	@echo "option,delimiter,\"	\"" > $@
 	@echo "option,hasColumnNames,false" >> $@
-	cat $^ >> $@
+	@cat $^ >> $@
 
-$(PREDICATE_SCRIPT): $(PREDICATE_IMPORTS)
-	@mkdir -p $(@D) 
+$(PREDICATES): $(PRDCSV:%.dlm=$(IMPORTDIR)/%.import)
 	@echo "option,delimiter,\"	\"" > $@
 	@echo "option,hasColumnNames,false" >> $@
-	cat $^ >> $@
+	@cat $^ >> $@
 
-# Unit tests in C
+# Phony targets
+import: $(ENTITIES) $(PREDICATES) $(AUTOIMPORT)
 
-$(TESTOUT): $(TESTBUILD)/%.s : $(EXAMPLES)/%.c
-	@mkdir -p $(@D)
-	clang -S -emit-llvm $< -o $@
+cleanimport:
+	rm -rf $(IMPORTDIR)
+	rm -f $(AUTOIMPORT)
 
-tests: $(TESTOUT)
+#######################
+# Datalog Compilation #
+#######################
 
-# Additional dependencies
-import-predicates: import-entities $(IMPORT_BLOCK)
-import-entities: create
+$(LOGIC_TARGET): $(LOGIC_LBSPEC) $(LOGIC) | $(LOGIC_OUTDIR)
+	$(LOGICC) $(LOGICCFLAGS) $< -outDir $(@D)
+	@touch $@
 
-$(ENTITY_IMPORTS): $(GEN)
-$(PREDICATE_IMPORTS): $(GEN)
-$(IMPORT_BLOCK): $(OPERAND_PRED_LIST) $(LOGIC_GEN)
-$(OPERAND_PRED_LIST): $(EXTRACTOR) $(SCHEMA)
+######################
+# Create directories #
+######################
 
-.PHONY: all clean cleanall clean-import clean-examples create delete import-entities import-predicates tests
+$(OUTDIR) $(LOGIC_OUTDIR) $(IMPORTDIR):
+	mkdir $@
+
+$(IMPORTDIR) $(LOGIC_OUTDIR): | $(OUTDIR)
+
+#################
+# Phony Targets #
+#################
+
+.PHONY: all compile clean cleanall 
+.PHONY: deploy cleandb 
+.PHONY: import cleanimport
+
+cleanall:
+	rm -rf $(OUTDIR)
+
+clean: cleanimport cleandb

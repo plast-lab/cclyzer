@@ -1,0 +1,77 @@
+#!/usr/bin/env python
+
+import os, string, sys
+
+LOGIC = '''
+// Auto-generated import logic for ${pred}
+
+${imm}(insn, imm) ->
+    string(insn), string(imm).
+
+${var}(insn, var) ->
+    string(insn), string(var).
+
+lang:physical:delimiter[`${imm}] = "\\t".
+lang:physical:delimiter[`${var}] = "\\t".
+lang:physical:filePath[`${imm}]  = "${immfile}".
+lang:physical:filePath[`${var}]  = "${varfile}".
+
++Immediate(imm), 
++Immediate:Value(imm:value),
++Operand(operand),
++Operand:byImmediate[imm] = operand,
++${pred}[insn] = operand
+<-
+    Instruction:Value(insn:insnId),
+    ${insn}(insn),
+    ${imm}(insnId, value).
+
+
++Variable(var), 
++Variable:Id(var:varId),
++Operand(operand),
++Operand:byVariable[var] = operand,
++${pred}[insn] = operand
+<-
+    Instruction:Value(insn:insnId),
+    ${insn}(insn),
+    ${var}(insnId, varId).'''
+
+def usage():
+    print >> sys.stderr, 'Usage: {0} OUTDIR'.format(sys.argv[0])
+    exit(1)
+
+def to_file_pred(pred, suffix):
+    components = pred[:-len('Operand')].split(':')
+
+    if not components[-1]:
+        components[-1] = suffix
+    else:
+        components.append(suffix)
+
+    filename = '-'.join(components) + '.dlm'
+    filepred = "_" + ''.join(components)
+    return filename, filepred
+
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        usage()
+    if not os.path.isdir(sys.argv[1]):
+        print >> sys.stderr, 'Not a directory', sys.argv[1]
+        usage()
+
+    outdir = sys.argv[1]
+
+    for pred in (line.strip() for line in sys.stdin):
+        insn, delim, rest = pred.partition(':')
+
+        # Compute file predicate names
+        immfile, imm = to_file_pred(pred, 'Imm')
+        varfile, var = to_file_pred(pred, 'Var')
+
+        immfile = os.path.join(outdir, immfile)
+        varfile = os.path.join(outdir, varfile)
+
+        templ = string.Template(LOGIC)
+
+        print templ.substitute(locals())

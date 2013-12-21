@@ -1,0 +1,59 @@
+// http://llvm.org/docs/LangRef.html#br-instruction
+// keywords: terminator; instruction
+
+br_instruction(Insn) -> instruction(Insn).
+br_instruction(Insn) -> terminator_instruction(Insn).
+
+br_cond_instruction(Insn) -> br_instruction(Insn).
+br_uncond_instruction(Insn) -> br_instruction(Insn).
+
+
+// Conditional branch
+
+br_cond_instruction:condition[Insn] = Cond -> 
+   br_cond_instruction(Insn), operand(Cond).
+
+br_cond_instruction:iftrue[Insn] = Label -> 
+   br_cond_instruction(Insn), variable(Label).
+
+br_cond_instruction:iffalse[Insn] = Label -> 
+   br_cond_instruction(Insn), variable(Label).
+
+
+// Unconditional branch
+
+br_uncond_instruction:dest[Insn] = Label -> 
+   br_uncond_instruction(Insn), variable(Label).
+
+
+// Constraints:
+//  (1) The conditional branch form of the ‘br‘ instruction takes: 
+//      (i)  a single ‘i1‘ value and 
+//      (ii) two ‘label‘ values. 
+//  (2) The unconditional form of the ‘br‘ instruction takes:
+//      (i)  a single ‘label‘ value as a target.
+
+br_cond_instruction(Insn) -> br_cond_instruction:condition[Insn] = _.
+int1_type[]  = Type,
+   br_cond_instruction:condition[_] = Cond
+ ->
+   operand:type[Cond] = Type.
+
+
+br_cond_instruction(Insn) -> br_cond_instruction:iftrue[Insn] = _.
+br_cond_instruction:iftrue[_] = Label
+ ->
+   variable:label(Label).
+
+
+br_cond_instruction(Insn) -> br_cond_instruction:iffalse[Insn] = _.
+br_cond_instruction:iffalse[_] = Label
+ ->
+   variable:label(Label).
+
+
+
+br_uncond_instruction(Insn) -> br_uncond_instruction:dest[Insn] = _.
+br_uncond_instruction:dest[_] = Label
+ ->
+   variable:label(Label).

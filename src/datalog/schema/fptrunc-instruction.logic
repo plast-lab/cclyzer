@@ -1,0 +1,40 @@
+// http://llvm.org/docs/LangRef.html#fptrunc-to-instruction
+// keywords: conversion; unary; instruction
+
+fptrunc_instruction(Insn) -> instruction(Insn).
+
+fptrunc_instruction:from[Insn] = Value -> 
+   fptrunc_instruction(Insn), operand(Value).
+
+fptrunc_instruction:to_type[Insn] = Type -> 
+   fptrunc_instruction(Insn), type(Type).
+
+fptrunc_instruction:from_type[Insn] = Type <-
+   fptrunc_instruction:from[Insn] = Value,
+   operand:type[Value] = Type.
+
+// Constraints:
+//
+// The ‘fptrunc‘ instruction takes:
+//  (i)  a floating point value to cast,
+//  (ii) and a floating point type to cast it to.
+//
+// The source type must be larger than the destination type.
+
+fptrunc_instruction(Insn) -> fptrunc_instruction:from[Insn] = _.
+fptrunc_instruction(Insn) -> fptrunc_instruction:to_type[Insn] = _.
+
+
+fptrunc_instruction:to_type[Insn] = Type
+ ->
+   instruction:type[Insn] = Type.
+
+
+fptrunc_instruction:from_type[_] = Type
+ -> 
+   fp_type(Type) ; 0 = 1. // TODO: check if dummy or can be avoided in future versions
+
+
+fptrunc_instruction:to_type[_] = Type
+ ->
+   fp_type(Type).

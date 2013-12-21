@@ -1,0 +1,36 @@
+// http://llvm.org/docs/LangRef.html#va-arg-instruction
+// keywords: unary; instruction
+
+va_arg_instruction(Insn) -> instruction(Insn).
+
+va_arg_instruction:va_list[Insn] = List -> 
+   va_arg_instruction(Insn), operand(List).
+
+va_arg_instruction:type[Insn] = Type -> 
+   va_arg_instruction(Insn), type(Type).
+
+
+// Constraints:
+//
+// The ‘va-arg‘ instruction takes:
+//  (i)  a va_list* value, and 
+//  (ii) the type of the arguments,
+//
+// It returns:
+//  (i) a value of the specified argument type.
+
+va_arg_instruction(Insn) -> va_arg_instruction:va_list[Insn] = _.
+va_arg_instruction(Insn) -> va_arg_instruction:type[Insn] = _.
+
+// The actual type of va_list is target specific.
+// TODO: how to construct it?
+
+va_arg_instruction:va_list[_] = List,
+   operand:type[List] = Type
+ ->
+   pointer_type(Type).
+
+
+va_arg_instruction:type[Insn] = Type
+ ->
+   instruction:type[Insn] = Type.

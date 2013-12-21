@@ -1,0 +1,23 @@
+// http://llvm.org/docs/LangRef.html#landingpad-instruction
+// keywords: exception; instruction
+
+landingpad_instruction(Insn) -> instruction(Insn).
+
+landingpad_instruction:Type[Insn] = Type ->
+   landingpad_instruction(Insn), type(Type).
+
+landingpad_instruction:function[Insn] = Func -> 
+   landingpad_instruction(Insn), operand(Func).
+
+landingpad_instruction:clause:catch[Insn] = Catch -> 
+   landingpad_instruction(Insn), operand(Catch).
+
+landingpad_instruction:clause:filter[Insn] = Filter -> 
+   landingpad_instruction(Insn), immediate(Filter).
+
+// Constraints:
+//
+//  (*) All ‘landingpad‘ instructions in a function must have the same 
+//      personality function.
+
+

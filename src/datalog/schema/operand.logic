@@ -1,0 +1,80 @@
+//////////////////////////////
+// Variables and Immediates //
+//////////////////////////////
+
+variable(Var), variable:id(Var:Ref) -> string(Ref).
+variable:type[Var] = Type -> variable(Var), type(Type).
+
+variable:label(Var) <-
+   variable:type[Var] = Type,
+   label_type[] = Type.
+
+variable:pointer(Var) <-
+   variable:type[Var] = Type,
+   pointer_type(Type).
+
+variable:firstclass(Var) <-
+   variable:type[Var] = Type,
+   type:firstclass(Type).
+
+immediate(Imm), immediate:value(Imm:Ref) -> string(Ref).
+immediate:type[Imm] = Type -> immediate(Imm), type(Type).
+
+constant_expression(Imm) -> immediate(Imm).
+
+immediate:eq(Imm1, Imm2) <-
+   immediate:value(Imm1:Val1),
+   immediate:value(Imm2:Val2),
+   Val1 = Val2. // is this enough??
+
+immediate:ne(Imm1, Imm2) <-
+   immediate(Imm1),
+   immediate(Imm2),
+   !immediate:eq(Imm1, Imm2).
+
+// immediates cannot be labels
+immediate:type[_] = type -> label_type[] != type.
+
+
+//////////////////////////////////////////////////
+// Operand (as union of {variable, immediate}). //
+//////////////////////////////////////////////////
+
+operand(Operand) -> .
+
+// Constructors
+operand:by_variable[Var] = Operand  ->
+   variable(Var), operand(Operand).
+
+operand:by_immediate[Imm] = Operand ->
+   immediate(Imm), operand(Operand).
+
+lang:physical:storageModel[`operand] = "ScalableSparse".
+lang:constructor(`operand:by_variable).
+lang:constructor(`operand:by_immediate).
+
+// Type predicate
+
+operand:type[Operand] = Type <-
+   operand:by_variable[Var] = Operand,
+   variable:type[Var] = Type.
+
+operand:type[Operand] = Type <-
+   operand:by_immediate[Imm] = Operand,
+   immediate:type[Imm] = Type.
+
+// View predicates
+operand:as_variable[Operand] = Var <-
+   operand:by_variable[Var] = Operand.
+
+operand:as_immediate[Operand] = Imm <-
+   operand:by_immediate[Imm] = Operand.
+
+// Auxiliary functions
+operand:pointer(Operand) <-
+   operand:type[Operand] = Type,
+   pointer_type(Type).
+
+operand:firstclass(Var) <-
+   operand:type[Var] = Type,
+   type:firstclass(Type).

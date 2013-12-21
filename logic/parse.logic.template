@@ -1,6 +1,0 @@
-// TODO: as separate file
-+IntegerType(type), +Type:Value(type:"i32") <- .
-+IntegerType(type), +Type:Value(type:"i64") <- .
-
-// Constructing Instruction Operands
-

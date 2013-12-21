@@ -1,0 +1,107 @@
+// http://llvm.org/docs/LangRef.html#global-variables
+
+global_variable(Var) -> immediate(Var). // TODO: why??
+
+global_variable:type[Var] = Type -> 
+   global_variable(Var), type(Type). // TODO: isn't this redundant? 
+
+global_variable:initializer[Var] = Init -> 
+   global_variable(Var), string(Init).
+
+global_variable:section[Var] = Sect -> 
+   global_variable(Var), string(Sect).
+
+global_variable:align[Var] = Alignment -> 
+   global_variable(Var),  int[64](Alignment).
+
+global_variable:flag(Var, Flag) -> 
+   global_variable(Var), string(Flag).
+
+global_variable:linkage_type[Var] = Link -> 
+   global_variable(Var), linkage_type(Link).
+
+global_variable:visibility[Var] = Vis -> 
+   global_variable(Var), visibility(Vis).
+
+global_variable:threadlocal_mode[Var] = Mode -> 
+   global_variable(Var), threadlocal_mode(Mode).
+
+// A variable may be defined as a global constant, which indicates 
+// that the contents of the variable will never be modified (enabling 
+// better optimization, allowing the global data to be placed in the 
+// read-only section of an executable, etc).
+// Note that variables that need runtime initialization cannot be 
+// marked constant as there is a store to the variable.
+
+global_variable:constant(Var) -> global_variable(Var).
+global_variable:constant(Var) <-
+   global_variable:flag(Var, "constant").
+
+// Aliases act as “second name” for the aliasee value 
+// (which can be either function, global variable, another 
+// alias or bitcast of global value). 
+
+alias(Alias), alias:value(Alias:Ref) -> string(Ref).
+alias:type[Alias] = Type -> alias(Alias), type(Type).
+alias:linkage_type[Alias] = Link -> alias(Alias), linkage_type(Link).
+alias:visibility[Alias] = Vis -> alias(Alias), visibility(Vis).
+alias:aliasee[Alias] = Aliasee -> alias(Alias), string(Aliasee).
+
+alias(Var) -> alias:type[Var] = _.
+alias:linkage_type[_] = Link
+ ->
+   linkage_type:private[] = Link
+ ; linkage_type:linker_private[] = Link
+ ; linkage_type:linker_private_weak[] = Link
+ ; linkage_type:internal[] = Link
+ ; linkage_type:linkonce[] = Link
+ ; linkage_type:weak[] = Link
+ ; linkage_type:linkonce_odr[] = Link
+ ; linkage_type:weak_odr[] = Link
+ ; linkage_type:external[] = Link.
+
+
+// Linkage type for globals, and selectors
+linkage_type(Link), linkage_type:id(Link:Ref) -> string(Ref).
+linkage_type:external[] = Link <- linkage_type:id(Link:"external").
+linkage_type:private[]  = Link <- linkage_type:id(Link:"private").
+linkage_type:internal[] = Link <- linkage_type:id(Link:"internal").
+linkage_type:linkonce[] = Link <- linkage_type:id(Link:"linkonce").
+linkage_type:linker_private[] = Link <- linkage_type:id(Link:"linker_private").
+linkage_type:linkonce_odr[]   = Link <- linkage_type:id(Link:"linkonce_odr").
+linkage_type:weak[] = Link <- linkage_type:id(Link:"weak").
+linkage_type:weak_odr[] = Link <- linkage_type:id(Link:"weak_odr").
+linkage_type:common[] = Link <- linkage_type:id(Link:"common").
+linkage_type:appending[] = Link <- linkage_type:id(Link:"appending").
+linkage_type:dllimport[] = Link <- linkage_type:id(Link:"dllimport").
+linkage_type:dllexport[] = Link <- linkage_type:id(Link:"dllexport").
+linkage_type:extern_weak[] = Link <- linkage_type:id(Link:"extern_weak").
+linkage_type:linker_private_weak[]  = Link <- 
+   linkage_type:id(Link:"linker_private_weak").
+linkage_type:available_externally[] = Link <- 
+   linkage_type:id(Link:"available_externally").
+
+// Visibility style for globals
+visibility(Vis), visibility:id(Vis:Ref) -> string(Ref).
+visibility:default[] = Vis   <- visibility:id(Vis:"default").
+visibility:hidden[] = Vis    <- visibility:id(Vis:"hidden").
+visibility:protected[] = Vis <- visibility:id(Vis:"protected").
+
+
+// Thread-local mode for globals
+threadlocal_mode(Mode), threadlocal_mode:id(Mode:Ref) -> string(Ref).
+threadlocal_mode:thread_local[] = Mode  <- 
+   threadlocal_mode:id(Mode:"thread_local").
+
+threadlocal_mode:local_dynamic[] = Mode <- 
+   threadlocal_mode:id(Mode:"thread_local(localdynamic)").
+
+threadlocal_mode:initial_exec[] = Mode <- 
+   threadlocal_mode:id(Mode:"thread_local(initialexec)").
+
+threadlocal_mode:local_exec[] = Mode <- 
+   threadlocal_mode:id(Mode:"thread_local(localexec)").
+
+// Constraints:
+global_variable(Var) -> global_variable:visibility[Var] = _.
+global_variable(Var) -> global_variable:linkage_type[Var] = _.
