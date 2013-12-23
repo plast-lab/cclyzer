@@ -18,6 +18,30 @@ instruction:basicblock[Insn] = BB <-
    instruction:bb_entry[Insn] = Label,
    basicblock:by_label[Label] = BB.
 
+////////////////////////
+// Landingpad Clauses //
+////////////////////////
+
+landingpad_instruction:clause:catch_tmp[Insn, Index] = Constant -> 
+   landingpad_instruction(Insn), index(Index), global_variable(Constant).
+
+landingpad_instruction:clause:filter_tmp[Insn, Index] = Constant -> 
+   landingpad_instruction(Insn), index(Index), immediate(Constant).
+
+
+clause(Clause),
+clause:by_index[Insn, Index] = Clause,
+catch_clause:arg[Clause] = Constant,
+landingpad_instruction:clause[Insn, Index] = Clause <-
+   landingpad_instruction:clause:catch_tmp[Insn, I] = Constant,
+   index:value(I:Index).
+
+clause(Clause),
+clause:by_index[Insn, Index] = Clause,
+filter_clause:arg[Clause] = Constant,
+landingpad_instruction:clause[Insn, Index] = Clause <-
+   landingpad_instruction:clause:filter_tmp[Insn, I] = Constant,
+   index:value(I:Index).
 
 ///////////////////////////
 // Pseudo-index entities //

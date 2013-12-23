@@ -58,6 +58,26 @@ basicblock(BB), basicblock:by_label[Label] = BB <-
 lang:physical:storageModel[`basicblock] = "ScalableSparse".
 lang:constructor(`basicblock:by_label).
 
+basicblock:first[BB2] = First <-
+   instruction:next[Last] = First,
+   instruction:basicblock[Last] = BB1,
+   instruction:basicblock[First] = BB2,
+   BB1 != BB2.
+
+basicblock:first[BB] = First <-
+   !instruction:prev[First] = _,
+   instruction:basicblock[First] = BB.
+
+basicblock:last[BB1] = Last <-
+   instruction:next[Last] = First,
+   instruction:basicblock[Last] = BB1,
+   instruction:basicblock[First] = BB2,
+   BB1 != BB2.
+
+basicblock:last[BB] = Last <-
+   !instruction:next[Last] = _,
+   instruction:basicblock[Last] = BB.
+
 basicblock:predecessors(BB, Pred) ->
    basicblock(BB), basicblock(Pred).
 

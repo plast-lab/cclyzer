@@ -1,6 +1,6 @@
 SCHEMA TODO LIST // -*- mode: org -*-
 
-* TODO auxiliary-imports
+* DONE auxiliary-imports
 * DONE basic-blocks
 * DONE add-instruction
 * DONE alloca-instruction
@@ -37,7 +37,7 @@ SCHEMA TODO LIST // -*- mode: org -*-
 * DONE instruction
 * DONE inttoptr-instruction
 * DONE invoke-instruction
-* TODO landingpad-instruction
+* DONE landingpad-instruction
 * DONE load-instruction
 * DONE lshr-instruction
 * DONE mul-instruction
