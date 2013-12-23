@@ -3,7 +3,12 @@
 global_variable(Var) -> immediate(Var). // TODO: why??
 
 global_variable:type[Var] = Type -> 
-   global_variable(Var), type(Type). // TODO: isn't this redundant? 
+   global_variable(Var), type(Type).
+
+global_variable:type[Var] = Type,
+   immediate:type[Var] = Ptr
+ ->
+   pointer_type:component[Ptr] = Type.
 
 global_variable:initializer[Var] = Init -> 
    global_variable(Var), string(Init).
