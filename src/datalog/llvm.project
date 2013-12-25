@@ -69,3 +69,4 @@ schema/unreachable-instruction.logic, active
 schema/va-arg-instruction.logic, active
 
 import/auxiliary.logic, active
+import/operand-specific.logic, inactive

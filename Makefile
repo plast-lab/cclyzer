@@ -9,8 +9,8 @@ LOGICRT     = bloxbatch
 LOGICC      = bloxcompiler
 LOGICCFLAGS = -compileProject
 INSTALL     = install
-SCRIPTGEN   = $(BINDIR)/generate-import.sh
-LOGICGEN    = $(BINDIR)/import-logic-gen
+SCRIPTGEN   = $(BINDIR)/generate-import-script
+LOGICGEN    = $(BINDIR)/generate-import-logic
 
 # Database
 DB = $(OUTDIR)/db
@@ -41,7 +41,7 @@ PREDICATES = $(IMPORTDIR)/predicates.import
 
 # For file predicates
 AUTOPRED   = $(LOGIC_SRCDIR)/import/.autopred
-AUTOIMPORT = $(LOGIC_SRCDIR)/import/parse.logic
+AUTOIMPORT = $(LOGIC_SRCDIR)/import/operand-specific.logic
 
 
 all: compile
@@ -52,14 +52,14 @@ compile: $(LOGIC_TARGET)
 ##############
 
 # TODO: fix by adding script
-deploy: $(AUTOIMPORT)
+deploy: $(LOGIC_TARGET) $(ENTITIES) $(PREDICATES)
 	$(LOGICRT) -db $(DB) -create -overwrite
 	$(LOGICRT) -db $(DB) -addProject $(LOGIC_OUTDIR)
 	$(LOGICRT) -db $(DB) -import $(ENTITIES)
 	$(LOGICRT) -db $(DB) -import $(PREDICATES)
-	$(LOGICRT) -db $(DB) -execute -file $(AUTOIMPORT)
+	$(LOGICRT) -db $(DB) -execute -block $(AUTOIMPORT)
 
-cleandb:
+clean-db:
 	rm -rf $(DB)/
 
 ############################
@@ -97,17 +97,19 @@ $(PREDICATES): $(PRDCSV:%.dlm=$(IMPORTDIR)/%.import)
 # Phony targets
 import: $(ENTITIES) $(PREDICATES) $(AUTOIMPORT)
 
-cleanimport:
-	rm -rf $(IMPORTDIR)
+clean-import:
 	rm -f $(AUTOIMPORT)
+	rm -rf $(IMPORTDIR)
 
 #######################
 # Datalog Compilation #
 #######################
 
-$(LOGIC_TARGET): $(LOGIC_LBSPEC) $(LOGIC) | $(LOGIC_OUTDIR)
+$(LOGIC_TARGET): $(LOGIC_LBSPEC) | $(LOGIC_OUTDIR)
 	$(LOGICC) $(LOGICCFLAGS) $< -outDir $(@D)
 	@touch $@
+
+$(LOGIC_TARGET): $(LOGIC) $(AUTOIMPORT)
 
 ######################
 # Create directories #
@@ -122,11 +124,9 @@ $(IMPORTDIR) $(LOGIC_OUTDIR): | $(OUTDIR)
 # Phony Targets #
 #################
 
-.PHONY: all compile clean cleanall 
-.PHONY: deploy cleandb 
-.PHONY: import cleanimport
+.PHONY: all compile clean
+.PHONY: deploy clean-db 
+.PHONY: import clean-import
 
-cleanall:
+clean: clean-import clean-db
 	rm -rf $(OUTDIR)
-
-clean: cleanimport cleandb
