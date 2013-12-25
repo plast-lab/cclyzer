@@ -42,6 +42,7 @@ PREDICATES = $(IMPORTDIR)/predicates.import
 # For file predicates
 AUTOPRED   = $(LOGIC_SRCDIR)/import/.autopred
 AUTOIMPORT = $(LOGIC_SRCDIR)/import/operand-specific.logic
+AUTOBLOCK  = $(AUTOIMPORT:$(LOGIC_SRCDIR)/import/%.logic=import:%)
 
 
 all: compile
@@ -51,13 +52,14 @@ compile: $(LOGIC_TARGET)
 # Deployment #
 ##############
 
-# TODO: fix by adding script
 deploy: $(LOGIC_TARGET) $(ENTITIES) $(PREDICATES)
 	$(LOGICRT) -db $(DB) -create -overwrite
-	$(LOGICRT) -db $(DB) -addProject $(LOGIC_OUTDIR)
+	$(LOGICRT) -db $(DB) -installProject -dir $(LOGIC_OUTDIR)
+	@rm -f $(OUTDIR)/$(DATADIR)
+	@ln -rs $(DATADIR) $(OUTDIR)
 	$(LOGICRT) -db $(DB) -import $(ENTITIES)
 	$(LOGICRT) -db $(DB) -import $(PREDICATES)
-	$(LOGICRT) -db $(DB) -execute -block $(AUTOIMPORT)
+	$(LOGICRT) -db $(DB) -execute -name $(AUTOBLOCK)
 
 clean-db:
 	rm -rf $(DB)/
