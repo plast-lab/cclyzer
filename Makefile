@@ -1,134 +1,154 @@
-# Directories
-SRCDIR  = ./src
-BINDIR  = ./bin
-OUTDIR  = ./build
-DATADIR = ./data
+# For debugging
+QUIET   := @
 
-# Datalog and misc tools
-LOGICRT     = bloxbatch
-LOGICC      = bloxcompiler
-LOGICCFLAGS = -compileProject
-INSTALL     = install
-SCRIPTGEN   = $(BINDIR)/generate-import-script
-LOGICGEN    = $(BINDIR)/generate-import-logic
+# Trees
+SRCDIR  := ./src
+BINDIR  := ./bin
+OUTDIR  := ./build
+DATADIR := ./data
+DBDIR   := $(OUTDIR)/db
 
-# Database
-DB = $(OUTDIR)/db
+# Unix tools
+INSTALL := install
+RM      := rm -f
+MKDIR   := mkdir -p
 
-###########
-# Datalog #
-###########
-
-LOGIC_SRCDIR = $(SRCDIR)/datalog
-LOGIC_OUTDIR = $(OUTDIR)/datalog
-LOGIC_LBSPEC = $(LOGIC_SRCDIR)/llvm.project
-LOGIC_TARGET = $(LOGIC_OUTDIR)/.comp.lock
-
-LOGIC := $(wildcard $(LOGIC_SRCDIR)/schema/*.logic)
-LOGIC += $(wildcard $(LOGIC_SRCDIR)/import/*.logic)
-
-###############################
-# CSV data and import scripts #
-###############################
-
-IMPORTDIR  = $(OUTDIR)/import
-
-# For import scripts
-ENTCSV     = $(notdir $(wildcard $(DATADIR)/entities/*.dlm))
-PRDCSV     = $(notdir $(wildcard $(DATADIR)/predicates/*.dlm))
-ENTITIES   = $(IMPORTDIR)/entities.import
-PREDICATES = $(IMPORTDIR)/predicates.import
-
-# For file predicates
-AUTOPRED   = $(LOGIC_SRCDIR)/import/.autopred
-AUTOIMPORT = $(LOGIC_SRCDIR)/import/operand-specific.logic
-AUTOBLOCK  = $(AUTOIMPORT:$(LOGIC_SRCDIR)/import/%.logic=import:%)
+# Utility Scripts
+GEN.mkscript := $(BINDIR)/generate-import-script.sh
+GEN.mklogic  := $(BINDIR)/generate-import-logic.sh
 
 
-all: compile
-compile: $(LOGIC_TARGET)
+# LogicBlox Tools
 
-##############
-# Deployment #
-##############
+define compile-datalog-project =
+  bloxcompiler -compileProject $1 -outDir $2
+endef
 
-deploy: $(LOGIC_TARGET) $(ENTITIES) $(PREDICATES)
-	$(LOGICRT) -db $(DB) -create -overwrite
-	$(LOGICRT) -db $(DB) -installProject -dir $(LOGIC_OUTDIR)
-	@rm -f $(OUTDIR)/$(DATADIR)
-	@ln -rs $(DATADIR) $(OUTDIR)
-	$(LOGICRT) -db $(DB) -import $(ENTITIES)
-	$(LOGICRT) -db $(DB) -import $(PREDICATES)
-	$(LOGICRT) -db $(DB) -execute -name $(AUTOBLOCK)
+define deploy-datalog-project =
+  bloxbatch -db $1 -create -overwrite
+  bloxbatch -db $1 -installProject -dir $(LOGIC.outdir)
+  bloxbatch -db $1 -import $(entities)
+  bloxbatch -db $1 -import $(predicates)
+  bloxbatch -db $1 -execute -name "import:operand-specific"
+endef
+
+
+# Datalog Module
+
+LOGIC.srcdir := $(SRCDIR)/datalog
+LOGIC.outdir := $(OUTDIR)/datalog
+LOGIC.proj   := $(LOGIC.srcdir)/llvm.project
+LOGIC.ph     := $(LOGIC.outdir)/.placeholder
+LOGIC.src    := $(wildcard $(LOGIC.srcdir)/schema/*.logic)
+LOGIC.src    += $(wildcard $(LOGIC.srcdir)/import/*.logic)
+
+
+# CSV data and import scripts
+
+GEN.srcdir   := $(LOGIC.srcdir)/import
+GEN.outdir   := $(OUTDIR)/import
+GEN.csv      := $(shell find $(DATADIR)/ -type f -name '*.dlm')
+GEN.src      := $(GEN.srcdir)/operand-specific.logic
+LOGIC.src    += $(GEN.src)
+
+entities     := $(GEN.outdir)/entities.import
+predicates   := $(GEN.outdir)/predicates.import
+
+## $(call csv-import-chunk, csv)
+define csv-import-chunk =
+  $(patsubst %.dlm,$(GEN.outdir)/%.import.part, $(notdir $1))
+endef
+
+
+# Directories to be created
+directories  := $(OUTDIR)
+directories  += $(DBDIR) $(LOGIC.outdir) $(GEN.outdir)
+
+
+all: compile import
+compile: $(LOGIC.ph)
+
+
+# Deployment
+
+.PHONY: deploy
+deploy: $(LOGIC.ph) $(entities) $(predicates)
+	$(QUIET) $(RM) $(OUTDIR)/$(DATADIR)
+	$(QUIET) ln -rs $(DATADIR) $(OUTDIR)
+	$(call deploy-datalog-project,$(DBDIR))
+
+
+# Import scripts and logic
+
+## Generate import logic (file predicates)
+
+vpath .autopred $(LOGIC.srcdir)/import
+
+$(GEN.src): .autopred $(GEN.mklogic)
+	cat $< | $(GEN.mklogic) "$(DATADIR)" > $@
+
+## Generate .import scripts
+
+vpath %.dlm $(DATADIR)
+vpath %.dlm $(DATADIR)/entities
+vpath %.dlm $(DATADIR)/predicates
+
+$(GEN.outdir)/%.import.part: %.dlm | $(GEN.outdir)
+	$(GEN.mkscript) $< > $@
+
+## Collect all generated .import files into one
+
+entities_CSV     := $(filter $(DATADIR)/entities/%.dlm, $(GEN.csv))
+predicates_CSV   := $(filter $(DATADIR)/predicates/%.dlm, $(GEN.csv))
+
+entities_CHUNK   := $(call csv-import-chunk,$(entities_CSV))
+predicates_CHUNK := $(call csv-import-chunk,$(predicates_CSV))
+
+.SECONDEXPANSION:
+$(entities) $(predicates): $(GEN.outdir)/%.import: $$($$*_CHUNK)
+	$(QUIET) echo "option,delimiter,\"	\"" > $@
+	$(QUIET) echo "option,hasColumnNames,false" >> $@
+	$(QUIET) cat $^ >> $@
+
+# Uncomment this line to remove .import.part automatically
+# .INTERMEDIATE: $(entities_CHUNK) $(predicates_CHUNK)
+
+.PHONY: entities
+entities: $(entities)
+
+.PHONY: predicates
+predicates: $(predicates)
+
+.PHONY: import
+import: entities predicates $(GEN.src)
+
+
+# Compile Datalog Code
+
+$(LOGIC.ph): $(LOGIC.proj) $(LOGIC.src) | $(LOGIC.outdir)
+	$(call compile-datalog-project, $<, $(@D))
+	$(QUIET) touch $@
+
+
+# Create directories
+$(directories):
+	$(MKDIR) $@
+
+
+# Cleaning Targets
+
+clean: clean-import clean-db clean-logic
+	$(RM) -r $(OUTDIR)/
 
 clean-db:
-	rm -rf $(DB)/
-
-############################
-# Import scripts and logic #
-############################
-
-# Generate import logic (file predicates)
-
-$(AUTOIMPORT): %.logic: $(AUTOPRED) $(LOGICGEN)
-	cat $< | $(LOGICGEN) "$(DATADIR)" > $@
-
-# Generate .import scripts
-
-$(IMPORTDIR)/%.import: $(DATADIR)/entities/%.dlm 
-	$(SCRIPTGEN) $< > $@
-
-$(IMPORTDIR)/%.import: $(DATADIR)/predicates/%.dlm
-	$(SCRIPTGEN) $< > $@
-
-$(ENTCSV:%.dlm=$(IMPORTDIR)/%.import): $(SCRIPTGEN) | $(IMPORTDIR)
-$(PRDCSV:%.dlm=$(IMPORTDIR)/%.import): $(SCRIPTGEN) | $(IMPORTDIR)
-
-# Collect all generated .import files into one
-
-$(ENTITIES): $(ENTCSV:%.dlm=$(IMPORTDIR)/%.import)
-	@echo "option,delimiter,\"	\"" > $@
-	@echo "option,hasColumnNames,false" >> $@
-	@cat $^ >> $@
-
-$(PREDICATES): $(PRDCSV:%.dlm=$(IMPORTDIR)/%.import)
-	@echo "option,delimiter,\"	\"" > $@
-	@echo "option,hasColumnNames,false" >> $@
-	@cat $^ >> $@
-
-# Phony targets
-import: $(ENTITIES) $(PREDICATES) $(AUTOIMPORT)
+	$(RM) -r $(DBDIR)/
 
 clean-import:
-	rm -f $(AUTOIMPORT)
-	rm -rf $(IMPORTDIR)
+	$(RM) $(GEN.src)
+	$(RM) -r $(GEN.outdir)
 
-#######################
-# Datalog Compilation #
-#######################
+clean-logic:
+	$(RM) -r $(LOGIC.outdir)
 
-$(LOGIC_TARGET): $(LOGIC_LBSPEC) | $(LOGIC_OUTDIR)
-	$(LOGICC) $(LOGICCFLAGS) $< -outDir $(@D)
-	@touch $@
-
-$(LOGIC_TARGET): $(LOGIC) $(AUTOIMPORT)
-
-######################
-# Create directories #
-######################
-
-$(OUTDIR) $(LOGIC_OUTDIR) $(IMPORTDIR):
-	mkdir $@
-
-$(IMPORTDIR) $(LOGIC_OUTDIR): | $(OUTDIR)
-
-#################
-# Phony Targets #
-#################
-
-.PHONY: all compile clean
-.PHONY: deploy clean-db 
-.PHONY: import clean-import
-
-clean: clean-import clean-db
-	rm -rf $(OUTDIR)
+.PHONY: clean clean-import clean-db clean-logic
+.PHONY: all compile
