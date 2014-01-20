@@ -630,9 +630,7 @@ void getIRFilesfromDir(const char * dirName, vector<string> &files) {
 	}
 	while((entry = readdir(dir)) != NULL) {
 		if(strcmp(entry->d_name, ".") && strcmp(entry->d_name, "..")) {
-			cout << "Exei mesa ta : " << entry->d_name << "\n";
 			path = string(dirName) + "/" + string(entry->d_name);
-			cout << "!!!!  " << path << "\n";
 			if(isDir(path.c_str())) {
 				getIRFilesfromDir(path.c_str(), files);
 			}
