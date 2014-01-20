@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
 	if(mkdir(DirInfo::factsDir, 0777) != 0) {
 		if(errno == EEXIST) {
 			//delete all previous contents
-			clearFactsDir("facts");
+			clearFactsDir(DirInfo::factsDir);
 		}
 		else {
 			perror("mkdir()");
@@ -181,7 +181,6 @@ int main(int argc, char *argv[]) {
 		int counter = 0;
 		for (inst_iterator i = inst_begin(fi), e = inst_end(fi); i != e; ++i) {
 			Instruction *ii = dyn_cast<Instruction>(&*i);
-			errs() << *ii << "\n";
 			string instrNum = instrId + static_cast<ostringstream*>(&(ostringstream()<< counter))->str();
 			counter++;
 			if(!ii->getType()->isVoidTy()) {
@@ -312,4 +311,4 @@ int main(int argc, char *argv[]) {
 	}
 	return 0;
 }
-//g++ -g Main.cpp functions.cpp InstructionVisitor.cpp -std=c++0x `llvm-config --cxxflags --ldflags | sed s/-fno-rtti//` -lLLVM-3.3 -o tut
+//g++ -g *.cpp -std=c++0x `llvm-config --cxxflags --ldflags | sed s/-fno-rtti//` -lLLVM-3.3 -o th

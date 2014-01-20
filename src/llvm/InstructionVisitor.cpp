@@ -864,14 +864,12 @@ void InstructionVisitor::visitIndirectBrInst(IndirectBrInst &IBR) {
 	WriteAsOperand(rso, IBR.getOperand(0), 0, Mod);
 	if(Constant *c = dyn_cast<Constant>(IBR.getOperand(0))) {
 		varId = instrId + rso.str();
-		printFactsToFile("facts/IndirectBrInstruction-Imm.dlm", "%s\t%s\n", instrNum, varId);
 		printFactsToFile(PredicateNames::predNameWithOperandToFilename(PredicateNames::indirectbrInsnAddr, 0).c_str(),
 				"%s\t%s\n", instrNum, varId);
 		immediate[varId] = IBR.getOperand(0)->getType();
 	}
 	else {
 		varId = instrId + rso.str();
-		printFactsToFile("facts/IndirectBrInstruction-Var.dlm", "%s\t%s\n", instrNum, varId);
 		printFactsToFile(PredicateNames::predNameWithOperandToFilename(PredicateNames::indirectbrInsnAddr, 1).c_str(),
 				"%s\t%s\n", instrNum, varId);
 		variable[varId] = IBR.getOperand(0)->getType();
@@ -881,12 +879,10 @@ void InstructionVisitor::visitIndirectBrInst(IndirectBrInst &IBR) {
 		value_str.clear();
 		WriteAsOperand(rso, IBR.getOperand(i), 0, Mod);
 		varId = instrId + rso.str();
-		printFactsToFile("facts/predicates/IndirectBrInstruction-Label_tmp.dlm", "%s\t%d\t%s\n", instrNum, i-1, varId);
 		printFactsToFile(PredicateNames::predNameToFilename(PredicateNames::indirectbrInsnLabel).c_str(),
 				"%s\t%d\t%s\n", instrNum, i-1, varId);
 		variable[varId] = IBR.getOperand(i)->getType();
 	}
-	printFactsToFile("facts/predicates/IndirectBrInstruction-nLabels.dlm", "%s\t%d\n", instrNum, IBR.getNumOperands()-1);
 	printFactsToFile(PredicateNames::predNameToFilename(PredicateNames::indirectbrInsnNLabels).c_str(),
 			"%s\t%d\n", instrNum, IBR.getNumOperands()-1);
 }
@@ -981,7 +977,6 @@ void InstructionVisitor::visitResumeInst(ResumeInst &RI) {
 	WriteAsOperand(rso, RI.getValue(), 0, Mod);
 	if(Constant *c = dyn_cast<Constant>(RI.getValue())) {
 		varId = instrId + rso.str();
-		printFactsToFile("facts/ResumeInstruction-Imm.dlm", "%s\t%s\n", instrNum, varId);
 		printFactsToFile(PredicateNames::predNameWithOperandToFilename(PredicateNames::resumeInsnOp, 0).c_str(),
 				"%s\t%s\n", instrNum, varId);
 		immediate[varId] = RI.getValue()->getType();
@@ -1407,42 +1402,6 @@ void InstructionVisitor::visitBitCastInst(BitCastInst &I) {
 			printType(I.getType()));
 }
 
-//void InstructionVisitor::visitCastInst(CastInst &CI) {
-//	raw_string_ostream rso(value_str);
-//	string error;
-//
-//	string instrName = string(CI.getOpcodeName());
-//	instrName[0] = toupper(instrName[0]);
-//	instrName = instrName + "Instruction";
-//	string entityName = "facts/entities/" + instrName + ".dlm";
-//	string operand = "facts/" + instrName;
-//	string type = "facts/predicates/" + instrName + "-Type.dlm";
-//
-//	printFactsToFile(entityName.c_str(), "%s\n", instrNum);
-//	value_str.clear();
-//	WriteAsOperand(rso, CI.getOperand(0), 0, Mod);
-//	if(Constant *c = dyn_cast<Constant>(CI.getOperand(0))) {
-////		varId = rso.str();
-//		varId = instrId + rso.str();
-//		printFactsToFile((operand + "-Imm.dlm").c_str(), "%s\t%s\n", instrNum, varId);
-//		immediate[varId] = CI.getOperand(0)->getType();
-//		if(!fileExists((operand + "Var.dlm").c_str())) {
-//			raw_fd_ostream f((operand + "Var.dlm").c_str(), error, raw_fd_ostream::F_Append);
-//			f.close();
-//		}
-//	}
-//	else {
-//		varId = instrId + rso.str();
-//		printFactsToFile((operand + "-Var.dlm").c_str(), "%s\t%s\n", instrNum, varId);
-//		variable[varId] = CI.getOperand(0)->getType();
-//		if(!fileExists((operand + "Imm.dlm").c_str())) {
-//			raw_fd_ostream f((operand + "Imm.dlm").c_str(), error, raw_fd_ostream::F_Append);
-//			f.close();
-//		}
-//	}
-//	printFactsToFile(type.c_str(), "%s\t%t\n", instrNum, printType(CI.getType()));
-//}
-
 void InstructionVisitor::visitStoreInst(StoreInst &SI) {
 
 	raw_string_ostream rso(value_str);
@@ -1656,7 +1615,6 @@ void InstructionVisitor::visitPHINode(PHINode &PHI) {
 	// <result> = phi <ty> [ <val0>, <label0>], ...
 	printFactsToFile(PredicateNames::predNameToFilename(PredicateNames::phiInsn).c_str(), "%s\n", instrNum);
 	// type
-	printFactsToFile("facts/predicates/PhiInstruction-Type.dlm", "%s\t%t\n", instrNum, printType(PHI.getType()));
 	printFactsToFile(PredicateNames::predNameToFilename(PredicateNames::phiInsnType).c_str(),
 			"%s\t%t\n", instrNum, printType(PHI.getType()));
 	for(unsigned op = 0; op < PHI.getNumIncomingValues(); ++op) {
@@ -1679,7 +1637,6 @@ void InstructionVisitor::visitPHINode(PHINode &PHI) {
 		value_str.clear();
 		WriteAsOperand(rso, PHI.getIncomingBlock(op), 0, Mod);
 		varId = instrId + rso.str();
-		printFactsToFile("facts/predicates/PhiInstruction-Pair-Label.dlm", "%s\t%d\t%s\n", instrNum, op, varId);
 		printFactsToFile(PredicateNames::predNameToFilename(PredicateNames::phiInsnPairLabel).c_str(),
 				"%s\t%d\t%s\n", instrNum, op, varId);
 		variable[varId] = PHI.getIncomingBlock(op)->getType();
@@ -1767,7 +1724,6 @@ void InstructionVisitor::visitInsertValueInst(InsertValueInst &IVI) {
 	WriteAsOperand(rso, IVI.getOperand(1), 0, Mod);
 	if(Constant *c = dyn_cast<Constant>(IVI.getOperand(1))) {
 		varId = instrId + rso.str();
-		printFactsToFile("facts/InsertValueInstruction-Right-Imm.dlm", "%s\t%s\n", instrNum, varId);
 		printFactsToFile(PredicateNames::predNameWithOperandToFilename(PredicateNames::insertValueInsnValue, 0).c_str(),
 				"%s\t%s\n", instrNum, varId);
 		immediate[varId] = IVI.getOperand(1)->getType();
@@ -1795,7 +1751,6 @@ void InstructionVisitor::visitLandingPadInst(LandingPadInst &LI) {
 
 	printFactsToFile(PredicateNames::predNameToFilename(PredicateNames::landingpadInsn).c_str(), "%s\n", instrNum);
 	// type
-	printFactsToFile("facts/predicates/LandingpadInstruction-Type.dlm", "%s\t%t\n", instrNum, printType(LI.getType()));
 	printFactsToFile(PredicateNames::predNameToFilename(PredicateNames::landingpadInsnType).c_str(),
 			"%s\t%t\n", instrNum, printType(LI.getType()));
 
@@ -2010,7 +1965,6 @@ void InstructionVisitor::visitExtractElementInst(ExtractElementInst &EEI) {
 	WriteAsOperand(rso, EEI.getVectorOperand(), 0, Mod);
 	if(Constant *c = dyn_cast<Constant>(EEI.getVectorOperand())) {
 		varId = instrId + rso.str();
-		printFactsToFile("facts/ExtractElementInstruction-Left-Imm.dlm", "%s\t%s\n", instrNum, varId);
 		printFactsToFile(PredicateNames::predNameWithOperandToFilename(PredicateNames::extractElemInsnBase, 0).c_str(),
 				"%s\t%s\n", instrNum, varId);
 		immediate[varId] = EEI.getVectorOperand()->getType();
@@ -2129,7 +2083,6 @@ void InstructionVisitor::visitShuffleVectorInst(ShuffleVectorInst &SVI) {
 	value_str.clear();
 	WriteAsOperand(rso, SVI.getOperand(2), 0, Mod);
 	varId = instrId + rso.str();
-	printFactsToFile("facts/predicates/ShuffleVecotrInstruction-Mask.dlm", "%s\t%s\n", instrNum, varId);
 	printFactsToFile(PredicateNames::predNameToFilename(PredicateNames::shuffleVectorInsnMask).c_str(),
 			"%s\t%s\n", instrNum, varId);
 	immediate[varId] = SVI.getOperand(2)->getType();
