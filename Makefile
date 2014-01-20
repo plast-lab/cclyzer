@@ -20,11 +20,11 @@ GEN.mklogic  := $(BINDIR)/generate-import-logic.sh
 
 # LogicBlox Tools
 
-define compile-datalog-project =
+define compile-datalog-project
   bloxcompiler -compileProject $1 -outDir $2
 endef
 
-define deploy-datalog-project =
+define deploy-datalog-project
   bloxbatch -db $1 -create -overwrite
   bloxbatch -db $1 -installProject -dir $(LOGIC.outdir)
   bloxbatch -db $1 -import $(entities)
@@ -55,7 +55,7 @@ entities     := $(GEN.outdir)/entities.import
 predicates   := $(GEN.outdir)/predicates.import
 
 ## $(call csv-import-chunk, csv)
-define csv-import-chunk =
+define csv-import-chunk
   $(patsubst %.dlm,$(GEN.outdir)/%.import.part, $(notdir $1))
 endef
 
@@ -126,7 +126,7 @@ import: entities predicates $(GEN.src)
 # Compile Datalog Code
 
 $(LOGIC.ph): $(LOGIC.proj) $(LOGIC.src) | $(LOGIC.outdir)
-	$(call compile-datalog-project, $<, $(@D))
+	$(call compile-datalog-project, $<,$(@D))
 	$(QUIET) touch $@
 
 
