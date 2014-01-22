@@ -330,10 +330,6 @@ public:
 	static const char * landingpadInsnCleanup;
 	static const char * landingpadInsnType;
 	static const char * landingpadInsnFunc;
-	static const char * catchClause;
-	static const char * catchClauseArg;
-	static const char * filterClause;
-	static const char * filterClauseArg;
 	static const char * landingpadInsnCatch;
 	static const char * landingpadInsnFilter;
 	static const char * landingpadInsnNClauses;

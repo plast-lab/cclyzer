@@ -1,7 +1,6 @@
 #include "llvm/InstVisitor.h"
 
 using namespace llvm;
-using namespace std;
 
 class InstructionVisitor : public InstVisitor<InstructionVisitor> {
 
@@ -96,22 +95,22 @@ public:
 	// 'default' case
 	void visitInstruction(Instruction &I);
 
-	void setInstrNum(string instructionNum) {
+	void setInstrNum(std::string instructionNum) {
 
 		instrNum = instructionNum;
 	}
-	void setInstrId(string instructionId) {
+	void setInstrId(std::string instructionId) {
 
 		instrId = instructionId;
 	}
 
 private :
 
-	string instrNum;
-	string instrId;
-	string varId;
-	string value_str;
-	map<string, Type *> &variable;
-	map<string, Type *> &immediate;
+	std::string instrNum;
+	std::string instrId;
+	std::string varId;
+	std::string value_str;
+	map<std::string, Type *> &variable;
+	map<std::string, Type *> &immediate;
 	Module *Mod;
  };

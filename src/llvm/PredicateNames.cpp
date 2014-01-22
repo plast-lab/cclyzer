@@ -9,7 +9,7 @@ using namespace std;
 
 // Basic Blocks
 
-const char * PredicateNames::basicBlockPred = "basicblock:predecessors";
+const char * PredicateNames::basicBlockPred = "basicblock:pred_aux";
 
 // Global
 
@@ -331,10 +331,6 @@ const char * PredicateNames::callInsnFuncAttr = "call_instruction:function_attri
 const char * PredicateNames::landingpadInsn = "landingpad_instruction";
 const char * PredicateNames::landingpadInsnType = "landingpad_instruction:type";
 const char * PredicateNames::landingpadInsnFunc = "landingpad_instruction:pers_fn";
-const char * PredicateNames::catchClause = "catch_clause";
-const char * PredicateNames::catchClauseArg = "catch_clause:arg";
-const char * PredicateNames::filterClause = "filter_clause";
-const char * PredicateNames::filterClauseArg = "filter_clause:arg";
 const char * PredicateNames::landingpadInsnCatch = "landingpad_instruction:clause:catch_tmp";
 const char * PredicateNames::landingpadInsnFilter = "landingpad_instruction:clause:filter_tmp";
 const char * PredicateNames::landingpadInsnNClauses = "landingpad_instruction:nclauses";

@@ -12,12 +12,10 @@
 using namespace llvm;
 using namespace std;
 
-// Visit methods definitions including constructor
-
 InstructionVisitor::InstructionVisitor(map<string,Type *> &var,
 		map<string, Type *> &imm, Module *M): variable(var), immediate(imm), Mod(M) {
 
-    errs() << "InstructionVisitor is being created.\n";
+ //   errs() << "InstructionVisitor is being created.\n";
 }
 
 void InstructionVisitor::visitAdd(BinaryOperator &BI) {
