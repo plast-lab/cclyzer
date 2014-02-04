@@ -1,0 +1,12 @@
+echo "Creating workspace WORKSPACE ..."
+create --overwrite WORKSPACE
+transaction
+echo "Installing compiled Datalog schema in SCHEMA ..."
+installProject --dir SCHEMA
+echo "Importing entities from ENTITIES ..."
+import --script ENTITIES
+echo "Importing predicates from PREDICATES ..."
+import --script PREDICATES
+echo "Executing operand-related import logic ..."
+exec --storedBlock "import:operand-specific"
+commit

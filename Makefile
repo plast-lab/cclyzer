@@ -12,6 +12,7 @@ DBDIR   := $(OUTDIR)/db
 INSTALL := install
 RM      := rm -f
 MKDIR   := mkdir -p
+M4      := m4
 
 # Utility Scripts
 GEN.mkscript := $(BINDIR)/generate-import-script.sh
@@ -25,11 +26,15 @@ define compile-datalog-project
 endef
 
 define deploy-datalog-project
-  bloxbatch -db $1 -create -overwrite
-  bloxbatch -db $1 -installProject -dir $(LOGIC.outdir)
-  bloxbatch -db $1 -import $(entities)
-  bloxbatch -db $1 -import $(predicates)
-  bloxbatch -db $1 -execute -name "import:operand-specific"
+  bloxbatch -script $1
+endef
+
+define process-script
+  $(M4) --define=ENTITIES=$(entities)     \
+        --define=PREDICATES=$(predicates) \
+        --define=SCHEMA=$(LOGIC.outdir)   \
+        --define=WORKSPACE=$(DBDIR)       \
+        $(LOGIC.script) > $1
 endef
 
 
@@ -41,7 +46,7 @@ LOGIC.proj   := $(LOGIC.srcdir)/llvm.project
 LOGIC.ph     := $(LOGIC.outdir)/.placeholder
 LOGIC.src    := $(wildcard $(LOGIC.srcdir)/schema/*.logic)
 LOGIC.src    += $(wildcard $(LOGIC.srcdir)/import/*.logic)
-
+LOGIC.script := $(LOGIC.srcdir)/run.template
 
 # CSV data and import scripts
 
@@ -53,6 +58,11 @@ LOGIC.src    += $(GEN.src)
 
 entities     := $(GEN.outdir)/entities.import
 predicates   := $(GEN.outdir)/predicates.import
+
+# Script for deployment
+
+GEN.mkdatabase := $(notdir $(basename $(LOGIC.script))).lb
+
 
 ## $(call csv-import-chunk, csv)
 define csv-import-chunk
@@ -72,11 +82,15 @@ compile: $(LOGIC.ph)
 # Deployment
 
 .PHONY: deploy
-deploy: $(LOGIC.ph) $(entities) $(predicates)
+deploy: $(LOGIC.ph) $(entities) $(predicates) $(GEN.mkdatabase)
 	$(QUIET) $(RM) $(OUTDIR)/$(DATADIR)
 	$(QUIET) ln -rs $(DATADIR) $(OUTDIR)
-	$(call deploy-datalog-project,$(DBDIR))
+	$(call deploy-datalog-project,$(GEN.mkdatabase))
 
+
+.INTERMEDIATE: $(GEN.mkdatabase)
+$(GEN.mkdatabase):
+	$(call process-script,$@)
 
 # Import scripts and logic
 
