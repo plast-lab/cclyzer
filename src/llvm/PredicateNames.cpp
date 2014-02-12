@@ -360,7 +360,7 @@ const char * PredicateNames::arrayTypeComp = "array_type:component";
 const char * PredicateNames::arrayTypeSize = "array_type:size";
 
 const char * PredicateNames::structType = "struct_type";
-const char * PredicateNames::structTypeField = "struct_type:field";
+const char * PredicateNames::structTypeField = "struct_type:field_tmp";
 const char * PredicateNames::structTypeNFields = "struct_type:nfields";
 const char * PredicateNames::opaqueStructType = "opaque_struct_type";
 
