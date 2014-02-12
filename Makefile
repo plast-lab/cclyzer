@@ -84,7 +84,7 @@ compile: $(LOGIC.ph)
 .PHONY: deploy
 deploy: $(LOGIC.ph) $(entities) $(predicates) $(GEN.mkdatabase)
 	$(QUIET) $(RM) $(OUTDIR)/$(DATADIR)
-	$(QUIET) ln -rs $(DATADIR) $(OUTDIR)
+	$(QUIET) ln -s $(abspath $(DATADIR)) $(OUTDIR)
 	$(call deploy-datalog-project,$(GEN.mkdatabase))
 
 
