@@ -20,7 +20,7 @@ global_variable:align[Var] = Alignment ->
    global_variable(Var),  int[64](Alignment).
 
 global_variable:flag(Var, Flag) -> 
-   global_variable(Var), string(Flag).
+   global_variable(Var), flag(Flag).
 
 global_variable:linkage_type[Var] = Link -> 
    global_variable(Var), linkage_type(Link).

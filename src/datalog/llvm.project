@@ -1,5 +1,6 @@
 llvm, projectname
 
+schema/flag.logic, active
 schema/attribute.logic, active
 schema/calling-convention.logic, active
 schema/ordering.logic, active
