@@ -12,7 +12,7 @@ basicblock:predecessors(BB1, BB2) <-
 instruction:bb_entry[Insn] = Label ->
    instruction(Insn), variable(Label).
 
-instruction:bb_entry[_] = Label -> variable:label(Label).
+// instruction:bb_entry[_] = Label -> variable:label(Label). // TODO
 
 instruction:basicblock[Insn] = BB <-
    instruction:bb_entry[Insn] = Label,
@@ -48,6 +48,14 @@ landingpad_instruction:clause[Insn, Index] = Clause <-
 ///////////////////////////
 
 index(Index), index:value(Index:Value) -> int[64](Value).
+
+// function_type
+struct_type:field_tmp[Type, Index] = Field ->
+   struct_type(Type), index(Index), type(Field).
+
+struct_type:field[Type, Index] = Field <-
+   struct_type:field_tmp[Type, I] = Field,
+   index:value(I:Index).
 
 // function_type
 function_type:param_tmp[Type, Index] = Param ->
