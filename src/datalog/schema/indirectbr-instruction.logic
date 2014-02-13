@@ -2,7 +2,9 @@
 // keywords: terminator; instruction
 
 indirectbr_instruction(Insn) -> instruction(Insn).
-indirectbr_instruction(Insn) -> terminator_instruction(Insn).
+
+terminator_instruction(Insn) <-
+   indirectbr_instruction(Insn).
 
 // The ‘address‘ argument is the address of the label to jump to.
 

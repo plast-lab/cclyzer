@@ -2,7 +2,9 @@
 // keywords: terminator; instruction
 
 resume_instruction(Insn) -> instruction(Insn).
-resume_instruction(Insn) -> terminator_instruction(Insn).
+
+terminator_instruction(Insn) <-
+   resume_instruction(Insn).
 
 resume_instruction:operand[Insn] = Operand -> 
    resume_instruction(Insn), operand(Operand).

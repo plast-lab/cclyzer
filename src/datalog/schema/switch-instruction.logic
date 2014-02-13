@@ -2,7 +2,9 @@
 // keywords: terminator; instruction
 
 switch_instruction(Insn) -> instruction(Insn).
-switch_instruction(Insn) -> terminator_instruction(Insn).
+
+terminator_instruction(Insn) <-
+   switch_instruction(Insn).
 
 switch_instruction:operand[Insn] = Value -> 
    switch_instruction(Insn), operand(Value).

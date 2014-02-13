@@ -2,7 +2,9 @@
 // keywords: terminator; instruction
 
 ret_instruction(Insn) -> instruction(Insn).
-ret_instruction(Insn) -> terminator_instruction(Insn).
+
+terminator_instruction(Insn) <-
+   ret_instruction(Insn).
 
 // The ‘ret‘ instruction optionally accepts a single 
 // argument, the return value.

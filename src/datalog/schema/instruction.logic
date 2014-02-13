@@ -5,6 +5,8 @@
 instruction(Insn), instruction:id(Insn:Ref) -> string(Ref).
 
 terminator_instruction(Insn) -> instruction(Insn).
+lang:isEntity[`terminator_instruction] = false.
+
 instruction:flag(Insn, Flag) -> instruction(Insn), flag(Flag).
 
 // Apart from the instructions with 'void' type,
