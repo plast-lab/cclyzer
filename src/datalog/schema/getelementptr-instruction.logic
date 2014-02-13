@@ -48,12 +48,12 @@ gep:vector_based(Insn) <-
    operand:type[Ptr] = Type,
    vector_type(Type).
 
-getelementptr_instruction:interm_type[Insn, 0] = Comp <-
+getelementptr_instruction:interm_type[Insn, 1] = Comp <-
    getelementptr_instruction:base[Insn] = Ptr,
    operand:type[Ptr] = Type,
    pointer_type:component[Type] = Comp. // no vector-based filter here is needed
 
-getelementptr_instruction:interm_type[Insn, 0] = Comp <-
+getelementptr_instruction:interm_type[Insn, 1] = Comp <-
    getelementptr_instruction:base[Insn] = Vector,
    operand:type[Vector] = Type,
    vector_type:component[Type] = Interm,
