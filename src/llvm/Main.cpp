@@ -187,6 +187,10 @@ int main(int argc, char *argv[]) {
 	value_str.clear();
 	WriteAsOperand(rso, bi, 0, Mod);
 	varId = bbId + rso.str();
+	printFactsToFile(PredicateNames::predNameToFilename(PredicateNames::variable).c_str(),
+			 "%s\n", varId);
+	printFactsToFile(PredicateNames::predNameToFilename(PredicateNames::variableType).c_str(),
+			 "%s\t%s\n", varId, "label");
 	for(pred_iterator pi = pred_begin(bi), pi_end = pred_end(bi); pi != pi_end; ++pi) {
 	  value_str.clear();
 	  WriteAsOperand(rso, *pi, 0, Mod);
@@ -254,6 +258,15 @@ int main(int argc, char *argv[]) {
     identifyType(type, componentTypes);
   }
 
+  //TODO: Do we need to write other primitives manually?
+  printFactsToFile(PredicateNames::predNameToFilename(PredicateNames::primitiveType).c_str(),
+		   "%s\n", "void");
+  printFactsToFile(PredicateNames::predNameToFilename(PredicateNames::primitiveType).c_str(),
+		   "%s\n", "label");
+  printFactsToFile(PredicateNames::predNameToFilename(PredicateNames::primitiveType).c_str(),
+		   "%s\n", "metadata");
+  printFactsToFile(PredicateNames::predNameToFilename(PredicateNames::primitiveType).c_str(),
+		   "%s\n", "x86mmx");
   for (set<Type *>::iterator it = componentTypes.begin(); it != componentTypes.end(); ++it) {
     Type *type = dyn_cast<Type>(*it);
     if (type->isIntegerTy()) {
