@@ -12,7 +12,7 @@ basicblock:predecessors(BB1, BB2) <-
 instruction:bb_entry[Insn] = Label ->
    instruction(Insn), variable(Label).
 
-// instruction:bb_entry[_] = Label -> variable:label(Label). // TODO
+instruction:bb_entry[_] = Label -> variable:label(Label).
 
 instruction:basicblock[Insn] = BB <-
    instruction:bb_entry[Insn] = Label,
