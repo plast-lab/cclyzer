@@ -40,24 +40,22 @@ lang:physical:delimiter[\`${var}] = "\t".
 lang:physical:filePath[\`${imm}]  = "${immfile}".
 lang:physical:filePath[\`${var}]  = "${varfile}".
 
-+immediate(Imm), 
-+immediate:value(Imm:ImmRef),
 +operand(Operand),
 +operand:by_immediate[Imm] = Operand,
 +${pred}[Insn${index+, Index}] = Operand
 <-
     instruction:id(Insn:InsnRef),
+    immediate:value(Imm:ImmRef),
     ${insn}(Insn),
     ${imm}(InsnRef${index+, Index}, ImmRef).
 
 
-+variable(Var), 
-+variable:id(Var:VarRef),
 +operand(Operand),
 +operand:by_variable[Var] = Operand,
 +${pred}[Insn${index+, Index}] = Operand
 <-
     instruction:id(Insn:InsnRef),
+    variable:id(Var:VarRef),
     ${insn}(Insn),
     ${var}(InsnRef${index+, Index}, VarRef).
 EOF
