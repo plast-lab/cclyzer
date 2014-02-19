@@ -48,8 +48,7 @@ insertvalue_instruction:value_type[Insn] = Type <-
    operand:type[Value] = Type. // c4 (fdv)
 
 insertvalue_instruction:base_type[Insn] = Type <-
-   insertvalue_instruction:base[Insn] = Aggregate,
-   operand:type[Aggregate] = Type.
+   insertvalue_instruction:interm_type[Insn, 0] = Type.
 
 
 // Constraints:

@@ -52,8 +52,7 @@ extractvalue_instruction:value_type[Insn] = Type <-
    extractvalue_instruction:interm_type[Insn, Total] = Type.
 
 extractvalue_instruction:base_type[Insn] = Type <-
-   extractvalue_instruction:base[Insn] = Aggregate,
-   operand:type[Aggregate] = Type.
+   extractvalue_instruction:interm_type[Insn, 0] = Type.
 
 
 // Constraints:
