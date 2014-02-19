@@ -371,6 +371,10 @@ public:
 	static const char * variable;
 	static const char * variableType;
 
+    //Auxiliary predicates
+
+    static const char * constToInt;
+
 	// methods for converting a predicate name into a filename
 
 	static const std::string predNameToFilename(const char *);
