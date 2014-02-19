@@ -30,7 +30,7 @@ insertvalue_instruction:interm_type[Insn, 0] = Type <-
 insertvalue_instruction:interm_type[Insn, Next] = Comp <-
    insertvalue_instruction:interm_type[Insn, Index] = Type,
    insertvalue_instruction:index[Insn, Index] = Constant,
-   constant:toInt[Constant] = Value,
+   constant:to_int[Constant] = Value,
    struct_type:field[Type, Value] = Comp,
    instruction:next_index[Insn, Index] = Next.
 

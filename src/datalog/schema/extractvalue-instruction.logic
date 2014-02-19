@@ -24,7 +24,7 @@ extractvalue_instruction:index[Insn, Index] = Idx ->
 // However, we assume a map of [constant -> int] exists,
 // so that we can introduce field-sensitivity in the future.
 
-constant:toInt[Constant] = Value ->
+constant:to_int[Constant] = Value ->
    immediate(Constant), int[64](Value).
 
 instruction:next_index[Insn, Index] = Index + 1 <-
@@ -38,7 +38,7 @@ extractvalue_instruction:interm_type[Insn, 0] = Type <-
 extractvalue_instruction:interm_type[Insn, Next] = Comp <-
    extractvalue_instruction:interm_type[Insn, Index] = Type,
    extractvalue_instruction:index[Insn, Index] = Constant,
-   constant:toInt[Constant] = Value, // Note: read above comments
+   constant:to_int[Constant] = Value, // Note: read above comments
    struct_type:field[Type, Value] = Comp,
    instruction:next_index[Insn, Index] = Next.
 
