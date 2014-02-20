@@ -1589,6 +1589,8 @@ void InstructionVisitor::visitGetElementPtrInst(GetElementPtrInst &GEP) {
 			varId = instrId + rso.str();
 			printFactsToFile(PredicateNames::predNameWithOperandToFilename(PredicateNames::gepInsnIndex, 0).c_str(),
 					"%s\t%d\t%s\n", instrNum, index-1, varId);
+            printFactsToFile(PredicateNames::predNameToFilename(PredicateNames::constToInt).c_str(), 
+                             "%s\t%s\n", varId, c->getUniqueInteger().toString(10,true));
 			immediate[varId] = GEP.getOperand(index)->getType();
 		}
 		else {

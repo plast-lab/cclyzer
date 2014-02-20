@@ -372,6 +372,10 @@ const char * PredicateNames::immediateType = "immediate:type";
 const char * PredicateNames::variable = "variable";
 const char * PredicateNames::variableType = "variable:type";
 
+// Auxiliary predicates
+
+const char * PredicateNames::constToInt = "constant:to_int";
+
 const string PredicateNames::predNameToFilename(const char * predName) {
 
 	string filename = predName;
