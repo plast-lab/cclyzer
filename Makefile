@@ -4,7 +4,7 @@ all:
 
 module.logic  := logic
 module.csv    := csvgen
-modules       := $(module.logic)
+modules       := $(module.logic) $(module.csv)
 targets.clean := $(addsuffix .clean,$(modules))
 
 include common.mk

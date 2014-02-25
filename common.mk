@@ -4,9 +4,12 @@ QUIET   := @
 
 # Unix tools
 INSTALL := install
-RM      := rm -f
 MKDIR   := mkdir -p
+SED     := sed
+RM      := rm -f
+MV      := mv
 M4      := m4
+CXX     := g++
 
 # Directory Tree
 OUTDIR   = $(LEVEL)/build
