@@ -3,10 +3,10 @@
 
 alloca_instruction(Insn) -> instruction(Insn).
 
-alloca_instruction:alignment[Insn] = Alignment -> 
+alloca_instruction:alignment[Insn] = Alignment ->
    alloca_instruction(Insn),  int[64](Alignment).
 
-alloca_instruction:size[Insn] = Size -> 
+alloca_instruction:size[Insn] = Size ->
    alloca_instruction(Insn), operand(Size).
 
 alloca_instruction:type[Insn] = Type ->

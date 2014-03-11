@@ -3,16 +3,16 @@
 
 sub_instruction(Insn) -> instruction(Insn).
 
-sub_instruction:first_operand[Insn] = Left -> 
+sub_instruction:first_operand[Insn] = Left ->
    sub_instruction(Insn), operand(Left).
 
-sub_instruction:second_operand[Insn] = Right -> 
+sub_instruction:second_operand[Insn] = Right ->
    sub_instruction(Insn), operand(Right).
 
 // Constraints:
 // The two arguments to the ‘sub‘ instruction must be:
-//    (i)  integer or 
-//    (ii) vector of integer values. 
+//    (i)  integer or
+//    (ii) vector of integer values.
 // Both arguments must have identical types.
 // The resulting value is the same type as its operands.
 
@@ -21,7 +21,7 @@ sub_instruction(Insn) -> sub_instruction:second_operand[Insn] = _.
 
 sub_instruction(Insn),
    instruction:type[Insn] = Type
- -> 
+ ->
    integer_type(Type); vector_type:integer(Type).
 
 instruction:type[Insn] = Type,

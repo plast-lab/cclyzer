@@ -3,16 +3,16 @@
 
 udiv_instruction(Insn) -> instruction(Insn).
 
-udiv_instruction:first_operand[Insn] = Left -> 
+udiv_instruction:first_operand[Insn] = Left ->
    udiv_instruction(Insn), operand(Left).
 
-udiv_instruction:second_operand[Insn] = Right -> 
+udiv_instruction:second_operand[Insn] = Right ->
    udiv_instruction(Insn), operand(Right).
 
 // Constraints:
 // The two arguments to the ‘udiv‘ instruction must be:
-//    (i)  integer or 
-//    (ii) vector of integer values. 
+//    (i)  integer or
+//    (ii) vector of integer values.
 // Both arguments must have identical types.
 // The resulting value is the same type as its operands.
 
@@ -21,7 +21,7 @@ udiv_instruction(Insn) -> udiv_instruction:second_operand[Insn] = _.
 
 udiv_instruction(Insn),
    instruction:type[Insn] = Type
- -> 
+ ->
    integer_type(Type); vector_type:integer(Type).
 
 instruction:type[Insn] = Type,

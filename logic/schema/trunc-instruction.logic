@@ -3,10 +3,10 @@
 
 trunc_instruction(Insn) -> instruction(Insn).
 
-trunc_instruction:from[Insn] = Value -> 
+trunc_instruction:from[Insn] = Value ->
    trunc_instruction(Insn), operand(Value).
 
-trunc_instruction:to_type[Insn] = Type -> 
+trunc_instruction:to_type[Insn] = Type ->
    trunc_instruction(Insn), type(Type).
 
 trunc_instruction:from_type[Insn] = Type <-
@@ -35,7 +35,7 @@ trunc_instruction:to_type[Insn] = Type
 
 
 trunc_instruction:from_type[_] = Type
- -> 
+ ->
    integer_type(Type); vector_type:integer(Type).
 
 
@@ -47,5 +47,5 @@ trunc_instruction:to_type[_] = Type
 trunc_instruction(Insn),
    trunc_instruction:from_type[Insn] = From,
    trunc_instruction:to_type[Insn] = To
- -> 
+ ->
    vector:compatible(From, To).

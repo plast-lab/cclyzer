@@ -3,10 +3,10 @@
 
 fptosi_instruction(Insn) -> instruction(Insn).
 
-fptosi_instruction:from[Insn] = Value -> 
+fptosi_instruction:from[Insn] = Value ->
    fptosi_instruction(Insn), operand(Value).
 
-fptosi_instruction:to_type[Insn] = Type -> 
+fptosi_instruction:to_type[Insn] = Type ->
    fptosi_instruction(Insn), type(Type).
 
 fptosi_instruction:from_type[Insn] = Type <-
@@ -16,12 +16,12 @@ fptosi_instruction:from_type[Insn] = Type <-
 // Constraints:
 //
 // The ‘fptosi‘ instruction takes:
-//  (i)  a value to cast, which must be a scalar or vector 
-//       floating point value, 
-//  (ii) and a type to cast it to, which must be an integer type. 
+//  (i)  a value to cast, which must be a scalar or vector
+//       floating point value,
+//  (ii) and a type to cast it to, which must be an integer type.
 //
 // If the value to be casted is a vector floating point type:
-//  (i)  the type must be a vector integer type, 
+//  (i)  the type must be a vector integer type,
 //  (ii) with the same number of elements.
 
 fptosi_instruction(Insn) -> fptosi_instruction:from[Insn] = _.
@@ -34,17 +34,17 @@ fptosi_instruction:to_type[Insn] = Type
 
 
 fptosi_instruction:from_type[_] = Type
- -> 
+ ->
    fp_type(Type); vector_type:fp(Type).
 
 
 fptosi_instruction:to_type[_] = Type
- -> 
+ ->
    integer_type(Type); vector_type:integer(Type).
 
 
 fptosi_instruction(Insn),
    fptosi_instruction:from_type[Insn] = From,
    fptosi_instruction:to_type[Insn] = To
- -> 
+ ->
    vector:compatible(From, To).

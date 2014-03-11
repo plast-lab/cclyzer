@@ -3,16 +3,16 @@
 
 srem_instruction(Insn) -> instruction(Insn).
 
-srem_instruction:first_operand[Insn] = Left -> 
+srem_instruction:first_operand[Insn] = Left ->
    srem_instruction(Insn), operand(Left).
 
-srem_instruction:second_operand[Insn] = Right -> 
+srem_instruction:second_operand[Insn] = Right ->
    srem_instruction(Insn), operand(Right).
 
 // Constraints:
 // The two arguments to the ‘srem‘ instruction must be:
-//    (i)  integer or 
-//    (ii) vector of integer values. 
+//    (i)  integer or
+//    (ii) vector of integer values.
 // Both arguments must have identical types.
 // The resulting value is the same type as its operands.
 
@@ -21,7 +21,7 @@ srem_instruction(Insn) -> srem_instruction:second_operand[Insn] = _.
 
 srem_instruction(Insn),
    instruction:type[Insn] = Type
- -> 
+ ->
    integer_type(Type); vector_type:integer(Type).
 
 instruction:type[Insn] = Type,

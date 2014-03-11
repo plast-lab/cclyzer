@@ -30,7 +30,7 @@ call_instruction:calling_convention[Insn] = Conv ->
    call_instruction(Insn), calling_convention(Conv).
 
 // Actual arguments
-call_instruction:arg[Insn, Index] = Arg -> 
+call_instruction:arg[Insn, Index] = Arg ->
    call_instruction(Insn), int[64](Index), operand(Arg).
 
 // Parameter Attributes
@@ -55,18 +55,18 @@ call_instruction:return_type[Insn] = Type <-
 
 // Constraints:
 //
-//  (1) Only ‘zeroext‘, ‘signext‘, and ‘inreg‘ attributes 
+//  (1) Only ‘zeroext‘, ‘signext‘, and ‘inreg‘ attributes
 //      are valid for return values.
-//  (2) The calling convention of the call must match the 
+//  (2) The calling convention of the call must match the
 //      calling convention of the target function.
-//  (3) The type of the call instruction is also the type of 
-//      the return value. Functions that return no value are 
+//  (3) The type of the call instruction is also the type of
+//      the return value. Functions that return no value are
 //      marked void.
-//  (4) The function type shall be the signature of the pointer 
-//      to function value being invoked. The argument types must 
+//  (4) The function type shall be the signature of the pointer
+//      to function value being invoked. The argument types must
 //      match the types implied by this signature.
 //  (5) All arguments must be of first class type.
-//  (6) Only ‘noreturn‘, ‘nounwind‘, ‘readonly‘ and ‘readnone‘ 
+//  (6) Only ‘noreturn‘, ‘nounwind‘, ‘readonly‘ and ‘readnone‘
 //      attributes are valid as function attributes.
 
 call_instruction(Insn) -> call_instruction:function[Insn] = _.
@@ -79,7 +79,7 @@ call_instruction:return_attribute(_, Attr)
    parameter_attribute:nreg[] = Attr.   // c1
 
 call_instruction:function_attribute(_, Attr)
- -> 
+ ->
    function_attribute:noreturn[] = Attr ;
    function_attribute:nounwind[] = Attr ;
    function_attribute:readonly[] = Attr ;

@@ -3,10 +3,10 @@
 
 sext_instruction(Insn) -> instruction(Insn).
 
-sext_instruction:from[Insn] = Value -> 
+sext_instruction:from[Insn] = Value ->
    sext_instruction(Insn), operand(Value).
 
-sext_instruction:to_type[Insn] = Type -> 
+sext_instruction:to_type[Insn] = Type ->
    sext_instruction(Insn), type(Type).
 
 sext_instruction:from_type[Insn] = Type <-
@@ -35,7 +35,7 @@ sext_instruction:to_type[Insn] = Type
 
 
 sext_instruction:from_type[_] = Type
- -> 
+ ->
    integer_type(Type); vector_type:integer(Type).
 
 
@@ -47,5 +47,5 @@ sext_instruction:to_type[_] = Type
 sext_instruction(Insn),
    sext_instruction:from_type[Insn] = From,
    sext_instruction:to_type[Insn] = To
- -> 
+ ->
    vector:compatible(From, To).

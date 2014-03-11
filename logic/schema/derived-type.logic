@@ -32,10 +32,10 @@ type:firstclass(Type) <-
 // Struct type //
 /////////////////
 
-struct_type:field[Type, Index] = Field -> 
+struct_type:field[Type, Index] = Field ->
    struct_type(Type), int[64](Index), type(Field).
 
-struct_type:nfields[Type] = Total -> 
+struct_type:nfields[Type] = Total ->
    struct_type(Type), int[64](Total).
 
 
@@ -43,10 +43,10 @@ struct_type:nfields[Type] = Total ->
 // Array Type //
 ////////////////
 
-array_type:component[Type] = Comp -> 
+array_type:component[Type] = Comp ->
    array_type(Type), type(Comp).
 
-array_type:size[Type] = Size -> 
+array_type:size[Type] = Size ->
    array_type(Type), int[64](Size).
 
 array_type(Type) -> array_type:component[Type] = _.
@@ -59,13 +59,13 @@ array_type(Type) -> array_type:size[Type] = _.
 
 function_type:varargs(Type) -> function_type(Type).
 
-function_type:return[Type] = Ret -> 
+function_type:return[Type] = Ret ->
    function_type(Type), type(Ret).
 
-function_type:param[Type, Index] = Param -> 
+function_type:param[Type, Index] = Param ->
    function_type(Type), int[64](Index), type(Param).
 
-function_type:nparams[Type] = Total -> 
+function_type:nparams[Type] = Total ->
    function_type(Type), int[64](Total).
 
 function_type:return[_] = Ret
@@ -78,10 +78,10 @@ function_type:return[_] = Ret
 // Pointer type //
 //////////////////
 
-pointer_type:component[Type] = Comp -> 
+pointer_type:component[Type] = Comp ->
    pointer_type(Type), type(Comp).
 
-pointer_type:addr_space[Type] = Addr -> 
+pointer_type:addr_space[Type] = Addr ->
    pointer_type(Type), int[64](Addr).
 
 pointer_type:firstclass(Type) <-
@@ -120,7 +120,7 @@ pointer_type:component[_] = Comp
 // Vector type //
 /////////////////
 
-vector_type:component[Type] = Comp -> 
+vector_type:component[Type] = Comp ->
    vector_type(Type), type(Comp).
 
 vector_type:size[Type] = Size ->
@@ -148,19 +148,19 @@ vector_type:pointer(Type) <-
 
 // Constraints:
 //
-//  (1) A vector type requires a size (number of elements) 
-//      and a component type. 
-//  (2) The number of elements is a constant integer value 
+//  (1) A vector type requires a size (number of elements)
+//      and a component type.
+//  (2) The number of elements is a constant integer value
 //      larger than 0.
-//  (3) The component type can be any integer or floating point type, 
-//      or a pointer to these types. 
+//  (3) The component type can be any integer or floating point type,
+//      or a pointer to these types.
 
 vector_type(Type) -> vector_type:component[Type] = _.
 vector_type(Type) -> vector_type:size[Type] = _.
 vector_type:size[_] = Size -> Size > 0.
 
 vector_type:component[_] = Comp ->
-   integer_type(Comp); 
+   integer_type(Comp);
    fp_type(Comp);
    pointer_type:integer(Comp);
    pointer_type:fp(Comp).
@@ -180,12 +180,12 @@ vector:eq_size_3(Type1, Type2, Type3) <-
 //  (i)  neither is a vector, or
 //  (ii) both are vectors of the same size.
 
-vector:compatible(Type1, Type2) -> type(Type1), type(Type2).   
-vector:compatible(Type1, Type2) <- 
-   type(Type1), 
+vector:compatible(Type1, Type2) -> type(Type1), type(Type2).
+vector:compatible(Type1, Type2) <-
+   type(Type1),
    type(Type2),
    !vector_type(Type1),
    !vector_type(Type2).
 
-vector:compatible(Type1, Type2) <- 
+vector:compatible(Type1, Type2) <-
    vector:eq_size_2(Type1, Type2).

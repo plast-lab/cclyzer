@@ -8,25 +8,25 @@ terminator_instruction(Insn) <-
 
 // The ‘address‘ argument is the address of the label to jump to.
 
-indirectbr_instruction:address[Insn] = Address -> 
+indirectbr_instruction:address[Insn] = Address ->
    indirectbr_instruction(Insn), operand(Address).
 
-// The rest of the arguments indicate the full set 
+// The rest of the arguments indicate the full set
 // of possible destinations that the address may point to.
-// This destination list is required so that dataflow analysis 
+// This destination list is required so that dataflow analysis
 // has an accurate understanding of the CFG.
 
-indirectbr_instruction:label[Insn, Index] = Label -> 
+indirectbr_instruction:label[Insn, Index] = Label ->
    indirectbr_instruction(Insn), int[64](Index), variable(Label).
 
-indirectbr_instruction:nlabels[Insn] = Total -> 
+indirectbr_instruction:nlabels[Insn] = Total ->
    indirectbr_instruction(Insn), int[64](Total).
 
 
 // Constraints:
 //  (1) Address must be derived from a blockaddress constant.
-//  (2) The ‘blockaddress‘ constant computes the address of the 
-//      specified basic block in the specified function, and always 
+//  (2) The ‘blockaddress‘ constant computes the address of the
+//      specified basic block in the specified function, and always
 //      has an i8* type.
 
 indirectbr_instruction(Insn) -> indirectbr_instruction:nlabels[Insn] = _.
@@ -35,7 +35,7 @@ indirectbr_instruction:label[_, _] = Var -> variable:label(Var).
 
 indirectbr_instruction:label[Insn, Index] = _,
    indirectbr_instruction:nlabels[Insn] = Total
- -> 
+ ->
    0 <= Index,
    Index < Total.
 

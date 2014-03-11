@@ -3,13 +3,13 @@
 
 fcmp_instruction(Insn) -> instruction(Insn).
 
-fcmp_instruction:condition[Insn] = Cond -> 
+fcmp_instruction:condition[Insn] = Cond ->
    fcmp_instruction(Insn), fcmp_condition(Cond).
 
-fcmp_instruction:first_operand[Insn] = Left -> 
+fcmp_instruction:first_operand[Insn] = Left ->
    fcmp_instruction(Insn), operand(Left).
 
-fcmp_instruction:second_operand[Insn] = Right -> 
+fcmp_instruction:second_operand[Insn] = Right ->
    fcmp_instruction(Insn), operand(Right).
 
 // Condition Code and selectors for the 'fcmp' Instruction, as enum
@@ -57,13 +57,13 @@ fcmp_instruction:to_type[Insn]  = Type <-
 
 // Constraints:
 // The ‘fcmp‘ instruction returns:
-//  (i)  a boolean value or 
-//  (ii) a vector of boolean values 
+//  (i)  a boolean value or
+//  (ii) a vector of boolean values
 // based on comparison of its two:
-//  (i)  floating point or 
+//  (i)  floating point or
 //  (ii) floating point vector operands.
 // They must also be identical types.
-// 
+//
 // If the operands are floating point vectors
 //  (i)  the result type is a boolean vector
 //  (ii) with the same number of elements.
@@ -73,18 +73,18 @@ fcmp_instruction(Insn) -> fcmp_instruction:first_operand[Insn] = _.
 fcmp_instruction(Insn) -> fcmp_instruction:second_operand[Insn] = _.
 
 fcmp_instruction:to_type[_] = Type
- -> 
+ ->
    boolean_type(Type); vector_type:boolean(Type).
 
 
 fcmp_instruction:from_type[_] = Type
- -> 
+ ->
    fp_type(Type) ; vector_type:fp(Type).
 
 
 fcmp_instruction(Insn),
    fcmp_instruction:first_operand[Insn]  = Left,
-   fcmp_instruction:second_operand[Insn] = Right, 
+   fcmp_instruction:second_operand[Insn] = Right,
    operand:type[Left]  = Type1,
    operand:type[Right] = Type2
  ->
@@ -94,5 +94,5 @@ fcmp_instruction(Insn),
 fcmp_instruction(Insn),
    fcmp_instruction:from_type[Insn] = From,
    fcmp_instruction:to_type[Insn] = To
- -> 
+ ->
    vector:compatible(From, To).

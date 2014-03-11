@@ -3,10 +3,10 @@
 
 zext_instruction(Insn) -> instruction(Insn).
 
-zext_instruction:from[Insn] = Value -> 
+zext_instruction:from[Insn] = Value ->
    zext_instruction(Insn), operand(Value).
 
-zext_instruction:to_type[Insn] = Type -> 
+zext_instruction:to_type[Insn] = Type ->
    zext_instruction(Insn), type(Type).
 
 zext_instruction:from_type[Insn] = Type <-
@@ -35,7 +35,7 @@ zext_instruction:to_type[Insn] = Type
 
 
 zext_instruction:from_type[_] = Type
- -> 
+ ->
    integer_type(Type); vector_type:integer(Type).
 
 
@@ -47,5 +47,5 @@ zext_instruction:to_type[_] = Type
 zext_instruction(Insn),
    zext_instruction:from_type[Insn] = From,
    zext_instruction:to_type[Insn] = To
- -> 
+ ->
    vector:compatible(From, To).

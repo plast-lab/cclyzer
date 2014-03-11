@@ -12,62 +12,62 @@ function(Func), function:id(Func:Ref) -> string(Ref).
 
 function:unnamed_addr(Func) -> function(Func).
 
-function:linkage_type[Func] = Link -> 
+function:linkage_type[Func] = Link ->
    function(Func), linkage_type(Link).
 
-function:visibility[Func] = Vis -> 
+function:visibility[Func] = Vis ->
    function(Func), visibility(Vis).
 
-function:calling_convention[Func] = Conv -> 
+function:calling_convention[Func] = Conv ->
    function(Func), calling_convention(Conv).
 
-function:section[Func] = Sect -> 
+function:section[Func] = Sect ->
    function(Func), string(Sect).
 
-function:alignment[Func] = Alignment -> 
+function:alignment[Func] = Alignment ->
    function(Func), int[64](Alignment).
 
-function:attributes(Func, Attr) -> 
+function:attributes(Func, Attr) ->
    function(Func), attribute(Attr).
 
-function:gc[Func] = CollectorName -> 
+function:gc[Func] = CollectorName ->
    function(Func), string(CollectorName).
 
-function:name[Func] = Name -> 
+function:name[Func] = Name ->
    function(Func), string(Name).
 
-function:type[Func] = Type -> 
+function:type[Func] = Type ->
    function(Func), function_type(Type).
 
 // Number of parameters
 function:nparams[Func] = Total -> function(Func), int[64](Total).
-function:nparams[Func] = Total <- 
+function:nparams[Func] = Total <-
    function:type[Func] = Type,
    function_type:nparams[Type] = Total.
 
 // Formal parameters
-function:param[Func, Index] = Param -> 
+function:param[Func, Index] = Param ->
    function(Func), int[64](Index), variable(Param).
 
 // [Parameter Attributes]
 //
-// The return type and each parameter of a function type may have 
-// a set of parameter attributes associated with them. 
+// The return type and each parameter of a function type may have
+// a set of parameter attributes associated with them.
 //
-// Parameter attributes are used to communicate additional information 
-// about the result or parameters of a function. 
+// Parameter attributes are used to communicate additional information
+// about the result or parameters of a function.
 //
-// Parameter attributes are considered to be part of the function, 
-// not of the function type, so functions with different parameter 
+// Parameter attributes are considered to be part of the function,
+// not of the function type, so functions with different parameter
 // attributes can have the same function type.
 //
-// Parameter attributes are simple keywords that follow the type specified. 
+// Parameter attributes are simple keywords that follow the type specified.
 // If multiple parameter attributes are needed, they are space separated.
 
-function:return_attribute(Func, Attr) -> 
+function:return_attribute(Func, Attr) ->
    function(Func), attribute(Attr).
 
-function:param_attribute(Func, Index, Attr) -> 
+function:param_attribute(Func, Index, Attr) ->
    function(Func), int[64](Index), attribute(Attr).
 
 // Constraints:
@@ -76,21 +76,21 @@ function:param_attribute(Func, Index, Attr) ->
 // in the function type.
 //
 // The return type must also be compatible for the function
-// to be well-formed, but this is checked in ret-instruction 
+// to be well-formed, but this is checked in ret-instruction
 // logic.
 
-function:type[Func] = Type, 
+function:type[Func] = Type,
    function_type:param[Type, Index] = ParamType,
    function:param[Func, Index] = Param
  ->
    variable:type[Param] = ParamType.
 
-function:type[Func] = Type, 
+function:type[Func] = Type,
    function_type:param[Type, Index] = _
  ->
    function:param[Func, Index] = _.
 
-function:type[Func] = Type, 
+function:type[Func] = Type,
    function:param[Func, Index] = _
  ->
    function_type:param[Type, Index] = _.

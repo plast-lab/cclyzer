@@ -9,7 +9,7 @@ landingpad_instruction:type[Insn] = Type ->
    landingpad_instruction(Insn), type(Type).
 
 // personality function
-landingpad_instruction:pers_fn[Insn] = Func -> 
+landingpad_instruction:pers_fn[Insn] = Func ->
    landingpad_instruction(Insn), immediate(Func).
 
 /////////////////
@@ -65,11 +65,11 @@ clause:by_index[Insn, Index] = Clause ->
 lang:physical:storageModel[`clause] = "ScalableSparse".
 lang:constructor(`clause:by_index).
 
-// A clause begins with the clause type — catch or filter — and 
-// contains the global variable representing the “type” that may 
-// be caught or filtered respectively. 
+// A clause begins with the clause type — catch or filter — and
+// contains the global variable representing the “type” that may
+// be caught or filtered respectively.
 //
-// Unlike the catch clause, the filter clause takes an array 
+// Unlike the catch clause, the filter clause takes an array
 // constant as its argument.
 
 catch_clause:arg[Clause] = Arg ->
@@ -78,27 +78,27 @@ catch_clause:arg[Clause] = Arg ->
 filter_clause:arg[Clause] = Arg ->
    filter_clause(Clause), immediate(Arg).
 
-landingpad_instruction:clause[Insn, Index] = Clause -> 
+landingpad_instruction:clause[Insn, Index] = Clause ->
    landingpad_instruction(Insn), int[64](Index), clause(Clause).
 
-landingpad_instruction:nclauses[Insn] = Total -> 
+landingpad_instruction:nclauses[Insn] = Total ->
    landingpad_instruction(Insn), int[64](Total).
 
 // Constraints:
 //
 // The landingpad instruction has several restrictions:
-//  (1) A landing pad block is a basic block which is the unwind 
-//      destination of an ‘invoke‘ instruction. (See 
+//  (1) A landing pad block is a basic block which is the unwind
+//      destination of an ‘invoke‘ instruction. (See
 //      invoke-instruction.)
-//  (2) A landing pad block must have a ‘landingpad‘ instruction 
+//  (2) A landing pad block must have a ‘landingpad‘ instruction
 //      as its first non-PHI instruction.
-//  (3) There can be only one ‘landingpad‘ instruction within the 
+//  (3) There can be only one ‘landingpad‘ instruction within the
 //      landing pad block.
-//  (4) A basic block that is not a landing pad block may not include 
+//  (4) A basic block that is not a landing pad block may not include
 //      a ‘landingpad‘ instruction.
-//  (5) All ‘landingpad‘ instructions in a function must have the same 
+//  (5) All ‘landingpad‘ instructions in a function must have the same
 //      personality function.
-//  (6) The ‘landingpad‘ instruction must contain at least one clause 
+//  (6) The ‘landingpad‘ instruction must contain at least one clause
 //      or the cleanup flag.
 
 filter_clause:arg[_] = Arg,

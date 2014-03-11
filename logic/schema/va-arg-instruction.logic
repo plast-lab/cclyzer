@@ -3,17 +3,17 @@
 
 va_arg_instruction(Insn) -> instruction(Insn).
 
-va_arg_instruction:va_list[Insn] = List -> 
+va_arg_instruction:va_list[Insn] = List ->
    va_arg_instruction(Insn), operand(List).
 
-va_arg_instruction:type[Insn] = Type -> 
+va_arg_instruction:type[Insn] = Type ->
    va_arg_instruction(Insn), type(Type).
 
 
 // Constraints:
 //
 // The ‘va-arg‘ instruction takes:
-//  (i)  a va_list* value, and 
+//  (i)  a va_list* value, and
 //  (ii) the type of the arguments,
 //
 // It returns:

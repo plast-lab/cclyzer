@@ -3,16 +3,16 @@
 
 urem_instruction(Insn) -> instruction(Insn).
 
-urem_instruction:first_operand[Insn] = Left -> 
+urem_instruction:first_operand[Insn] = Left ->
    urem_instruction(Insn), operand(Left).
 
-urem_instruction:second_operand[Insn] = Right -> 
+urem_instruction:second_operand[Insn] = Right ->
    urem_instruction(Insn), operand(Right).
 
 // Constraints:
 // The two arguments to the ‘urem‘ instruction must be:
-//    (i)  integer or 
-//    (ii) vector of integer values. 
+//    (i)  integer or
+//    (ii) vector of integer values.
 // Both arguments must have identical types.
 // The resulting value is the same type as its operands.
 
@@ -21,7 +21,7 @@ urem_instruction(Insn) -> urem_instruction:second_operand[Insn] = _.
 
 urem_instruction(Insn),
    instruction:type[Insn] = Type
- -> 
+ ->
    integer_type(Type); vector_type:integer(Type).
 
 instruction:type[Insn] = Type,

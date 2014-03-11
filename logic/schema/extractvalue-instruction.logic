@@ -6,10 +6,10 @@ extractvalue_instruction(Insn) -> instruction(Insn).
 extractvalue_instruction:base[Insn] = Aggregate ->
    extractvalue_instruction(Insn), operand(Aggregate).
 
-extractvalue_instruction:nindices[Insn] = Total -> 
+extractvalue_instruction:nindices[Insn] = Total ->
    extractvalue_instruction(Insn), int[64](Total).
 
-extractvalue_instruction:index[Insn, Index] = Idx -> 
+extractvalue_instruction:index[Insn, Index] = Idx ->
    extractvalue_instruction(Insn), int[64](Index), immediate(Idx).
 
 // [Determining Fields]
@@ -58,13 +58,13 @@ extractvalue_instruction:base_type[Insn] = Type <-
 // Constraints:
 //
 //  (1) The first operand of an ‘extractvalue‘ instruction is
-//      a value of struct or array type. 
-//  (2) The operands are constant indices to specify which value 
-//      to extract in a similar manner as indices in a ‘getelementptr‘ 
+//      a value of struct or array type.
+//  (2) The operands are constant indices to specify which value
+//      to extract in a similar manner as indices in a ‘getelementptr‘
 //      instruction.
 //  (3) At least one index must be specified.
 //
-// The result is the value at the position in the aggregate specified 
+// The result is the value at the position in the aggregate specified
 // by the index operands.
 
 extractvalue_instruction(Insn) -> extractvalue_instruction:base[Insn] = _.

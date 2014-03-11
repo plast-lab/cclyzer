@@ -3,13 +3,13 @@
 
 icmp_instruction(Insn) -> instruction(Insn).
 
-icmp_instruction:condition[Insn] = Cond -> 
+icmp_instruction:condition[Insn] = Cond ->
    icmp_instruction(Insn), icmp_condition(Cond).
 
-icmp_instruction:first_operand[Insn] = Left -> 
+icmp_instruction:first_operand[Insn] = Left ->
    icmp_instruction(Insn), operand(Left).
 
-icmp_instruction:second_operand[Insn] = Right -> 
+icmp_instruction:second_operand[Insn] = Right ->
    icmp_instruction(Insn), operand(Right).
 
 // Condition code and selectors for the ‘icmp‘ Instruction, as enum
@@ -48,12 +48,12 @@ icmp_instruction:to_type[Insn]  = Type <-
 
 // Constraints:
 // The ‘icmp‘ instruction returns:
-//  (i)  a boolean value or 
-//  (ii) a vector of boolean values 
+//  (i)  a boolean value or
+//  (ii) a vector of boolean values
 // based on comparison of its two:
-//  (i)   integer, 
-//  (ii)  integer vector, 
-//  (iii) pointer, or 
+//  (i)   integer,
+//  (ii)  integer vector,
+//  (iii) pointer, or
 //  (iv)  pointer vector operands.
 // They must also be identical types.
 
@@ -62,19 +62,19 @@ icmp_instruction(Insn) -> icmp_instruction:first_operand[Insn] = _.
 icmp_instruction(Insn) -> icmp_instruction:second_operand[Insn] = _.
 
 icmp_instruction:to_type[_] = Type
- -> 
+ ->
    boolean_type(Type); vector_type:boolean(Type).
 
 
 icmp_instruction:from_type[_] = Type
- -> 
+ ->
    integer_type(Type) ; vector_type:integer(Type);
    pointer_type(Type) ; vector_type:pointer(Type).
 
 
 icmp_instruction(Insn),
    icmp_instruction:first_operand[Insn]  = Left,
-   icmp_instruction:second_operand[Insn] = Right, 
+   icmp_instruction:second_operand[Insn] = Right,
    operand:type[Left]  = Type1,
    operand:type[Right] = Type2
  ->
@@ -84,5 +84,5 @@ icmp_instruction(Insn),
 icmp_instruction(Insn),
    icmp_instruction:from_type[Insn] = From,
    icmp_instruction:to_type[Insn] = To
- -> 
+ ->
    vector:compatible(From, To).

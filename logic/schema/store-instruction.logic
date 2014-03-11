@@ -3,36 +3,36 @@
 
 store_instruction(Insn) -> instruction(Insn).
 
-store_instruction:alignment[Insn] = Alignment -> 
+store_instruction:alignment[Insn] = Alignment ->
    store_instruction(Insn),  int[64](Alignment).
 
-store_instruction:ordering[Insn] = Ord -> 
+store_instruction:ordering[Insn] = Ord ->
    store_instruction(Insn), ordering(Ord).
 
 
-// If the store is marked as volatile, then the optimizer is not allowed 
-// to modify the number or order of execution of this store with other 
+// If the store is marked as volatile, then the optimizer is not allowed
+// to modify the number or order of execution of this store with other
 // volatile operations.
 
 store_instruction:volatile(Insn) ->
    store_instruction(Insn).
 
 
-// If the store is marked as atomic, it takes an extra ordering 
+// If the store is marked as atomic, it takes an extra ordering
 // and optional singlethread argument.
 
 store_instruction:atomic(Insn) <-
    store_instruction:ordering[Insn] = _.
 
 
-// There are two arguments to the store instruction: 
-//  (i)  a value to store and 
+// There are two arguments to the store instruction:
+//  (i)  a value to store and
 //  (ii) an address at which to store it.
 
-store_instruction:value[Insn] = Value -> 
+store_instruction:value[Insn] = Value ->
    store_instruction(Insn), operand(Value).
 
-store_instruction:address[Insn] = Pointer -> 
+store_instruction:address[Insn] = Pointer ->
    store_instruction(Insn), operand(Pointer).
 
 
@@ -48,8 +48,8 @@ store_instruction:val_type[Insn] = Type <-
 
 
 // Constraints:
-//  (i)  The type of the <pointer> operand must be a pointer to 
-//       the first class type of the <value> operand. 
+//  (i)  The type of the <pointer> operand must be a pointer to
+//       the first class type of the <value> operand.
 //  (ii) The acquire and acq_rel orderings aren’t valid on store instructions.
 
 store_instruction(Insn) -> !instruction:to[Insn] = _.
@@ -63,7 +63,7 @@ store_instruction:ptr_type[_] = Type
 
 
 store_instruction:ptr_type[Insn] = Type,
-   pointer_type:component[Type]  = Comp   
+   pointer_type:component[Type]  = Comp
  ->
    store_instruction:val_type[Insn] = Comp.
 
