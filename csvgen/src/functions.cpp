@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <set>
 #include <string>
 #include <sstream>
@@ -17,8 +18,9 @@ using namespace llvm;
 
 void printFactsToFile(const char *filename, const char* s) {
 
-	string error;
-	raw_fd_ostream f(filename, error, raw_fd_ostream::F_Append);
+    string error;
+    raw_fd_ostream f(filename, error, raw_fd_ostream::F_Append);
+
 	while (*s) {
 		if (*s == '%' && *++s != '%')
 			cout << "Invalid format string: missing arguments. " << filename << "\n";
@@ -417,7 +419,7 @@ const char *writeLinkage(GlobalValue::LinkageTypes LT) {
 	const char *linkTy;
 
 	switch (LT) {
-	case GlobalValue::ExternalLinkage: 		linkTy = "";				break;
+	case GlobalValue::ExternalLinkage: 		linkTy = "external";        break;
 	case GlobalValue::PrivateLinkage:       linkTy = "private";			break;
 	case GlobalValue::LinkerPrivateLinkage: linkTy = "linker_private";	break;
 	case GlobalValue::LinkerPrivateWeakLinkage:
@@ -448,7 +450,7 @@ const char *writeVisibility(GlobalValue::VisibilityTypes Vis) {
 
 	const char *visibility;
 	switch (Vis) {
-	case GlobalValue::DefaultVisibility: 	visibility = ""; 			break;
+	case GlobalValue::DefaultVisibility: 	visibility = "default";	    break;
 	case GlobalValue::HiddenVisibility:    	visibility = "hidden"; 		break;
 	case GlobalValue::ProtectedVisibility: 	visibility = "protected"; 	break;
 	default: visibility = "";	break;
