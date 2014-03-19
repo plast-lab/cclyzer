@@ -3,10 +3,10 @@
 
 fpext_instruction(Insn) -> instruction(Insn).
 
-fpext_instruction:from[Insn] = Value -> 
+fpext_instruction:from[Insn] = Value ->
    fpext_instruction(Insn), operand(Value).
 
-fpext_instruction:to_type[Insn] = Type -> 
+fpext_instruction:to_type[Insn] = Type ->
    fpext_instruction(Insn), type(Type).
 
 fpext_instruction:from_type[Insn] = Type <-
@@ -30,7 +30,7 @@ fpext_instruction:to_type[Insn] = Type
 
 
 fpext_instruction:from_type[_] = Type
- -> 
+ ->
    fp_type(Type) ; 0 = 1. // TODO: check if dummy or above can be avoided in future versions
 
 

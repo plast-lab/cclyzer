@@ -42,15 +42,15 @@ shufflevector_instruction:mask_type[Insn] = Type <-
 //  (ii) whose element type is the same as the element type of the first two operands.
 
 shufflevector_instruction(Insn)
- -> 
+ ->
    shufflevector_instruction:first_vector[Insn]  = _.
 
 shufflevector_instruction(Insn)
- -> 
+ ->
    shufflevector_instruction:second_vector[Insn] = _.
 
 shufflevector_instruction(Insn)
- -> 
+ ->
    shufflevector_instruction:mask[Insn] = _.
 
 shufflevector_instruction:input_type[_] = Input

@@ -3,32 +3,32 @@
 
 select_instruction(Insn) -> instruction(Insn).
 
-// The ‘select‘ instruction is used to choose one value 
+// The ‘select‘ instruction is used to choose one value
 // based on a condition, without branching.
 
-select_instruction:condition[Insn] = Cond -> 
+select_instruction:condition[Insn] = Cond ->
    select_instruction(Insn), operand(Cond).
 
-select_instruction:first_operand[Insn] = Value -> 
+select_instruction:first_operand[Insn] = Value ->
    select_instruction(Insn), operand(Value).
 
-select_instruction:second_operand[Insn] = Value -> 
+select_instruction:second_operand[Insn] = Value ->
    select_instruction(Insn), operand(Value).
 
 
 // Constraints:
 //
-// The ‘select‘ instruction requires: 
-//  (i)  an ‘i1’ value or a vector of ‘i1’ values 
-//       indicating the condition, and 
-//  (ii) two values of the same first class type. 
+// The ‘select‘ instruction requires:
+//  (i)  an ‘i1’ value or a vector of ‘i1’ values
+//       indicating the condition, and
+//  (ii) two values of the same first class type.
 //
-// If the condition is a vector of i1, then: 
-//  (i)  the value arguments must be vectors of the same size, and 
+// If the condition is a vector of i1, then:
+//  (i)  the value arguments must be vectors of the same size, and
 //  (ii) the selection is done element by element.
 //
-// If the condition is a scalar, the value arguments can still be 
-// vectors, in which case the entire vectors are selected, instead 
+// If the condition is a scalar, the value arguments can still be
+// vectors, in which case the entire vectors are selected, instead
 // of individual elements.
 
 select_instruction(Insn) -> select_instruction:condition[Insn] = _.
@@ -44,7 +44,7 @@ select_instruction:condition[_] = Cond,
 
 select_instruction(Insn),
    instruction:type[Insn] = Type
- -> 
+ ->
    type:firstclass(Type).
 
 instruction:type[Insn] = Type,
@@ -57,11 +57,11 @@ instruction:type[Insn] = Type,
  ->
    operand:type[Right] = Type.
 
-// If the condition is of type vector, then all operands 
+// If the condition is of type vector, then all operands
 // must have the same size.
 
 instruction:type[Insn] = Type,
    select_instruction:condition[Insn] = Cond,
    operand:type[Cond] = CType
- -> 
+ ->
    vector:compatible(CType, Type).

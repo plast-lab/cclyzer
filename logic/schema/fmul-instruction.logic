@@ -3,16 +3,16 @@
 
 fmul_instruction(Insn) -> instruction(Insn).
 
-fmul_instruction:first_operand[Insn] = Left -> 
+fmul_instruction:first_operand[Insn] = Left ->
    fmul_instruction(Insn), operand(Left).
 
-fmul_instruction:second_operand[Insn] = Right -> 
+fmul_instruction:second_operand[Insn] = Right ->
    fmul_instruction(Insn), operand(Right).
 
 // Constraints:
 // The two arguments to the ‘fmul‘ instruction must be:
-//    (i)  floating point or 
-//    (ii) vector of floating point values. 
+//    (i)  floating point or
+//    (ii) vector of floating point values.
 // Both arguments must have identical types.
 // The resulting value is the same type as its operands.
 
@@ -21,7 +21,7 @@ fmul_instruction(Insn) -> fmul_instruction:second_operand[Insn] = _.
 
 fmul_instruction(Insn),
    instruction:type[Insn] = Type
- -> 
+ ->
    fp_type(Type); vector_type:fp(Type).
 
 instruction:type[Insn] = Type,

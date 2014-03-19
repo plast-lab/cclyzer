@@ -3,10 +3,10 @@
 
 inttoptr_instruction(Insn) -> instruction(Insn).
 
-inttoptr_instruction:from[Insn] = Value -> 
+inttoptr_instruction:from[Insn] = Value ->
    inttoptr_instruction(Insn), operand(Value).
 
-inttoptr_instruction:to_type[Insn] = Type -> 
+inttoptr_instruction:to_type[Insn] = Type ->
    inttoptr_instruction(Insn), type(Type).
 
 inttoptr_instruction:from_type[Insn] = Type <-
@@ -17,11 +17,11 @@ inttoptr_instruction:from_type[Insn] = Type <-
 //
 // The ‘inttoptr‘ instruction takes:
 //  (i)  a value to cast, which must be integer or vector of integer values,
-//  (ii) and a type to cast it to, which must be a pointer or a vector of 
-//       pointers type. 
+//  (ii) and a type to cast it to, which must be a pointer or a vector of
+//       pointers type.
 //
 // If the value to be casted is a vector integer type:
-//  (i)  the type must be a vector pointer type, 
+//  (i)  the type must be a vector pointer type,
 //  (ii) with the same number of elements.
 
 inttoptr_instruction(Insn) -> inttoptr_instruction:from[Insn] = _.
@@ -34,17 +34,17 @@ inttoptr_instruction:to_type[Insn] = Type
 
 
 inttoptr_instruction:from_type[_] = Type
- -> 
+ ->
    integer_type(Type); vector_type:integer(Type).
 
 
 inttoptr_instruction:to_type[_] = Type
- -> 
+ ->
    pointer_type(Type); vector_type:pointer(Type).
 
 
 inttoptr_instruction(Insn),
    inttoptr_instruction:from_type[Insn] = From,
    inttoptr_instruction:to_type[Insn] = To
- -> 
+ ->
    vector:compatible(From, To).

@@ -56,14 +56,14 @@ insertvalue_instruction:base_type[Insn] = Type <-
 //  (1) The first operand of an ‘insertvalue‘ instruction is
 //      a value of struct or array type.
 //  (2) The second operand is a first-class value to insert.
-//  (3) The following operands are constant indices indicating 
-//      the position at which to insert the value in a similar 
+//  (3) The following operands are constant indices indicating
+//      the position at which to insert the value in a similar
 //      manner as indices in a ‘extractvalue‘ instruction.
-//  (4) The value to insert must have the same type as the value 
+//  (4) The value to insert must have the same type as the value
 //      identified by the indices.
 //  (5) At least one index must be specified.
 //
-// The result is an aggregate of the same type as the first 
+// The result is an aggregate of the same type as the first
 // operand type.
 
 insertvalue_instruction(Insn) -> insertvalue_instruction:base[Insn] = _.

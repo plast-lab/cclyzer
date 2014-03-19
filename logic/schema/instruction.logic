@@ -28,7 +28,7 @@ instruction:next_index[Insn, Index] = Next ->
 //////////////////////////////
 
 // The next instruction in the source file.
-instruction:next[Insn] = Next -> 
+instruction:next[Insn] = Next ->
    instruction(Insn), instruction(Next).
 
 instruction:prev[Insn] = Prev <-
@@ -84,7 +84,7 @@ basicblock:predecessors(BB, Pred) ->
    basicblock(BB), basicblock(Pred).
 
 instruction:next[Insn] = Next,
-   instruction:basicblock[Insn] = BB1, 
+   instruction:basicblock[Insn] = BB1,
    instruction:basicblock[Next] = BB2
  ->
    BB1 = BB2 ; terminator_instruction(Insn).

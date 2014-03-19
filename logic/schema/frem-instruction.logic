@@ -3,16 +3,16 @@
 
 frem_instruction(Insn) -> instruction(Insn).
 
-frem_instruction:first_operand[Insn] = Left -> 
+frem_instruction:first_operand[Insn] = Left ->
    frem_instruction(Insn), operand(Left).
 
-frem_instruction:second_operand[Insn] = Right -> 
+frem_instruction:second_operand[Insn] = Right ->
    frem_instruction(Insn), operand(Right).
 
 // Constraints:
 // The two arguments to the ‘frem‘ instruction must be:
-//    (i)  floating point or 
-//    (ii) vector of floating point values. 
+//    (i)  floating point or
+//    (ii) vector of floating point values.
 // Both arguments must have identical types.
 // The resulting value is the same type as its operands.
 
@@ -21,7 +21,7 @@ frem_instruction(Insn) -> frem_instruction:second_operand[Insn] = _.
 
 frem_instruction(Insn),
    instruction:type[Insn] = Type
- -> 
+ ->
    fp_type(Type); vector_type:fp(Type).
 
 instruction:type[Insn] = Type,

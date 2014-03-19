@@ -2,7 +2,7 @@
 
 global_variable(Var) -> immediate(Var). // TODO: why??
 
-global_variable:type[Var] = Type -> 
+global_variable:type[Var] = Type ->
    global_variable(Var), type(Type).
 
 global_variable:type[Var] = Type,
@@ -10,41 +10,41 @@ global_variable:type[Var] = Type,
  ->
    pointer_type:component[Ptr] = Type.
 
-global_variable:initializer[Var] = Init -> 
+global_variable:initializer[Var] = Init ->
    global_variable(Var), string(Init).
 
-global_variable:section[Var] = Sect -> 
+global_variable:section[Var] = Sect ->
    global_variable(Var), string(Sect).
 
-global_variable:align[Var] = Alignment -> 
+global_variable:align[Var] = Alignment ->
    global_variable(Var),  int[64](Alignment).
 
-global_variable:flag(Var, Flag) -> 
+global_variable:flag(Var, Flag) ->
    global_variable(Var), flag(Flag).
 
-global_variable:linkage_type[Var] = Link -> 
+global_variable:linkage_type[Var] = Link ->
    global_variable(Var), linkage_type(Link).
 
-global_variable:visibility[Var] = Vis -> 
+global_variable:visibility[Var] = Vis ->
    global_variable(Var), visibility(Vis).
 
-global_variable:threadlocal_mode[Var] = Mode -> 
+global_variable:threadlocal_mode[Var] = Mode ->
    global_variable(Var), threadlocal_mode(Mode).
 
-// A variable may be defined as a global constant, which indicates 
-// that the contents of the variable will never be modified (enabling 
-// better optimization, allowing the global data to be placed in the 
+// A variable may be defined as a global constant, which indicates
+// that the contents of the variable will never be modified (enabling
+// better optimization, allowing the global data to be placed in the
 // read-only section of an executable, etc).
-// Note that variables that need runtime initialization cannot be 
+// Note that variables that need runtime initialization cannot be
 // marked constant as there is a store to the variable.
 
 global_variable:constant(Var) -> global_variable(Var).
 global_variable:constant(Var) <-
    global_variable:flag(Var, "constant").
 
-// Aliases act as “second name” for the aliasee value 
-// (which can be either function, global variable, another 
-// alias or bitcast of global value). 
+// Aliases act as “second name” for the aliasee value
+// (which can be either function, global variable, another
+// alias or bitcast of global value).
 
 alias(Alias), alias:value(Alias:Ref) -> string(Ref).
 alias:type[Alias] = Type -> alias(Alias), type(Type).
@@ -81,9 +81,9 @@ linkage_type:appending[] = Link <- linkage_type:id(Link:"appending").
 linkage_type:dllimport[] = Link <- linkage_type:id(Link:"dllimport").
 linkage_type:dllexport[] = Link <- linkage_type:id(Link:"dllexport").
 linkage_type:extern_weak[] = Link <- linkage_type:id(Link:"extern_weak").
-linkage_type:linker_private_weak[]  = Link <- 
+linkage_type:linker_private_weak[]  = Link <-
    linkage_type:id(Link:"linker_private_weak").
-linkage_type:available_externally[] = Link <- 
+linkage_type:available_externally[] = Link <-
    linkage_type:id(Link:"available_externally").
 
 // Visibility style for globals
@@ -95,16 +95,16 @@ visibility:protected[] = Vis <- visibility:id(Vis:"protected").
 
 // Thread-local mode for globals
 threadlocal_mode(Mode), threadlocal_mode:id(Mode:Ref) -> string(Ref).
-threadlocal_mode:thread_local[] = Mode  <- 
+threadlocal_mode:thread_local[] = Mode  <-
    threadlocal_mode:id(Mode:"thread_local").
 
-threadlocal_mode:local_dynamic[] = Mode <- 
+threadlocal_mode:local_dynamic[] = Mode <-
    threadlocal_mode:id(Mode:"thread_local(localdynamic)").
 
-threadlocal_mode:initial_exec[] = Mode <- 
+threadlocal_mode:initial_exec[] = Mode <-
    threadlocal_mode:id(Mode:"thread_local(initialexec)").
 
-threadlocal_mode:local_exec[] = Mode <- 
+threadlocal_mode:local_exec[] = Mode <-
    threadlocal_mode:id(Mode:"thread_local(localexec)").
 
 // Constraints:
