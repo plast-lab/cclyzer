@@ -311,10 +311,7 @@ int main(int argc, char *argv[]) {
             FunctionType *funcType = cast<FunctionType>(type);
             printFactsToFile(PredicateNames::predNameToFilename(PredicateNames::funcType).c_str(),
                              "%t\n", printType(funcType));
-            if(funcType->isVarArg()) {
-                printFactsToFile(PredicateNames::predNameToFilename(PredicateNames::funcTypeReturn).c_str(),
-                                 "%t\n", printType(funcType));
-            }
+            //TODO: which predicate/entity do we need to update for varagrs?
             printFactsToFile(PredicateNames::predNameToFilename(PredicateNames::funcTypeReturn).c_str(),
                              "%t\t%t\n", printType(funcType), printType(funcType->getReturnType()));
             for (unsigned int par = 0; par < funcType->getFunctionNumParams(); ++par) {
