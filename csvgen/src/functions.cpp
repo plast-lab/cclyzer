@@ -48,7 +48,7 @@ const char *writeAtomicInfo(string instrId, AtomicOrdering order, Synchronizatio
 	case Release: atomic = "release"; 				 break;
 	case AcquireRelease: atomic = "acq_rel"; 		 break;
 	case SequentiallyConsistent: atomic = "seq_cst"; break;
-//	case NotAtomic: atomic = ""; break;
+    //TODO: NotAtomic?
 	default: atomic = ""; break;
 	}
 	//default synchScope: crossthread
@@ -106,7 +106,7 @@ string writeCallingConv(unsigned cc) {
 	string conv;
 
 	switch (cc) {
-//	case CallingConv::C:				conv = ""; 					break;
+    //TODO:CallingConv::C
 	case CallingConv::Fast:				conv =  "fastcc"; 			break;
 	case CallingConv::Cold:				conv =  "coldcc"; 			break;
 	case CallingConv::X86_FastCall:		conv =  "x86_fastcallcc"; 	break;
@@ -506,13 +506,7 @@ void writeGlobalVar(const GlobalVariable *gv, string globalName) {
 		printFactsToFile(PredicateNames::predNameToFilename(PredicateNames::globalVarTlm).c_str(),
 				"%s\t%s\n", globalName, writeThreadLocalModel(gv->getThreadLocalMode()));
 	}
-	// Den ta exoume sto schema ths vashs
-//	if(unsigned AddressSpace = gv->getType()->getAddressSpace()) {
-//		printFactsToFile(PredicateNames::predNameToFilename(PredicateNames::globalVarAddrSpace).c_str(), globalName, AddressSpace);
-//	}
-//	if (gv->hasUnnamedAddr()) {
-//		printFactsToFile(PredicateNames::predNameToFilename(PredicateNames::globalVarUnnamed).c_str(), "%s\t%s\n", globalName, "unnamed_addr");
-//	}
+    //TODO: in lb schema - AddressSpace & hasUnnamedAddr properties
 	if (gv->isExternallyInitialized()) {
 		printFactsToFile(PredicateNames::predNameToFilename(PredicateNames::globalVarFlag).c_str(),
 				"%s\t%s\n", globalName, "externally_initialized");
