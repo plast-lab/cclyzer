@@ -180,8 +180,7 @@ int main(int argc, char *argv[]) {
                                      "%s\t%s\n", varId, predBB);
                 }
                 //iterating over instructions in a basic block
-                
-                //for (inst_iterator i = inst_begin(fi), e = inst_end(fi); i != e; ++i) {
+
                 for (BasicBlock::iterator i = bi->begin(), i_end = bi->end(); i != i_end; ++i) {
                     Instruction *ii = dyn_cast<Instruction>(&*i);
                     string instrNum = instrId + static_cast<ostringstream*>(&(ostringstream()<< counter))->str();
