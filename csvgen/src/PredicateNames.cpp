@@ -140,7 +140,7 @@ const char * PredicateNames::brInsn = "br_instruction";
 const char * PredicateNames::brCondInsn = "br_cond_instruction";
 const char * PredicateNames::brCondInsnCondition = "br_cond_instruction:condition";
 const char * PredicateNames::brCondInsnIfTrue = "br_cond_instruction:iftrue";
-const char * PredicateNames::brCondInsnIfFalse = "br_instruction:iffalse";
+const char * PredicateNames::brCondInsnIfFalse = "br_cond_instruction:iffalse";
 const char * PredicateNames::brUncondInsn = "br_uncond_instruction";
 const char * PredicateNames::brUncondInsnDest = "br_uncond_instruction:dest";
 
@@ -409,7 +409,7 @@ const string PredicateNames::predNameWithOperandToFilename(const char * predName
 
 	if((it = operandFilenames.find(filename)) == operandFilenames.end()) {
 		operandFilenames.insert(filename);
-		ofstream csvFile(filename.c_str());
+		ofstream csvFile(filename.c_str(), ofstream::app);
 		csvFile.close();
 	}
 	return operand ? var : imm;
