@@ -113,4 +113,4 @@ private :
 	map<std::string, Type *> &variable;
 	map<std::string, Type *> &immediate;
 	Module *Mod;
- };
+};
