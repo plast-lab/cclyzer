@@ -77,26 +77,6 @@ int main(int argc, char *argv[]) {
 
         char *real_path = realpath(IRFiles[i].c_str(), NULL);
 
-        //break constant expressions into regular instructions
-        /*for (Module::iterator fi = Mod->begin(), fi_end = Mod->end(); fi != fi_end; ++fi) {
-            for (inst_iterator I = inst_begin(fi), E = inst_end(fi); I != E; ++I) {
-                if(!isa<PHINode>(&*I)) {
-                    for (unsigned operands = 0; operands < I->getNumOperands(); ++operands) {
-                        if (ConstantExpr * CE = dyn_cast<ConstantExpr>(I->getOperand(operands))) {
-                            Instruction * InsertPt = dyn_cast<Instruction>(&*I);
-                            if(Instruction * NewInst = convertCstExpression(CE, InsertPt)) {
-                                InsertPt->setOperand(operands, NewInst);
-                            }
-                        }
-                    }
-                }
-            }
-            }*/
-        //	string error;
-        //	raw_fd_ostream r("modifiedFile.ll", error, raw_fd_ostream::F_Binary);
-        //	Mod->print(r, 0);
-        //	r.close();
-        //-------------------apo panw
         string varId;
         string value_str;
         raw_string_ostream rso(value_str);
@@ -149,7 +129,7 @@ int main(int argc, char *argv[]) {
                                  "%s\t%s\n", funcId, fi->getGC());
             }
             printFactsToFile(PredicateNames::predNameToFilename(PredicateNames::FuncName).c_str(),
-                             "%s\t%@s\n", funcId, fi->getName());
+                             "%s\t%@s\n", funcId, fi->getName().str());
             if(fi->hasUnnamedAddr()) {
                 printFactsToFile(PredicateNames::predNameToFilename(PredicateNames::FuncUnnamedAddr).c_str(),
                                  "%s\n", funcId);
@@ -181,6 +161,7 @@ int main(int argc, char *argv[]) {
                     index++;
                 }
             }
+            int counter = 0;
             //iterating over basic blocks in a function
             for (Function::iterator bi = fi->begin(), bi_end = fi->end(); bi != bi_end; ++bi) {
                 string bbId = funcId + ":";
@@ -199,7 +180,7 @@ int main(int argc, char *argv[]) {
                                      "%s\t%s\n", varId, predBB);
                 }
                 //iterating over instructions in a basic block
-                int counter = 0;
+                
                 //for (inst_iterator i = inst_begin(fi), e = inst_end(fi); i != e; ++i) {
                 for (BasicBlock::iterator i = bi->begin(), i_end = bi->end(); i != i_end; ++i) {
                     Instruction *ii = dyn_cast<Instruction>(&*i);
