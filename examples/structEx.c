@@ -13,5 +13,7 @@ struct ST {
 };
 
 char foo(struct ST *s) {
+    int i = 1;
+    i = i+2;
   return s[1].Z.C;
 }
