@@ -1,3 +1,6 @@
+#ifndef __PREDICATE_NAMES_H__
+#define __PREDICATE_NAMES_H__
+
 #include <string>
 
 class PredicateNames {
@@ -381,3 +384,4 @@ public:
 	static const std::string predNameWithOperandToFilename(const char *, bool);	// predicate names witn operands
 };
 
+#endif

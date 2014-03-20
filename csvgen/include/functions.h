@@ -44,13 +44,13 @@ const char *writePredicate(unsigned);
 
 void annotateGeneratedInstr(Instruction *);
 
-string printType(Type *);
+string printType(const Type *);
 
-void identifyType(Type *, set<Type *> &);
+void identifyType(const Type *, set<const Type *> &);
 
-void identifyStructType(Type *, set<Type *> &);
+void identifyStructType(const Type *, set<const Type *> &);
 
-void identifyFunctionType(Type *, set<Type *> &);
+void identifyFunctionType(const Type *, set<const Type *> &);
 
 Instruction *convertGEP(ConstantExpr *, Instruction *);
 

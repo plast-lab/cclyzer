@@ -67,10 +67,10 @@ int main(int argc, char *argv[]) {
     SMDiagnostic Err;
 
     // Type sets and maps
-    set<Type *> types;
-    set<Type *> componentTypes;
-    map<string, Type *> variable;
-    map<string, Type *> immediate;
+    set<const Type *> types;
+    set<const Type *> componentTypes;
+    map<string, const Type *> variable;
+    map<string, const Type *> immediate;
 
     for(int i = 0; i < IRFiles.size(); ++i) {
         Module *Mod = ParseIRFile(IRFiles[i], Err, Context);
@@ -219,22 +219,22 @@ int main(int argc, char *argv[]) {
         delete Mod;
     }
     // Immediate
-    for (map<string, Type *>::iterator it = immediate.begin(); it != immediate.end(); ++it) {
+    for (map<string, const Type *>::iterator it = immediate.begin(); it != immediate.end(); ++it) {
         printFactsToFile(PredicateNames::predNameToFilename(PredicateNames::immediate).c_str(), "%s\n", it->first);
         printFactsToFile(PredicateNames::predNameToFilename(PredicateNames::immediateType).c_str(),
                          "%s\t%t\n", it->first, printType(it->second));
         types.insert(it->second);
     }
     // Variable
-    for (map<string, Type *>::iterator it = variable.begin(); it != variable.end(); ++it) {
+    for (map<string, const Type *>::iterator it = variable.begin(); it != variable.end(); ++it) {
         printFactsToFile(PredicateNames::predNameToFilename(PredicateNames::variable).c_str(), "%s\n", it->first);
         printFactsToFile(PredicateNames::predNameToFilename(PredicateNames::variableType).c_str(),
                          "%s\t%t\n", it->first, printType(it->second));
         types.insert(it->second);
     }
     // Types
-    for (set<Type *>::iterator it = types.begin(); it != types.end(); ++it) {
-        Type *type = dyn_cast<Type>(*it);
+    for (set<const Type *>::iterator it = types.begin(); it != types.end(); ++it) {
+        const Type *type = dyn_cast<Type>(*it);
         identifyType(type, componentTypes);
     }
 
@@ -247,8 +247,8 @@ int main(int argc, char *argv[]) {
                      "%s\n", "metadata");
     printFactsToFile(PredicateNames::predNameToFilename(PredicateNames::primitiveType).c_str(),
                      "%s\n", "x86mmx");
-    for (set<Type *>::iterator it = componentTypes.begin(); it != componentTypes.end(); ++it) {
-        Type *type = dyn_cast<Type>(*it);
+    for (set<const Type *>::iterator it = componentTypes.begin(); it != componentTypes.end(); ++it) {
+        const Type *type = dyn_cast<Type>(*it);
         if (type->isIntegerTy()) {
             printFactsToFile(PredicateNames::predNameToFilename(PredicateNames::intType).c_str(),
                              "%t\n", printType(type));
@@ -282,7 +282,7 @@ int main(int argc, char *argv[]) {
                              "%t\t\%t\n", printType(type), printType(type->getArrayElementType()));
         }
         else if(type->isStructTy()) {
-            StructType *strTy = cast<StructType>(type);
+            const StructType *strTy = cast<StructType>(type);
             printFactsToFile(PredicateNames::predNameToFilename(PredicateNames::structType).c_str(),
                              "%t\n", printType(strTy));
             if(strTy->isOpaque()) {
@@ -307,7 +307,7 @@ int main(int argc, char *argv[]) {
                              "%t\t%d\n", printType(type), type->getVectorNumElements());
         }
         else if(type->isFunctionTy()) {
-            FunctionType *funcType = cast<FunctionType>(type);
+            const FunctionType *funcType = cast<FunctionType>(type);
             printFactsToFile(PredicateNames::predNameToFilename(PredicateNames::funcType).c_str(),
                              "%t\n", printType(funcType));
             //TODO: which predicate/entity do we need to update for varagrs?
@@ -321,7 +321,8 @@ int main(int argc, char *argv[]) {
                              "%t\t%d\n", printType(funcType), funcType->getFunctionNumParams());
         }
         else {
-            errs() << *type << ": invalid type in componentTypes set.\n";
+            type->dump();
+            errs() << ": invalid type in componentTypes set.\n";
         }
     }
     return 0;

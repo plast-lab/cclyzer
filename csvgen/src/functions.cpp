@@ -194,12 +194,12 @@ const char *writePredicate(unsigned predicate) {
  	I->setMetadata("synthetic_instruction", N);
  }
 
-string printType(Type *type) {
+string printType(const Type *type) {
 
 	string type_str;
 	raw_string_ostream rso(type_str);
 	if(type->isStructTy()) {
-		StructType *STy = cast<StructType>(type);
+		const StructType *STy = cast<StructType>(type);
 		if(STy->isLiteral()) {
 			type->print(rso);
 			return rso.str();
@@ -216,7 +216,7 @@ string printType(Type *type) {
 	return rso.str();
 }
 
-void identifyType(Type *elementType, set<Type *> &componentTypes) {
+void identifyType(const Type *elementType, set<const Type *> &componentTypes) {
 
 	if(componentTypes.count(elementType) != 0) {
 		return;
@@ -245,9 +245,9 @@ void identifyType(Type *elementType, set<Type *> &componentTypes) {
 	}
 }
 
-void identifyStructType(Type *structType, set<Type *> &componentTypes) {
+void identifyStructType(const Type *structType, set<const Type *> &componentTypes) {
 
-	StructType *strTy = cast<StructType>(structType);
+	const StructType *strTy = cast<StructType>(structType);
 	if(!strTy->isOpaque()) {
 		for (unsigned int i = 0; i < strTy->getStructNumElements(); ++i) {
 			identifyType(strTy->getStructElementType(i), componentTypes);
@@ -255,9 +255,9 @@ void identifyStructType(Type *structType, set<Type *> &componentTypes) {
 	}
 }
 
-void identifyFunctionType(Type *funcType, set<Type *> &componentTypes) {
+void identifyFunctionType(const Type *funcType, set<const Type *> &componentTypes) {
 
-	FunctionType *funcTy = dyn_cast<FunctionType>(funcType);
+	const FunctionType *funcTy = dyn_cast<FunctionType>(funcType);
 	identifyType(funcTy->getReturnType(), componentTypes);
 	for (unsigned int par = 0; par < funcType->getFunctionNumParams(); ++par) {
 		identifyType(funcTy->getFunctionParamType(par), componentTypes);

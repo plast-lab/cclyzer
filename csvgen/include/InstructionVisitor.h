@@ -1,12 +1,13 @@
 #include "llvm/InstVisitor.h"
+#include "../include/PredicateNames.h"
 
 using namespace llvm;
 
-class InstructionVisitor : public InstVisitor<InstructionVisitor> {
+class InstructionVisitor : public InstVisitor<InstructionVisitor>, public PredicateNames {
 
 public:
 
-	InstructionVisitor(map<string, Type *> &var, map<string, Type *> &imm, Module *M);
+	InstructionVisitor(map<string, const Type *> &var, map<string, const Type *> &imm, Module *M);
 
 	//////////////////////////
 	// 	   visit methods    //
@@ -55,7 +56,7 @@ public:
 
 	void visitReturnInst(ReturnInst &);
 	void visitBranchInst(BranchInst &);
-	void visitSwitchInst(SwitchInst &);
+	void visitSwitchInst(const SwitchInst &);
 	void visitIndirectBrInst(IndirectBrInst &);
 	void visitInvokeInst(InvokeInst &);
 	void visitResumeInst(ResumeInst &);
@@ -104,13 +105,18 @@ public:
 		instrId = instructionId;
 	}
 
-private :
+private:
+
+    void logSimpleValue(const Value * Value, const char * predNmae);
+    void logOperand(const Value * Operand, const char * predName);
+    void logBinaryOperator(BinaryOperator &BI, const char * predName, 
+                           const char * predNameLeftOp, const char * predNameRightOp);
 
 	std::string instrNum;
 	std::string instrId;
 	std::string varId;
 	std::string value_str;
-	map<std::string, Type *> &variable;
-	map<std::string, Type *> &immediate;
+	map<std::string, const Type *> &variable;
+	map<std::string, const Type *> &immediate;
 	Module *Mod;
 };
