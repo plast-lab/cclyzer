@@ -15,7 +15,10 @@ dependencies := $(patsubst $(srcdir)/%.cpp,$(outdir)/%.d,$(sources))
 program      := $(outdir)/csv-generation
 include_dirs := include
 
+
+#-----------------------------------
 # Search in directories
+#-----------------------------------
 
 CPPFLAGS += $(addprefix -I ,$(include_dirs))
 
@@ -23,14 +26,18 @@ vpath %.cpp $(srcdir)
 vpath %.h $(include_dirs)
 
 
+#-----------------------------------
 # LLVM specific flags
+#-----------------------------------
 
 CPPFLAGS += $(shell llvm-config --cppflags)
 CXXFLAGS += $(shell llvm-config --cxxflags) -std=c++0x
 LDFLAGS  += $(shell llvm-config --libs) $(shell llvm-config --ldflags)
 
 
+#-----------------------------------
 # Basic Rules
+#-----------------------------------
 
 $(outdir)/%.o: %.cpp | $(outdir)
 	$(COMPILE.cpp) -o $@ $<
@@ -39,7 +46,9 @@ $(program): $(objects)
 	$(LINK.cpp) -o $@ $^ $(LDFLAGS)
 
 
+#-----------------------------------
 # Phony targets
+#-----------------------------------
 
 .PHONY: all
 all: $(program)
@@ -48,11 +57,19 @@ all: $(program)
 clean:
 	$(RM) -r $(outdir)
 
+.PHONY: check-syntax
+check-syntax:
+	$(COMPILE.cpp) -Wall -Wextra -pedantic -fsyntax-only $(sources)
 
+
+#-----------------------------------
 # Automatic Dependency Generation
+#-----------------------------------
 
 ifneq "$(MAKECMDGOALS)" "clean"
-  -include $(dependencies)
+  ifneq "$(MAKECMDGOALS)" "check-syntax"
+    -include $(dependencies)
+  endif
 endif
 
 $(outdir)/%.d: %.cpp | $(outdir)
