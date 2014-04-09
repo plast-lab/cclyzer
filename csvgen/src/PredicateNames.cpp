@@ -1,416 +1,374 @@
-#include <string>
-#include <fstream>
-#include <set>
-
 #include "PredicateNames.h"
-#include "DirInfo.h"
 
-using namespace std;
+namespace predicateNames{
 
 // Basic Blocks
 
-const char * PredicateNames::basicBlockPred = "basicblock:pred_aux";
+    const char * basicBlockPred = "basicblock:pred_aux";
 
 // Global
 
-const char * PredicateNames::globalVar = "global_variable";
-const char * PredicateNames::globalVarType = "global_variable:type";
-const char * PredicateNames::globalVarInit = "global_variable:initializer";
-const char * PredicateNames::globalVarSect = "global_variable:section";
-const char * PredicateNames::globalVarAlign = "global_variable:align";
-const char * PredicateNames::globalVarFlag = "global_variable:flag";
-const char * PredicateNames::globalVarLink = "global_variable:linkage_type";
-const char * PredicateNames::globalVarVis = "global_variable:visibility";
-const char * PredicateNames::globalVarTlm = "global_variable:threadlocal_mode";
+    const char * globalVar = "global_variable";
+    const char * globalVarType = "global_variable:type";
+    const char * globalVarInit = "global_variable:initializer";
+    const char * globalVarSect = "global_variable:section";
+    const char * globalVarAlign = "global_variable:align";
+    const char * globalVarFlag = "global_variable:flag";
+    const char * globalVarLink = "global_variable:linkage_type";
+    const char * globalVarVis = "global_variable:visibility";
+    const char * globalVarTlm = "global_variable:threadlocal_mode";
 
-const char * PredicateNames::alias = "alias";
-const char * PredicateNames::aliasType = "alias:type";
-const char * PredicateNames::aliasLink = "alias:linkage_type";
-const char * PredicateNames::aliasVis = "alias:visibility";
-const char * PredicateNames::aliasAliasee = "alias:aliasee";
+    const char * alias = "alias";
+    const char * aliasType = "alias:type";
+    const char * aliasLink = "alias:linkage_type";
+    const char * aliasVis = "alias:visibility";
+    const char * aliasAliasee = "alias:aliasee";
 
 // Function
 
-const char * PredicateNames::Func = "function";
-const char * PredicateNames::FuncUnnamedAddr = "function:unnamed_addr";
-const char * PredicateNames::FuncLink = "function:linkage_type";
-const char * PredicateNames::FuncVis = "function:visibility";
-const char * PredicateNames::FuncCallConv = "function:calling_convention";
-const char * PredicateNames::FuncSect = "function:section";
-const char * PredicateNames::FuncAlign = "function:alignment";
-const char * PredicateNames::FuncAttr = "function:attributes";
-const char * PredicateNames::FuncGc = "function:gc";
-const char * PredicateNames::FuncName = "function:name";
-const char * PredicateNames::FuncType = "function:type";
-const char * PredicateNames::FuncParam = "function:param_tmp";
-const char * PredicateNames::FuncRetAttr = "function:return_attribute";
-const char * PredicateNames::FuncParamAttr = "function:param_attribute";
+    const char * Func = "function";
+    const char * FuncUnnamedAddr = "function:unnamed_addr";
+    const char * FuncLink = "function:linkage_type";
+    const char * FuncVis = "function:visibility";
+    const char * FuncCallConv = "function:calling_convention";
+    const char * FuncSect = "function:section";
+    const char * FuncAlign = "function:alignment";
+    const char * FuncAttr = "function:attributes";
+    const char * FuncGc = "function:gc";
+    const char * FuncName = "function:name";
+    const char * FuncType = "function:type";
+    const char * FuncParam = "function:param_tmp";
+    const char * FuncRetAttr = "function:return_attribute";
+    const char * FuncParamAttr = "function:param_attribute";
 
 // Instructions
 
-const char * PredicateNames::insnTo = "instruction:to";
-const char * PredicateNames::insnFlag = "instruction:flag";
-const char * PredicateNames::insnNext = "instruction:next";
-const char * PredicateNames::insnBBEntry = "instruction:bb_entry";
-const char * PredicateNames::insnFunc = "instruction:function";
+    const char * insnTo = "instruction:to";
+    const char * insnFlag = "instruction:flag";
+    const char * insnNext = "instruction:next";
+    const char * insnBBEntry = "instruction:bb_entry";
+    const char * insnFunc = "instruction:function";
 
 // Binary Instructions
 
-const char * PredicateNames::addInsn = "add_instruction";
-const char * PredicateNames::addInsnFirstOp = "add_instruction:first_operand";
-const char * PredicateNames::addInsnSecondOp = "add_instruction:second_operand";
+    const char * addInsn = "add_instruction";
+    const char * addInsnFirstOp = "add_instruction:first_operand";
+    const char * addInsnSecondOp = "add_instruction:second_operand";
 
-const char * PredicateNames::faddInsn = "fadd_instruction";
-const char * PredicateNames::faddInsnFirstOp = "fadd_instruction:first_operand";
-const char * PredicateNames::faddInsnSecondOp = "fadd_instruction:second_operand";
+    const char * faddInsn = "fadd_instruction";
+    const char * faddInsnFirstOp = "fadd_instruction:first_operand";
+    const char * faddInsnSecondOp = "fadd_instruction:second_operand";
 
-const char * PredicateNames::subInsn = "sub_instruction";
-const char * PredicateNames::subInsnFirstOp = "sub_instruction:first_operand";
-const char * PredicateNames::subInsnSecondOp = "sub_instruction:second_operand";
+    const char * subInsn = "sub_instruction";
+    const char * subInsnFirstOp = "sub_instruction:first_operand";
+    const char * subInsnSecondOp = "sub_instruction:second_operand";
 
-const char * PredicateNames::fsubInsn = "fsub_instruction";
-const char * PredicateNames::fsubInsnFirstOp = "fsub_instruction:first_operand";
-const char * PredicateNames::fsubInsnSecondOp = "fsub_instruction:second_operand";
+    const char * fsubInsn = "fsub_instruction";
+    const char * fsubInsnFirstOp = "fsub_instruction:first_operand";
+    const char * fsubInsnSecondOp = "fsub_instruction:second_operand";
 
-const char * PredicateNames::mulInsn = "mul_instruction";
-const char * PredicateNames::mulInsnFirstOp = "mul_instruction:first_operand";
-const char * PredicateNames::mulInsnSecondOp = "mul_instruction:second_operand";
+    const char * mulInsn = "mul_instruction";
+    const char * mulInsnFirstOp = "mul_instruction:first_operand";
+    const char * mulInsnSecondOp = "mul_instruction:second_operand";
 
-const char * PredicateNames::fmulInsn = "fmul_instruction";
-const char * PredicateNames::fmulInsnFirstOp = "fmul_instruction:first_operand";
-const char * PredicateNames::fmulInsnSecondOp = "fmul_instruction:second_operand";
+    const char * fmulInsn = "fmul_instruction";
+    const char * fmulInsnFirstOp = "fmul_instruction:first_operand";
+    const char * fmulInsnSecondOp = "fmul_instruction:second_operand";
 
-const char * PredicateNames::udivInsn = "udiv_instruction";
-const char * PredicateNames::udivInsnFirstOp = "udiv_instruction:first_operand";
-const char * PredicateNames::udivInsnSecondOp = "udiv_instruction:second_operand";
+    const char * udivInsn = "udiv_instruction";
+    const char * udivInsnFirstOp = "udiv_instruction:first_operand";
+    const char * udivInsnSecondOp = "udiv_instruction:second_operand";
 
-const char * PredicateNames::fdivInsn = "fdiv_instruction";
-const char * PredicateNames::fdivInsnFirstOp = "fdiv_instruction:first_operand";
-const char * PredicateNames::fdivInsnSecondOp = "fdiv_instruction:second_operand";
+    const char * fdivInsn = "fdiv_instruction";
+    const char * fdivInsnFirstOp = "fdiv_instruction:first_operand";
+    const char * fdivInsnSecondOp = "fdiv_instruction:second_operand";
 
-const char * PredicateNames::sdivInsn = "sdiv_instruction";
-const char * PredicateNames::sdivInsnFirstOp = "sdiv_instruction:first_operand";
-const char * PredicateNames::sdivInsnSecondOp = "sdiv_instruction:second_operand";
+    const char * sdivInsn = "sdiv_instruction";
+    const char * sdivInsnFirstOp = "sdiv_instruction:first_operand";
+    const char * sdivInsnSecondOp = "sdiv_instruction:second_operand";
 
-const char * PredicateNames::uremInsn = "urem_instruction";
-const char * PredicateNames::uremInsnFirstOp = "urem_instruction:first_operand";
-const char * PredicateNames::uremInsnSecondOp = "urem_instruction:second_operand";
+    const char * uremInsn = "urem_instruction";
+    const char * uremInsnFirstOp = "urem_instruction:first_operand";
+    const char * uremInsnSecondOp = "urem_instruction:second_operand";
 
-const char * PredicateNames::sremInsn = "srem_instruction";
-const char * PredicateNames::sremInsnFirstOp = "srem_instruction:first_operand";
-const char * PredicateNames::sremInsnSecondOp = "srem_instruction:second_operand";
+    const char * sremInsn = "srem_instruction";
+    const char * sremInsnFirstOp = "srem_instruction:first_operand";
+    const char * sremInsnSecondOp = "srem_instruction:second_operand";
 
-const char * PredicateNames::fremInsn = "frem_instruction";
-const char * PredicateNames::fremInsnFirstOp = "frem_instruction:first_operand";
-const char * PredicateNames::fremInsnSecondOp = "frem_instruction:second_operand";
+    const char * fremInsn = "frem_instruction";
+    const char * fremInsnFirstOp = "frem_instruction:first_operand";
+    const char * fremInsnSecondOp = "frem_instruction:second_operand";
 
 // Bitwise Binary Instructions
 
-const char * PredicateNames::shlInsn = "shl_instruction";
-const char * PredicateNames::shlInsnFirstOp = "shl_instruction:first_operand";
-const char * PredicateNames::shlInsnSecondOp = "shl_instruction:second_operand";
+    const char * shlInsn = "shl_instruction";
+    const char * shlInsnFirstOp = "shl_instruction:first_operand";
+    const char * shlInsnSecondOp = "shl_instruction:second_operand";
 
-const char * PredicateNames::lshrInsn = "lshr_instruction";
-const char * PredicateNames::lshrInsnFirstOp = "lshr_instruction:first_operand";
-const char * PredicateNames::lshrInsnSecondOp = "lshr_instruction:second_operand";
+    const char * lshrInsn = "lshr_instruction";
+    const char * lshrInsnFirstOp = "lshr_instruction:first_operand";
+    const char * lshrInsnSecondOp = "lshr_instruction:second_operand";
 
-const char * PredicateNames::ashrInsn = "ashr_instruction";
-const char * PredicateNames::ashrInsnFirstOp = "ashr_instruction:first_operand";
-const char * PredicateNames::ashrInsnSecondOp = "ashr_instruction:second_operand";
+    const char * ashrInsn = "ashr_instruction";
+    const char * ashrInsnFirstOp = "ashr_instruction:first_operand";
+    const char * ashrInsnSecondOp = "ashr_instruction:second_operand";
 
-const char * PredicateNames::andInsn = "and_instruction";
-const char * PredicateNames::andInsnFirstOp = "and_instruction:first_operand";
-const char * PredicateNames::andInsnSecondOp = "and_instruction:second_operand";
+    const char * andInsn = "and_instruction";
+    const char * andInsnFirstOp = "and_instruction:first_operand";
+    const char * andInsnSecondOp = "and_instruction:second_operand";
 
-const char * PredicateNames::orInsn = "or_instruction";
-const char * PredicateNames::orInsnFirstOp = "or_instruction:first_operand";
-const char * PredicateNames::orInsnSecondOp = "or_instruction:second_operand";
+    const char * orInsn = "or_instruction";
+    const char * orInsnFirstOp = "or_instruction:first_operand";
+    const char * orInsnSecondOp = "or_instruction:second_operand";
 
-const char * PredicateNames::xorInsn = "xor_instruction";
-const char * PredicateNames::xorInsnFirstOp = "xor_instruction:first_operand";
-const char * PredicateNames::xorInsnSecondOp = "xor_instruction:second_operand";
+    const char * xorInsn = "xor_instruction";
+    const char * xorInsnFirstOp = "xor_instruction:first_operand";
+    const char * xorInsnSecondOp = "xor_instruction:second_operand";
 
 // Terminator Instructions
 
-const char * PredicateNames::retInsn = "ret_instruction";
-const char * PredicateNames::retInsnVoid = "ret_instruction:void";
-const char * PredicateNames::retInsnOp = "ret_instruction:value";
+    const char * retInsn = "ret_instruction";
+    const char * retInsnVoid = "ret_instruction:void";
+    const char * retInsnOp = "ret_instruction:value";
 
-const char * PredicateNames::brInsn = "br_instruction";
-const char * PredicateNames::brCondInsn = "br_cond_instruction";
-const char * PredicateNames::brCondInsnCondition = "br_cond_instruction:condition";
-const char * PredicateNames::brCondInsnIfTrue = "br_cond_instruction:iftrue";
-const char * PredicateNames::brCondInsnIfFalse = "br_cond_instruction:iffalse";
-const char * PredicateNames::brUncondInsn = "br_uncond_instruction";
-const char * PredicateNames::brUncondInsnDest = "br_uncond_instruction:dest";
+    const char * brInsn = "br_instruction";
+    const char * brCondInsn = "br_cond_instruction";
+    const char * brCondInsnCondition = "br_cond_instruction:condition";
+    const char * brCondInsnIfTrue = "br_cond_instruction:iftrue";
+    const char * brCondInsnIfFalse = "br_cond_instruction:iffalse";
+    const char * brUncondInsn = "br_uncond_instruction";
+    const char * brUncondInsnDest = "br_uncond_instruction:dest";
 
-const char * PredicateNames::switchInsn = "switch_instruction";
-const char * PredicateNames::switchInsnOp = "switch_instruction:operand";
-const char * PredicateNames::switchInsnDefLabel = "switch_instruction:default_label";
-const char * PredicateNames::switchInsnCaseVal = "switch_instruction:case:value_tmp";
-const char * PredicateNames::switchInsnCaseLabel = "switch_instruction:case:label_tmp";
-const char * PredicateNames::switchInsnNCases = "switch_instruction:ncases";
+    const char * switchInsn = "switch_instruction";
+    const char * switchInsnOp = "switch_instruction:operand";
+    const char * switchInsnDefLabel = "switch_instruction:default_label";
+    const char * switchInsnCaseVal = "switch_instruction:case:value_tmp";
+    const char * switchInsnCaseLabel = "switch_instruction:case:label_tmp";
+    const char * switchInsnNCases = "switch_instruction:ncases";
 
-const char * PredicateNames::indirectbrInsn = "indirectbr_instruction";
-const char * PredicateNames::indirectbrInsnAddr = "indirectbr_instruction:address";
-const char * PredicateNames::indirectbrInsnLabel = "indirectbr_instruction:label_tmp";
-const char * PredicateNames::indirectbrInsnNLabels = "indirectbr_instruction:nlabels";
+    const char * indirectbrInsn = "indirectbr_instruction";
+    const char * indirectbrInsnAddr = "indirectbr_instruction:address";
+    const char * indirectbrInsnLabel = "indirectbr_instruction:label_tmp";
+    const char * indirectbrInsnNLabels = "indirectbr_instruction:nlabels";
 
-const char * PredicateNames::resumeInsn = "resume_instruction";
-const char * PredicateNames::resumeInsnOp = "resume_instruction:operand";
+    const char * resumeInsn = "resume_instruction";
+    const char * resumeInsnOp = "resume_instruction:operand";
 
-const char * PredicateNames::unreachableInsn = "unreachable_instruction";
+    const char * unreachableInsn = "unreachable_instruction";
 
-const char * PredicateNames::invokeInsn = "invoke_instruction";
-const char * PredicateNames::invokeInsnFunc = "invoke_instruction:function";
-const char * PredicateNames::directInvokeInsn = "direct_invoke_instruction";
-const char * PredicateNames::indirectInvokeInsn = "indirect_invoke_instruction";
-const char * PredicateNames::invokeInsnCallConv = "invoke_instruction:calling_convention";
-const char * PredicateNames::invokeInsnArg = "invoke_instruction:arg";
-const char * PredicateNames::invokeInsnRetAttr = "invoke_instruction:return_attribute";
-const char * PredicateNames::invokeInsnParamAttr = "invoke_instruction:param_attribute";
-const char * PredicateNames::invokeInsnFuncAttr = "invoke_instruction:function_attribute";
-const char * PredicateNames::invokeInsnNormalLabel = "invoke_instruction:normal_label";
-const char * PredicateNames::invokeInsnExceptLabel = "invoke_instruction:exception_label";
+    const char * invokeInsn = "invoke_instruction";
+    const char * invokeInsnFunc = "invoke_instruction:function";
+    const char * directInvokeInsn = "direct_invoke_instruction";
+    const char * indirectInvokeInsn = "indirect_invoke_instruction";
+    const char * invokeInsnCallConv = "invoke_instruction:calling_convention";
+    const char * invokeInsnArg = "invoke_instruction:arg";
+    const char * invokeInsnRetAttr = "invoke_instruction:return_attribute";
+    const char * invokeInsnParamAttr = "invoke_instruction:param_attribute";
+    const char * invokeInsnFuncAttr = "invoke_instruction:function_attribute";
+    const char * invokeInsnNormalLabel = "invoke_instruction:normal_label";
+    const char * invokeInsnExceptLabel = "invoke_instruction:exception_label";
 
 // Vector Operations
 
-const char * PredicateNames::extractElemInsn = "extractelement_instruction";
-const char * PredicateNames::extractElemInsnBase = "extractelement_instruction:base";
-const char * PredicateNames::extractElemInsnIndex = "extractelement_instruction:index";
+    const char * extractElemInsn = "extractelement_instruction";
+    const char * extractElemInsnBase = "extractelement_instruction:base";
+    const char * extractElemInsnIndex = "extractelement_instruction:index";
 
-const char * PredicateNames::insertElemInsn = "insertelement_instruction";
-const char * PredicateNames::insertElemInsnBase = "insertelement_instruction:base";
-const char * PredicateNames::insertElemInsnIndex = "insertelement_instruction:index";
-const char * PredicateNames::insertElemInsnValue = "insertelement_instruction:value";
+    const char * insertElemInsn = "insertelement_instruction";
+    const char * insertElemInsnBase = "insertelement_instruction:base";
+    const char * insertElemInsnIndex = "insertelement_instruction:index";
+    const char * insertElemInsnValue = "insertelement_instruction:value";
 
-const char * PredicateNames::shuffleVectorInsn = "shufflevector_instruction";
-const char * PredicateNames::shuffleVectorInsnFirstVec = "shufflevector_instruction:first_vector";
-const char * PredicateNames::shuffleVectorInsnSecondVec = "shufflevector_instruction:second_vector";
-const char * PredicateNames::shuffleVectorInsnMask = "shufflevector_instruction:mask";
+    const char * shuffleVectorInsn = "shufflevector_instruction";
+    const char * shuffleVectorInsnFirstVec = "shufflevector_instruction:first_vector";
+    const char * shuffleVectorInsnSecondVec = "shufflevector_instruction:second_vector";
+    const char * shuffleVectorInsnMask = "shufflevector_instruction:mask";
 
 // Aggregate Operations
 
-const char * PredicateNames::extractValueInsn = "extractvalue_instruction";
-const char * PredicateNames::extractValueInsnBase = "extractvalue_instruction:base";
-const char * PredicateNames::extractValueInsnIndex = "extractvalue_instruction:index_tmp";
-const char * PredicateNames::extractValueInsnNIndices = "extractvalue_instruction:nindices";
+    const char * extractValueInsn = "extractvalue_instruction";
+    const char * extractValueInsnBase = "extractvalue_instruction:base";
+    const char * extractValueInsnIndex = "extractvalue_instruction:index_tmp";
+    const char * extractValueInsnNIndices = "extractvalue_instruction:nindices";
 
-const char * PredicateNames::insertValueInsn = "insertvalue_instruction";
-const char * PredicateNames::insertValueInsnBase = "insertvalue_instruction:base";
-const char * PredicateNames::insertValueInsnValue = "insertvalue_instruction:value";
-const char * PredicateNames::insertValueInsnIndex = "insertvalue_instruction:index_tmp";
-const char * PredicateNames::insertValueInsnNIndices = "insertvalue_instruction:nindices";
+    const char * insertValueInsn = "insertvalue_instruction";
+    const char * insertValueInsnBase = "insertvalue_instruction:base";
+    const char * insertValueInsnValue = "insertvalue_instruction:value";
+    const char * insertValueInsnIndex = "insertvalue_instruction:index_tmp";
+    const char * insertValueInsnNIndices = "insertvalue_instruction:nindices";
 
 // Memory Operations
 
-const char * PredicateNames::allocaInsn = "alloca_instruction";
-const char * PredicateNames::allocaInsnAlign = "alloca_instruction:alignment";
-const char * PredicateNames::allocaInsnSize = "alloca_instruction:size";
-const char * PredicateNames::allocaInsnType = "alloca_instruction:type";
+    const char * allocaInsn = "alloca_instruction";
+    const char * allocaInsnAlign = "alloca_instruction:alignment";
+    const char * allocaInsnSize = "alloca_instruction:size";
+    const char * allocaInsnType = "alloca_instruction:type";
 
-const char * PredicateNames::loadInsn = "load_instruction";
-const char * PredicateNames::loadInsnAlign = "load_instruction:alignment";
-const char * PredicateNames::loadInsnOrd = "load_instruction:ordering";
-const char * PredicateNames::loadInsnAddr = "load_instruction:address";
+    const char * loadInsn = "load_instruction";
+    const char * loadInsnAlign = "load_instruction:alignment";
+    const char * loadInsnOrd = "load_instruction:ordering";
+    const char * loadInsnAddr = "load_instruction:address";
 
-const char * PredicateNames::storeInsn = "store_instruction";
-const char * PredicateNames::storeInsnAlign = "store_instruction:alignment";
-const char * PredicateNames::storeInsnOrd = "store_instruction:ordering";
-const char * PredicateNames::storeInsnValue = "store_instruction:value";
-const char * PredicateNames::storeInsnAddr = "store_instruction:address";
+    const char * storeInsn = "store_instruction";
+    const char * storeInsnAlign = "store_instruction:alignment";
+    const char * storeInsnOrd = "store_instruction:ordering";
+    const char * storeInsnValue = "store_instruction:value";
+    const char * storeInsnAddr = "store_instruction:address";
 
-const char * PredicateNames::fenceInsn = "fence_instruction";
-const char * PredicateNames::fenceInsnOrd = "fence_instruction:ordering";
+    const char * fenceInsn = "fence_instruction";
+    const char * fenceInsnOrd = "fence_instruction:ordering";
 
-const char * PredicateNames::atomicRMWInsn = "atomicrmw_instruction";
-const char * PredicateNames::atomicRMWInsnOrd = "atomicrmw_instruction:ordering";
-const char * PredicateNames::atomicRMWInsnOper = "atomicrmw_instruction:operation";
-const char * PredicateNames::atomicRMWInsnAddr = "atomicrmw_instruction:address";
-const char * PredicateNames::atomicRMWInsnValue = "atomicrmw_instruction:value";
+    const char * atomicRMWInsn = "atomicrmw_instruction";
+    const char * atomicRMWInsnOrd = "atomicrmw_instruction:ordering";
+    const char * atomicRMWInsnOper = "atomicrmw_instruction:operation";
+    const char * atomicRMWInsnAddr = "atomicrmw_instruction:address";
+    const char * atomicRMWInsnValue = "atomicrmw_instruction:value";
 
-const char * PredicateNames::cmpxchgInsn = "cmpxchg_instruction";
-const char * PredicateNames::cmpxchgInsnOrd = "cmpxchg_instruction:ordering";
-const char * PredicateNames::cmpxchgInsnAddr = "cmpxchg_instruction:address";
-const char * PredicateNames::cmpxchgInsnCmp = "cmpxchg_instruction:cmp";
-const char * PredicateNames::cmpxchgInsnNew = "cmpxchg_instruction:new";
-const char * PredicateNames::cmpxchgInsnType = "cmpxchg_instruction:type";
+    const char * cmpxchgInsn = "cmpxchg_instruction";
+    const char * cmpxchgInsnOrd = "cmpxchg_instruction:ordering";
+    const char * cmpxchgInsnAddr = "cmpxchg_instruction:address";
+    const char * cmpxchgInsnCmp = "cmpxchg_instruction:cmp";
+    const char * cmpxchgInsnNew = "cmpxchg_instruction:new";
+    const char * cmpxchgInsnType = "cmpxchg_instruction:type";
 
-const char * PredicateNames::gepInsn = "getelementptr_instruction";
-const char * PredicateNames::gepInsnBase = "getelementptr_instruction:base";
-const char * PredicateNames::gepInsnIndex = "getelementptr_instruction:index";
-const char * PredicateNames::gepInsnNIndices = "getelementptr_instruction:nindices";
+    const char * gepInsn = "getelementptr_instruction";
+    const char * gepInsnBase = "getelementptr_instruction:base";
+    const char * gepInsnIndex = "getelementptr_instruction:index";
+    const char * gepInsnNIndices = "getelementptr_instruction:nindices";
 
 // Conversion Operations
 
-const char * PredicateNames::truncInsn = "trunc_instruction";
-const char * PredicateNames::truncInsnFrom = "trunc_instruction:from";
-const char * PredicateNames::truncInsnToType = "trunc_instruction:to_type";
+    const char * truncInsn = "trunc_instruction";
+    const char * truncInsnFrom = "trunc_instruction:from";
+    const char * truncInsnToType = "trunc_instruction:to_type";
 
-const char * PredicateNames::zextInsn = "zext_instruction";
-const char * PredicateNames::zextInsnFrom = "zext_instruction:from";
-const char * PredicateNames::zextInsnToType = "zext_instruction:to_type";
+    const char * zextInsn = "zext_instruction";
+    const char * zextInsnFrom = "zext_instruction:from";
+    const char * zextInsnToType = "zext_instruction:to_type";
 
-const char * PredicateNames::sextInsn = "sext_instruction";
-const char * PredicateNames::sextInsnFrom = "sext_instruction:from";
-const char * PredicateNames::sextInsnToType = "sext_instruction:to_type";
+    const char * sextInsn = "sext_instruction";
+    const char * sextInsnFrom = "sext_instruction:from";
+    const char * sextInsnToType = "sext_instruction:to_type";
 
-const char * PredicateNames::fptruncInsn = "fptrunc_instruction";
-const char * PredicateNames::fptruncInsnFrom = "fptrunc_instruction:from";
-const char * PredicateNames::fptruncInsnToType = "fptrunc_instruction:to_type";
+    const char * fptruncInsn = "fptrunc_instruction";
+    const char * fptruncInsnFrom = "fptrunc_instruction:from";
+    const char * fptruncInsnToType = "fptrunc_instruction:to_type";
 
-const char * PredicateNames::fpextInsn = "fpext_instruction";
-const char * PredicateNames::fpextInsnFrom = "fpext_instruction:from";
-const char * PredicateNames::fpextInsnToType = "fpext_instruction:to_type";
+    const char * fpextInsn = "fpext_instruction";
+    const char * fpextInsnFrom = "fpext_instruction:from";
+    const char * fpextInsnToType = "fpext_instruction:to_type";
 
-const char * PredicateNames::fptouiInsn = "fptoui_instruction";
-const char * PredicateNames::fptouiInsnFrom = "fptoui_instruction:from";
-const char * PredicateNames::fptouiInsnToType = "fptrunc_instruction:to_type";
+    const char * fptouiInsn = "fptoui_instruction";
+    const char * fptouiInsnFrom = "fptoui_instruction:from";
+    const char * fptouiInsnToType = "fptrunc_instruction:to_type";
 
-const char * PredicateNames::fptosiInsn = "fptosi_instruction";
-const char * PredicateNames::fptosiInsnFrom = "fptosi_instruction:from";
-const char * PredicateNames::fptosiInsnToType = "fptosi_instruction:to_type";
+    const char * fptosiInsn = "fptosi_instruction";
+    const char * fptosiInsnFrom = "fptosi_instruction:from";
+    const char * fptosiInsnToType = "fptosi_instruction:to_type";
 
-const char * PredicateNames::uitofpInsn = "uitofp_instruction";
-const char * PredicateNames::uitofpInsnFrom = "uitofp_instruction:from";
-const char * PredicateNames::uitofpInsnToType = "uitofp_instruction:to_type";
+    const char * uitofpInsn = "uitofp_instruction";
+    const char * uitofpInsnFrom = "uitofp_instruction:from";
+    const char * uitofpInsnToType = "uitofp_instruction:to_type";
 
-const char * PredicateNames::sitofpInsn = "sitofp_instruction";
-const char * PredicateNames::sitofpInsnFrom = "sitofp_instruction:from";
-const char * PredicateNames::sitofpInsnToType = "sitofp_instruction:to_type";
+    const char * sitofpInsn = "sitofp_instruction";
+    const char * sitofpInsnFrom = "sitofp_instruction:from";
+    const char * sitofpInsnToType = "sitofp_instruction:to_type";
 
-const char * PredicateNames::ptrtointInsn = "ptrtoint_instruction";
-const char * PredicateNames::ptrtointInsnFrom = "ptrtoint_instruction:from";
-const char * PredicateNames::ptrtointInsnToType = "ptrtoint_instruction:to_type";
+    const char * ptrtointInsn = "ptrtoint_instruction";
+    const char * ptrtointInsnFrom = "ptrtoint_instruction:from";
+    const char * ptrtointInsnToType = "ptrtoint_instruction:to_type";
 
-const char * PredicateNames::inttoptrInsn = "inttoptr_instruction";
-const char * PredicateNames::inttoptrInsnFrom = "inttoptr_instruction:from";
-const char * PredicateNames::inttoptrInsnToType = "inttoptr_instruction:to_type";
+    const char * inttoptrInsn = "inttoptr_instruction";
+    const char * inttoptrInsnFrom = "inttoptr_instruction:from";
+    const char * inttoptrInsnToType = "inttoptr_instruction:to_type";
 
-const char * PredicateNames::bitcastInsn = "bitcast_instruction";
-const char * PredicateNames::bitcastInsnFrom = "bitcast_instruction:from";
-const char * PredicateNames::bitcastInsnToType = "bitcast_instruction:to_type";
+    const char * bitcastInsn = "bitcast_instruction";
+    const char * bitcastInsnFrom = "bitcast_instruction:from";
+    const char * bitcastInsnToType = "bitcast_instruction:to_type";
 
 // Other Operations
 
-const char * PredicateNames::icmpInsn = "icmp_instruction";
-const char * PredicateNames::icmpInsnCond = "icmp_instruction:condition";
-const char * PredicateNames::icmpInsnFirstOp = "icmp_instruction:first_operand";
-const char * PredicateNames::icmpInsnSecondOp = "icmp_instruction:second_operand";
+    const char * icmpInsn = "icmp_instruction";
+    const char * icmpInsnCond = "icmp_instruction:condition";
+    const char * icmpInsnFirstOp = "icmp_instruction:first_operand";
+    const char * icmpInsnSecondOp = "icmp_instruction:second_operand";
 
-const char * PredicateNames::fcmpInsn = "fcmp_instruction";
-const char * PredicateNames::fcmpInsnCond = "fcmp_instruction:condition";
-const char * PredicateNames::fcmpInsnFirstOp = "fcmp_instruction:first_operand";
-const char * PredicateNames::fcmpInsnSecondOp = "fcmp_instruction:second_operand";
+    const char * fcmpInsn = "fcmp_instruction";
+    const char * fcmpInsnCond = "fcmp_instruction:condition";
+    const char * fcmpInsnFirstOp = "fcmp_instruction:first_operand";
+    const char * fcmpInsnSecondOp = "fcmp_instruction:second_operand";
 
-const char * PredicateNames::phiInsn = "phi_instruction";
-const char * PredicateNames::phiInsnType = "phi_instruction:type";
-const char * PredicateNames::phiInsnPairValue = "phi_instruction:pair:value";
-const char * PredicateNames::phiInsnPairLabel = "phi_instruction:pair:label_tmp";
-const char * PredicateNames::phiInsnNPairs = "phi_instruction:npairs";
+    const char * phiInsn = "phi_instruction";
+    const char * phiInsnType = "phi_instruction:type";
+    const char * phiInsnPairValue = "phi_instruction:pair:value";
+    const char * phiInsnPairLabel = "phi_instruction:pair:label_tmp";
+    const char * phiInsnNPairs = "phi_instruction:npairs";
 
-const char * PredicateNames::selectInsn = "select_instruction";
-const char * PredicateNames::selectInsnCond = "select_instruction:condition";
-const char * PredicateNames::selectInsnFirstOp = "select_instruction:first_operand";
-const char * PredicateNames::selectInsnSecondOp = "select_instruction:second_operand";
+    const char * selectInsn = "select_instruction";
+    const char * selectInsnCond = "select_instruction:condition";
+    const char * selectInsnFirstOp = "select_instruction:first_operand";
+    const char * selectInsnSecondOp = "select_instruction:second_operand";
 
-const char * PredicateNames::vaargInsn = "va_arg_instruction";
-const char * PredicateNames::vaargInsnList = "va_arg_instruction:va_list";
-const char * PredicateNames::vaargInsnType = "va_arg_instruction:type";
+    const char * vaargInsn = "va_arg_instruction";
+    const char * vaargInsnList = "va_arg_instruction:va_list";
+    const char * vaargInsnType = "va_arg_instruction:type";
 
-const char * PredicateNames::callInsn = "call_instruction";
-const char * PredicateNames::callInsnFunction = "call_instruction:function";
-const char * PredicateNames::directCallInsn = "direct_call_instruction";
-const char * PredicateNames::indirectCallInsn = "indirect_call_instruction";
-const char * PredicateNames::callCallConv = "call_instruction:calling_convention";
-const char * PredicateNames::callInsnArg = "call_instruction:arg";
-const char * PredicateNames::callInsnRetAttr = "call_instruction:return_attribute";
-const char * PredicateNames::callInsnParamAttr = "call_instruction:param_attribute";
-const char * PredicateNames::callInsnFuncAttr = "call_instruction:function_attribute";
+    const char * callInsn = "call_instruction";
+    const char * callInsnFunction = "call_instruction:function";
+    const char * directCallInsn = "direct_call_instruction";
+    const char * indirectCallInsn = "indirect_call_instruction";
+    const char * callCallConv = "call_instruction:calling_convention";
+    const char * callInsnArg = "call_instruction:arg";
+    const char * callInsnRetAttr = "call_instruction:return_attribute";
+    const char * callInsnParamAttr = "call_instruction:param_attribute";
+    const char * callInsnFuncAttr = "call_instruction:function_attribute";
 
-const char * PredicateNames::landingpadInsn = "landingpad_instruction";
-const char * PredicateNames::landingpadInsnType = "landingpad_instruction:type";
-const char * PredicateNames::landingpadInsnFunc = "landingpad_instruction:pers_fn";
-const char * PredicateNames::landingpadInsnCatch = "landingpad_instruction:clause:catch_tmp";
-const char * PredicateNames::landingpadInsnFilter = "landingpad_instruction:clause:filter_tmp";
-const char * PredicateNames::landingpadInsnNClauses = "landingpad_instruction:nclauses";
+    const char * landingpadInsn = "landingpad_instruction";
+    const char * landingpadInsnType = "landingpad_instruction:type";
+    const char * landingpadInsnFunc = "landingpad_instruction:pers_fn";
+    const char * landingpadInsnCatch = "landingpad_instruction:clause:catch_tmp";
+    const char * landingpadInsnFilter = "landingpad_instruction:clause:filter_tmp";
+    const char * landingpadInsnNClauses = "landingpad_instruction:nclauses";
 
 // Types
 
-const char * PredicateNames::primitiveType = "primitive_type";
-const char * PredicateNames::intType = "integer_type";
-const char * PredicateNames::fpType = "fp_type";
+    const char * primitiveType = "primitive_type";
+    const char * intType = "integer_type";
+    const char * fpType = "fp_type";
 
-const char * PredicateNames::funcType = "function_type";
-const char * PredicateNames::funcTypeVarArgs = "function_type:varargs";
-const char * PredicateNames::funcTypeReturn = "function_type:return";
-const char * PredicateNames::funcTypeParam = "function_type:param_tmp";
-const char * PredicateNames::funcTypeNParams = "function_type:nparams";
+    const char * funcType = "function_type";
+    const char * funcTypeVarArgs = "function_type:varargs";
+    const char * funcTypeReturn = "function_type:return";
+    const char * funcTypeParam = "function_type:param_tmp";
+    const char * funcTypeNParams = "function_type:nparams";
 
-const char * PredicateNames::ptrType = "pointer_type";
-const char * PredicateNames::ptrTypeComp = "pointer_type:component";
-const char * PredicateNames::ptrTypeAddrSpace = "pointer_type:addr_space";
+    const char * ptrType = "pointer_type";
+    const char * ptrTypeComp = "pointer_type:component";
+    const char * ptrTypeAddrSpace = "pointer_type:addr_space";
 
-const char * PredicateNames::vectorType = "vector_type";
-const char * PredicateNames::vectorTypeComp = "vector_type:component";
-const char * PredicateNames::vectorTypeSize = "vector_type:size";
+    const char * vectorType = "vector_type";
+    const char * vectorTypeComp = "vector_type:component";
+    const char * vectorTypeSize = "vector_type:size";
 
-const char * PredicateNames::arrayType = "array_type";
-const char * PredicateNames::arrayTypeComp = "array_type:component";
-const char * PredicateNames::arrayTypeSize = "array_type:size";
+    const char * arrayType = "array_type";
+    const char * arrayTypeComp = "array_type:component";
+    const char * arrayTypeSize = "array_type:size";
 
-const char * PredicateNames::structType = "struct_type";
-const char * PredicateNames::structTypeField = "struct_type:field_tmp";
-const char * PredicateNames::structTypeNFields = "struct_type:nfields";
-const char * PredicateNames::opaqueStructType = "opaque_struct_type";
+    const char * structType = "struct_type";
+    const char * structTypeField = "struct_type:field_tmp";
+    const char * structTypeNFields = "struct_type:nfields";
+    const char * opaqueStructType = "opaque_struct_type";
 
 // Variables and Immediates
 
-const char * PredicateNames::immediate = "immediate";
-const char * PredicateNames::immediateType = "immediate:type";
+    const char * immediate = "immediate";
+    const char * immediateType = "immediate:type";
 
-const char * PredicateNames::variable = "variable";
-const char * PredicateNames::variableType = "variable:type";
+    const char * variable = "variable";
+    const char * variableType = "variable:type";
 
 // Auxiliary predicates
 
-const char * PredicateNames::constToInt = "constant:to_int";
+    const char * constToInt = "constant:to_int";
 
-const string PredicateNames::predNameToFilename(const char * predName) {
-
-	string filename = predName;
-	string folder = DirInfo::entitiesDir;
-	size_t pos = 0;
-	while ((pos = filename.find(':', pos)) != string::npos) {
-		filename[pos] = '-';
-		folder = DirInfo::predicatesDir;
-	}
-	filename = folder + filename + ".dlm";
-
-	return filename;
-}
-
-const string PredicateNames::predNameWithOperandToFilename(const char * predName, bool operand) {
-
-	static set <string> operandFilenames;
-	set<string>::iterator it;
-	string filename = predName;
-	size_t pos = 0;
-	while ((pos = filename.find(':', pos)) != string::npos) {
-		filename[pos] = '-';
-	}
-	// imm: operand = 0, var: operand = 1
-	filename = DirInfo::factsDir + filename;
-	const string imm = filename + "-imm.dlm";
-	const string var = filename + "-var.dlm";
-
-	// the other file must also be created
-	filename = operand ? imm : var;
-
-	if((it = operandFilenames.find(filename)) == operandFilenames.end()) {
-		operandFilenames.insert(filename);
-		ofstream csvFile(filename.c_str(), ofstream::app);
-		csvFile.close();
-	}
-	return operand ? var : imm;
 }
