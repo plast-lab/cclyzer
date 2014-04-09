@@ -1,50 +1,51 @@
-#include <iostream>
-#include <set>
 #include <string>
 
-#include "llvm/Assembly/Writer.h"
 #include "llvm/IR/Module.h"
+#include "llvm/IR/Operator.h"
 
-#include "functions.h"
+#include "AuxiliaryMethods.hpp"
 #include "InstructionVisitor.h"
 #include "PredicateNames.h"
 
 using namespace llvm;
 using namespace std;
+using namespace boost;
 
-void InstructionVisitor::logSimpleValue(const Value * Val, const char * predName){
-    raw_string_ostream rso(value_str); //TODO: is value_str necessary here?
+using namespace auxiliary_methods;
+using namespace predicateNames;
+
+//TODO: Remove these if(strlen(...)) checks
+//TODO: Move immediate and variable maps entirely to the CsvGenerator class
+
+void InstructionVisitor::logSimpleValue(const Value * Val, const char * predName, int index){
     const Type * ValType = Val->getType();
-    value_str.clear();
-    WriteAsOperand(rso, Val, 0, Mod);
+
     if(const Constant *c = dyn_cast<Constant>(Val)) {
-        varId = instrNum + ":" + rso.str();
+        varId = instrNum + ":" + valueToString(Val, Mod);
         immediate[varId] = ValType;
     }
     else {
-        varId = instrId + rso.str();
+        varId = instrId + valueToString(Val, Mod);
         variable[varId] = ValType;
     }
-    printFactsToFile(predNameToFilename(predName).c_str(), "%s\t%s\n", instrNum, varId);
+    csvGen->writePredicateToCsv(predName, instrNum, varId, index);
 }
 
-void InstructionVisitor::logOperand(const Value * Operand, const char * predName){
-    raw_string_ostream rso(value_str); //TODO: is value_str necessary here?
+void InstructionVisitor::logOperand(const Value * Operand, const char * predName, int index){
     int operandType; //whether we have a constant or variable operand
     const Type * OpType = Operand->getType();
-    value_str.clear();
-    WriteAsOperand(rso, Operand, 0, Mod);
+
     if(const Constant *c = dyn_cast<Constant>(Operand)) {
         operandType = 0;
-        varId = instrNum + ":" + rso.str();
+        varId = instrNum + ":" + valueToString(Operand, Mod);
         immediate[varId] = OpType;
     }
     else {
         operandType = 1;
-        varId = instrId + rso.str();
+        varId = instrId + valueToString(Operand, Mod);
         variable[varId] = OpType;
     }
-    printFactsToFile(predNameWithOperandToFilename(predName, operandType).c_str(), "%s\t%s\n", instrNum, varId);
+    csvGen->writeOperandPredicateToCsv(predName, instrNum, varId, operandType, index);
 }
 
 //REVIEW: Do we need two predicate names for both left and right operand? Can't we just infer these names
@@ -53,7 +54,7 @@ void InstructionVisitor::logBinaryOperator(BinaryOperator &BI, const char * pred
                                            const char * predNameLeftOp, const char * predNameRightOp){
 
     writeOptimizationInfoToFile(&BI, instrNum);
-    printFactsToFile(predNameToFilename(predName).c_str(), "%s\n", instrNum);
+    csvGen->writeEntityToCsv(predName, instrNum);
     
     //Left Operand
     logOperand(BI.getOperand(0), predNameLeftOp);
@@ -62,8 +63,10 @@ void InstructionVisitor::logBinaryOperator(BinaryOperator &BI, const char * pred
     logOperand(BI.getOperand(1), predNameRightOp);
 }
 
-InstructionVisitor::InstructionVisitor(map<string, const Type *> &var,
-                                       map<string, const Type *> &imm, Module *M): variable(var), immediate(imm), Mod(M) {
+InstructionVisitor::InstructionVisitor(unordered_map<string, const Type *> &var,
+                                       unordered_map<string, const Type *> &imm, 
+                                       const Module *M): variable(var), immediate(imm), Mod(M) {
+    csvGen = CsvGenerator::getInstance();
 }
 
 void InstructionVisitor::visitAdd(BinaryOperator &BI) {
@@ -140,27 +143,25 @@ void InstructionVisitor::visitXor(BinaryOperator &BI) {
 
 void InstructionVisitor::visitReturnInst(ReturnInst &RI) {
 
-    raw_string_ostream rso(value_str);
-    printFactsToFile(predNameToFilename(retInsn).c_str(), "%s\n", instrNum);
+    csvGen->writeEntityToCsv(retInsn, instrNum);
     // ret <type> <value>
     if(RI.getReturnValue()) {
         logOperand(RI.getReturnValue(), retInsnOp);
     }
     // ret void
     else {
-        printFactsToFile(predNameToFilename(retInsnVoid).c_str(), "%s\n", instrNum);
+        csvGen->writeEntityToCsv(retInsnVoid, instrNum);
     }
 }
 
 void InstructionVisitor::visitBranchInst(BranchInst &BI) {
 
-    raw_string_ostream rso(value_str);
     string error;
 
-    printFactsToFile(predNameToFilename(brInsn).c_str(), "%s\n", instrNum);
+    csvGen->writeEntityToCsv(brInsn, instrNum);
     // br i1 <cond>, label <iftrue>, label <iffalse>
     if(BI.isConditional()) {
-        printFactsToFile(predNameToFilename(brCondInsn).c_str(), "%s\n", instrNum);
+        csvGen->writeEntityToCsv(brCondInsn, instrNum);
         // Condition Operand
         logOperand(BI.getCondition(), brCondInsnCondition);
 
@@ -172,17 +173,15 @@ void InstructionVisitor::visitBranchInst(BranchInst &BI) {
     }
     else {
         //br label <dest>
-        printFactsToFile(predNameToFilename(brUncondInsn).c_str(), "%s\n", instrNum);
+        csvGen->writeEntityToCsv(brUncondInsn, instrNum);
         logSimpleValue(BI.getOperand(0), brUncondInsnDest);
     }
 }
 
 void InstructionVisitor::visitSwitchInst(const SwitchInst &SI) {
 
-    raw_string_ostream rso(value_str);
-
     //switch <intty> <value>, label <defaultdest> [ <intty> <val>, label <dest> ... ]
-    printFactsToFile(predNameToFilename(switchInsn).c_str(), "%s\n", instrNum);
+    csvGen->writeEntityToCsv(switchInsn, instrNum);
     //'value' Operand
     logOperand(SI.getOperand(0), switchInsnOp);
 
@@ -192,53 +191,30 @@ void InstructionVisitor::visitSwitchInst(const SwitchInst &SI) {
     //'case list' [constant, label]
     int index = 0;
     for(SwitchInst::ConstCaseIt Case = SI.case_begin(), CasesEnd = SI.case_end(); Case != CasesEnd; Case++){
-        value_str.clear();
-        const ConstantInt * CaseVal = Case.getCaseValue();
-        WriteAsOperand(rso, CaseVal, 0, Mod);
-        varId = instrNum + ":" + rso.str();
-        printFactsToFile(predNameToFilename(switchInsnCaseVal).c_str(),
-                         "%s\t%d\t%s\n", instrNum, index, varId);
-        immediate[varId] = CaseVal->getType();
+        logSimpleValue(Case.getCaseValue(), switchInsnCaseVal, index);
 
-        value_str.clear();
-        const BasicBlock * CaseLabel = Case.getCaseSuccessor();
-        WriteAsOperand(rso, CaseLabel, 0, Mod);
-        varId = instrId + rso.str();
-        printFactsToFile(predNameToFilename(switchInsnCaseLabel).c_str(),
-                         "%s\t%d\t%s\n", instrNum, index++, varId);
-        variable[varId] = CaseLabel->getType();
+        logSimpleValue(Case.getCaseSuccessor(), switchInsnCaseLabel, index++);
     }
-    printFactsToFile(predNameToFilename(switchInsnNCases).c_str(),
-                     "%s\t%d\n", instrNum, SI.getNumCases());
+    csvGen->writePredicateToCsv(switchInsnNCases, instrNum, SI.getNumCases());
 }
 
 void InstructionVisitor::visitIndirectBrInst(IndirectBrInst &IBR) {
 
-    raw_string_ostream rso(value_str);
-
     //indirectbr <somety>* <address>, [ label <dest1>, label <dest2>, ... ]
-    printFactsToFile(predNameToFilename(indirectbrInsn).c_str(), "%s\n", instrNum);
+    csvGen->writeEntityToCsv(indirectbrInsn, instrNum);
     //'address' Operand
     logOperand(IBR.getOperand(0), indirectbrInsnAddr);
 
     //'label' list
     for(unsigned i = 1; i < IBR.getNumOperands(); ++i) {
-        value_str.clear();
-        WriteAsOperand(rso, IBR.getOperand(i), 0, Mod);
-        varId = instrId + rso.str();
-        printFactsToFile(predNameToFilename(indirectbrInsnLabel).c_str(),
-                         "%s\t%d\t%s\n", instrNum, i-1, varId);
-        variable[varId] = IBR.getOperand(i)->getType();
+        logSimpleValue(IBR.getOperand(i), indirectbrInsnLabel, i-1);
     }
-    printFactsToFile(predNameToFilename(indirectbrInsnNLabels).c_str(),
-                     "%s\t%d\n", instrNum, IBR.getNumOperands()-1);
+    csvGen->writePredicateToCsv(indirectbrInsnNLabels, instrNum, IBR.getNumOperands()-1);
 }
 
 void InstructionVisitor::visitInvokeInst(InvokeInst &II) {
 
-    raw_string_ostream rso(value_str);
-
-    printFactsToFile(predNameToFilename(invokeInsn).c_str(), "%s\n", instrNum);
+    csvGen->writeEntityToCsv(invokeInsn, instrNum);
     Value *invokeOp = II.getCalledValue();
     PointerType *ptrTy = cast<PointerType>(invokeOp->getType());
     FunctionType *funcTy = cast<FunctionType>(ptrTy->getElementType());
@@ -246,250 +222,199 @@ void InstructionVisitor::visitInvokeInst(InvokeInst &II) {
     logOperand(II.getCalledValue(), invokeInsnFunc);
 
     if(II.getCalledFunction()) {
-        printFactsToFile(predNameToFilename(directInvokeInsn).c_str(), "%s\n", instrNum);
+        csvGen->writeEntityToCsv(directInvokeInsn, instrNum);
     }
     else {
-        printFactsToFile(predNameToFilename(indirectInvokeInsn).c_str(), "%s\n", instrNum);
+        csvGen->writeEntityToCsv(indirectInvokeInsn, instrNum);
     }
     //actual args
-    for(unsigned op = 0; op < II.getNumArgOperands(); ++op) {
-        int operandType;
-        value_str.clear();
-        WriteAsOperand(rso, II.getArgOperand(op), 0, Mod);
-        const Type * ArgType = II.getArgOperand(op)->getType();
-        if(Constant *c = dyn_cast<Constant>(II.getArgOperand(op))) {
-            varId = instrNum + ":" + rso.str();
-            immediate[varId] = ArgType;
-        }
-        else {
-            varId = instrId + rso.str();
-            variable[varId] = II.getArgOperand(op)->getType();
-        }
-        printFactsToFile(predNameWithOperandToFilename(invokeInsnArg, operandType).c_str(), "%s\t%d\t%s\n", instrNum, op, varId);
-    }
+    for(unsigned op = 0; op < II.getNumArgOperands(); ++op)
+        logOperand(II.getArgOperand(op), invokeInsnArg, op);
+
     //'normal label'
-    logOperand(II.getNormalDest(), invokeInsnNormalLabel);
+    logSimpleValue(II.getNormalDest(), invokeInsnNormalLabel);
 
     //'exception label'
-    logOperand(II.getUnwindDest(), invokeInsnExceptLabel);
+    logSimpleValue(II.getUnwindDest(), invokeInsnExceptLabel);
 
     //Function Attributes
     const AttributeSet &Attrs = II.getAttributes();
     if (Attrs.hasAttributes(AttributeSet::ReturnIndex)) {
-        printFactsToFile(predNameToFilename(invokeInsnRetAttr).c_str(),
-                         "%s\t%s\n", instrNum, Attrs.getAsString(AttributeSet::ReturnIndex));
+        csvGen->writePredicateToCsv(invokeInsnRetAttr, instrNum, Attrs.getAsString(AttributeSet::ReturnIndex));
     }
     vector<string> FuncnAttr;
     writeFnAttributes(Attrs, FuncnAttr);
     for(int i = 0; i < FuncnAttr.size(); ++i) {
-        printFactsToFile(predNameToFilename(invokeInsnFuncAttr).c_str(),
-                         "%s\t%s\n", instrNum, FuncnAttr[i]);
+        csvGen->writePredicateToCsv(invokeInsnFuncAttr, instrNum, FuncnAttr[i]);
     }
     //TODO: Why not CallingConv::C
     if (II.getCallingConv() != CallingConv::C) {
-        printFactsToFile(predNameToFilename(invokeInsnCallConv).c_str(),
-                         "%s\t%s\n", instrNum, writeCallingConv(II.getCallingConv()));
+        csvGen->writePredicateToCsv(invokeInsnCallConv, instrNum, writeCallingConv(II.getCallingConv()));
     }
 }
 
 void InstructionVisitor::visitResumeInst(ResumeInst &RI) {
 
-    raw_string_ostream rso(value_str);
-
-    printFactsToFile(predNameToFilename(resumeInsn).c_str(), "%s\n", instrNum);
+    csvGen->writeEntityToCsv(resumeInsn, instrNum);
     logOperand(RI.getValue(), resumeInsnOp);
 }
 
 void InstructionVisitor::visitUnreachableInst(UnreachableInst &I) {
-    printFactsToFile(predNameToFilename(unreachableInsn).c_str(), "%s\n", instrNum);
+    csvGen->writeEntityToCsv(unreachableInsn, instrNum);
 }
 
 void InstructionVisitor::visitAllocaInst(AllocaInst &AI) {
 
-    raw_string_ostream rso(value_str);
-
-    printFactsToFile(predNameToFilename(allocaInsn).c_str(), "%s\n", instrNum);
-    printFactsToFile(predNameToFilename(allocaInsnType).c_str(), "%s\t%t\n", instrNum, printType(AI.getAllocatedType()));
+    csvGen->writeEntityToCsv(allocaInsn, instrNum);
+    csvGen->writePredicateToCsv(allocaInsnType, instrNum, printType(AI.getAllocatedType()));
 
     if(AI.isArrayAllocation()) {
         logOperand(AI.getArraySize(), allocaInsnSize);
     }
     if(AI.getAlignment()) {
-        printFactsToFile(predNameToFilename(allocaInsnAlign).c_str(), "%s\t%d\n", instrNum, AI.getAlignment());
+        csvGen->writePredicateToCsv(allocaInsnAlign, instrNum, AI.getAlignment());
     }
 }
 
 void InstructionVisitor::visitLoadInst(LoadInst &LI) {
 
-    raw_string_ostream rso(value_str);
-
-    printFactsToFile(predNameToFilename(loadInsn).c_str(), "%s\n", instrNum);
+    csvGen->writeEntityToCsv(loadInsn, instrNum);
     logOperand(LI.getPointerOperand(), loadInsnAddr);
 
     writeVolatileFlag(instrNum, LI.isVolatile());
     if(LI.isAtomic()) {
         const char *ord = writeAtomicInfo(instrNum, LI.getOrdering(), LI.getSynchScope());
         if(strlen(ord)) {
-            printFactsToFile(predNameToFilename(loadInsnOrd).c_str(), "%s\t%d\n", instrNum, ord);
+            csvGen->writePredicateToCsv(loadInsnOrd, instrNum, ord);
         }
     }
     if(LI.getAlignment()) {
-        printFactsToFile(predNameToFilename(loadInsnAlign).c_str(), "%s\t%d\n", instrNum, LI.getAlignment());
+        csvGen->writePredicateToCsv(loadInsnAlign, instrNum, LI.getAlignment());
     }
 }
 
 void InstructionVisitor::visitVAArgInst(VAArgInst &VI) {
 
-    raw_string_ostream rso(value_str);
-
-    printFactsToFile(predNameToFilename(vaargInsn).c_str(), "%s\n", instrNum);
+    csvGen->writeEntityToCsv(vaargInsn, instrNum);
     logOperand(VI.getPointerOperand(), vaargInsnList);
 
-    printFactsToFile(predNameToFilename(vaargInsnType).c_str(), "%s\t%t\n", instrNum, printType(VI.getType()));
+    csvGen->writePredicateToCsv(vaargInsnType, instrNum, printType(VI.getType()));
 }
 
 void InstructionVisitor::visitExtractValueInst(ExtractValueInst &EVI) {
 
-    raw_string_ostream rso(value_str);
-
-    printFactsToFile(predNameToFilename(extractValueInsn).c_str(), "%s\n", instrNum);
+    csvGen->writeEntityToCsv(extractValueInsn, instrNum);
     //Aggregate Operand
     logOperand(EVI.getOperand(0), extractValueInsnBase);
 
     //Constant Indices
     int index = 0;
     for (const unsigned *i = EVI.idx_begin(), *e = EVI.idx_end(); i != e; ++i) {
-        printFactsToFile(predNameToFilename(extractValueInsnIndex).c_str(), "%s\t%d\t%s\n", instrNum, index, *i);
+        csvGen->writePredicateToCsv(extractValueInsnIndex, instrNum, *i, index);
         index++;
     }
-    printFactsToFile(predNameToFilename(extractValueInsnNIndices).c_str(), "%s\t%s\n", instrNum, EVI.getNumIndices());
+    csvGen->writePredicateToCsv(extractValueInsnNIndices, instrNum, EVI.getNumIndices());
 }
 
 void InstructionVisitor::visitTruncInst(TruncInst &I) {
 
-    raw_string_ostream rso(value_str);
-
-    printFactsToFile(predNameToFilename(truncInsn).c_str(), "%s\n", instrNum);
+    csvGen->writeEntityToCsv(truncInsn, instrNum);
     logOperand(I.getOperand(0), truncInsnFrom);
 
-    printFactsToFile(predNameToFilename(truncInsnToType).c_str(), "%s\t%t\n", instrNum, printType(I.getType()));
+    csvGen->writePredicateToCsv(truncInsnToType, instrNum, printType(I.getType()));
 }
 
 void InstructionVisitor::visitZExtInst(ZExtInst &I) {
 
-    raw_string_ostream rso(value_str);
-
-    printFactsToFile(predNameToFilename(zextInsn).c_str(), "%s\n", instrNum);
+    csvGen->writeEntityToCsv(zextInsn, instrNum);
     logOperand(I.getOperand(0), zextInsnFrom);
 
-    printFactsToFile(predNameToFilename(zextInsnToType).c_str(), "%s\t%t\n", instrNum, printType(I.getType()));
+    csvGen->writePredicateToCsv(zextInsnToType, instrNum, printType(I.getType()));
 }
 
 void InstructionVisitor::visitSExtInst(SExtInst &I) {
 
-    raw_string_ostream rso(value_str);
-
-    printFactsToFile(predNameToFilename(sextInsn).c_str(), "%s\n", instrNum);
+    csvGen->writeEntityToCsv(sextInsn, instrNum);
     logOperand(I.getOperand(0), sextInsnFrom);
 
-    printFactsToFile(predNameToFilename(sextInsnToType).c_str(), "%s\t%t\n", instrNum, printType(I.getType()));
+    csvGen->writePredicateToCsv(sextInsnToType, instrNum, printType(I.getType()));
 }
 
 void InstructionVisitor::visitFPTruncInst(FPTruncInst &I) {
 
-    raw_string_ostream rso(value_str);
-
-    printFactsToFile(predNameToFilename(fptruncInsn).c_str(), "%s\n", instrNum);
+    csvGen->writeEntityToCsv(fptruncInsn, instrNum);
     logOperand(I.getOperand(0), fptruncInsnFrom);
 
-    printFactsToFile(predNameToFilename(fptruncInsnToType).c_str(), "%s\t%t\n", instrNum, printType(I.getType()));
+    csvGen->writePredicateToCsv(fptruncInsnToType, instrNum, printType(I.getType()));
 }
 
 void InstructionVisitor::visitFPExtInst(FPExtInst &I) {
 
-    raw_string_ostream rso(value_str);
-
-    printFactsToFile(predNameToFilename(fpextInsn).c_str(), "%s\n", instrNum);
+    csvGen->writeEntityToCsv(fpextInsn, instrNum);
     logOperand(I.getOperand(0), fpextInsnFrom);
 
-    printFactsToFile(predNameToFilename(fpextInsnToType).c_str(), "%s\t%t\n", instrNum, printType(I.getType()));
+    csvGen->writePredicateToCsv(fpextInsnToType, instrNum, printType(I.getType()));
 }
 
 void InstructionVisitor::visitFPToUIInst(FPToUIInst &I) {
 
-    raw_string_ostream rso(value_str);
-
-    printFactsToFile(predNameToFilename(fptouiInsn).c_str(), "%s\n", instrNum);
+    csvGen->writeEntityToCsv(fptouiInsn, instrNum);
     logOperand(I.getOperand(0), fptouiInsnFrom);
 
-    printFactsToFile(predNameToFilename(fptouiInsnToType).c_str(), "%s\t%t\n", instrNum, printType(I.getType()));
+    csvGen->writePredicateToCsv(fptouiInsnToType, instrNum, printType(I.getType()));
 }
 
 void InstructionVisitor::visitFPToSIInst(FPToSIInst &I) {
 
-    raw_string_ostream rso(value_str);
-
-    printFactsToFile(predNameToFilename(fptosiInsn).c_str(), "%s\n", instrNum);
+    csvGen->writeEntityToCsv(fptosiInsn, instrNum);
     logOperand(I.getOperand(0), fptosiInsnFrom);
 
-    printFactsToFile(predNameToFilename(fptosiInsnToType).c_str(), "%s\t%t\n", instrNum, printType(I.getType()));
+    csvGen->writePredicateToCsv(fptosiInsnToType, instrNum, printType(I.getType()));
 }
 
 void InstructionVisitor::visitUIToFPInst(UIToFPInst &I) {
 
-    raw_string_ostream rso(value_str);
-
-    printFactsToFile(predNameToFilename(uitofpInsn).c_str(), "%s\n", instrNum);
+    csvGen->writeEntityToCsv(uitofpInsn, instrNum);
     logOperand(I.getOperand(0), uitofpInsnFrom);
 
-    printFactsToFile(predNameToFilename(uitofpInsnToType).c_str(), "%s\t%t\n", instrNum, printType(I.getType()));
+    csvGen->writePredicateToCsv(uitofpInsnToType, instrNum, printType(I.getType()));
 }
 
 void InstructionVisitor::visitSIToFPInst(SIToFPInst &I) {
 
-    raw_string_ostream rso(value_str);
-
-    printFactsToFile(predNameToFilename(sitofpInsn).c_str(), "%s\n", instrNum);
+    csvGen->writeEntityToCsv(sitofpInsn, instrNum);
     logOperand(I.getOperand(0), sitofpInsnFrom);
 
-    printFactsToFile(predNameToFilename(sitofpInsnToType).c_str(), "%s\t%t\n", instrNum, printType(I.getType()));
+    csvGen->writePredicateToCsv(sitofpInsnToType, instrNum, printType(I.getType()));
 }
 
 void InstructionVisitor::visitPtrToIntInst(PtrToIntInst &I) {
 
-    raw_string_ostream rso(value_str);
-
-    printFactsToFile(predNameToFilename(ptrtointInsn).c_str(), "%s\n", instrNum);
+    csvGen->writeEntityToCsv(ptrtointInsn, instrNum);
     logOperand(I.getOperand(0), ptrtointInsnFrom);
 
-    printFactsToFile(predNameToFilename(ptrtointInsnToType).c_str(), "%s\t%t\n", instrNum, printType(I.getType()));
+    csvGen->writePredicateToCsv(ptrtointInsnToType, instrNum, printType(I.getType()));
 }
 
 void InstructionVisitor::visitIntToPtrInst(IntToPtrInst &I) {
 
-    raw_string_ostream rso(value_str);
-
-    printFactsToFile(predNameToFilename(inttoptrInsn).c_str(), "%s\n", instrNum);
+    csvGen->writeEntityToCsv(inttoptrInsn, instrNum);
     logOperand(I.getOperand(0), inttoptrInsnFrom);
 
-    printFactsToFile(predNameToFilename(inttoptrInsnToType).c_str(), "%s\t%t\n", instrNum, printType(I.getType()));
+    csvGen->writePredicateToCsv(inttoptrInsnToType, instrNum, printType(I.getType()));
 }
 
 void InstructionVisitor::visitBitCastInst(BitCastInst &I) {
 
-    raw_string_ostream rso(value_str);
-
-    printFactsToFile(predNameToFilename(bitcastInsn).c_str(), "%s\n", instrNum);
+    csvGen->writeEntityToCsv(bitcastInsn, instrNum);
     logOperand(I.getOperand(0), bitcastInsnFrom);
 
-    printFactsToFile(predNameToFilename(bitcastInsnToType).c_str(), "%s\t%t\n", instrNum, printType(I.getType()));
+    csvGen->writePredicateToCsv(bitcastInsnToType, instrNum, printType(I.getType()));
 }
 
 void InstructionVisitor::visitStoreInst(StoreInst &SI) {
 
-    raw_string_ostream rso(value_str);
-
-    printFactsToFile(predNameToFilename(storeInsn).c_str(), "%s\n", instrNum);
+    csvGen->writeEntityToCsv(storeInsn, instrNum);
     logOperand(SI.getValueOperand(), storeInsnValue);
 
     logOperand(SI.getPointerOperand(), storeInsnAddr);
@@ -498,19 +423,17 @@ void InstructionVisitor::visitStoreInst(StoreInst &SI) {
     if(SI.isAtomic()) {
         const char *ord = writeAtomicInfo(instrNum, SI.getOrdering(), SI.getSynchScope());
         if(strlen(ord)) {
-            printFactsToFile(predNameToFilename(storeInsnOrd).c_str(), "%s\t%d\n", instrNum, ord);
+            csvGen->writePredicateToCsv(storeInsnOrd, instrNum, ord);
         }
     }
     if(SI.getAlignment()) {
-        printFactsToFile(predNameToFilename(storeInsnAlign).c_str(), "%s\t%d\n", instrNum, SI.getAlignment());
+        csvGen->writePredicateToCsv(storeInsnAlign, instrNum, SI.getAlignment());
     }
 }
 
 void InstructionVisitor::visitAtomicCmpXchgInst(AtomicCmpXchgInst &AXI) {
 
-    raw_string_ostream rso(value_str);
-
-    printFactsToFile(predNameToFilename(cmpxchgInsn).c_str(), "%s\n", instrNum);
+    csvGen->writeEntityToCsv(cmpxchgInsn, instrNum);
     //ptrValue
     logOperand(AXI.getPointerOperand(), cmpxchgInsnAddr);
 
@@ -523,15 +446,13 @@ void InstructionVisitor::visitAtomicCmpXchgInst(AtomicCmpXchgInst &AXI) {
     writeVolatileFlag(instrNum, AXI.isVolatile());
     const char *ord = writeAtomicInfo(instrNum, AXI.getOrdering(), AXI.getSynchScope());
     if(strlen(ord)) {
-        printFactsToFile(predNameToFilename(cmpxchgInsnOrd).c_str(), "%s\t%d\n", instrNum, ord);
+        csvGen->writePredicateToCsv(cmpxchgInsnOrd, instrNum, ord);
     }
 }
 
 void InstructionVisitor::visitAtomicRMWInst(AtomicRMWInst &AWI) {
 
-    raw_string_ostream rso(value_str);
-
-    printFactsToFile(predNameToFilename(atomicRMWInsn).c_str(), "%s\n", instrNum);
+    csvGen->writeEntityToCsv(atomicRMWInsn, instrNum);
     //ptrValue - LeftOperand
     logOperand(AWI.getPointerOperand(), atomicRMWInsnAddr);
 
@@ -542,95 +463,57 @@ void InstructionVisitor::visitAtomicRMWInst(AtomicRMWInst &AWI) {
     writeAtomicRMWOp(instrNum, AWI.getOperation());
     const char *ord = writeAtomicInfo(instrNum, AWI.getOrdering(), AWI.getSynchScope());
     if(strlen(ord)) {
-        printFactsToFile(predNameToFilename(atomicRMWInsnOper).c_str(), "%s\t%d\n", instrNum, ord);
+        csvGen->writePredicateToCsv(atomicRMWInsnOper, instrNum, ord);
     }
 }
 
 void InstructionVisitor::visitFenceInst(FenceInst &FI) {
 
-    raw_string_ostream rso(value_str);
-
-    printFactsToFile(predNameToFilename(fenceInsn).c_str(), "%s\n", instrNum);
+    csvGen->writeEntityToCsv(fenceInsn, instrNum);
     //fence [singleThread]  <ordering>
     const char *ord = writeAtomicInfo(instrNum, FI.getOrdering(), FI.getSynchScope());
     if(strlen(ord)) {
-        printFactsToFile(predNameToFilename(fenceInsnOrd).c_str(), "%s\t%d\n", instrNum, ord);
+        csvGen->writePredicateToCsv(fenceInsnOrd, instrNum, ord);
     }
 }
 
 void InstructionVisitor::visitGetElementPtrInst(GetElementPtrInst &GEP) {
 
-    raw_string_ostream rso(value_str);
-
-    printFactsToFile(predNameToFilename(gepInsn).c_str(), "%s\n", instrNum);
+    csvGen->writeEntityToCsv(gepInsn, instrNum);
     logOperand(GEP.getPointerOperand(), gepInsnBase);
 
     for (unsigned index = 1; index < GEP.getNumOperands(); ++index) {
-        int operandType;
-        value_str.clear();
-        WriteAsOperand(rso, GEP.getOperand(index), 0, Mod);
-        if(Constant *c = dyn_cast<Constant>(GEP.getOperand(index))) {
-            varId = instrNum + rso.str();
-            operandType = 0;
-            printFactsToFile(predNameToFilename(constToInt).c_str(), 
-                             "%s\t%s\n", varId, c->getUniqueInteger().toString(10,true));
-            immediate[varId] = GEP.getOperand(index)->getType();
+        const Value * GepOperand = GEP.getOperand(index);
+        logOperand(GepOperand, gepInsnIndex, index-1);
+        if(const Constant *c = dyn_cast<Constant>(GepOperand)) {
+            varId = instrNum + ":" + valueToString(c, Mod);
+            csvGen->writePredicateToCsv(constToInt, varId, c->getUniqueInteger().toString(10,true));
         }
-        else {
-            varId = instrId + rso.str();
-            operandType = 1;
-            variable[varId] = GEP.getOperand(index)->getType();
-        }
-        printFactsToFile(predNameWithOperandToFilename(gepInsnIndex, operandType).c_str(),
-                             "%s\t%d\t%s\n", instrNum, index-1, varId);
     }
-    printFactsToFile(predNameToFilename(gepInsnNIndices).c_str(), "%s\t%d\n", instrNum, GEP.getNumIndices());
+    csvGen->writePredicateToCsv(gepInsnNIndices, instrNum, GEP.getNumIndices());
     if(GEP.isInBounds()) {
-        printFactsToFile(predNameToFilename(insnFlag).c_str(), "%s\t%s\n", instrNum, "inbounds");
+        csvGen->writePredicateToCsv(insnFlag, instrNum, "inbounds");
     }
 }
 
 void InstructionVisitor::visitPHINode(PHINode &PHI) {
 
-    raw_string_ostream rso(value_str);
-
     // <result> = phi <ty> [ <val0>, <label0>], ...
-    printFactsToFile(predNameToFilename(phiInsn).c_str(), "%s\n", instrNum);
+    csvGen->writeEntityToCsv(phiInsn, instrNum);
     // type
-    printFactsToFile(predNameToFilename(phiInsnType).c_str(), "%s\t%t\n", instrNum, printType(PHI.getType()));
-    for(unsigned op = 0; op < PHI.getNumIncomingValues(); ++op) {
-        int operandType;
-        //value
-        value_str.clear();
-        WriteAsOperand(rso, PHI.getIncomingValue(op), 0, Mod);
-        if(Constant *c = dyn_cast<Constant>(PHI.getIncomingValue(op))) {
-            varId = instrNum + rso.str();
-            operandType = 0;            
-            immediate[varId] = PHI.getIncomingValue(op)->getType();
-        }
-        else {
-            varId = instrId + rso.str();
-            operandType = 1;
-            variable[varId] = PHI.getIncomingValue(op)->getType();
-        }
-        printFactsToFile(predNameWithOperandToFilename(phiInsnPairValue, operandType).c_str(),
-                         "%s\t%d\t%s\n", instrNum, op, varId);
+    csvGen->writePredicateToCsv(phiInsnType, instrNum, printType(PHI.getType()));
+    for(int op = 0; op < PHI.getNumIncomingValues(); ++op) {
+        logOperand(PHI.getIncomingValue(op), phiInsnPairValue, op);
 
         //<label>
-        value_str.clear();
-        WriteAsOperand(rso, PHI.getIncomingBlock(op), 0, Mod);
-        varId = instrId + rso.str();
-        printFactsToFile(predNameToFilename(phiInsnPairLabel).c_str(), "%s\t%d\t%s\n", instrNum, op, varId);
-        variable[varId] = PHI.getIncomingBlock(op)->getType();
+        logSimpleValue(PHI.getIncomingBlock(op), phiInsnPairLabel, op);
     }
-    printFactsToFile(predNameToFilename(phiInsnNPairs).c_str(), "%s\t%d\n", instrNum, PHI.getNumIncomingValues());
+    csvGen->writePredicateToCsv(phiInsnNPairs, instrNum, PHI.getNumIncomingValues());
 }
 
 void InstructionVisitor::visitSelectInst(SelectInst &SI) {
 
-    raw_string_ostream rso(value_str);
-
-    printFactsToFile(predNameToFilename(selectInsn).c_str(), "%s\n", instrNum);
+    csvGen->writeEntityToCsv(selectInsn, instrNum);
     //Condition
     logOperand(SI.getOperand(0), selectInsnCond);
 
@@ -643,9 +526,7 @@ void InstructionVisitor::visitSelectInst(SelectInst &SI) {
 
 void InstructionVisitor::visitInsertValueInst(InsertValueInst &IVI) {
 
-    raw_string_ostream rso(value_str);
-
-    printFactsToFile(predNameToFilename(insertValueInsn).c_str(), "%s\n", instrNum);
+    csvGen->writeEntityToCsv(insertValueInsn, instrNum);
     //Left Operand
     logOperand(IVI.getOperand(0), insertValueInsnBase);
 
@@ -655,45 +536,38 @@ void InstructionVisitor::visitInsertValueInst(InsertValueInst &IVI) {
     //Constant Indices
     int index = 0;
     for (const unsigned *i = IVI.idx_begin(), *e = IVI.idx_end(); i != e; ++i,index++) {
-        printFactsToFile(predNameToFilename(insertValueInsnIndex).c_str(), "%s\t%d\t%s\n", instrNum, index, *i);
+        csvGen->writePredicateToCsv(insertValueInsnIndex, instrNum, *i, index);
     }
-    printFactsToFile(predNameToFilename(insertValueInsnNIndices).c_str(), "%s\t%s\n", instrNum, IVI.getNumIndices());
+    csvGen->writePredicateToCsv(insertValueInsnNIndices, instrNum, IVI.getNumIndices());
 }
 
 void InstructionVisitor::visitLandingPadInst(LandingPadInst &LI) {
 
-    raw_string_ostream rso(value_str);
-
-    printFactsToFile(predNameToFilename(landingpadInsn).c_str(), "%s\n", instrNum);
+    csvGen->writeEntityToCsv(landingpadInsn, instrNum);
     // type
-    printFactsToFile(predNameToFilename(landingpadInsnType).c_str(), "%s\t%t\n", instrNum, printType(LI.getType()));
+    csvGen->writePredicateToCsv(landingpadInsnType, instrNum, printType(LI.getType()));
 
     // function
-    logOperand(LI.getPersonalityFn(), landingpadInsnFunc);
+    logSimpleValue(LI.getPersonalityFn(), landingpadInsnFunc);
 
     //cleanup
     if(LI.isCleanup()) {
-        printFactsToFile(predNameToFilename(insnFlag).c_str(), "%s\t%s\n", instrNum, "cleanup");
+        csvGen->writePredicateToCsv(insnFlag, instrNum, "cleanup");
     }
     //#clauses
     for (unsigned i = 0; i < LI.getNumClauses(); ++i) {
         //catch clause
-        if(LI.isCatch(i)) {
-            logOperand(LI.getClause(i), landingpadInsnCatch);
-        }
-        //filter clause
-        else {
-            logSimpleValue(LI.getClause(i), landingpadInsnFilter);
-        }
+        if(LI.isCatch(i))
+            csvGen->writePredicateToCsv(landingpadInsnCatch, instrNum, LI.getClause(i), i);
+        else
+            csvGen->writePredicateToCsv(landingpadInsnFilter, instrNum, LI.getClause(i), i);
     }
-    printFactsToFile(predNameToFilename(landingpadInsnNClauses).c_str(), "%s\t%s\n", instrNum, LI.getNumClauses());
+    csvGen->writePredicateToCsv(landingpadInsnNClauses, instrNum, LI.getNumClauses());
 }
 
 void InstructionVisitor::visitCallInst(CallInst &CI) {
 
-    raw_string_ostream rso(value_str);
-
-    printFactsToFile(predNameToFilename(callInsn).c_str(), "%s\n", instrNum);
+    csvGen->writeEntityToCsv(callInsn, instrNum);
     Value *callOp = CI.getCalledValue();
     PointerType *ptrTy = cast<PointerType>(callOp->getType());
     FunctionType *funcTy = cast<FunctionType>(ptrTy->getElementType());
@@ -702,55 +576,38 @@ void InstructionVisitor::visitCallInst(CallInst &CI) {
     logOperand(callOp, callInsnFunction);
 
     if(CI.getCalledFunction()) {
-        printFactsToFile(predNameToFilename(directCallInsn).c_str(), "%s\n", instrNum);
+        csvGen->writeEntityToCsv(directCallInsn, instrNum);
     }
     else {
-        printFactsToFile(predNameToFilename(indirectCallInsn).c_str(), "%s\n", instrNum);
+        csvGen->writeEntityToCsv(indirectCallInsn, instrNum);
     }
     for(unsigned op = 0; op < CI.getNumArgOperands(); ++op) {
-        int operandType;
-        value_str.clear();
-        WriteAsOperand(rso, CI.getArgOperand(op), 0, Mod);
-        if(Constant *c = dyn_cast<Constant>(CI.getArgOperand(op))) {
-            varId = instrNum + rso.str();
-            operandType = 0;
-            immediate[varId] = CI.getArgOperand(op)->getType();
-        }
-        else {
-            varId = instrId + rso.str();
-            operandType = 1;
-            variable[varId] = CI.getArgOperand(op)->getType();
-        }
-        printFactsToFile(predNameWithOperandToFilename(callInsnArg, operandType).c_str(), "%s\t%d\t%s\n", instrNum, op, varId);
+        logOperand(CI.getArgOperand(op), callInsnArg, op);
     }
     if(CI.isTailCall()) {
-        printFactsToFile(predNameToFilename(insnFlag).c_str(), "%s\t%s\n", instrNum, "tail");
+        csvGen->writePredicateToCsv(insnFlag, instrNum, "tail");
     }
     if (CI.getCallingConv() != CallingConv::C) {
-        printFactsToFile(predNameToFilename(callCallConv).c_str(),
-                         "%s\t%s\n", instrNum, writeCallingConv(CI.getCallingConv()));
+        csvGen->writePredicateToCsv(callCallConv, instrNum, writeCallingConv(CI.getCallingConv()));
     }
     const AttributeSet &Attrs = CI.getAttributes();
     if (Attrs.hasAttributes(AttributeSet::ReturnIndex)) {
-        printFactsToFile(predNameToFilename(callInsnRetAttr).c_str(), 
-                         "%s\t%s\n", instrNum, Attrs.getAsString(AttributeSet::ReturnIndex));
+        csvGen->writePredicateToCsv(callInsnRetAttr, instrNum, Attrs.getAsString(AttributeSet::ReturnIndex));
     }
     vector<string> FuncnAttr;
     writeFnAttributes(Attrs, FuncnAttr);
     for(int i = 0; i < FuncnAttr.size(); ++i) {
-        printFactsToFile(predNameToFilename(callInsnFuncAttr).c_str(), "%s\t%s\n", instrNum, FuncnAttr[i]);
+        csvGen->writePredicateToCsv(callInsnFuncAttr, instrNum, FuncnAttr[i]);
     }
 }
 
 void InstructionVisitor::visitICmpInst(ICmpInst &I) {
 
-    raw_string_ostream rso(value_str);
-
-    printFactsToFile(predNameToFilename(icmpInsn).c_str(), "%s\n", instrNum);
+    csvGen->writeEntityToCsv(icmpInsn, instrNum);
 
     //Condition
     if(strlen(writePredicate(I.getPredicate()))) {
-        printFactsToFile(predNameToFilename(icmpInsnCond).c_str(), "%s\t%s\n", instrNum, writePredicate(I.getPredicate()));
+        csvGen->writePredicateToCsv(icmpInsnCond, instrNum, writePredicate(I.getPredicate()));
     }
     //Left Operand
     logOperand(I.getOperand(0), icmpInsnFirstOp);
@@ -762,13 +619,11 @@ void InstructionVisitor::visitICmpInst(ICmpInst &I) {
 
 void InstructionVisitor::visitFCmpInst(FCmpInst &I) {
 
-    raw_string_ostream rso(value_str);
-
-    printFactsToFile(predNameToFilename(fcmpInsn).c_str(), "%s\n", instrNum);
+    csvGen->writeEntityToCsv(fcmpInsn, instrNum);
 
     //Condition
     if(strlen(writePredicate(I.getPredicate()))) {
-        printFactsToFile(predNameToFilename(fcmpInsnCond).c_str(), "%s\t%s\n", instrNum, writePredicate(I.getPredicate()));
+        csvGen->writePredicateToCsv(fcmpInsnCond, instrNum, writePredicate(I.getPredicate()));
     }
     //Left Operand
     logOperand(I.getOperand(0), fcmpInsnFirstOp);
@@ -780,9 +635,7 @@ void InstructionVisitor::visitFCmpInst(FCmpInst &I) {
 
 void InstructionVisitor::visitExtractElementInst(ExtractElementInst &EEI) {
 
-    raw_string_ostream rso(value_str);
-
-    printFactsToFile(predNameToFilename(extractElemInsn).c_str(), "%s\n", instrNum);
+    csvGen->writeEntityToCsv(extractElemInsn, instrNum);
     //VectorOperand
     logOperand(EEI.getVectorOperand(), extractElemInsnBase);
 
@@ -793,9 +646,7 @@ void InstructionVisitor::visitExtractElementInst(ExtractElementInst &EEI) {
 
 void InstructionVisitor::visitInsertElementInst(InsertElementInst &IEI) {
 
-    raw_string_ostream rso(value_str);
-
-    printFactsToFile(predNameToFilename(insertElemInsn).c_str(), "%s\n", instrNum);
+    csvGen->writeEntityToCsv(insertElemInsn, instrNum);
     //vectorOperand
     logOperand(IEI.getOperand(0), insertElemInsnBase);
 
@@ -809,9 +660,7 @@ void InstructionVisitor::visitInsertElementInst(InsertElementInst &IEI) {
 
 void InstructionVisitor::visitShuffleVectorInst(ShuffleVectorInst &SVI) {
 
-    raw_string_ostream rso(value_str);
-
-    printFactsToFile(predNameToFilename(shuffleVectorInsn).c_str(), "%s\n", instrNum);
+    csvGen->writeEntityToCsv(shuffleVectorInsn, instrNum);
     //firstVector
     logOperand(SVI.getOperand(0), shuffleVectorInsnFirstVec);
 
@@ -819,11 +668,130 @@ void InstructionVisitor::visitShuffleVectorInst(ShuffleVectorInst &SVI) {
     logOperand(SVI.getOperand(1), shuffleVectorInsnSecondVec);
 
     //Mask
-    logOperand(SVI.getOperand(2), shuffleVectorInsnMask);
+    logSimpleValue(SVI.getOperand(2), shuffleVectorInsnMask);
 
 }
 
 void  InstructionVisitor::visitInstruction(Instruction &I) {
 
     errs() << I.getOpcodeName() << ": Unhandled instruction\n";
+}
+
+//auxiliary methods
+
+const char* InstructionVisitor::writePredicate(unsigned predicate) {
+
+    const char *pred;
+
+    switch (predicate) {
+    case FCmpInst::FCMP_FALSE: pred = "false"; 	break;
+    case FCmpInst::FCMP_OEQ:   pred = "oeq"; 	break;
+    case FCmpInst::FCMP_OGT:   pred = "ogt";	break;
+    case FCmpInst::FCMP_OGE:   pred = "oge"; 	break;
+    case FCmpInst::FCMP_OLT:   pred = "olt"; 	break;
+    case FCmpInst::FCMP_OLE:   pred = "ole"; 	break;
+    case FCmpInst::FCMP_ONE:   pred = "one"; 	break;
+    case FCmpInst::FCMP_ORD:   pred = "ord"; 	break;
+    case FCmpInst::FCMP_UNO:   pred = "uno"; 	break;
+    case FCmpInst::FCMP_UEQ:   pred = "ueq"; 	break;
+    case FCmpInst::FCMP_UGT:   pred = "ugt"; 	break;
+    case FCmpInst::FCMP_UGE:   pred = "uge"; 	break;
+    case FCmpInst::FCMP_ULT:   pred = "ult"; 	break;
+    case FCmpInst::FCMP_ULE:   pred = "ule"; 	break;
+    case FCmpInst::FCMP_UNE:   pred = "une"; 	break;
+    case FCmpInst::FCMP_TRUE:  pred = "true"; 	break;
+
+    case ICmpInst::ICMP_EQ:    pred = "eq";  	break;
+    case ICmpInst::ICMP_NE:    pred = "ne"; 	break;
+    case ICmpInst::ICMP_SGT:   pred = "sgt"; 	break;
+    case ICmpInst::ICMP_SGE:   pred = "sge"; 	break;
+    case ICmpInst::ICMP_SLT:   pred = "slt"; 	break;
+    case ICmpInst::ICMP_SLE:   pred = "sle"; 	break;
+    case ICmpInst::ICMP_UGT:   pred = "ugt"; 	break;
+    case ICmpInst::ICMP_UGE:   pred = "uge"; 	break;
+    case ICmpInst::ICMP_ULT:   pred = "ult"; 	break;
+    case ICmpInst::ICMP_ULE:   pred = "ule"; 	break;
+    default: pred = ""; break;
+    }
+    return pred;
+}
+
+void InstructionVisitor::writeOptimizationInfoToFile(const User *u, string instrId) {
+
+    if (const FPMathOperator *fpo = dyn_cast<const FPMathOperator>(u)) {
+        if(fpo->hasUnsafeAlgebra()) {
+            csvGen->writePredicateToCsv(insnFlag, instrId, "fast");
+        }
+        else {
+            if(fpo->hasNoNaNs()) {
+                csvGen->writePredicateToCsv(insnFlag, instrId, "nnan");
+            }
+            if(fpo->hasNoInfs()) {
+                csvGen->writePredicateToCsv(insnFlag, instrId, "ninf");
+            }
+            if(fpo->hasNoSignedZeros()) {
+                csvGen->writePredicateToCsv(insnFlag, instrId, "nsz");
+            }
+            if(fpo->hasAllowReciprocal()) {
+                csvGen->writePredicateToCsv(insnFlag, instrId, "arcp");
+            }
+        }
+    }
+    if (const OverflowingBinaryOperator *obo = dyn_cast<OverflowingBinaryOperator>(u)) {
+        if(obo->hasNoUnsignedWrap()) {
+            csvGen->writePredicateToCsv(insnFlag, instrId, "nuw");
+        }
+        if(obo->hasNoSignedWrap()) {
+            csvGen->writePredicateToCsv(insnFlag, instrId, "nsw");
+        }
+    }
+    else if (const PossiblyExactOperator *div = dyn_cast<PossiblyExactOperator>(u)) {
+        if(div->isExact()) {
+            csvGen->writePredicateToCsv(insnFlag, instrId, "exact");
+        }
+    }
+}
+
+const char* InstructionVisitor::writeAtomicInfo(string instrId, AtomicOrdering order, SynchronizationScope synchScope) {
+
+	const char *atomic;
+
+	switch (order) {
+	case Unordered: atomic = "unordered"; 			 break;
+	case Monotonic: atomic = "monotonic"; 			 break;
+	case Acquire: atomic = "acquire"; 				 break;
+	case Release: atomic = "release"; 				 break;
+	case AcquireRelease: atomic = "acq_rel"; 		 break;
+	case SequentiallyConsistent: atomic = "seq_cst"; break;
+        //TODO: NotAtomic?
+	default: atomic = ""; break;
+	}
+	//default synchScope: crossthread
+	if(synchScope == SingleThread) {
+        csvGen->writePredicateToCsv(insnFlag, instrId, "singlethread");
+	}
+	return atomic;
+}
+
+void InstructionVisitor::writeAtomicRMWOp(string instrId, AtomicRMWInst::BinOp op) {
+
+	const char *oper;
+
+	switch (op) {
+	case AtomicRMWInst::Xchg: oper = "xchg";	break;
+	case AtomicRMWInst::Add:  oper = "add"; 	break;
+	case AtomicRMWInst::Sub:  oper = "sub"; 	break;
+	case AtomicRMWInst::And:  oper = "and"; 	break;
+	case AtomicRMWInst::Nand: oper = "nand"; 	break;
+	case AtomicRMWInst::Or:   oper = "or"; 		break;
+	case AtomicRMWInst::Xor:  oper = "xor"; 	break;
+	case AtomicRMWInst::Max:  oper = "max"; 	break;
+	case AtomicRMWInst::Min:  oper = "min"; 	break;
+	case AtomicRMWInst::UMax: oper = "umax"; 	break;
+	case AtomicRMWInst::UMin: oper = "umin"; 	break;
+	default: oper = ""; break;
+	}
+	if(strlen(oper)) {
+        csvGen->writePredicateToCsv(atomicRMWInsnOper, instrId, oper);
+	}
 }

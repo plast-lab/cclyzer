@@ -1,13 +1,23 @@
+#ifndef __INSTRUCTION_VISITOR_H__
+#define __INSTRUCTION_VISITOR_H__
+
+#include <string>
+
+#include <boost/unordered_map.hpp>
+
 #include "llvm/InstVisitor.h"
-#include "../include/PredicateNames.h"
+#include "llvm/IR/Attributes.h"
 
-using namespace llvm;
+#include "PredicateNames.h"
+#include "CsvGenerator.hpp"
 
-class InstructionVisitor : public InstVisitor<InstructionVisitor>, public PredicateNames {
+class InstructionVisitor : public llvm::InstVisitor<InstructionVisitor> {
 
 public:
 
-	InstructionVisitor(map<string, const Type *> &var, map<string, const Type *> &imm, Module *M);
+	InstructionVisitor(boost::unordered_map<std::string, const llvm::Type *> &var, 
+                       boost::unordered_map<std::string, const llvm::Type *> &imm,
+                       const llvm::Module *M);
 
 	//////////////////////////
 	// 	   visit methods    //
@@ -15,86 +25,86 @@ public:
 
 	// Binary Operations
 
-	void visitAdd(BinaryOperator &);
-	void visitFAdd(BinaryOperator &);
-	void visitSub(BinaryOperator &);
-	void visitFsub(BinaryOperator &);
-	void visitMul(BinaryOperator &);
-	void visitFMul(BinaryOperator &);
-	void visitSdiv(BinaryOperator &);
-	void visitFdiv(BinaryOperator &);
-	void visitUDiv(BinaryOperator &);
-	void visitSRem(BinaryOperator &);
-	void visitFRem(BinaryOperator &);
-	void visitURem(BinaryOperator &);
+	void visitAdd(llvm::BinaryOperator &);
+	void visitFAdd(llvm::BinaryOperator &);
+	void visitSub(llvm::BinaryOperator &);
+	void visitFsub(llvm::BinaryOperator &);
+	void visitMul(llvm::BinaryOperator &);
+	void visitFMul(llvm::BinaryOperator &);
+	void visitSdiv(llvm::BinaryOperator &);
+	void visitFdiv(llvm::BinaryOperator &);
+	void visitUDiv(llvm::BinaryOperator &);
+	void visitSRem(llvm::BinaryOperator &);
+	void visitFRem(llvm::BinaryOperator &);
+	void visitURem(llvm::BinaryOperator &);
 
 	// Bitwise Binary Operations
 
-	void visitShl(BinaryOperator &);
-	void visitLShr(BinaryOperator &);
-	void visitAShr(BinaryOperator &);
-	void visitAnd(BinaryOperator &);
-	void visitOr(BinaryOperator &);
-	void visitXor(BinaryOperator &);
+	void visitShl(llvm::BinaryOperator &);
+	void visitLShr(llvm::BinaryOperator &);
+	void visitAShr(llvm::BinaryOperator &);
+	void visitAnd(llvm::BinaryOperator &);
+	void visitOr(llvm::BinaryOperator &);
+	void visitXor(llvm::BinaryOperator &);
 
 	// Conversion Operations
 
-	void visitTruncInst(TruncInst &);
-	void visitZExtInst(ZExtInst &);
-	void visitSExtInst(SExtInst &);
-	void visitFPTruncInst(FPTruncInst &);
-	void visitFPExtInst(FPExtInst &);
-	void visitFPToUIInst(FPToUIInst &);
-	void visitFPToSIInst(FPToSIInst &);
-	void visitUIToFPInst(UIToFPInst &);
-	void visitSIToFPInst(SIToFPInst &);
-	void visitPtrToIntInst(PtrToIntInst &);
-	void visitIntToPtrInst(IntToPtrInst &);
-	void visitBitCastInst(BitCastInst &);
+	void visitTruncInst(llvm::TruncInst &);
+	void visitZExtInst(llvm::ZExtInst &);
+	void visitSExtInst(llvm::SExtInst &);
+	void visitFPTruncInst(llvm::FPTruncInst &);
+	void visitFPExtInst(llvm::FPExtInst &);
+	void visitFPToUIInst(llvm::FPToUIInst &);
+	void visitFPToSIInst(llvm::FPToSIInst &);
+	void visitUIToFPInst(llvm::UIToFPInst &);
+	void visitSIToFPInst(llvm::SIToFPInst &);
+	void visitPtrToIntInst(llvm::PtrToIntInst &);
+	void visitIntToPtrInst(llvm::IntToPtrInst &);
+	void visitBitCastInst(llvm::BitCastInst &);
 
 	// Terminator Instructions
 
-	void visitReturnInst(ReturnInst &);
-	void visitBranchInst(BranchInst &);
-	void visitSwitchInst(const SwitchInst &);
-	void visitIndirectBrInst(IndirectBrInst &);
-	void visitInvokeInst(InvokeInst &);
-	void visitResumeInst(ResumeInst &);
-	void visitUnreachableInst(UnreachableInst &);
+	void visitReturnInst(llvm::ReturnInst &);
+	void visitBranchInst(llvm::BranchInst &);
+	void visitSwitchInst(const llvm::SwitchInst &);
+	void visitIndirectBrInst(llvm::IndirectBrInst &);
+	void visitInvokeInst(llvm::InvokeInst &);
+	void visitResumeInst(llvm::ResumeInst &);
+	void visitUnreachableInst(llvm::UnreachableInst &);
 
 	// Aggregate Operations
 
-	void visitInsertValueInst(InsertValueInst &);
-	void visitExtractValueInst(ExtractValueInst &);
+	void visitInsertValueInst(llvm::InsertValueInst &);
+	void visitExtractValueInst(llvm::ExtractValueInst &);
 
 	// Memory Operations
 
-	void visitAllocaInst(AllocaInst &);
-	void visitLoadInst(LoadInst &);
-	void visitStoreInst(StoreInst &);
-	void visitAtomicCmpXchgInst(AtomicCmpXchgInst &);
-	void visitAtomicRMWInst(AtomicRMWInst &);
-	void visitFenceInst(FenceInst &);
-	void visitGetElementPtrInst(GetElementPtrInst &);
+	void visitAllocaInst(llvm::AllocaInst &);
+	void visitLoadInst(llvm::LoadInst &);
+	void visitStoreInst(llvm::StoreInst &);
+	void visitAtomicCmpXchgInst(llvm::AtomicCmpXchgInst &);
+	void visitAtomicRMWInst(llvm::AtomicRMWInst &);
+	void visitFenceInst(llvm::FenceInst &);
+	void visitGetElementPtrInst(llvm::GetElementPtrInst &);
 
 	// Other
 
-	void visitICmpInst(ICmpInst &);
-	void visitFCmpInst(FCmpInst &);
-	void visitPHINode(PHINode &);
-	void visitSelectInst(SelectInst &);
-	void visitLandingPadInst(LandingPadInst &);
-	void visitCallInst(CallInst &);
-	void visitVAArgInst(VAArgInst &);
+	void visitICmpInst(llvm::ICmpInst &);
+	void visitFCmpInst(llvm::FCmpInst &);
+	void visitPHINode(llvm::PHINode &);
+	void visitSelectInst(llvm::SelectInst &);
+	void visitLandingPadInst(llvm::LandingPadInst &);
+	void visitCallInst(llvm::CallInst &);
+	void visitVAArgInst(llvm::VAArgInst &);
 
 	// Vector Operations
 
-	void visitExtractElementInst(ExtractElementInst &);
-	void visitInsertElementInst(InsertElementInst &);
-	void visitShuffleVectorInst(ShuffleVectorInst &);
+	void visitExtractElementInst(llvm::ExtractElementInst &);
+	void visitInsertElementInst(llvm::InsertElementInst &);
+	void visitShuffleVectorInst(llvm::ShuffleVectorInst &);
 
 	// 'default' case
-	void visitInstruction(Instruction &I);
+	void visitInstruction(llvm::Instruction &I);
 
 	void setInstrNum(std::string instructionNum) {
 
@@ -106,17 +116,31 @@ public:
 	}
 
 private:
-
-    void logSimpleValue(const Value * Value, const char * predNmae);
-    void logOperand(const Value * Operand, const char * predName);
-    void logBinaryOperator(BinaryOperator &BI, const char * predName, 
+    //auxiliary methods
+    void logSimpleValue(const llvm::Value * Value, const char * predNmae, int index = -1);
+    void logOperand(const llvm::Value * Operand, const char * predName, int index = -1);
+    void logBinaryOperator(llvm::BinaryOperator &BI, const char * predName, 
                            const char * predNameLeftOp, const char * predNameRightOp);
+
+    const char* writePredicate(unsigned predicate);
+    void writeOptimizationInfoToFile(const llvm::User *u, std::string instrId);
+    const char *writeAtomicInfo(std::string instrId, llvm::AtomicOrdering order, llvm::SynchronizationScope synchScope);
+    void writeAtomicRMWOp(std::string instrId, llvm::AtomicRMWInst::BinOp op);
+
+    void writeVolatileFlag(std::string instrId, bool volatileFlag) {
+
+        if(volatileFlag) {
+            csvGen->writePredicateToCsv(predicateNames::insnFlag, instrId, "volatile");
+        }
+    }
 
 	std::string instrNum;
 	std::string instrId;
 	std::string varId;
-	std::string value_str;
-	map<std::string, const Type *> &variable;
-	map<std::string, const Type *> &immediate;
-	Module *Mod;
+    CsvGenerator *csvGen;
+    boost::unordered_map<std::string, const llvm::Type *> &variable;
+    boost::unordered_map<std::string, const llvm::Type *> &immediate;
+	const llvm::Module *Mod;
 };
+
+#endif
