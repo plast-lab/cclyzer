@@ -8,7 +8,7 @@
 #include "llvm/InstVisitor.h"
 #include "llvm/IR/Attributes.h"
 
-#include "PredicateNames.h"
+#include "PredicateNames.hpp"
 #include "CsvGenerator.hpp"
 
 class InstructionVisitor : public llvm::InstVisitor<InstructionVisitor> {

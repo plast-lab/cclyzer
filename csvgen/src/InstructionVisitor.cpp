@@ -4,8 +4,8 @@
 #include "llvm/IR/Operator.h"
 
 #include "AuxiliaryMethods.hpp"
-#include "InstructionVisitor.h"
-#include "PredicateNames.h"
+#include "InstructionVisitor.hpp"
+#include "PredicateNames.hpp"
 
 using namespace llvm;
 using namespace std;

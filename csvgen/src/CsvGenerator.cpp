@@ -6,7 +6,7 @@
 
 #include "AuxiliaryMethods.hpp"
 #include "CsvGenerator.hpp"
-#include "InstructionVisitor.h"
+#include "InstructionVisitor.hpp"
 
 using namespace llvm;
 using namespace std;

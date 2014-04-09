@@ -24,9 +24,9 @@
 #include "llvm/IR/LLVMContext.h"
 #include "llvm/Support/CFG.h"
 
-#include "InstructionVisitor.h"
-#include "PredicateNames.h"
-#include "DirInfo.h"
+#include "InstructionVisitor.hpp"
+#include "PredicateNames.hpp"
+#include "DirInfo.hpp"
 
 using namespace llvm;
 using namespace std;

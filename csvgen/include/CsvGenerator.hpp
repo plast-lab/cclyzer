@@ -13,8 +13,8 @@
 #include "llvm/IR/GlobalVariable.h"
 
 #include "AuxiliaryMethods.hpp"
-#include "PredicateNames.h"
-#include "DirInfo.h"
+#include "PredicateNames.hpp"
+#include "DirInfo.hpp"
 
 class CsvGenerator {
 public:

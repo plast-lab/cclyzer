@@ -1,4 +1,4 @@
-#include "PredicateNames.h"
+#include "PredicateNames.hpp"
 
 namespace predicateNames{
 
