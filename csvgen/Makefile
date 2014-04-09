@@ -25,9 +25,10 @@ vpath %.h $(include_dirs)
 
 # LLVM specific flags
 
-CPPFLAGS += $(shell llvm-config --cppflags)
-CXXFLAGS += $(shell llvm-config --cxxflags) -std=c++0x
-LDFLAGS  += $(shell llvm-config --libs) $(shell llvm-config --ldflags)
+CPPFLAGS += $(shell llvm-config --cppflags | sed 's/-fno-rtti//') 
+CXXFLAGS += $(shell llvm-config --cxxflags | sed 's/-fno-rtti//') -fexceptions -g
+LDFLAGS  += $(shell llvm-config --libs) $(shell llvm-config --ldflags) -lpthread -lcurses -ldl -g
+LDFLAGS  += -lboost_system -lboost_filesystem -lboost_program_options
 
 
 # Basic Rules
