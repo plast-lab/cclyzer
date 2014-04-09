@@ -12,7 +12,7 @@ using namespace std;
 using namespace boost;
 
 using namespace auxiliary_methods;
-using namespace predicateNames;
+using namespace predicate_names;
 
 //TODO: Remove these if(strlen(...)) checks
 //TODO: Move immediate and variable maps entirely to the CsvGenerator class

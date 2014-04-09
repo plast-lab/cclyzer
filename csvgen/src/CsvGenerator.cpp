@@ -13,7 +13,7 @@ using namespace std;
 using namespace boost;
 
 using namespace auxiliary_methods;
-using namespace predicateNames;
+using namespace predicate_names;
 
 char CsvGenerator::delim = '\t';
 CsvGenerator * CsvGenerator::INSTANCE = NULL;

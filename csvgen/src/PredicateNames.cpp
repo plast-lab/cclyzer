@@ -1,6 +1,6 @@
 #include "PredicateNames.hpp"
 
-namespace predicateNames{
+namespace predicate_names{
 
 // Basic Blocks
 

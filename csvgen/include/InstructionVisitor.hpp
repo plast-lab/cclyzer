@@ -130,7 +130,7 @@ private:
     void writeVolatileFlag(std::string instrId, bool volatileFlag) {
 
         if(volatileFlag) {
-            csvGen->writePredicateToCsv(predicateNames::insnFlag, instrId, "volatile");
+            csvGen->writePredicateToCsv(predicate_names::insnFlag, instrId, "volatile");
         }
     }
 

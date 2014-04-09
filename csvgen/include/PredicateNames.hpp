@@ -1,7 +1,7 @@
 #ifndef __PREDICATE_NAMES_H__
 #define __PREDICATE_NAMES_H__
 
-namespace predicateNames {
+namespace predicate_names {
 
 // Basic Blocks
 
