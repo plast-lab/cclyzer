@@ -16,7 +16,7 @@ using namespace auxiliary_methods;
 using namespace predicate_names;
 
 char CsvGenerator::delim = '\t';
-CsvGenerator * CsvGenerator::INSTANCE = NULL;
+template<> CsvGenerator *Singleton<CsvGenerator>::INSTANCE = NULL;
 
 //aggregate array for all predicate names
 
