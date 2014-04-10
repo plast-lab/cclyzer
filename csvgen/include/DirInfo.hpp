@@ -5,17 +5,12 @@
 
 #include <boost/filesystem.hpp>
 
+#include "Singleton.hpp"
+
 namespace bfs = boost::filesystem;
 
-class DirInfo {
+class DirInfo : public Singleton<DirInfo> {
 public:
-
-    static DirInfo* getInstance(){
-        if(INSTANCE == NULL)
-            INSTANCE = new DirInfo();
-
-        return INSTANCE;
-    }
 
     bool setInputDir(const std::string &inputDirStr){
         this->inputDir = bfs::canonical(inputDirStr + "/");
@@ -74,16 +69,15 @@ public:
         return inputDir.string();
     }
 
-private:
+protected:
+
+    friend class Singleton<DirInfo>;
 
     DirInfo() {}
     DirInfo(const DirInfo&);
     DirInfo& operator= (const DirInfo&);
 
-    ~DirInfo(){
-        delete INSTANCE;
-        INSTANCE = NULL;
-    }
+private:
 
     bfs::path inputDir;
 
@@ -92,8 +86,6 @@ private:
     bfs::path entitiesDir;
 
     bfs::path predicatesDir;
-
-    static DirInfo *INSTANCE;
 
 };
 

@@ -15,8 +15,9 @@
 #include "AuxiliaryMethods.hpp"
 #include "PredicateNames.hpp"
 #include "DirInfo.hpp"
+#include "Singleton.hpp"
 
-class CsvGenerator {
+class CsvGenerator : public Singleton<CsvGenerator> {
 public:
 
     void writeEntityToCsv(const char *filename, const std::string& entityRefmode);
@@ -43,19 +44,9 @@ public:
         delim = newDelim;
     }
 
-    static CsvGenerator* getInstance(){
-        if(INSTANCE == NULL)
-            INSTANCE = new CsvGenerator();
+protected:
 
-        return INSTANCE;
-    }
-
-    static void destroy() {
-        delete INSTANCE;
-        INSTANCE = NULL;
-    }
-
-private:
+    friend class Singleton<CsvGenerator>;
 
     CsvGenerator();
     CsvGenerator(const CsvGenerator&);
@@ -71,6 +62,7 @@ private:
         }
     }
 
+private:
     //auxiliary methods
 
     void identifyType(const llvm::Type *elementType, boost::unordered_set<const llvm::Type *> &componentTypes);

@@ -33,7 +33,7 @@ using namespace std;
 using namespace boost::program_options;
 using namespace boost::filesystem;
 
-DirInfo *DirInfo::INSTANCE = NULL;
+template<> DirInfo *Singleton<DirInfo>::INSTANCE = NULL;
 
 options_description desc("Usage");
 variables_map optionVals;
