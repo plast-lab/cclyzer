@@ -12,7 +12,7 @@ outdir       := $(csvgen.outdir)
 sources      := $(wildcard $(srcdir)/*.cpp)
 objects      := $(patsubst $(srcdir)/%.cpp,$(outdir)/%.o,$(sources))
 dependencies := $(patsubst $(srcdir)/%.cpp,$(outdir)/%.d,$(sources))
-program      := $(outdir)/csv-generation
+program      := $(outdir)/$(FACTGEN)
 include_dirs := include
 
 

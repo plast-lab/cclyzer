@@ -9,7 +9,10 @@ targets.clean := $(addsuffix .clean,$(modules))
 
 include common.mk
 
+
+#--------------------------
 # Accumulating Rules
+#--------------------------
 
 $(modules):
 	$(MAKE) --directory=$@
@@ -18,7 +21,9 @@ $(targets.clean): %.clean:
 	$(MAKE) --directory=$* clean
 
 
+#--------------------------
 # Phony Targets
+#--------------------------
 
 .PHONY: all $(modules)
 all: $(modules)

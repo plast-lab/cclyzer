@@ -11,6 +11,9 @@ MV      := mv
 M4      := m4
 CXX     := g++
 
+# Other tools
+FACTGEN := csv-generation
+
 # Directory Tree
 OUTDIR   = $(LEVEL)/build
 DATADIR  = $(LEVEL)/data
