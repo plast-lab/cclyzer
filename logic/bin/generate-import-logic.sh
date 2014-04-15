@@ -26,7 +26,6 @@ while read line; do
     fi
 
     cat <<EOF
-
 // Auto-generated import logic for ${pred}
 
 ${imm}(Insn${index+, Index}, Imm) ->
@@ -58,6 +57,7 @@ lang:physical:filePath[\`${var}]  = "${varfile}".
     variable:id(Var:VarRef),
     ${insn}(Insn),
     ${var}(InsnRef${index+, Index}, VarRef).
+
 EOF
     unset index
 done

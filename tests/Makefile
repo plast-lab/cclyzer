@@ -73,8 +73,8 @@ import-$1: | $$($1.csv)
 
 load-$1: import-$1 $$($1.script)
 	$(call prompt-echo, $1, "Loading into database ...")
-	$(QUIET) $(RM) $(OUTDIR)/$$(notdir $$($1.csv))
-	$(QUIET) ln -s $$(abspath $$($1.csv)) $(OUTDIR)
+	$(QUIET) $(RM) $(DATADIR)
+	$(QUIET) ln -s $$(abspath $$($1.csv)) $(DATADIR)
 	$(call prompt, $1)
 	$(call deploy-datalog-project,$$($1.script))
 

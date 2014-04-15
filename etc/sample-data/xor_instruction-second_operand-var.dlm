@@ -1,0 +1,11 @@
+</home/lobo/repo/llvm-datalog/tests/grep/dfa.ll>:dfaanalyze:609	</home/lobo/repo/llvm-datalog/tests/grep/dfa.ll>:dfaanalyze:%393
+</home/lobo/repo/llvm-datalog/tests/grep/dfa.ll>:state_index:39	</home/lobo/repo/llvm-datalog/tests/grep/dfa.ll>:state_index:%vec.phi
+</home/lobo/repo/llvm-datalog/tests/grep/dfa.ll>:state_index:40	</home/lobo/repo/llvm-datalog/tests/grep/dfa.ll>:state_index:%vec.phi58
+</home/lobo/repo/llvm-datalog/tests/grep/dfa.ll>:state_index:47	</home/lobo/repo/llvm-datalog/tests/grep/dfa.ll>:state_index:%rdx.vec.exit.phi
+</home/lobo/repo/llvm-datalog/tests/grep/dfa.ll>:state_index:66	</home/lobo/repo/llvm-datalog/tests/grep/dfa.ll>:state_index:%hash.024
+</home/lobo/repo/llvm-datalog/tests/grep/dfa.ll>:dfastate:696	</home/lobo/repo/llvm-datalog/tests/grep/dfa.ll>:dfastate:%427
+</home/lobo/repo/llvm-datalog/tests/grep/dfa.ll>:dfastate:1051	</home/lobo/repo/llvm-datalog/tests/grep/dfa.ll>:dfastate:%643
+</home/lobo/repo/llvm-datalog/tests/grep/dfa.ll>:dfastate:1083	</home/lobo/repo/llvm-datalog/tests/grep/dfa.ll>:dfastate:%662
+</home/lobo/repo/llvm-datalog/tests/grep/main.ll>:prpending:39	</home/lobo/repo/llvm-datalog/tests/grep/main.ll>:prpending:%26
+</home/lobo/repo/llvm-datalog/tests/grep/main.ll>:prline:11	</home/lobo/repo/llvm-datalog/tests/grep/main.ll>:prline:%5
+</home/lobo/repo/llvm-datalog/tests/grep/main.ll>:prline:17	</home/lobo/repo/llvm-datalog/tests/grep/main.ll>:prline:%.

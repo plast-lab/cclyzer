@@ -28,13 +28,13 @@ clean:
 	$(RM) -r $(logic.outdir)
 
 
-##########################################
-# Generated import scripts/logic section #
-##########################################
+#=========================================
+# Generated import scripts/logic section
+#=========================================
 
 $(eval $(call create-destdir,import))
 
-import.csv   := $(shell find $(DATADIR)/ -type f -name '*.dlm')
+import.csv   := $(shell find $(SAMPLEDIR)/ -type f -name '*.dlm')
 import.src   := import/operand-specific.logic
 entities     := $(import.outdir)/entities.import
 predicates   := $(import.outdir)/predicates.import
@@ -43,9 +43,13 @@ predicates   := $(import.outdir)/predicates.import
 import.mkscript := $(logic.bin)/generate-import-script.sh
 import.mklogic  := $(logic.bin)/generate-import-logic.sh
 
+
 $(logic.ph): $(import.src)
 
+
+#-----------------------------------------
 # Generate import logic (file predicates)
+#-----------------------------------------
 
 vpath .autopred import
 
@@ -53,20 +57,26 @@ $(import.src): .autopred $(import.mklogic)
 	cat $< | $(import.mklogic) "$(abspath $(DATADIR))" > $@
 
 
+#-----------------------------------------
 # Generate .import scripts
+#-----------------------------------------
 
-vpath %.dlm $(DATADIR)
-vpath %.dlm $(DATADIR)/entities
-vpath %.dlm $(DATADIR)/predicates
+vpath %.dlm $(SAMPLEDIR)
+vpath %.dlm $(SAMPLEDIR)/entities
+vpath %.dlm $(SAMPLEDIR)/predicates
 
-$(import.outdir)/%.import.part: %.dlm | $(import.outdir)
-	$(import.mkscript) $(abspath $<) > $@
+$(import.outdir)/%.import.part: %.dlm $(import.mkscript) | $(import.outdir)
+	$(QUIET) $(RM) $(DATADIR)
+	$(QUIET) ln -s $(abspath $(SAMPLEDIR)) $(DATADIR)
+	$(import.mkscript) $(abspath $(subst $(SAMPLEDIR),$(DATADIR),$<)) > $@
 
 
+#-----------------------------------------------
 # Collect all generated .import files into one
+#-----------------------------------------------
 
-entities_CSV     := $(filter $(DATADIR)/entities/%.dlm, $(import.csv))
-predicates_CSV   := $(filter $(DATADIR)/predicates/%.dlm, $(import.csv))
+entities_CSV     := $(filter $(SAMPLEDIR)/entities/%.dlm, $(import.csv))
+predicates_CSV   := $(filter $(SAMPLEDIR)/predicates/%.dlm, $(import.csv))
 
 ## $(call csv-import-chunk, csv)
 define csv-import-chunk
@@ -106,9 +116,9 @@ clean: import.clean
 
 
 
-###################
-# Deployment Test #
-###################
+#==================
+# Deployment Test
+#==================
 
 deploy.script := run.lb
 workspace     := $(OUTDIR)/db

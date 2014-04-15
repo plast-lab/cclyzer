@@ -1,22 +1,23 @@
 # For debugging
-QUIET   := @
+QUIET     := @
 
 
 # Unix tools
-INSTALL := install
-MKDIR   := mkdir -p
-SED     := sed
-RM      := rm -f
-MV      := mv
-M4      := m4
-CXX     := g++
+INSTALL   := install
+MKDIR     := mkdir -p
+SED       := sed
+RM        := rm -f
+MV        := mv
+M4        := m4
+CXX       := g++
 
 # Other tools
-FACTGEN := csv-generation
+FACTGEN   := csv-generation
 
 # Directory Tree
-OUTDIR   = $(LEVEL)/build
-DATADIR  = $(LEVEL)/data
+OUTDIR     = $(LEVEL)/build
+DATADIR    = $(LEVEL)/data
+SAMPLEDIR ?= $(LEVEL)/etc/sample-data
 
 
 # Template to create destination directory

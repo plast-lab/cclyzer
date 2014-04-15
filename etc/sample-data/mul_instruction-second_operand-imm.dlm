@@ -1,0 +1,9 @@
+</home/lobo/repo/llvm-datalog/tests/grep/kwset.ll>:kwsexec:47	</home/lobo/repo/llvm-datalog/tests/grep/kwset.ll>:kwsexec:47:12
+</home/lobo/repo/llvm-datalog/tests/grep/kwset.ll>:kwsexec:51	</home/lobo/repo/llvm-datalog/tests/grep/kwset.ll>:kwsexec:51:11
+</home/lobo/repo/llvm-datalog/tests/grep/dfa.ll>:lex:328	</home/lobo/repo/llvm-datalog/tests/grep/dfa.ll>:lex:328:10
+</home/lobo/repo/llvm-datalog/tests/grep/dfa.ll>:lex:352	</home/lobo/repo/llvm-datalog/tests/grep/dfa.ll>:lex:352:10
+</home/lobo/repo/llvm-datalog/tests/grep/dfa.ll>:lex:479	</home/lobo/repo/llvm-datalog/tests/grep/dfa.ll>:lex:479:10
+</home/lobo/repo/llvm-datalog/tests/grep/dfa.ll>:lex:593	</home/lobo/repo/llvm-datalog/tests/grep/dfa.ll>:lex:593:10
+</home/lobo/repo/llvm-datalog/tests/grep/dfa.ll>:lex:940	</home/lobo/repo/llvm-datalog/tests/grep/dfa.ll>:lex:940:96
+</home/lobo/repo/llvm-datalog/tests/grep/dfa.ll>:state_index:140	</home/lobo/repo/llvm-datalog/tests/grep/dfa.ll>:state_index:140:48
+</home/lobo/repo/llvm-datalog/tests/grep/dfasearch.ll>:GEAcompile:39	</home/lobo/repo/llvm-datalog/tests/grep/dfasearch.ll>:GEAcompile:39:88
