@@ -47,9 +47,10 @@ switch_instruction:case:value[_, _] = Constant,
 
 switch_instruction(Insn),
    switch_instruction:case:value[Insn, Index1] = Const1,
-   switch_instruction:case:value[Insn, Index2] = Const2
+   switch_instruction:case:value[Insn, Index2] = Const2,
+   immediate:eq(Const1, Const2)
  ->
-   immediate:ne(Const1, Const2) ; Index1 = Index2.
+   Index1 = Index2.
 
 switch_instruction:case:label[Insn, Index] = _,
    switch_instruction:ncases[Insn] = Total

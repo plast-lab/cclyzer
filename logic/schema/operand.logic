@@ -32,6 +32,8 @@ immediate:ne(Imm1, Imm2) <-
    immediate(Imm2),
    !immediate:eq(Imm1, Imm2).
 
+lang:derivationType[`immediate:ne] = "Derived".
+
 // immediates cannot be labels
 immediate:type[_] = type -> label_type[] != type.
 
