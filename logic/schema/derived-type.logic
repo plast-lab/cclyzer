@@ -70,8 +70,8 @@ function_type:nparams[Type] = Total ->
 
 function_type:return[_] = Ret
  ->
-   !metadata_type[] = Ret,
-   !label_type[] = Ret.
+   metadata_type[] != Ret,
+   label_type[] != Ret.
 
 
 //////////////////
