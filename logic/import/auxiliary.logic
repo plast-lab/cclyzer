@@ -49,7 +49,7 @@ landingpad_instruction:clause[Insn, Index] = Clause <-
 
 index(Index), index:value(Index:Value) -> int[64](Value).
 
-// function_type
+// struct_type
 struct_type:field_tmp[Type, Index] = Field ->
    struct_type(Type), index(Index), type(Field).
 
