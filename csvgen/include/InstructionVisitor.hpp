@@ -31,8 +31,8 @@ public:
 	void visitFsub(llvm::BinaryOperator &);
 	void visitMul(llvm::BinaryOperator &);
 	void visitFMul(llvm::BinaryOperator &);
-	void visitSdiv(llvm::BinaryOperator &);
-	void visitFdiv(llvm::BinaryOperator &);
+	void visitSDiv(llvm::BinaryOperator &);
+	void visitFDiv(llvm::BinaryOperator &);
 	void visitUDiv(llvm::BinaryOperator &);
 	void visitSRem(llvm::BinaryOperator &);
 	void visitFRem(llvm::BinaryOperator &);
