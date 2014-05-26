@@ -351,6 +351,8 @@ void CsvGenerator::writeVarsTypesAndImmediates(){
             const FunctionType *funType = cast<FunctionType>(type);
             writeEntityToCsv(funcType, printType(funType));
             //TODO: which predicate/entity do we need to update for varagrs?
+            if(funType->isVarArg())
+                writeEntityToCsv(funcTypeVarArgs, printType(funType));
             writePredicateToCsv(funcTypeReturn, printType(funType), printType(funType->getReturnType()));
 
             for (unsigned int par = 0; par < funType->getFunctionNumParams(); ++par) {

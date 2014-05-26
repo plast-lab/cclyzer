@@ -84,7 +84,11 @@ private:
     }
 
     std::string predNameToFilename(const char * predName) {
-        //TODO: add cache
+        boost::unordered_map<const char*, std::string>::iterator cachedValue = simplePredFilenames.find(predName);
+        if(cachedValue != simplePredFilenames.end()){
+            return cachedValue->second;
+        }
+
         DirInfo * info = DirInfo::getInstance();
         std::string filename = std::string(predName);
         std::string folder = info->getEntitiesDir();
@@ -94,12 +98,23 @@ private:
             folder = info->getPredicatesDir();
         }
         filename = folder + "/" + filename + ".dlm";
-
+        simplePredFilenames[predName] = filename;
         return filename;
     }
 
     std::string predNameWithOperandToFilename(const char * predName, bool operand) {
-        //TODO: add cache
+        //TODO: yikes make a typedef
+        boost::unordered_map<const char*, 
+                             std::pair<std::string, std::string> >::iterator 
+            cachedValue = operandPredFilenames.find(predName);
+
+        if(cachedValue != operandPredFilenames.end()){
+            if(operand)
+                return cachedValue->second.first;
+            else
+                return cachedValue->second.second;
+        }
+
         std::string filename = predName;
         size_t pos = 0;
         while ((pos = filename.find(':', pos)) != std::string::npos) {
@@ -107,10 +122,13 @@ private:
         }
         // imm: operand = 0, var: operand = 1
         filename = DirInfo::getInstance()->getFactsDir() + "/" + filename;
+        
+        std::string varVersion = filename + "-var.dlm", immVersion = filename + "-imm.dlm";
+        operandPredFilenames[predName] = std::pair<std::string, std::string>(varVersion, immVersion);
         if(operand)
-            return filename + "-var.dlm";
+            return varVersion;
         else
-            return filename + "-imm.dlm";
+            return immVersion;
     }
 
     boost::filesystem::ofstream* getCsvFile(std::string filename){
@@ -125,6 +143,8 @@ private:
     boost::unordered_map<std::string, const llvm::Type *> variable;
     boost::unordered_map<std::string, const llvm::Type *> immediate;
     boost::unordered_map<std::string, boost::filesystem::ofstream*> csvFiles;
+    boost::unordered_map<const char*, std::string> simplePredFilenames;
+    boost::unordered_map<const char*, std::pair<std::string, std::string> > operandPredFilenames;
     
     static char delim;
     static CsvGenerator * INSTANCE;

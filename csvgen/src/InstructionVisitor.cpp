@@ -93,11 +93,11 @@ void InstructionVisitor::visitFMul(BinaryOperator &BI) {
     logBinaryOperator(BI, fmulInsn, fmulInsnFirstOp, fmulInsnSecondOp);
 }
 
-void InstructionVisitor::visitSdiv(BinaryOperator &BI) {
+void InstructionVisitor::visitSDiv(BinaryOperator &BI) {
     logBinaryOperator(BI, sdivInsn, sdivInsnFirstOp, sdivInsnSecondOp);
 }
 
-void InstructionVisitor::visitFdiv(BinaryOperator &BI) {
+void InstructionVisitor::visitFDiv(BinaryOperator &BI) {
     logBinaryOperator(BI, fdivInsn, fdivInsnFirstOp, fdivInsnSecondOp);
 }
 
