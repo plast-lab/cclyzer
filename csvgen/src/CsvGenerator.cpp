@@ -20,7 +20,7 @@ template<> CsvGenerator *Singleton<CsvGenerator>::INSTANCE = NULL;
 
 //aggregate array for all predicate names
 
-const int CsvGenerator::simplePredicatesNum = 182;
+const int CsvGenerator::simplePredicatesNum = 183;
 
 const char * CsvGenerator::simplePredicates[] = {
     basicBlockPred, globalVar, globalVarType,
@@ -28,7 +28,7 @@ const char * CsvGenerator::simplePredicates[] = {
     globalVarFlag, globalVarLink, globalVarVis,
     globalVarTlm, alias, aliasType,
     aliasLink, aliasVis, aliasAliasee,
-    Func, FuncUnnamedAddr, FuncLink,
+    Func, FuncDecl, FuncUnnamedAddr, FuncLink,
     FuncVis, FuncCallConv, FuncSect,
     FuncAlign, FuncAttr, FuncGc,
     FuncName, FuncType, FuncParam,
@@ -170,7 +170,7 @@ void CsvGenerator::processModule(const Module * Mod, string& path){
         string funcId = "<" + path + ">:" + string(fi->getName());
         string instrId = funcId + ":";
         IV.setInstrId(instrId);
-        writeEntityToCsv(Func, funcId);
+
         writePredicateToCsv(FuncType, funcId, printType(fi->getFunctionType()));
 
         types.insert(fi->getFunctionType());
@@ -204,6 +204,7 @@ void CsvGenerator::processModule(const Module * Mod, string& path){
             writePredicateToCsv(FuncAttr, funcId, FuncnAttr[i]);
         }
         if (!fi->isDeclaration()) {
+            writeEntityToCsv(Func, funcId);
             if(fi->hasSection()) {
                 writePredicateToCsv(FuncSect, funcId, fi->getSection());
             }
@@ -216,6 +217,11 @@ void CsvGenerator::processModule(const Module * Mod, string& path){
                 index++;
             }
         }
+        else{
+            writeEntityToCsv(FuncDecl, funcId);
+            continue;
+        }
+
         int counter = 0;
         //iterating over basic blocks in a function
         //REVIEW: There must be a way to move this whole logic inside InstructionVisitor, i.e., visit(Module M)

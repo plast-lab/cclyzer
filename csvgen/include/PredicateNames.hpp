@@ -28,6 +28,7 @@ namespace predicate_names {
 // Function
 
     extern const char * Func;
+    extern const char * FuncDecl;
     extern const char * FuncUnnamedAddr;
     extern const char * FuncLink;
     extern const char * FuncVis;

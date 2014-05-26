@@ -27,6 +27,7 @@ namespace predicate_names{
 // Function
 
     const char * Func = "function";
+    const char * FuncDecl = "function_decl";
     const char * FuncUnnamedAddr = "function:unnamed_addr";
     const char * FuncLink = "function:linkage_type";
     const char * FuncVis = "function:visibility";

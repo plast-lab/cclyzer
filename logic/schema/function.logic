@@ -51,6 +51,8 @@ function:alignment[Func] = Alignment ->
 function:gc[Func] = CollectorName ->
    function_decl(Func), string(CollectorName).
 
+function:attributes(Func, Attr) ->
+   function_decl(Func), attribute(Attr).
 
 //-----------------------------------------------------------------
 // Optional function attributes (only for definitions)
@@ -58,9 +60,6 @@ function:gc[Func] = CollectorName ->
 
 function:section[Func] = Sect ->
    function(Func), string(Sect).
-
-function:attributes(Func, Attr) ->
-   function(Func), attribute(Attr).
 
 
 //----------------------------------
