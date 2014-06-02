@@ -4,8 +4,10 @@ attribute(Attr), attribute:value(Attr:Ref) -> string(Ref).
 parameter_attribute:zeroext[] = Attr <- attribute:value(Attr:"zeroext").
 parameter_attribute:signext[] = Attr <- attribute:value(Attr:"signext").
 parameter_attribute:nreg[] = Attr <- attribute:value(Attr:"nreg").
+parameter_attribute:noallias[] = Attr <- attribute:value(Attr:"noalias").
 
 function_attribute:noreturn[] = Attr <- attribute:value(Attr:"noreturn").
 function_attribute:nounwind[] = Attr <- attribute:value(Attr:"nounwind").
 function_attribute:readonly[] = Attr <- attribute:value(Attr:"readonly").
 function_attribute:readnone[] = Attr <- attribute:value(Attr:"readnone").
+function_attribute:cold[] = Attr <- attribute:value(Attr:"cold").
