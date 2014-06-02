@@ -21,7 +21,10 @@ void InstructionVisitor::logSimpleValue(const Value * Val, const char * predName
     const Type * ValType = Val->getType();
 
     if(const Constant *c = dyn_cast<Constant>(Val)) {
-        varId = instrNum + ":" + valueToString(Val, Mod);
+        ostringstream immOffset;
+        immOffset << immediateOffset;
+        varId = instrNum + ":" + immOffset.str() + ":" + valueToString(Val, Mod);
+        immediateOffset++;
         immediate[varId] = ValType;
     }
     else {
@@ -37,7 +40,10 @@ void InstructionVisitor::logOperand(const Value * Operand, const char * predName
 
     if(const Constant *c = dyn_cast<Constant>(Operand)) {
         operandType = 0;
-        varId = instrNum + ":" + valueToString(Operand, Mod);
+        ostringstream immOffset;
+        immOffset << immediateOffset;
+        varId = instrNum + ":" + immOffset.str() + ":" + valueToString(Operand, Mod);
+        immediateOffset++;
         immediate[varId] = OpType;
     }
     else {
@@ -483,10 +489,13 @@ void InstructionVisitor::visitGetElementPtrInst(GetElementPtrInst &GEP) {
     logOperand(GEP.getPointerOperand(), gepInsnBase);
 
     for (unsigned index = 1; index < GEP.getNumOperands(); ++index) {
+        int immOffset = immediateOffset;
         const Value * GepOperand = GEP.getOperand(index);
         logOperand(GepOperand, gepInsnIndex, index-1);
         if(const Constant *c = dyn_cast<Constant>(GepOperand)) {
-            varId = instrNum + ":" + valueToString(c, Mod);
+            stringstream immStr;
+            immStr << immOffset;
+            varId = instrNum + ":" + immStr.str() + ":" + valueToString(c, Mod);
             csvGen->writePredicateToCsv(constToInt, varId, c->getUniqueInteger().toString(10,true));
         }
     }
@@ -581,9 +590,10 @@ void InstructionVisitor::visitCallInst(CallInst &CI) {
     else {
         csvGen->writeEntityToCsv(indirectCallInsn, instrNum);
     }
-    for(unsigned op = 0; op < CI.getNumArgOperands(); ++op) {
+
+    for(unsigned op = 0; op < CI.getNumArgOperands(); ++op)
         logOperand(CI.getArgOperand(op), callInsnArg, op);
-    }
+
     if(CI.isTailCall()) {
         csvGen->writePredicateToCsv(insnFlag, instrNum, "tail");
     }

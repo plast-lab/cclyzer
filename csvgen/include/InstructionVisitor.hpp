@@ -109,6 +109,7 @@ public:
 	void setInstrNum(std::string instructionNum) {
 
 		instrNum = instructionNum;
+        immediateOffset = 0;
 	}
 	void setInstrId(std::string instructionId) {
 
@@ -136,6 +137,7 @@ private:
 
 	std::string instrNum;
 	std::string instrId;
+    int immediateOffset;
 	std::string varId;
     CsvGenerator *csvGen;
     boost::unordered_map<std::string, const llvm::Type *> &variable;
