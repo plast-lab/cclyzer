@@ -21,7 +21,7 @@ Pre-installation steps
 ### Install the LogicBlox engine
 
 The LogicBlox engine needs to be installed. Download LogicBlox engine
-(version 3.*) from: https://download.logicblox.com/
+(version 3.*) from the [LogicBlox Download Page](https://download.logicblox.com/).
 
 You must also set the environment variable `$LOGICBLOX_HOME` and
 augment your `$PATH` accordingly. The following additions to either
