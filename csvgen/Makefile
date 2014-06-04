@@ -68,7 +68,7 @@ check-syntax:
 
 .PHONY: install
 install: $(program)
-	$(INSTALL) -m 0755 $< $(INSTALLDIR_BIN)
+	$(INSTALL) -m 0755 $< $(INSTALL_BIN)
 
 #-----------------------------------
 # Automatic Dependency Generation

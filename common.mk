@@ -21,11 +21,11 @@ factgen.exe := csv-generation
 
 DATADIR      = $(LEVEL)/data
 OUTDIR       = $(LEVEL)/build
-INSTALLDIR  ?= $(LEVEL)
+DESTDIR     ?= $(LEVEL)
 SAMPLEDIR   ?= $(LEVEL)/etc/sample-data
 
-INSTALLDIR_BIN = $(INSTALLDIR)/bin
-INSTALLDIR_LIB = $(INSTALLDIR)/lib
+INSTALL_BIN  = $(DESTDIR)/bin
+INSTALL_LIB  = $(DESTDIR)/lib
 
 
 #---------------------------------------------------
