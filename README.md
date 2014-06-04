@@ -48,7 +48,7 @@ You will also have to install the following packages:
 
 #### Fedora 20
 
-    # yum install boost boost-devel ncurses ncurses-devel
+    # yum install boost boost-devel ncurses ncurses-devel m4
 
 Installation
 ------------
