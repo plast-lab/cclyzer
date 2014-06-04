@@ -34,10 +34,10 @@ const char * CsvGenerator::simplePredicates[] = {
     FuncName, FuncType, FuncParam,
     FuncRetAttr, FuncParamAttr, insnTo,
     insnFlag, insnNext, insnBBEntry,
-    insnFunc, addInsn, faddInsn, 
-    subInsn, fsubInsn, mulInsn, 
-    fmulInsn, udivInsn, fdivInsn, 
-    sdivInsn, uremInsn, sremInsn, 
+    insnFunc, addInsn, faddInsn,
+    subInsn, fsubInsn, mulInsn,
+    fmulInsn, udivInsn, fdivInsn,
+    sdivInsn, uremInsn, sremInsn,
     fremInsn, shlInsn, lshrInsn,
     ashrInsn, andInsn, orInsn,
     xorInsn, retInsn, retInsnVoid,
@@ -429,24 +429,24 @@ const char* CsvGenerator::writeLinkage(GlobalValue::LinkageTypes LT) {
     const char *linkTy;
 
     switch (LT) {
-    case GlobalValue::ExternalLinkage: 		linkTy = "external";        break;
-    case GlobalValue::PrivateLinkage:       linkTy = "private";			break;
-    case GlobalValue::LinkerPrivateLinkage: linkTy = "linker_private";	break;
+    case GlobalValue::ExternalLinkage:      linkTy = "external";        break;
+    case GlobalValue::PrivateLinkage:       linkTy = "private";         break;
+    case GlobalValue::LinkerPrivateLinkage: linkTy = "linker_private";  break;
     case GlobalValue::LinkerPrivateWeakLinkage:
         linkTy = "linker_private_weak";
         break;
-    case GlobalValue::InternalLinkage:      linkTy = "internal";		break;
-    case GlobalValue::LinkOnceAnyLinkage:   linkTy = "linkonce";       	break;
-    case GlobalValue::LinkOnceODRLinkage:   linkTy = "linkonce_odr";   	break;
-    case GlobalValue::WeakAnyLinkage:		linkTy = "weak";			break;
-    case GlobalValue::WeakODRLinkage:		linkTy = "weak_odr";		break;
-    case GlobalValue::CommonLinkage:    	linkTy = "common";      	break;
-    case GlobalValue::AppendingLinkage: 	linkTy = "appending";   	break;
-    case GlobalValue::ExternalWeakLinkage:  linkTy = "extern_weak"; 	break;
+    case GlobalValue::InternalLinkage:      linkTy = "internal";        break;
+    case GlobalValue::LinkOnceAnyLinkage:   linkTy = "linkonce";        break;
+    case GlobalValue::LinkOnceODRLinkage:   linkTy = "linkonce_odr";    break;
+    case GlobalValue::WeakAnyLinkage:       linkTy = "weak";            break;
+    case GlobalValue::WeakODRLinkage:       linkTy = "weak_odr";        break;
+    case GlobalValue::CommonLinkage:        linkTy = "common";          break;
+    case GlobalValue::AppendingLinkage:     linkTy = "appending";       break;
+    case GlobalValue::ExternalWeakLinkage:  linkTy = "extern_weak";     break;
     case GlobalValue::AvailableExternallyLinkage:
         linkTy = "available_externally";
         break;
-    default: linkTy = "";	break;
+    default: linkTy = "";   break;
     }
     return linkTy;
 }
@@ -455,10 +455,10 @@ const char* CsvGenerator::writeVisibility(GlobalValue::VisibilityTypes Vis) {
 
     const char *visibility;
     switch (Vis) {
-    case GlobalValue::DefaultVisibility: 	visibility = "default";	    break;
-    case GlobalValue::HiddenVisibility:    	visibility = "hidden"; 		break;
-    case GlobalValue::ProtectedVisibility: 	visibility = "protected"; 	break;
-    default: visibility = "";	break;
+    case GlobalValue::DefaultVisibility:    visibility = "default";     break;
+    case GlobalValue::HiddenVisibility:     visibility = "hidden";      break;
+    case GlobalValue::ProtectedVisibility:  visibility = "protected";   break;
+    default: visibility = "";   break;
     }
     return visibility;
 }

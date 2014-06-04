@@ -61,7 +61,7 @@ void InstructionVisitor::logBinaryOperator(BinaryOperator &BI, const char * pred
 
     writeOptimizationInfoToFile(&BI, instrNum);
     csvGen->writeEntityToCsv(predName, instrNum);
-    
+
     //Left Operand
     logOperand(BI.getOperand(0), predNameLeftOp);
 
@@ -193,7 +193,7 @@ void InstructionVisitor::visitSwitchInst(const SwitchInst &SI) {
 
     //'defaultdest' label
     logSimpleValue(SI.getOperand(1), switchInsnDefLabel);
-    
+
     //'case list' [constant, label]
     int index = 0;
     for(SwitchInst::ConstCaseIt Case = SI.case_begin(), CasesEnd = SI.case_end(); Case != CasesEnd; Case++){
@@ -694,33 +694,33 @@ const char* InstructionVisitor::writePredicate(unsigned predicate) {
     const char *pred;
 
     switch (predicate) {
-    case FCmpInst::FCMP_FALSE: pred = "false"; 	break;
-    case FCmpInst::FCMP_OEQ:   pred = "oeq"; 	break;
-    case FCmpInst::FCMP_OGT:   pred = "ogt";	break;
-    case FCmpInst::FCMP_OGE:   pred = "oge"; 	break;
-    case FCmpInst::FCMP_OLT:   pred = "olt"; 	break;
-    case FCmpInst::FCMP_OLE:   pred = "ole"; 	break;
-    case FCmpInst::FCMP_ONE:   pred = "one"; 	break;
-    case FCmpInst::FCMP_ORD:   pred = "ord"; 	break;
-    case FCmpInst::FCMP_UNO:   pred = "uno"; 	break;
-    case FCmpInst::FCMP_UEQ:   pred = "ueq"; 	break;
-    case FCmpInst::FCMP_UGT:   pred = "ugt"; 	break;
-    case FCmpInst::FCMP_UGE:   pred = "uge"; 	break;
-    case FCmpInst::FCMP_ULT:   pred = "ult"; 	break;
-    case FCmpInst::FCMP_ULE:   pred = "ule"; 	break;
-    case FCmpInst::FCMP_UNE:   pred = "une"; 	break;
-    case FCmpInst::FCMP_TRUE:  pred = "true"; 	break;
+    case FCmpInst::FCMP_FALSE: pred = "false";  break;
+    case FCmpInst::FCMP_OEQ:   pred = "oeq";    break;
+    case FCmpInst::FCMP_OGT:   pred = "ogt";    break;
+    case FCmpInst::FCMP_OGE:   pred = "oge";    break;
+    case FCmpInst::FCMP_OLT:   pred = "olt";    break;
+    case FCmpInst::FCMP_OLE:   pred = "ole";    break;
+    case FCmpInst::FCMP_ONE:   pred = "one";    break;
+    case FCmpInst::FCMP_ORD:   pred = "ord";    break;
+    case FCmpInst::FCMP_UNO:   pred = "uno";    break;
+    case FCmpInst::FCMP_UEQ:   pred = "ueq";    break;
+    case FCmpInst::FCMP_UGT:   pred = "ugt";    break;
+    case FCmpInst::FCMP_UGE:   pred = "uge";    break;
+    case FCmpInst::FCMP_ULT:   pred = "ult";    break;
+    case FCmpInst::FCMP_ULE:   pred = "ule";    break;
+    case FCmpInst::FCMP_UNE:   pred = "une";    break;
+    case FCmpInst::FCMP_TRUE:  pred = "true";   break;
 
-    case ICmpInst::ICMP_EQ:    pred = "eq";  	break;
-    case ICmpInst::ICMP_NE:    pred = "ne"; 	break;
-    case ICmpInst::ICMP_SGT:   pred = "sgt"; 	break;
-    case ICmpInst::ICMP_SGE:   pred = "sge"; 	break;
-    case ICmpInst::ICMP_SLT:   pred = "slt"; 	break;
-    case ICmpInst::ICMP_SLE:   pred = "sle"; 	break;
-    case ICmpInst::ICMP_UGT:   pred = "ugt"; 	break;
-    case ICmpInst::ICMP_UGE:   pred = "uge"; 	break;
-    case ICmpInst::ICMP_ULT:   pred = "ult"; 	break;
-    case ICmpInst::ICMP_ULE:   pred = "ule"; 	break;
+    case ICmpInst::ICMP_EQ:    pred = "eq";     break;
+    case ICmpInst::ICMP_NE:    pred = "ne";     break;
+    case ICmpInst::ICMP_SGT:   pred = "sgt";    break;
+    case ICmpInst::ICMP_SGE:   pred = "sge";    break;
+    case ICmpInst::ICMP_SLT:   pred = "slt";    break;
+    case ICmpInst::ICMP_SLE:   pred = "sle";    break;
+    case ICmpInst::ICMP_UGT:   pred = "ugt";    break;
+    case ICmpInst::ICMP_UGE:   pred = "uge";    break;
+    case ICmpInst::ICMP_ULT:   pred = "ult";    break;
+    case ICmpInst::ICMP_ULE:   pred = "ule";    break;
     default: pred = ""; break;
     }
     return pred;
@@ -764,44 +764,44 @@ void InstructionVisitor::writeOptimizationInfoToFile(const User *u, string instr
 
 const char* InstructionVisitor::writeAtomicInfo(string instrId, AtomicOrdering order, SynchronizationScope synchScope) {
 
-	const char *atomic;
+    const char *atomic;
 
-	switch (order) {
-	case Unordered: atomic = "unordered"; 			 break;
-	case Monotonic: atomic = "monotonic"; 			 break;
-	case Acquire: atomic = "acquire"; 				 break;
-	case Release: atomic = "release"; 				 break;
-	case AcquireRelease: atomic = "acq_rel"; 		 break;
-	case SequentiallyConsistent: atomic = "seq_cst"; break;
+    switch (order) {
+    case Unordered: atomic = "unordered";            break;
+    case Monotonic: atomic = "monotonic";            break;
+    case Acquire: atomic = "acquire";                break;
+    case Release: atomic = "release";                break;
+    case AcquireRelease: atomic = "acq_rel";         break;
+    case SequentiallyConsistent: atomic = "seq_cst"; break;
         //TODO: NotAtomic?
-	default: atomic = ""; break;
-	}
-	//default synchScope: crossthread
-	if(synchScope == SingleThread) {
+    default: atomic = ""; break;
+    }
+    //default synchScope: crossthread
+    if(synchScope == SingleThread) {
         csvGen->writePredicateToCsv(insnFlag, instrId, "singlethread");
-	}
-	return atomic;
+    }
+    return atomic;
 }
 
 void InstructionVisitor::writeAtomicRMWOp(string instrId, AtomicRMWInst::BinOp op) {
 
-	const char *oper;
+    const char *oper;
 
-	switch (op) {
-	case AtomicRMWInst::Xchg: oper = "xchg";	break;
-	case AtomicRMWInst::Add:  oper = "add"; 	break;
-	case AtomicRMWInst::Sub:  oper = "sub"; 	break;
-	case AtomicRMWInst::And:  oper = "and"; 	break;
-	case AtomicRMWInst::Nand: oper = "nand"; 	break;
-	case AtomicRMWInst::Or:   oper = "or"; 		break;
-	case AtomicRMWInst::Xor:  oper = "xor"; 	break;
-	case AtomicRMWInst::Max:  oper = "max"; 	break;
-	case AtomicRMWInst::Min:  oper = "min"; 	break;
-	case AtomicRMWInst::UMax: oper = "umax"; 	break;
-	case AtomicRMWInst::UMin: oper = "umin"; 	break;
-	default: oper = ""; break;
-	}
-	if(strlen(oper)) {
+    switch (op) {
+    case AtomicRMWInst::Xchg: oper = "xchg";    break;
+    case AtomicRMWInst::Add:  oper = "add";     break;
+    case AtomicRMWInst::Sub:  oper = "sub";     break;
+    case AtomicRMWInst::And:  oper = "and";     break;
+    case AtomicRMWInst::Nand: oper = "nand";    break;
+    case AtomicRMWInst::Or:   oper = "or";      break;
+    case AtomicRMWInst::Xor:  oper = "xor";     break;
+    case AtomicRMWInst::Max:  oper = "max";     break;
+    case AtomicRMWInst::Min:  oper = "min";     break;
+    case AtomicRMWInst::UMax: oper = "umax";    break;
+    case AtomicRMWInst::UMin: oper = "umin";    break;
+    default: oper = ""; break;
+    }
+    if(strlen(oper)) {
         csvGen->writePredicateToCsv(atomicRMWInsnOper, instrId, oper);
-	}
+    }
 }

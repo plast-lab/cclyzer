@@ -104,8 +104,8 @@ private:
 
     std::string predNameWithOperandToFilename(const char * predName, bool operand) {
         //TODO: yikes make a typedef
-        boost::unordered_map<const char*, 
-                             std::pair<std::string, std::string> >::iterator 
+        boost::unordered_map<const char*,
+                             std::pair<std::string, std::string> >::iterator
             cachedValue = operandPredFilenames.find(predName);
 
         if(cachedValue != operandPredFilenames.end()){
@@ -122,7 +122,7 @@ private:
         }
         // imm: operand = 0, var: operand = 1
         filename = DirInfo::getInstance()->getFactsDir() + "/" + filename;
-        
+
         std::string varVersion = filename + "-var.dlm", immVersion = filename + "-imm.dlm";
         operandPredFilenames[predName] = std::pair<std::string, std::string>(varVersion, immVersion);
         if(operand)
@@ -145,7 +145,7 @@ private:
     boost::unordered_map<std::string, boost::filesystem::ofstream*> csvFiles;
     boost::unordered_map<const char*, std::string> simplePredFilenames;
     boost::unordered_map<const char*, std::pair<std::string, std::string> > operandPredFilenames;
-    
+
     static char delim;
     static CsvGenerator * INSTANCE;
     static const int simplePredicatesNum;

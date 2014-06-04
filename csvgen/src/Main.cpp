@@ -40,49 +40,49 @@ variables_map optionVals;
 
 bool isDir(const char *path) {
 
-	bool dir = false;
-	struct stat buf;
+    bool dir = false;
+    struct stat buf;
 
-	if(stat(path, &buf) == -1)
-	{
-		perror("stat()");
-		exit(1);
-	}
-	if((buf.st_mode & S_IFMT ) == S_IFDIR) {
-		dir = true;
-	}
-	else if((buf.st_mode & S_IFMT ) == S_IFREG) {
-		dir = false;
-	}
-	else {
-		errs() << path << ":Unknown File Format\n";
-		exit(1);
-	}
-	return dir;
+    if(stat(path, &buf) == -1)
+    {
+        perror("stat()");
+        exit(1);
+    }
+    if((buf.st_mode & S_IFMT ) == S_IFDIR) {
+        dir = true;
+    }
+    else if((buf.st_mode & S_IFMT ) == S_IFREG) {
+        dir = false;
+    }
+    else {
+        errs() << path << ":Unknown File Format\n";
+        exit(1);
+    }
+    return dir;
 }
 
 void getIRFilesfromDir(const char * dirName, vector<string> &files) {
     //TODO: use boost
-	DIR *dir;
-  	struct dirent *entry;
-	string path;
+    DIR *dir;
+    struct dirent *entry;
+    string path;
 
-	if((dir = opendir(dirName)) == NULL) {
-		perror ("opendir()");
-		exit(1);
-	}
-	while((entry = readdir(dir)) != NULL) {
-		if(strcmp(entry->d_name, ".") && strcmp(entry->d_name, "..")) {
-			path = string(dirName) + "/" + string(entry->d_name);
-			if(isDir(path.c_str())) {
-				getIRFilesfromDir(path.c_str(), files);
-			}
-			else {
-				files.push_back(path.c_str());
-			}
-		}
-	}
-	closedir(dir);
+    if((dir = opendir(dirName)) == NULL) {
+        perror ("opendir()");
+        exit(1);
+    }
+    while((entry = readdir(dir)) != NULL) {
+        if(strcmp(entry->d_name, ".") && strcmp(entry->d_name, "..")) {
+            path = string(dirName) + "/" + string(entry->d_name);
+            if(isDir(path.c_str())) {
+                getIRFilesfromDir(path.c_str(), files);
+            }
+            else {
+                files.push_back(path.c_str());
+            }
+        }
+    }
+    closedir(dir);
 }
 
 void registerOptions(){
@@ -133,7 +133,7 @@ int main(int argc, char *argv[]) {
 
     registerOptions();
 
-    parseOptions(argc, argv);    
+    parseOptions(argc, argv);
 
     vector<string> IRFiles;
 
@@ -152,7 +152,7 @@ int main(int argc, char *argv[]) {
         string realPath = string(realpath(IRFiles[i].c_str(), NULL));
 
         csvGen->processModule(Mod, realPath);
-        
+
         delete Mod;
     }
 
@@ -160,4 +160,3 @@ int main(int argc, char *argv[]) {
     csvGen->destroy();
     exit(EXIT_SUCCESS);
 }
-
