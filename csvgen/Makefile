@@ -1,9 +1,13 @@
+# Directory depth
 LEVEL := ..
 
+# Placeholder
 all:
 
+# Import common Makefile routines
 include $(LEVEL)/common.mk
 
+# Generate build directory
 $(eval $(call create-destdir,csvgen))
 
 
@@ -12,7 +16,7 @@ outdir       := $(csvgen.outdir)
 sources      := $(wildcard $(srcdir)/*.cpp)
 objects      := $(patsubst $(srcdir)/%.cpp,$(outdir)/%.o,$(sources))
 dependencies := $(patsubst $(srcdir)/%.cpp,$(outdir)/%.d,$(sources))
-program      := $(outdir)/$(FACTGEN)
+program      := $(outdir)/$(factgen.exe)
 include_dirs := include
 
 
@@ -62,6 +66,9 @@ clean:
 check-syntax:
 	$(COMPILE.cpp) -Wall -Wextra -pedantic -fsyntax-only $(sources)
 
+.PHONY: install
+install: $(program)
+	$(INSTALL) -m 0755 $< $(INSTALLDIR_BIN)
 
 #-----------------------------------
 # Automatic Dependency Generation
@@ -77,4 +84,4 @@ $(outdir)/%.d: %.cpp | $(outdir)
 	$(QUIET) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -M $< |  \
 	$(SED) 's,\($*.o\) *:,$(@D)/\1 $@: ,' > $@.tmp
 	$(QUIET) $(MV) $@.tmp $@
-	$(QUIET) echo "Created dependency file: $@"
+	$(info Created dependency file: $@)

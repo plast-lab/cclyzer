@@ -1,10 +1,14 @@
+# Directory depth
 LEVEL := ..
 
+# Placeholder
 all:
 
+# Import common Makefile routines
 include $(LEVEL)/common.mk
 include blox.mk
 
+# Generate build directory
 $(eval $(call create-destdir,logic))
 
 logic.bin  := bin
@@ -15,10 +19,18 @@ logic.ph   := $(logic.outdir)/.placeholder
 logic.tmpl := run.template
 
 
+#-----------------------------------
+# Basic Rules
+#-----------------------------------
+
 $(logic.ph): $(logic.proj) $(logic.src) | $(logic.outdir)
 	$(call compile-datalog-project, $<,$(@D))
 	$(QUIET) touch $@
 
+
+#-----------------------------------
+# Phony targets
+#-----------------------------------
 
 .PHONY: all
 all: $(logic.ph)
