@@ -1,7 +1,7 @@
 # LogicBlox Tools
 
 define compile-datalog-project
-  bloxcompiler -compileProject $1 -outDir $2
+  bloxcompiler compileProject -outDir $2 $1
 endef
 
 define deploy-datalog-project
