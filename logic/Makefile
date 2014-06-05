@@ -19,6 +19,14 @@ logic.ph   := $(logic.outdir)/.placeholder
 logic.tmpl := run.template
 
 
+$(eval $(call create-destdir,lookup-logic))
+
+lookup.dir  := method-lookup
+lookup.proj := $(lookup.dir)/lookup.project
+lookup.src  := $(wildcard $(lookup.dir)/*.logic)
+lookup.ph   := $(lookup-logic.outdir)/.placeholder
+
+
 #-----------------------------------
 # Basic Rules
 #-----------------------------------
@@ -27,13 +35,20 @@ $(logic.ph): $(logic.proj) $(logic.src) | $(logic.outdir)
 	$(call compile-datalog-project, $<,$(@D))
 	$(QUIET) touch $@
 
+export LB_LIBRARY_PATH := $(logic.outdir)
+$(lookup.ph): $(lookup.proj) $(lookup.src) | $(lookup-logic.outdir)
+	$(info $(LB_LIBRARY_PATH))
+	$(call compile-datalog-project, $<,$(@D))
+	$(QUIET) touch $@
+
+$(lookup.ph): $(logic.ph)
 
 #-----------------------------------
 # Phony targets
 #-----------------------------------
 
 .PHONY: all
-all: $(logic.ph)
+all: $(logic.ph) $(lookup.ph)
 
 .PHONY: clean
 clean:

@@ -1,4 +1,4 @@
-llvm, projectname
+llvm:schema, projectname
 
 schema/flag.logic, active
 schema/attribute.logic, active

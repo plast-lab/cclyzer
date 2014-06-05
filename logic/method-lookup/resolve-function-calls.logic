@@ -1,0 +1,16 @@
+//----------------------------------------------------------------------
+// Each function declaration should be mapped to exactly one function
+// definition.
+//----------------------------------------------------------------------
+
+function:definition[Decl] = Def ->
+   function_decl(Decl), function(Def).
+
+
+//----------------------------------------------------------------------
+// Reflexivity: Each function declaration, which also happens to be a
+// definition, maps to itself.
+//----------------------------------------------------------------------
+
+function:definition[Func] = Func <-
+   function(Func).
