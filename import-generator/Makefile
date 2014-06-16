@@ -35,7 +35,7 @@ vpath %.h  $(include_dirs)
 #-----------------------------------
 
 protodir    := $(LOGICBLOX_HOME)/lib/protobuf
-proto.proto := $(addprefix $(protodir)/,blox/common/Common.proto)
+proto.proto := $(addprefix $(protodir)/,blox/common/Common.proto blox/compiler/BloxCompiler.proto)
 proto.cc    := $(proto.proto:$(protodir)/%.proto=$(srcdir)/%.pb.cc)
 
 vpath %.proto $(protodir)
