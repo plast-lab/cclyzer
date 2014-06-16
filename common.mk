@@ -10,9 +10,11 @@ RM          := rm -f
 MV          := mv
 M4          := m4
 CXX         := g++
+PROTOC      := /usr/bin/protoc
 
 # Other tools
-factgen.exe := csv-generation
+factgen.exe   := csv-generation
+importgen.exe := import-generator
 
 
 #--------------------
