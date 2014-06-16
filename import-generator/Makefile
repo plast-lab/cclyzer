@@ -84,7 +84,7 @@ clean:
 
 .PHONY: check-syntax
 check-syntax:
-	$(COMPILE.cc) -Wall -Wextra -pedantic -fsyntax-only $(sources)
+	$(COMPILE.cc) -Wall -Wextra -std=c++0x -pedantic -fsyntax-only $(sources)
 
 .PHONY: install
 install: $(program)
