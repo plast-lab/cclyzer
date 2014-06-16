@@ -44,9 +44,7 @@ $(proto.cc): $(srcdir)/%.pb.cc: %.proto
 	$(info Generating protobuf classes from $<)
 	$(PROTOC) --proto_path=$(protodir) --cpp_out=$(srcdir) $<
 	$(QUIET) $(MKDIR) $(dir include/$*.pb.h)
-	$(QUIET) $(MKDIR) $(dir $(outdir)/$*.pb.o)
 	$(QUIET) $(MV) $(srcdir)/$*.pb.h include/$*.pb.h
-
 
 # Phony targets to create auto-generated files
 .PHONY: proto
@@ -66,6 +64,7 @@ sources += $(proto.cc)
 #-----------------------------------
 
 $(outdir)/%.o: %.cc | $(outdir)
+	$(QUIET) $(MKDIR) $(@D)
 	$(COMPILE.cc) -o $@ $<
 
 $(program): $(objects)
