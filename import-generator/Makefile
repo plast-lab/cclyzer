@@ -41,15 +41,23 @@ proto.cc    := $(proto.proto:$(protodir)/%.proto=$(srcdir)/%.pb.cc)
 vpath %.proto $(protodir)
 
 $(proto.cc): $(srcdir)/%.pb.cc: %.proto
+	$(info Generating protobuf classes from $<)
 	$(PROTOC) --proto_path=$(protodir) --cpp_out=$(srcdir) $<
-	$(MKDIR) $(dir include/$*.pb.h)
-	$(MKDIR) $(dir $(outdir)/$*.pb.o)
-	$(MV) $(srcdir)/$*.pb.h include/$*.pb.h
+	$(QUIET) $(MKDIR) $(dir include/$*.pb.h)
+	$(QUIET) $(MKDIR) $(dir $(outdir)/$*.pb.o)
+	$(QUIET) $(MV) $(srcdir)/$*.pb.h include/$*.pb.h
 
+
+# Phony targets to create auto-generated files
 .PHONY: proto
 proto: $(proto.cc)
 
-# Add auto-generated files
+# Phony targets to clear auto-generated files
+.PHONY: clean-proto
+clean-proto:
+	$(RM) $(proto.cc) $(proto.cc:$(srcdir)/%.pb.cc=include/%.pb.h)
+
+# Add auto-generated files to sources
 sources += $(proto.cc)
 
 
