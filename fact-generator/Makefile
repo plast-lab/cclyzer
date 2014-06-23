@@ -8,11 +8,11 @@ all:
 include $(LEVEL)/common.mk
 
 # Generate build directory
-$(eval $(call create-destdir,csvgen))
+$(eval $(call create-destdir,factgen))
 
 
 srcdir       := src
-outdir       := $(csvgen.outdir)
+outdir       := $(factgen.outdir)
 sources      := $(wildcard $(srcdir)/*.cpp)
 objects      := $(patsubst $(srcdir)/%.cpp,$(outdir)/%.o,$(sources))
 dependencies := $(patsubst $(srcdir)/%.cpp,$(outdir)/%.d,$(sources))

@@ -3,8 +3,9 @@ LEVEL := .
 all:
 
 module.logic    := logic
-module.csv      := csvgen
-modules         := $(module.logic) $(module.csv)
+module.facts    := fact-generator
+module.imports  := import-generator
+modules         := $(module.logic) $(module.facts) $(module.imports)
 targets.clean   := $(addsuffix .clean,$(modules))
 targets.install := $(addsuffix .install,$(modules))
 

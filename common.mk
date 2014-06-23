@@ -13,7 +13,7 @@ CXX         := g++
 PROTOC      := /usr/bin/protoc
 
 # Other tools
-factgen.exe   := csv-generation
+factgen.exe   := fact-generator
 importgen.exe := import-generator
 
 

@@ -8,11 +8,11 @@ all:
 include $(LEVEL)/common.mk
 
 # Generate build directory
-$(eval $(call create-destdir,import-generator))
+$(eval $(call create-destdir,importgen))
 
 
 srcdir       := src
-outdir       := $(import-generator.outdir)
+outdir       := $(importgen.outdir)
 sources      := $(wildcard $(srcdir)/*.cc)
 objects       = $(patsubst $(srcdir)/%.cc,$(outdir)/%.o,$(sources))
 dependencies := $(patsubst $(srcdir)/%.cc,$(outdir)/%.d,$(sources))
