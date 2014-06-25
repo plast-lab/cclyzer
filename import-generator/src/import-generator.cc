@@ -62,9 +62,10 @@ int main(int argc, char* argv[])
             return EXIT_FAILURE;
     }
 
+    string entitiesDir = dir + "entities/", predicatesDir = dir + "predicates/";
+
     for(map<const string, Predicate*>::iterator it = allPredicates.begin(), end = allPredicates.end(); it != end; ++it)
     {
-        string entitiesDir = dir + "entities/", predicatesDir = dir + "entities/";
         Predicate *p = it->second;
 
         switch(p->getPredicateType())
