@@ -1,54 +1,88 @@
+#include <string>
 #include <cstdlib>
 #include <iostream>
-#include <fcntl.h>
 #include <fstream>
-#include <google/protobuf/text_format.h>
-#include <google/protobuf/io/zero_copy_stream_impl.h>
+#include <cstring>
 
-#include "blox/common/Common.pb.h"
-#include "blox/compiler/BloxCompiler.pb.h"
-
+#include "parse-protobuf.h"
 
 using namespace std;
-namespace common = blox::common::protocol;
-namespace compiler = blox::compiler::protocol;
 
-// Main function:  Reads the entire address book from a file and prints all
-//   the information inside.
+void usage()
+{
+    cerr << "usage: import-generator --dir [dirname] --delim [delim] [protobufmessage,...]" << endl;
+}
+
 int main(int argc, char* argv[])
 {
     // Verify that the version of the library that we linked against is
     // compatible with the version of the headers we compiled against.
     GOOGLE_PROTOBUF_VERIFY_VERSION;
 
-    if (argc != 2)
+    vector<const Constructor*> constructors;
+    map<const string, Predicate*> allPredicates;
+
+    string dir, delim;
+
+    if(argc <= 5)
     {
-        cerr << "Usage:  " << argv[0] << " LBB_FILE" << endl;
-        return -1;
+        usage();
+        return EXIT_FAILURE;
     }
 
-    compiler::CompilationUnitSummary compUnit;
-
+    if(strcmp(argv[1], "--dir"))
     {
-        int fileDescriptor = open(argv[1], O_RDONLY);
+        usage();
+        return EXIT_FAILURE;
+    }
+    else
+    {
+        dir = argv[2];
 
-        if (fileDescriptor < 0)
+        if(dir[dir.length() - 1] != '/')
+            dir.append(1, '/');
+    }
+
+    if(strcmp(argv[3], "--delim"))
+    {
+        usage();
+        return EXIT_FAILURE;
+    }
+    else
+    {
+        delim = argv[4];
+    }
+
+    ofstream entitiesImports("import-entities.logic"),
+             predicatesImports("import-predicates.logic");
+
+    for(int i = 5; i < argc; ++i)
+    {
+        if(parse(argv[i], constructors, allPredicates) == FAILURE)
+            return EXIT_FAILURE;
+    }
+
+    for(map<const string, Predicate*>::iterator it = allPredicates.begin(), end = allPredicates.end(); it != end; ++it)
+    {
+        string entitiesDir = dir + "entities/", predicatesDir = dir + "entities/";
+        Predicate *p = it->second;
+
+        switch(p->getPredicateType())
         {
-            std::cerr << " Error opening the file " << std::endl;
-            return false;
-        }
-
-        google::protobuf::io::FileInputStream fileInput(fileDescriptor);
-        fileInput.SetCloseOnDelete(true);
-
-        if (!google::protobuf::TextFormat::Parse(&fileInput, &compUnit))
-        {
-            cerr << std::endl << "Failed to parse file!" << endl;
-            return -1;
+        case Predicate::REFMODE_ENTITY:
+            entitiesImports << p->getFilePredicates(entitiesDir, delim) << "\n\n";
+            break;
+        case Predicate::REFMODELESS_ENTITY:
+            //we don't want to generate file predicates for refmodeless entities
+            continue;
+        case Predicate::SIMPLE_PREDICATE:
+        case Predicate::FUNCTIONAL_PREDICATE:
+            predicatesImports << p->getFilePredicates(predicatesDir, delim) << "\n\n";
+            break;
         }
     }
 
-    // Optional:  Delete all global objects allocated by libprotobuf.
+    //Delete all global objects allocated by libprotobuf.
     google::protobuf::ShutdownProtobufLibrary();
 
     return EXIT_SUCCESS;
