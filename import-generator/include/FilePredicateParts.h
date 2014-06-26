@@ -106,7 +106,7 @@ public:
         if(head.tellp() > 0)
             head << COMMA << NEW_LINE;
         head << "+" << refmodeName
-             << L_PAR << getSimpleVar(varIdx) << ":" << getEntityVar(entityIdx) << R_PAR << COMMA
+             << L_PAR << getEntityVar(entityIdx) << ":" << getSimpleVar(varIdx) << R_PAR << COMMA
              << NEW_LINE << "+" << qualName << L_PAR << getEntityVar(entityIdx) << R_PAR;
     }
 
@@ -114,7 +114,7 @@ public:
                           unsigned varIdx, unsigned entityIdx)
     {
         body << COMMA << NEW_LINE
-             << TAB << refmodeName << L_PAR << getSimpleVar(varIdx) << ":" << getEntityVar(entityIdx) << R_PAR
+             << TAB << refmodeName << L_PAR << getEntityVar(entityIdx) << ":" << getSimpleVar(varIdx) << R_PAR
              << COMMA << NEW_LINE
              << TAB << qualName << L_PAR << getEntityVar(entityIdx) << R_PAR;
     }
