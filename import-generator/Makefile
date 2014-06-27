@@ -96,9 +96,15 @@ install: $(program)
 #-----------------------------------
 
 ifneq "$(MAKECMDGOALS)" "clean"
-  ifneq "$(MAKECMDGOALS)" "check-syntax"
-    -include $(dependencies)
+
+  ifeq ($(LOGICBLOX_HOME),)		# error checking
+    $(error LOGICBLOX_HOME variable is not set)
   endif
+
+  ifneq "$(MAKECMDGOALS)" "check-syntax"
+    -include $(dependencies)	# inject dependencies
+  endif
+
 endif
 
 $(outdir)/%.d: %.cc | $(outdir)
