@@ -38,7 +38,7 @@ INSTALL_LIB  = $(DESTDIR)/lib
 #---------------------------------------------------
 
 define create-destdir
-$1.outdir = $(OUTDIR)/$1
+$1.outdir = $(OUTDIR)/$(notdir $(CURDIR))
 
 $$($1.outdir): | $(OUTDIR)
 	$(MKDIR) $$@
