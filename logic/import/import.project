@@ -1,0 +1,8 @@
+llvm:import, projectname
+llvm:schema, library
+
+auxiliary.logic, active
+operand-specific.logic, inactive
+
+import-entities.logic, inactive
+import-predicates.logic, inactive
