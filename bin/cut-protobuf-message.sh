@@ -1,9 +1,9 @@
 #!/bin/bash
 
 inFile=`basename $1`
-cropPattern="${inFile%*.pb}"
+cropPattern="${inFile%.*}"
 
-compUnitEnd=`grep -n "^name: \\"schema:$cropPattern\\"$" "$1" | cut -d : -f 1`
+compUnitEnd=`grep -n "^name: \\"$cropPattern\\"$" "$1" | cut -d : -f 1`
 
 compUnitEnd=$(($compUnitEnd - 2))
 
