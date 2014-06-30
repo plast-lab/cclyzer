@@ -8,168 +8,126 @@ all:
 include $(LEVEL)/common.mk
 include blox.mk
 
-# Generate build directory
+# Generate build directory for logic
 $(eval $(call create-destdir,logic))
 
-logic.bin  := bin
-logic.proj := llvm.project
-logic.src  := $(wildcard schema/*.logic)
-logic.src  += $(wildcard import/*.logic)
-logic.ph   := $(logic.outdir)/.placeholder
-logic.tmpl := run.template
 
+#------------------------------
+#  Schema Project Creation
+#------------------------------
 
-$(eval $(call create-destdir,lookup-logic))
+schema.proj   := schema/schema.project
+schema.src    := $(wildcard schema/*.logic)
+schema.outdir := $(logic.outdir)/schema
+schema.ph     := $(schema.outdir)/.placeholder
 
-lookup.dir  := method-lookup
-lookup.proj := $(lookup.dir)/lookup.project
-lookup.src  := $(wildcard $(lookup.dir)/*.logic)
-lookup.ph   := $(lookup-logic.outdir)/.placeholder
+$(schema.outdir): | $(logic.outdir)
+	$(MKDIR) $@
 
-
-#-----------------------------------
-# Basic Rules
-#-----------------------------------
-
-$(logic.ph): $(logic.proj) $(logic.src) | $(logic.outdir)
+$(schema.ph): $(schema.proj) $(schema.src) | $(schema.outdir)
 	$(call compile-datalog-project, $<,$(@D))
 	$(QUIET) touch $@
 
-export LB_LIBRARY_PATH := $(logic.outdir)
-$(lookup.ph): $(lookup.proj) $(lookup.src) | $(lookup-logic.outdir)
+.PHONY: schema
+schema: $(schema.ph)
+
+.PHONY: schema.clean
+schema.clean:
+	$(RM) -r $(schema.outdir)
+
+
+#-------------------------------------
+#  Method-Lookup Project Creation
+#-------------------------------------
+
+lookup.proj   := method-lookup/lookup.project
+lookup.src    := $(wildcard method-lookup/*.logic)
+lookup.outdir := $(logic.outdir)/method-lookup
+lookup.ph     := $(lookup.outdir)/.placeholder
+
+$(lookup.outdir): | $(logic.outdir)
+	$(MKDIR) $@
+
+export LB_LIBRARY_PATH := $(schema.outdir)
+$(lookup.ph): $(lookup.proj) $(lookup.src) | $(lookup.outdir)
 	$(info $(LB_LIBRARY_PATH))
 	$(call compile-datalog-project, $<,$(@D))
 	$(QUIET) touch $@
 
-$(lookup.ph): $(logic.ph)
+$(lookup.ph): $(schema.ph)
+
+.PHONY: lookup
+lookup: $(lookup.ph)
+
+.PHONY: lookup.clean
+lookup.clean:
+	$(RM) -r $(lookup.outdir)
+
+
+#------------------------------
+#  Import Project Creation
+#------------------------------
+
+import.proj   := import/import.project
+import.src    := $(addprefix import/,import-entities.logic import-predicates.logic)
+import.outdir := $(logic.outdir)/import
+import.ph     := $(import.outdir)/.placeholder
+
+$(import.outdir): | $(logic.outdir)
+	$(MKDIR) $@
+
+
+# Generate protobuf messages for schema
+
+schema.pb  := $(schema.src:schema/%.logic=$(import.outdir)/%.pb)
+
+.INTERMEDIATE: $(schema.pb)
+
+export PATH := $(INSTALL_BIN):$(PATH)
+$(schema.pb): $(import.outdir)/%.pb: schema/%.logic | $(schema.ph)
+	$(call generate-protobuf-message,$(schema.outdir)/$*.lbb)
+
+
+# Generate import logic
+
+export PATH := $(INSTALL_BIN):$(PATH)
+$(import.src): $(schema.pb)
+	$(importgen.exe) --dir . --delim '\t' $^
+
+export LB_LIBRARY_PATH := $(schema.outdir)
+$(import.ph): $(import.proj) $(import.src) | $(import.outdir)
+	$(info $(LB_LIBRARY_PATH))
+	$(call compile-datalog-project, $<,$(@D))
+	$(QUIET) touch $@
+
+$(import.ph): $(schema.ph)
+
+.PHONY: import
+import: $(import.ph)
+
+.PHONY: import.clean
+import.clean:
+	$(RM) -r $(import.outdir)
+
+# TODO add generated source files to clean
+# TODO include non-generated logic files as source
 
 #-----------------------------------
 # Phony targets
 #-----------------------------------
 
 .PHONY: all
-all: $(logic.ph) $(lookup.ph)
+all: $(schema.ph) $(lookup.ph) $(import.ph)
 
 .PHONY: clean
-clean:
+clean: schema.clean lookup.clean import.clean
 	$(RM) -r $(logic.outdir)
 
 
-#=========================================
-# Generated import scripts/logic section
-#=========================================
-
-$(eval $(call create-destdir,import))
-
-import.csv   := $(shell find $(SAMPLEDIR)/ -type f -name '*.dlm')
-import.src   := import/operand-specific.logic
-entities     := $(import.outdir)/entities.import
-predicates   := $(import.outdir)/predicates.import
-
-# Utility Scripts
-import.mkscript := $(logic.bin)/generate-import-script.sh
-import.mklogic  := $(logic.bin)/generate-import-logic.sh
-
-
-$(logic.ph): $(import.src)
-
-
-#-----------------------------------------
-# Generate import logic (file predicates)
-#-----------------------------------------
-
-vpath .autopred import
-
-$(import.src): .autopred $(import.mklogic)
-	cat $< | $(import.mklogic) "$(abspath $(DATADIR))" > $@
-
-
-#-----------------------------------------
-# Generate .import scripts
-#-----------------------------------------
-
-vpath %.dlm $(SAMPLEDIR)
-vpath %.dlm $(SAMPLEDIR)/entities
-vpath %.dlm $(SAMPLEDIR)/predicates
-
-$(import.outdir)/%.import.part: %.dlm $(import.mkscript) | $(import.outdir)
-	$(QUIET) $(RM) $(DATADIR)
-	$(QUIET) ln -s $(abspath $(SAMPLEDIR)) $(DATADIR)
-	$(import.mkscript) $(abspath $(subst $(SAMPLEDIR),$(DATADIR),$<)) > $@
-
-
-#-----------------------------------------------
-# Collect all generated .import files into one
-#-----------------------------------------------
-
-entities_CSV     := $(filter $(SAMPLEDIR)/entities/%.dlm, $(import.csv))
-predicates_CSV   := $(filter $(SAMPLEDIR)/predicates/%.dlm, $(import.csv))
-
-## $(call csv-import-chunk, csv)
-define csv-import-chunk
-  $(patsubst %.dlm,$(import.outdir)/%.import.part, $(notdir $1))
-endef
-
-entities_CHUNK   := $(call csv-import-chunk,$(entities_CSV))
-predicates_CHUNK := $(call csv-import-chunk,$(predicates_CSV))
-
-.SECONDEXPANSION:
-$(entities) $(predicates): $(import.outdir)/%.import: $$($$*_CHUNK)
-	$(QUIET) echo "option,delimiter,\"	\"" > $@
-	$(QUIET) echo "option,hasColumnNames,false" >> $@
-	$(QUIET) cat $^ >> $@
-
-# Uncomment this line to remove .import.part automatically
-# .INTERMEDIATE: $(entities_CHUNK) $(predicates_CHUNK)
-
-# Phony Targets
-
-.PHONY: entities
-entities: $(entities)
-
-.PHONY: predicates
-predicates: $(predicates)
-
-.PHONY: import
-import: entities predicates $(import.src)
-
-.PHONY: import.clean
-import.clean:
-	$(RM) $(import.src)
-	$(RM) -r $(import.outdir)
-
-all: import
-clean: import.clean
-
-
-
-#==================
-# Deployment Test
-#==================
-
-deploy.script := run.lb
-workspace     := $(OUTDIR)/db
-
-define process-script
-  $(M4) --define=ENTITIES=$(entities)     \
-        --define=PREDICATES=$(predicates) \
-        --define=SCHEMA=$(logic.outdir)   \
-        --define=WORKSPACE=$(workspace)   \
-        $(logic.tmpl) > $1
-endef
-
-.PHONY: deploy
-deploy: all $(deploy.script)
-	$(QUIET) $(RM) $(OUTDIR)/$(notdir $(DATADIR))
-	$(QUIET) ln -s $(abspath $(DATADIR)) $(OUTDIR)
-	$(call deploy-datalog-project,$(deploy.script))
-
-
-.INTERMEDIATE: $(deploy.script)
-$(deploy.script):
-	$(call process-script,$@)
-
-
-.PHONY: deploy.clean
-deploy.clean:
-	$(RM) -r $(workspace)/
+# define process-script
+#   $(M4) --define=ENTITIES=$(entities)     \
+#         --define=PREDICATES=$(predicates) \
+#         --define=SCHEMA=$(logic.outdir)   \
+#         --define=WORKSPACE=$(workspace)   \
+#         $(logic.tmpl) > $1
+# endef
