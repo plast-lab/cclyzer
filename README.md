@@ -50,6 +50,10 @@ You will also have to install the following packages:
 
     # yum install boost boost-devel ncurses ncurses-devel m4
 
+#### Ubuntu
+
+    # apt-get install m4 libncurses5-dev libboost-dev libboost-filesystem-dev libboost-program-options-dev libprotobuf-dev
+
 Installation
 ------------
 
