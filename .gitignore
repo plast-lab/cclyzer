@@ -1,6 +1,9 @@
 build/*
 data/*
+bin/*
 logic/import/operand-specific.logic
+logic/import/import-predicates.logic
+logic/import/import-entities.logic
 /import-generator/src/blox/common/Common.pb.cc
 /import-generator/include/blox/common/Common.pb.h
 /import-generator/src/blox/compiler/BloxCompiler.pb.cc
