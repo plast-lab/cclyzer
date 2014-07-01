@@ -38,7 +38,7 @@ namespace predicate_names{
     const char * FuncGc = "function:gc";
     const char * FuncName = "function:name";
     const char * FuncType = "function:type";
-    const char * FuncParam = "function:param_tmp";
+    const char * FuncParam = "function:param";
     const char * FuncRetAttr = "function:return_attribute";
     const char * FuncParamAttr = "function:param_attribute";
 
@@ -143,13 +143,13 @@ namespace predicate_names{
     const char * switchInsn = "switch_instruction";
     const char * switchInsnOp = "switch_instruction:operand";
     const char * switchInsnDefLabel = "switch_instruction:default_label";
-    const char * switchInsnCaseVal = "switch_instruction:case:value_tmp";
-    const char * switchInsnCaseLabel = "switch_instruction:case:label_tmp";
+    const char * switchInsnCaseVal = "switch_instruction:case:value";
+    const char * switchInsnCaseLabel = "switch_instruction:case:label";
     const char * switchInsnNCases = "switch_instruction:ncases";
 
     const char * indirectbrInsn = "indirectbr_instruction";
     const char * indirectbrInsnAddr = "indirectbr_instruction:address";
-    const char * indirectbrInsnLabel = "indirectbr_instruction:label_tmp";
+    const char * indirectbrInsnLabel = "indirectbr_instruction:label";
     const char * indirectbrInsnNLabels = "indirectbr_instruction:nlabels";
 
     const char * resumeInsn = "resume_instruction";
@@ -189,13 +189,13 @@ namespace predicate_names{
 
     const char * extractValueInsn = "extractvalue_instruction";
     const char * extractValueInsnBase = "extractvalue_instruction:base";
-    const char * extractValueInsnIndex = "extractvalue_instruction:index_tmp";
+    const char * extractValueInsnIndex = "extractvalue_instruction:index";
     const char * extractValueInsnNIndices = "extractvalue_instruction:nindices";
 
     const char * insertValueInsn = "insertvalue_instruction";
     const char * insertValueInsnBase = "insertvalue_instruction:base";
     const char * insertValueInsnValue = "insertvalue_instruction:value";
-    const char * insertValueInsnIndex = "insertvalue_instruction:index_tmp";
+    const char * insertValueInsnIndex = "insertvalue_instruction:index";
     const char * insertValueInsnNIndices = "insertvalue_instruction:nindices";
 
 // Memory Operations
@@ -302,7 +302,7 @@ namespace predicate_names{
     const char * phiInsn = "phi_instruction";
     const char * phiInsnType = "phi_instruction:type";
     const char * phiInsnPairValue = "phi_instruction:pair:value";
-    const char * phiInsnPairLabel = "phi_instruction:pair:label_tmp";
+    const char * phiInsnPairLabel = "phi_instruction:pair:label";
     const char * phiInsnNPairs = "phi_instruction:npairs";
 
     const char * selectInsn = "select_instruction";
@@ -340,7 +340,7 @@ namespace predicate_names{
     const char * funcType = "function_type";
     const char * funcTypeVarArgs = "function_type:varargs";
     const char * funcTypeReturn = "function_type:return";
-    const char * funcTypeParam = "function_type:param_tmp";
+    const char * funcTypeParam = "function_type:param";
     const char * funcTypeNParams = "function_type:nparams";
 
     const char * ptrType = "pointer_type";
@@ -356,7 +356,7 @@ namespace predicate_names{
     const char * arrayTypeSize = "array_type:size";
 
     const char * structType = "struct_type";
-    const char * structTypeField = "struct_type:field_tmp";
+    const char * structTypeField = "struct_type:field";
     const char * structTypeNFields = "struct_type:nfields";
     const char * opaqueStructType = "opaque_struct_type";
 

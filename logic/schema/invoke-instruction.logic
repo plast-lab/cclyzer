@@ -53,13 +53,18 @@ invoke_instruction:return_type[Insn] = Type <-
    invoke_instruction:signature[Insn] = Signature,
    function_type:return[Signature] = Type.
 
+
+//------------------------------------------------------------------------------
 // [Labels]
 //
 // ‘normal label‘:
-//    the label reached when the called function executes a ‘ret‘ instruction.
+//    the label reached when the called function executes a ‘ret‘
+//    instruction.
+//
 // ‘exception label‘:
-//   the label reached when a callee returns via the resume instruction or other
-//   exception handling mechanism.
+//   the label reached when a callee returns via the resume
+//   instruction or other exception handling mechanism.
+//------------------------------------------------------------------------------
 
 invoke_instruction:normal_label[Insn] = Normal ->
    invoke_instruction(Insn), variable(Normal).
@@ -67,7 +72,9 @@ invoke_instruction:normal_label[Insn] = Normal ->
 invoke_instruction:exception_label[Insn] = Exception ->
    invoke_instruction(Insn), variable(Exception).
 
-// Constraints:
+
+//------------------------------------------------------------------------------
+// [Constraints]
 //
 //  (1) Only ‘zeroext‘, ‘signext‘, and ‘inreg‘ attributes
 //      are valid for return values.
@@ -82,6 +89,7 @@ invoke_instruction:exception_label[Insn] = Exception ->
 //      attributes are valid as function attributes.
 //  (6) The 'invoke' instruction' takes a 'normal label' and
 //  (7) an 'exceptional label'.
+//------------------------------------------------------------------------------
 
 invoke_instruction(Insn) -> invoke_instruction:function[Insn] = _.
 invoke_instruction(Insn) -> invoke_instruction:normal_label[Insn] = _.

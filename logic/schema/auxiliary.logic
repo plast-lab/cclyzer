@@ -1,0 +1,57 @@
+//----------------------------------------------------------------------
+// [Auxiliary logic for Basic Blocks]
+//
+// The problem here is that basic-blocks are entites computed by *IDB*
+// logic.
+//
+// Thus, trying to import related predicates, namely: (i)
+//  basicblock:predecessors, and (ii) instruction:basicblock, via
+//  `import-generator' will fail.
+//
+// The reason is that no basic blocks can be constructed in the heads
+// of the auto-generated rules (with file predicates in their bodies).
+//
+// Additionally, if we were to skip the creation of new entities at
+// that point, no data would be imported at all, since basic-blocks
+// will be generated probably *after* the time we activate the file
+// predicate imports (for the aforementioned predicates), with the
+// current semantics.
+//
+// To solve this, we employ a level of indirection, introducing the
+// auxiliary *EDB* predicates (i) basicblock:pred_aux, and (ii)
+// instruction:bb_entry, respectively.
+//
+// Now we can use import-generator to import these predicates, in the
+// normal fashion, and supply the following rules to fill our initial
+// IDB predicates, based on them.
+//----------------------------------------------------------------------
+
+
+// Basic block predecessors
+
+basicblock:pred_aux(Label, Pred) ->
+   variable(Label), variable(Pred).
+
+basicblock:pred_aux(Label, Pred)
+ ->
+   variable:label(Label),
+   variable:label(Pred).
+
+basicblock:predecessors(BB1, BB2) <-
+   basicblock:pred_aux(Label, Pred),
+   basicblock:by_label[Label] = BB1,
+   basicblock:by_label[Pred] = BB2.
+
+
+// Basic blocks of instructions
+
+instruction:bb_entry[Insn] = Label ->
+   instruction(Insn), variable(Label).
+
+instruction:bb_entry[_] = Label
+ ->
+   variable:label(Label).
+
+instruction:basicblock[Insn] = BB <-
+   instruction:bb_entry[Insn] = Label,
+   basicblock:by_label[Label] = BB.
