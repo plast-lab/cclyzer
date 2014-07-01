@@ -55,3 +55,43 @@ instruction:bb_entry[_] = Label
 instruction:basicblock[Insn] = BB <-
    instruction:bb_entry[Insn] = Label,
    basicblock:by_label[Label] = BB.
+
+
+
+
+//----------------------------------------------------------------------
+// [Auxiliary logic for Landing Pad Clauses]
+//
+// The issue here is that we have two subtypes of clause, a filter
+// clause and a catch clause, but a single constructor. We want to
+// decide which one to create depending on the file from which we
+// import.
+//
+// That is, we need as many files to import from, as the number of
+// *concrete* clause subtypes.
+//
+// Similarly, we introduce a level of indirection through EDB
+// predicates (i) catch_tmp, and (ii) filter_tmp, and use these to
+// auto-generate clause entities and link them with their landing pad
+// instructions.
+//----------------------------------------------------------------------
+
+
+landingpad_instruction:clause:catch_tmp[Insn, Index] = Constant ->
+   landingpad_instruction(Insn), int[64](Index), global_variable(Constant).
+
+landingpad_instruction:clause:filter_tmp[Insn, Index] = Constant ->
+   landingpad_instruction(Insn), int[64](Index), immediate(Constant).
+
+
+catch_clause(Clause)
+ , clause:by_index[Insn, Index] = Clause
+ , catch_clause:arg[Clause] = Constant
+ , landingpad_instruction:clause[Insn, Index] = Clause <-
+   landingpad_instruction:clause:catch_tmp[Insn, Index] = Constant.
+
+filter_clause(Clause)
+ , clause:by_index[Insn, Index] = Clause
+ , filter_clause:arg[Clause] = Constant
+ , landingpad_instruction:clause[Insn, Index] = Clause <-
+   landingpad_instruction:clause:filter_tmp[Insn, Index] = Constant.

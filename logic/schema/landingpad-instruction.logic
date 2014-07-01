@@ -103,9 +103,21 @@ landingpad:start[BB] = Insn
 //------------------------------------------------------------------------------
 
 
+// Clauses as entities
+
 clause(Clause) -> .
 catch_clause(Clause) -> clause(Clause).
 filter_clause(Clause) -> clause(Clause).
+
+
+// Enforce that clause is an abstract type
+
+clause(Clause)
+ ->
+   catch_clause(Clause) ; filter_clause(Clause).
+
+
+// Clause Constructor
 
 clause:by_index[Insn, Index] = Clause ->
    landingpad_instruction(Insn), int[64](Index), clause(Clause).
@@ -113,6 +125,8 @@ clause:by_index[Insn, Index] = Clause ->
 lang:physical:storageModel[`clause] = "ScalableSparse".
 lang:constructor(`clause:by_index).
 
+
+// Clause Predicates
 
 catch_clause:arg[Clause] = Arg ->
    catch_clause(Clause), global_variable(Arg).
