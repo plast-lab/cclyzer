@@ -1,12 +1,14 @@
-/////////////////
-// Instruction //
-/////////////////
+//------------------------------------
+// Instruction (EDB) Entities
+//------------------------------------
 
 instruction(Insn), instruction:id(Insn:Ref) -> string(Ref).
 
+// Terminator Instruction Subset
 terminator_instruction(Insn) -> instruction(Insn).
 lang:isEntity[`terminator_instruction] = false.
 
+// Instruction Flags
 instruction:flag(Insn, Flag) -> instruction(Insn), flag(Flag).
 
 // Apart from the instructions with 'void' type,
@@ -23,9 +25,9 @@ instruction:next_index[Insn, Index] = Next ->
    instruction(Insn), int[64](Index), int[64](Next).
 
 
-//////////////////////////////
-// Sequence of instructions //
-//////////////////////////////
+//------------------------------------
+// Sequence of instructions
+//------------------------------------
 
 // The next instruction in the source file.
 instruction:next[Insn] = Next ->
@@ -45,9 +47,10 @@ instruction:basicblock[Insn] = BB ->
 instruction(Insn) -> instruction:function[Insn] = _.
 instruction(Insn) -> instruction:basicblock[Insn] = _.
 
-//////////////////
-// Basic Blocks //
-//////////////////
+
+//------------------------------------
+// Basic Blocks (IDB) Entities
+//------------------------------------
 
 basicblock(BB) -> .
 
@@ -60,6 +63,7 @@ basicblock(BB), basicblock:by_label[Label] = BB <-
 lang:physical:storageModel[`basicblock] = "ScalableSparse".
 lang:constructor(`basicblock:by_label).
 
+
 basicblock:first[BB2] = First <-
    instruction:next[Last] = First,
    instruction:basicblock[Last] = BB1,
@@ -69,6 +73,7 @@ basicblock:first[BB2] = First <-
 basicblock:first[BB] = First <-
    !instruction:prev[First] = _,
    instruction:basicblock[First] = BB.
+
 
 basicblock:last[BB1] = Last <-
    instruction:next[Last] = First,
@@ -80,11 +85,29 @@ basicblock:last[BB] = Last <-
    !instruction:next[Last] = _,
    instruction:basicblock[Last] = BB.
 
+
 basicblock:predecessors(BB, Pred) ->
    basicblock(BB), basicblock(Pred).
 
-instruction:next[Insn] = Next,
-   instruction:basicblock[Insn] = BB1,
-   instruction:basicblock[Next] = BB2
+
+// see auxiliary logic
+
+lang:derivationType[`basicblock:predecessors] = "DerivedAndStored".
+lang:derivationType[`instruction:basicblock] = "DerivedAndStored".
+
+
+
+//------------------------------------------------------------------------------
+// [Constraints]
+//
+// Two consecutive instructions must either belong to the same basic
+// block, or the first of the two should be classified as a terminator
+// instruction.
+//------------------------------------------------------------------------------
+
+
+instruction:next[Insn] = Next
+ , instruction:basicblock[Insn] = BB1
+ , instruction:basicblock[Next] = BB2
  ->
    BB1 = BB2 ; terminator_instruction(Insn).

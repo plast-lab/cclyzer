@@ -141,6 +141,12 @@ landingpad_instruction:nclauses[Insn] = Total ->
    landingpad_instruction(Insn), int[64](Total).
 
 
+// see auxiliary logic
+
+lang:derivationType[`landingpad_instruction:clause] = "DerivedAndStored".
+lang:derivationType[`catch_clause:arg] = "DerivedAndStored".
+lang:derivationType[`filter_clause:arg] = "DerivedAndStored".
+
 
 //-------------------------------------------------------------------------
 // [Constraints]
