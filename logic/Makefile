@@ -79,13 +79,13 @@ $(import.outdir): | $(logic.outdir)
 
 # Generate protobuf messages for schema
 
-schema.pb  := $(schema.src:schema/%.logic=$(schema.outdir)/%.pb)
+schema.pb  := $(schema.src:schema/%.logic=$(import.outdir)/%.pb)
 
 .INTERMEDIATE: $(schema.pb)
 
 export PATH := $(INSTALL_BIN):$(PATH)
-$(schema.pb): $(schema.outdir)/%.pb: schema/%.logic | $(schema.ph)
-	$(call generate-protobuf-message,$(schema.outdir)/$*.lbb)
+$(schema.pb): $(import.outdir)/%.pb: schema/%.logic | $(schema.ph) $(import.outdir)
+	$(call generate-protobuf-message,$(schema.outdir)/$*.lbb,$@)
 
 
 # Generate import logic

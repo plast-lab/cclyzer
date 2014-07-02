@@ -9,7 +9,7 @@ define deploy-datalog-project
 endef
 
 define generate-protobuf-message
-  bloxdisassembler -p $1 > $(1:%.lbb=%.pb)
-  cut-protobuf-message.sh $(1:%.lbb=%.pb) > tmp.pb
-  mv tmp.pb $(1:%.lbb=%.pb)
+  bloxdisassembler -p $1 > $2
+  cut-protobuf-message.sh $2 > tmp.pb
+  mv tmp.pb $2
 endef
