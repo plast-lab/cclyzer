@@ -21,7 +21,6 @@ importgen.exe := import-generator
 # Directory Tree
 #--------------------
 
-DATADIR      = $(LEVEL)/data
 OUTDIR       = $(LEVEL)/build
 DESTDIR     ?= $(LEVEL)
 SAMPLEDIR   ?= $(LEVEL)/etc/sample-data

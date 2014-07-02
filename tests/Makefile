@@ -17,21 +17,17 @@ template   := run.template
 # 
 # TODO: rearrange
 #-----------------------------------------
-
-csv.import   := $(OUTDIR)/csvgen/$(FACTGEN)
-entities     := $(OUTDIR)/import/entities.import
-predicates   := $(OUTDIR)/import/predicates.import
-logic.outdir := $(OUTDIR)/logic/
-
+data.link     := data
+csv.import    := $(OUTDIR)/fact-generator/$(factgen.exe)
+schema.outdir := $(OUTDIR)/logic/schema
+import.outdir := $(OUTDIR)/logic/import
 
 define process-script
-  $(M4) --define=ENTITIES=$(entities)     \
-        --define=PREDICATES=$(predicates) \
-        --define=SCHEMA=$(logic.outdir)   \
+  $(M4) --define=SCHEMA=$(schema.outdir)   \
+		--define=IMPORT=$(import.outdir)  \
         --define=WORKSPACE=$2             \
         $(template) > $1
 endef
-
 
 #----------------------------
 # Prompt routines
@@ -73,11 +69,9 @@ import-$1: | $$($1.csv)
 
 load-$1: import-$1 $$($1.script)
 	$(call prompt-echo, $1, "Loading into database ...")
-	$(QUIET) $(RM) $(DATADIR)
-	$(QUIET) ln -s $$(abspath $$($1.csv)) $(DATADIR)
+	$(QUIET) ln -s $$(abspath $$($1.csv)) $(data.link)
 	$(call prompt, $1)
 	$(call deploy-datalog-project,$$($1.script))
-
 
 .INTERMEDIATE: $$($1.script)
 $$($1.script):

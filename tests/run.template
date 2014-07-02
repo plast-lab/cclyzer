@@ -1,1 +1,11 @@
-../logic/run.template
+echo "Creating workspace WORKSPACE ..."
+create --overwrite WORKSPACE
+transaction
+echo "Installing compiled Datalog schema in SCHEMA ..."
+installProject --dir SCHEMA
+echo "Installing compiled Datalog import logic in IMPORT"
+installProject --dir IMPORT --libPath SCHEMA
+echo "Importing entities"
+exec --storedBlock "import-entities"
+exec --storedBlock "import-predicates"
+commit
