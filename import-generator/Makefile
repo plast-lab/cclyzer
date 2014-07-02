@@ -25,6 +25,8 @@ include_dirs := include
 #-----------------------------------
 
 CPPFLAGS += $(addprefix -I ,$(include_dirs))
+LDFLAGS  += -lboost_program_options
+LDFLAGS  += -lboost_system -lboost_filesystem
 
 vpath %.cc $(srcdir)
 vpath %.h  $(include_dirs)

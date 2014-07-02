@@ -14,7 +14,7 @@
 
 typedef std::map<const std::string, const blox::common::protocol::PredicateInfo*> predicateInfMap;
 
-int parse(char *inputFile, std::vector<const Constructor*> &constructors,
+int parse(const char *inputFile, std::vector<const Constructor*> &constructors,
           std::map<const std::string, Predicate*> &allPredicates);
 
 #endif

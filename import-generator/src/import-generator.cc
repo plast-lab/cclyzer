@@ -1,17 +1,15 @@
-#include <string>
 #include <cstdlib>
-#include <iostream>
-#include <fstream>
 #include <cstring>
+#include <fstream>
+#include <iostream>
+#include <string>
+
+#include <boost/filesystem.hpp>
 
 #include "parse-protobuf.h"
+#include "Options.h"
 
 using namespace std;
-
-void usage()
-{
-    cerr << "usage: import-generator --dir [dirname] --delim [delim] [protobufmessage,...]" << endl;
-}
 
 int main(int argc, char* argv[])
 {
@@ -22,68 +20,59 @@ int main(int argc, char* argv[])
     vector<const Constructor*> constructors;
     map<const string, Predicate*> allPredicates;
 
-    string dir, delim;
-
-    if(argc <= 5)
+    try
     {
-        usage();
-        return EXIT_FAILURE;
-    }
+        namespace fs = boost::filesystem;
 
-    if(strcmp(argv[1], "--dir"))
-    {
-        usage();
-        return EXIT_FAILURE;
-    }
-    else
-    {
-        dir = argv[2];
+        // Get program options instance
+        Options& opt = Options::getInstance().init(argc, argv);
 
-        if(dir[dir.length() - 1] != '/')
-            dir.append(1, '/');
-    }
+        fs::path entitiesImports   = opt.getOutputDirectory() / "import-entities.logic";
+        fs::path predicatesImports = opt.getOutputDirectory() / "import-predicates.logic";
 
-    if(strcmp(argv[3], "--delim"))
-    {
-        usage();
-        return EXIT_FAILURE;
-    }
-    else
-    {
-        delim = argv[4];
-    }
+        ofstream entitiesStream(entitiesImports.string().c_str()),
+                 predicatesStream(predicatesImports.string().c_str());
 
-    ofstream entitiesImports("import-entities.logic"),
-             predicatesImports("import-predicates.logic");
+        vector<fs::path> proto = opt.getFiles();
 
-    for(int i = 5; i < argc; ++i)
-    {
-        if(parse(argv[i], constructors, allPredicates) == FAILURE)
-            return EXIT_FAILURE;
-    }
-
-    string entitiesDir = dir + "entities/", predicatesDir = dir + "predicates/";
-
-    for(map<const string, Predicate*>::iterator it = allPredicates.begin(), end = allPredicates.end(); it != end; ++it)
-    {
-        Predicate *p = it->second;
-
-        switch(p->getPredicateType())
+        for(vector<fs::path>::iterator it = proto.begin(); it != proto.end(); ++it)
         {
-        case Predicate::REFMODE_ENTITY:
-            entitiesImports << p->getFilePredicates(entitiesDir, delim) << "\n\n";
-            break;
-        case Predicate::REFMODELESS_ENTITY:
-            //we don't want to generate file predicates for refmodeless entities
-            continue;
-        case Predicate::SIMPLE_PREDICATE:
-        case Predicate::FUNCTIONAL_PREDICATE:
-            predicatesImports << p->getFilePredicates(predicatesDir, delim) << "\n\n";
-            break;
+            string file = it->string();
+
+            if(parse(file.c_str(), constructors, allPredicates) == FAILURE)
+                return EXIT_FAILURE;
+        }
+
+        string entitiesDir   = ( opt.getPredDirectory() / "entities/"   ).string();
+        string predicatesDir = ( opt.getPredDirectory() / "predicates/" ).string();
+        string delim = opt.getPredDelimiter();
+
+        for(map<const string, Predicate*>::iterator it = allPredicates.begin(), end = allPredicates.end(); it != end; ++it)
+        {
+            Predicate *p = it->second;
+
+            switch (p->getPredicateType())
+            {
+            case Predicate::REFMODE_ENTITY:
+                entitiesStream << p->getFilePredicates(entitiesDir, delim) << "\n\n";
+                break;
+            case Predicate::REFMODELESS_ENTITY:
+                //we don't want to generate file predicates for refmodeless entities
+                continue;
+            case Predicate::SIMPLE_PREDICATE:
+            case Predicate::FUNCTIONAL_PREDICATE:
+                predicatesStream << p->getFilePredicates(predicatesDir, delim) << "\n\n";
+                break;
+            }
         }
     }
+    catch(exception& e)
+    {
+        cout << e.what() << "\n";
+        return 1;
+    }
 
-    //Delete all global objects allocated by libprotobuf.
+    // Delete all global objects allocated by libprotobuf.
     google::protobuf::ShutdownProtobufLibrary();
 
     return EXIT_SUCCESS;

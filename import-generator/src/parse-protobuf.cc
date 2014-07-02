@@ -104,7 +104,7 @@ Predicate* createPredicate(const common::PredicateInfo *predMsg, map<const strin
     return rv;
 }
 
-int parse(char *inputFile, vector<const Constructor*> &constructors, map<const string, Predicate*> &allPredicates)
+int parse(const char *inputFile, vector<const Constructor*> &constructors, map<const string, Predicate*> &allPredicates)
 {
 
     compiler::CompilationUnitSummary compUnit;
