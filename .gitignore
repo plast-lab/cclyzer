@@ -1,5 +1,5 @@
 build/*
-data/*
+data
 bin/*
 logic/import/operand-specific.logic
 logic/import/import-predicates.logic
