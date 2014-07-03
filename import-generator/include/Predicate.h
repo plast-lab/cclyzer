@@ -1,3 +1,4 @@
+
 #ifndef __PREDICATE_HPP__
 #define __PREDICATE_HPP__
 
@@ -92,6 +93,7 @@ protected:
 
     const PredicateType predType;
 
+    //TODO: probably the first bool is not needed, the constructNewEntity variable is enough
     virtual std::string getFilePredicateParts(unsigned &, unsigned &, FilePredicateParts &,
                                               bool, bool, int w = 0) const = 0;
 
@@ -211,16 +213,16 @@ class RefmodeEntity : public Predicate
 protected:
 
     std::string getFilePredicateParts(unsigned &varIndex, unsigned &entityIndex, FilePredicateParts &filePredParts,
-                                      bool construct, bool _, int whichCons = 0) const
+                                      bool construct, bool constructNewEntity, int whichCons = 0) const
     {
         assert(whichCons == 0);
 
         filePredParts.addVar(varIndex, *(refmode->getTypeName()));
 
-        if(construct)
-            filePredParts.addRefmodeToHead(*(refmode->getRefmodeName()), *qualifiedName, varIndex, entityIndex);
-        else
+        if(constructNewEntity)
             filePredParts.addRefmodeToBody(*(refmode->getRefmodeName()), *qualifiedName, varIndex, entityIndex);
+        else
+            filePredParts.addRefmodeToHead(*(refmode->getRefmodeName()), *qualifiedName, varIndex, entityIndex);
 
         varIndex++;
         entityIndex++;

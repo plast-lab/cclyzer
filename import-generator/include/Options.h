@@ -30,6 +30,14 @@ public:
         return protoFiles;
     }
 
+    bool mustIgnorePredicates() {
+        return ignorePredicates;
+    }
+
+    boost::filesystem::path& getPredicatesToIgnore() {
+        return predicatesToIgnore;
+    }
+
     Options& init(int argc, char* argv[]);
 
 private:
@@ -53,6 +61,11 @@ private:
 
     /* Protobuf Message Files */
     std::vector<boost::filesystem::path> protoFiles;
+
+    /* File with predicates to ignore during import-generation */
+    boost::filesystem::path predicatesToIgnore;
+
+    bool ignorePredicates;
 };
 
 #endif
