@@ -121,9 +121,9 @@ private:
             filename[pos] = '-';
         }
         // imm: operand = 0, var: operand = 1
-        filename = DirInfo::getInstance()->getFactsDir() + "/" + filename;
+        filename = DirInfo::getInstance()->getPredicatesDir() + "/" + filename;
 
-        std::string varVersion = filename + "-var.dlm", immVersion = filename + "-imm.dlm";
+        std::string varVersion = filename + "-by_variable.dlm", immVersion = filename + "-by_immediate.dlm";
         operandPredFilenames[predName] = std::pair<std::string, std::string>(varVersion, immVersion);
         if(operand)
             return varVersion;

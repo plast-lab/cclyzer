@@ -20,7 +20,7 @@ template<> CsvGenerator *Singleton<CsvGenerator>::INSTANCE = NULL;
 
 //aggregate array for all predicate names
 
-const int CsvGenerator::simplePredicatesNum = 183;
+const int CsvGenerator::simplePredicatesNum = 191;
 
 const char * CsvGenerator::simplePredicates[] = {
     basicBlockPred, globalVar, globalVarType,
@@ -54,11 +54,11 @@ const char * CsvGenerator::simplePredicates[] = {
     extractValueInsn, extractValueInsnIndex, extractValueInsnNIndices,
     insertValueInsn, insertValueInsnIndex, insertValueInsnNIndices,
     allocaInsn, allocaInsnAlign, allocaInsnType,
-    loadInsn, loadInsnAlign, loadInsnOrd,
-    storeInsn, storeInsnAlign, storeInsnOrd,
-    fenceInsn, fenceInsnOrd, atomicRMWInsn,
-    atomicRMWInsnOrd, atomicRMWInsnOper, cmpxchgInsn,
-    cmpxchgInsnOrd, cmpxchgInsnType, gepInsn,
+    loadInsn, loadInsnAlign, loadInsnOrd, loadInsnVolatile,
+    storeInsn, storeInsnAlign, storeInsnOrd, storeInsnVolatile,
+    fenceInsn, fenceInsnOrd, atomicRMWInsn, atomicRMWInsnVolatile,
+    atomicRMWInsnOrd, atomicRMWInsnOper, cmpxchgInsn, cmpxchgInsnVolatile,
+    cmpxchgInsnOrd, cmpxchgInsnType, gepInsn, gepInsnInbounds,
     gepInsnNIndices, truncInsn, truncInsnToType,
     zextInsn, zextInsnToType, sextInsn,
     sextInsnToType, fptruncInsn, fptruncInsnToType,
@@ -70,12 +70,12 @@ const char * CsvGenerator::simplePredicates[] = {
     bitcastInsnToType, icmpInsn, icmpInsnCond,
     fcmpInsn, fcmpInsnCond, phiInsn, phiInsnType,
     phiInsnPairLabel, phiInsnNPairs, selectInsn,
-    vaargInsn, vaargInsnType, callInsn,
+    vaargInsn, vaargInsnType, callInsn, callInsnTail,
     directCallInsn, indirectCallInsn, callCallConv,
     callInsnRetAttr, callInsnParamAttr, callInsnFuncAttr,
     landingpadInsn, landingpadInsnType, landingpadInsnFunc,
-    landingpadInsnNClauses, primitiveType, intType,
-    fpType, funcType, funcTypeVarArgs,
+    landingpadInsnCleanup,landingpadInsnNClauses, primitiveType,
+    intType, fpType, funcType, funcTypeVarArgs,
     funcTypeReturn, funcTypeParam, funcTypeNParams,
     ptrType, ptrTypeComp, ptrTypeAddrSpace,
     vectorType, vectorTypeComp, vectorTypeSize,
@@ -83,7 +83,7 @@ const char * CsvGenerator::simplePredicates[] = {
     structType, structTypeField, structTypeNFields,
     opaqueStructType, ::immediate, immediateType,
     ::variable, variableType, landingpadInsnCatch,
-    landingpadInsnFilter
+    landingpadInsnFilter, constExpr
 };
 
 const int CsvGenerator::operandPredicatesNum = 87;
@@ -123,7 +123,8 @@ const char * CsvGenerator::operandPredicates[] = {
 
 CsvGenerator::CsvGenerator(){
     //TODO: insert assertion that DirInfo has been initialized
-    for(int i = 0; i < operandPredicatesNum; ++i){
+    for(int i = 0; i < operandPredicatesNum; ++i)
+    {
         string csvFilenameImm = predNameWithOperandToFilename(operandPredicates[i], false),
             csvFilenameVar = predNameWithOperandToFilename(operandPredicates[i], true);
 
@@ -132,6 +133,14 @@ CsvGenerator::CsvGenerator(){
         //TODO: check if file open fails
         csvFiles[csvFilenameImm] = csvFileImm;
         csvFiles[csvFilenameVar] = csvFileVar;
+    }
+
+    for(int i = 0; i < simplePredicatesNum; ++i)
+    {
+        string csvFilename = predNameToFilename(simplePredicates[i]);
+        filesystem::ofstream *csvFile = new filesystem::ofstream(csvFilename.c_str(), ios_base::out);
+
+        csvFiles[csvFilename] = csvFile;
     }
 }
 

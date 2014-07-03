@@ -209,12 +209,14 @@ namespace predicate_names{
     const char * loadInsnAlign = "load_instruction:alignment";
     const char * loadInsnOrd = "load_instruction:ordering";
     const char * loadInsnAddr = "load_instruction:address";
+    const char * loadInsnVolatile = "load_instruction:volatile";
 
     const char * storeInsn = "store_instruction";
     const char * storeInsnAlign = "store_instruction:alignment";
     const char * storeInsnOrd = "store_instruction:ordering";
     const char * storeInsnValue = "store_instruction:value";
     const char * storeInsnAddr = "store_instruction:address";
+    const char * storeInsnVolatile = "store_instruction:volatile";
 
     const char * fenceInsn = "fence_instruction";
     const char * fenceInsnOrd = "fence_instruction:ordering";
@@ -224,6 +226,7 @@ namespace predicate_names{
     const char * atomicRMWInsnOper = "atomicrmw_instruction:operation";
     const char * atomicRMWInsnAddr = "atomicrmw_instruction:address";
     const char * atomicRMWInsnValue = "atomicrmw_instruction:value";
+    const char * atomicRMWInsnVolatile = "atomicrmw_instruction:volatile";
 
     const char * cmpxchgInsn = "cmpxchg_instruction";
     const char * cmpxchgInsnOrd = "cmpxchg_instruction:ordering";
@@ -231,11 +234,13 @@ namespace predicate_names{
     const char * cmpxchgInsnCmp = "cmpxchg_instruction:cmp";
     const char * cmpxchgInsnNew = "cmpxchg_instruction:new";
     const char * cmpxchgInsnType = "cmpxchg_instruction:type";
+    const char * cmpxchgInsnVolatile = "cmpxchg_instruction:volatile";
 
     const char * gepInsn = "getelementptr_instruction";
     const char * gepInsnBase = "getelementptr_instruction:base";
     const char * gepInsnIndex = "getelementptr_instruction:index";
     const char * gepInsnNIndices = "getelementptr_instruction:nindices";
+    const char * gepInsnInbounds = "getelementptr_instruction:inbounds";
 
 // Conversion Operations
 
@@ -261,7 +266,7 @@ namespace predicate_names{
 
     const char * fptouiInsn = "fptoui_instruction";
     const char * fptouiInsnFrom = "fptoui_instruction:from";
-    const char * fptouiInsnToType = "fptrunc_instruction:to_type";
+    const char * fptouiInsnToType = "fptoui_instruction:to_type";
 
     const char * fptosiInsn = "fptosi_instruction";
     const char * fptosiInsnFrom = "fptosi_instruction:from";
@@ -323,6 +328,7 @@ namespace predicate_names{
     const char * callInsnRetAttr = "call_instruction:return_attribute";
     const char * callInsnParamAttr = "call_instruction:param_attribute";
     const char * callInsnFuncAttr = "call_instruction:function_attribute";
+    const char * callInsnTail = "call_instruction:tail";
 
     const char * landingpadInsn = "landingpad_instruction";
     const char * landingpadInsnType = "landingpad_instruction:type";
@@ -330,6 +336,7 @@ namespace predicate_names{
     const char * landingpadInsnCatch = "landingpad_instruction:clause:catch_tmp";
     const char * landingpadInsnFilter = "landingpad_instruction:clause:filter_tmp";
     const char * landingpadInsnNClauses = "landingpad_instruction:nclauses";
+    const char * landingpadInsnCleanup = "landingpad_instruction:cleanup";
 
 // Types
 
@@ -367,6 +374,10 @@ namespace predicate_names{
 
     const char * variable = "variable";
     const char * variableType = "variable:type";
+
+// Constants
+
+    const char * constExpr = "constant_expression";
 
 // Auxiliary predicates
 

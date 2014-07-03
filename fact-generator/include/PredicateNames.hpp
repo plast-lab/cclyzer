@@ -210,12 +210,14 @@ namespace predicate_names {
     extern const char * loadInsnAlign;
     extern const char * loadInsnOrd;
     extern const char * loadInsnAddr;
+    extern const char * loadInsnVolatile;
 
     extern const char * storeInsn;
     extern const char * storeInsnAlign;
     extern const char * storeInsnOrd;
     extern const char * storeInsnValue;
     extern const char * storeInsnAddr;
+    extern const char * storeInsnVolatile;
 
     extern const char * fenceInsn;
     extern const char * fenceInsnOrd;
@@ -225,6 +227,7 @@ namespace predicate_names {
     extern const char * atomicRMWInsnOper;
     extern const char * atomicRMWInsnAddr;
     extern const char * atomicRMWInsnValue;
+    extern const char * atomicRMWInsnVolatile;
 
     extern const char * cmpxchgInsn;
     extern const char * cmpxchgInsnOrd;
@@ -232,11 +235,13 @@ namespace predicate_names {
     extern const char * cmpxchgInsnCmp;
     extern const char * cmpxchgInsnNew;
     extern const char * cmpxchgInsnType;
+    extern const char * cmpxchgInsnVolatile;
 
     extern const char * gepInsn;
     extern const char * gepInsnBase;
     extern const char * gepInsnIndex;
     extern const char * gepInsnNIndices;
+    extern const char * gepInsnInbounds;
 
 // Conversion Operations
 
@@ -324,6 +329,7 @@ namespace predicate_names {
     extern const char * callInsnRetAttr;
     extern const char * callInsnParamAttr;
     extern const char * callInsnFuncAttr;
+    extern const char * callInsnTail;
 
     extern const char * landingpadInsn;
     extern const char * landingpadInsnType;
@@ -331,6 +337,7 @@ namespace predicate_names {
     extern const char * landingpadInsnCatch;
     extern const char * landingpadInsnFilter;
     extern const char * landingpadInsnNClauses;
+    extern const char * landingpadInsnCleanup;
 
 // Types
 
@@ -368,6 +375,10 @@ namespace predicate_names {
 
     extern const char * variable;
     extern const char * variableType;
+
+// Constants
+
+    extern const char * constExpr;
 
 // Auxiliary predicates
 

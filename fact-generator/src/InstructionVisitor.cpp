@@ -14,6 +14,9 @@ using namespace boost;
 using namespace auxiliary_methods;
 using namespace predicate_names;
 
+//TODO: why do we store the volatile property with two different ways?
+//      (see writeVolatileFlag and :volatile for some entities)
+
 //TODO: Remove these if(strlen(...)) checks
 //TODO: Move immediate and variable maps entirely to the CsvGenerator class
 
@@ -287,7 +290,6 @@ void InstructionVisitor::visitLoadInst(LoadInst &LI) {
     csvGen->writeEntityToCsv(loadInsn, instrNum);
     logOperand(LI.getPointerOperand(), loadInsnAddr);
 
-    writeVolatileFlag(instrNum, LI.isVolatile());
     if(LI.isAtomic()) {
         const char *ord = writeAtomicInfo(instrNum, LI.getOrdering(), LI.getSynchScope());
         if(strlen(ord)) {
@@ -296,6 +298,9 @@ void InstructionVisitor::visitLoadInst(LoadInst &LI) {
     }
     if(LI.getAlignment()) {
         csvGen->writePredicateToCsv(loadInsnAlign, instrNum, LI.getAlignment());
+    }
+    if(LI.isVolatile()) {
+        csvGen->writeEntityToCsv(loadInsnVolatile, instrNum);
     }
 }
 
@@ -425,7 +430,6 @@ void InstructionVisitor::visitStoreInst(StoreInst &SI) {
 
     logOperand(SI.getPointerOperand(), storeInsnAddr);
 
-    writeVolatileFlag(instrNum, SI.isVolatile());
     if(SI.isAtomic()) {
         const char *ord = writeAtomicInfo(instrNum, SI.getOrdering(), SI.getSynchScope());
         if(strlen(ord)) {
@@ -434,6 +438,9 @@ void InstructionVisitor::visitStoreInst(StoreInst &SI) {
     }
     if(SI.getAlignment()) {
         csvGen->writePredicateToCsv(storeInsnAlign, instrNum, SI.getAlignment());
+    }
+    if(SI.isVolatile()) {
+        csvGen->writeEntityToCsv(storeInsnVolatile, instrNum);
     }
 }
 
@@ -449,7 +456,10 @@ void InstructionVisitor::visitAtomicCmpXchgInst(AtomicCmpXchgInst &AXI) {
     //newValue
     logOperand(AXI.getNewValOperand(), cmpxchgInsnNew);
 
-    writeVolatileFlag(instrNum, AXI.isVolatile());
+    if(AXI.isVolatile()) {
+        csvGen->writeEntityToCsv(cmpxchgInsn, instrNum);
+    }
+
     const char *ord = writeAtomicInfo(instrNum, AXI.getOrdering(), AXI.getSynchScope());
     if(strlen(ord)) {
         csvGen->writePredicateToCsv(cmpxchgInsnOrd, instrNum, ord);
@@ -465,7 +475,10 @@ void InstructionVisitor::visitAtomicRMWInst(AtomicRMWInst &AWI) {
     //valOperand - Right Operand
     logOperand(AWI.getValOperand(), atomicRMWInsnValue);
 
-    writeVolatileFlag(instrNum, AWI.isVolatile());
+    if(AWI.isVolatile()) {
+        csvGen->writeEntityToCsv(atomicRMWInsnVolatile, instrNum);
+    }
+
     writeAtomicRMWOp(instrNum, AWI.getOperation());
     const char *ord = writeAtomicInfo(instrNum, AWI.getOrdering(), AWI.getSynchScope());
     if(strlen(ord)) {
@@ -501,7 +514,7 @@ void InstructionVisitor::visitGetElementPtrInst(GetElementPtrInst &GEP) {
     }
     csvGen->writePredicateToCsv(gepInsnNIndices, instrNum, GEP.getNumIndices());
     if(GEP.isInBounds()) {
-        csvGen->writePredicateToCsv(insnFlag, instrNum, "inbounds");
+        csvGen->writeEntityToCsv(gepInsnInbounds, instrNum);
     }
 }
 
@@ -561,7 +574,7 @@ void InstructionVisitor::visitLandingPadInst(LandingPadInst &LI) {
 
     //cleanup
     if(LI.isCleanup()) {
-        csvGen->writePredicateToCsv(insnFlag, instrNum, "cleanup");
+        csvGen->writeEntityToCsv(landingpadInsnCleanup, instrNum);
     }
     //#clauses
     for (unsigned i = 0; i < LI.getNumClauses(); ++i) {
@@ -595,7 +608,7 @@ void InstructionVisitor::visitCallInst(CallInst &CI) {
         logOperand(CI.getArgOperand(op), callInsnArg, op);
 
     if(CI.isTailCall()) {
-        csvGen->writePredicateToCsv(insnFlag, instrNum, "tail");
+        csvGen->writeEntityToCsv(callInsnTail, instrNum);
     }
     if (CI.getCallingConv() != CallingConv::C) {
         csvGen->writePredicateToCsv(callCallConv, instrNum, writeCallingConv(CI.getCallingConv()));
