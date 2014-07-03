@@ -20,7 +20,10 @@ variable:firstclass(Var) <-
 immediate(Imm), immediate:value(Imm:Ref) -> string(Ref).
 immediate:type[Imm] = Type -> immediate(Imm), type(Type).
 
+//TODO: what do we need this predicate?
 constant_expression(Imm) -> immediate(Imm).
+
+lang:isEntity[`constant_expression] = true.
 
 immediate:eq(Imm1, Imm2) <-
    immediate:value(Imm1:Val1),

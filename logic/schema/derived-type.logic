@@ -18,6 +18,8 @@ array_type(Type)     -> aggregate_type(Type).
 struct_type(Type)    -> aggregate_type(Type).
 opaque_struct_type(Type) -> struct_type(Type).
 
+lang:isEntity[`opaque_struct_type] = true.
+
 ///////////////////////
 // First Class Types //
 ///////////////////////

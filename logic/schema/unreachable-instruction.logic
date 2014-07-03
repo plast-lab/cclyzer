@@ -3,6 +3,8 @@
 
 unreachable_instruction(Insn) -> instruction(Insn).
 
+lang:isEntity[`unreachable_instruction] = true.
+
 terminator_instruction(Insn) <-
    unreachable_instruction(Insn).
 
