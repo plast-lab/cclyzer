@@ -7,7 +7,7 @@ instruction(Insn), instruction:id(Insn:Ref) -> string(Ref).
 // Terminator Instruction Subset
 terminator_instruction(Insn) -> instruction(Insn).
 
-//This is to prevent the import-generator program from producing file predicates.
+// prevent import-generator from producing file predicates
 lang:derivationType[`terminator_instruction] = "DerivedAndStored".
 lang:isEntity[`terminator_instruction] = false.
 
@@ -27,7 +27,7 @@ instruction:type[Insn] = Type <-
 instruction:next_index[Insn, Index] = Next ->
    instruction(Insn), int[64](Index), int[64](Next).
 
-//Prevent import-generator from producing file predicates.
+// prevent import-generator from producing file predicates
 lang:derivationType[`instruction:next_index] = "DerivedAndStored".
 
 //------------------------------------
