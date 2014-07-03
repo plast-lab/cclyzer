@@ -29,6 +29,8 @@ define process-script
         $(template) > $1
 endef
 
+#.INTERMEDIATE: $(data.link)
+
 #----------------------------
 # Prompt routines
 #----------------------------
@@ -69,6 +71,7 @@ import-$1: | $$($1.csv)
 
 load-$1: import-$1 $$($1.script)
 	$(call prompt-echo, $1, "Loading into database ...")
+	$(RM) -f $(data.link)
 	$(QUIET) ln -s $$(abspath $$($1.csv)) $(data.link)
 	$(call prompt, $1)
 	$(call deploy-datalog-project,$$($1.script))
