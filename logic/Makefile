@@ -92,7 +92,7 @@ $(schema.pb): $(import.outdir)/%.pb: schema/%.logic | $(schema.ph) $(import.outd
 
 export PATH := $(INSTALL_BIN):$(PATH)
 $(import.src): $(schema.pb)
-	$(importgen.exe) --dir ./data --delim '\t' -o import $^
+	$(importgen.exe) --ignore import/.ignored-predicates --dir ./data --delim '\t' -o import $^
 
 export LB_LIBRARY_PATH := $(schema.outdir)
 $(import.ph): $(import.proj) $(import.src) | $(import.outdir)
