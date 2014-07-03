@@ -1,0 +1,14 @@
+instruction
+type
+derived_type
+aggregate_type
+visibility
+threadlocal_mode
+ordering
+operation
+linkage_type
+icmp_condition
+flag
+fcmp_condition
+calling_convention
+attribute
