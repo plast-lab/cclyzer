@@ -13,7 +13,9 @@ bitcast_instruction:from_type[Insn] = Type <-
    bitcast_instruction:from[Insn] = Value,
    operand:type[Value] = Type.
 
-// Constraints:
+
+//------------------------------------------------------------------------------
+// [Constraints]
 //
 // The ‘bitcast‘ instruction takes:
 //  (i)  a value to cast, which must be a non-aggregate first class value,
@@ -23,6 +25,7 @@ bitcast_instruction:from_type[Insn] = Type <-
 // If the value to be casted is of pointer type:
 //  (i)  the type must also be a pointer
 //  (ii) of the same size.
+//------------------------------------------------------------------------------
 
 bitcast_instruction(Insn) -> bitcast_instruction:from[Insn] = _.
 bitcast_instruction(Insn) -> bitcast_instruction:to_type[Insn] = _.
@@ -45,16 +48,17 @@ bitcast_instruction:to_type[_] = Type
    !aggregate_type(Type).
 
 
-bitcast_instruction(Insn),
-   bitcast_instruction:from_type[Insn] = From,
-   bitcast_instruction:to_type[Insn] = To,
-   pointer_type(From)
+bitcast_instruction(Insn)
+ , bitcast_instruction:from_type[Insn] = From
+ , bitcast_instruction:to_type[Insn] = To
+ , pointer_type(From)
  ->
    pointer_type(To).
 
-bitcast_instruction(Insn),
-   bitcast_instruction:from_type[Insn] = From,
-   bitcast_instruction:to_type[Insn] = To,
-   pointer_type(To)
+
+bitcast_instruction(Insn)
+ , bitcast_instruction:from_type[Insn] = From
+ , bitcast_instruction:to_type[Insn] = To
+ , pointer_type(To)
  ->
    pointer_type(From).
