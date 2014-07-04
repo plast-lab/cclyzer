@@ -3,13 +3,30 @@
 
 call_instruction(Insn) -> instruction(Insn).
 
+
 // Function operand: can be either a constant or a variable
 call_instruction:function[Insn] = Func ->
    call_instruction(Insn), operand(Func).
 
+
+// Eligible for tail call optimizations
+call_instruction:tail(Insn) -> call_instruction(Insn).
+
+
+// If none is specified, the call defaults to using C
+// calling conventions.
+call_instruction:calling_convention[Insn] = Conv ->
+   call_instruction(Insn), calling_convention(Conv).
+
+
+//---------------------------------------------------------------
+// [Direct and Indirect Call Instructions]
+//
 // Call-instructions are divided into direct calls
 // that provide a function name, and indirect calls
 // through a function pointer variable.
+//---------------------------------------------------------------
+
 direct_call_instruction(Insn)   -> call_instruction(Insn).
 indirect_call_instruction(Insn) -> call_instruction(Insn).
 
@@ -21,19 +38,19 @@ indirect_call_instruction(Insn) <-
    call_instruction:function[Insn] = Func,
    operand:as_variable[Func] = _.
 
-// Eligible for tail call optimizations
-call_instruction:tail(Insn) -> call_instruction(Insn).
 
-// If none is specified, the call defaults to using C
-// calling conventions.
-call_instruction:calling_convention[Insn] = Conv ->
-   call_instruction(Insn), calling_convention(Conv).
-
+//----------------------
 // Actual arguments
+//----------------------
+
 call_instruction:arg[Insn, Index] = Arg ->
    call_instruction(Insn), int[64](Index), operand(Arg).
 
+
+//-------------------------
 // Parameter Attributes
+//-------------------------
+
 call_instruction:return_attribute(Insn, Attr) ->
    call_instruction(Insn), attribute(Attr).
 
@@ -43,7 +60,10 @@ call_instruction:param_attribute(Insn, Index, Attr) ->
 call_instruction:function_attribute(Insn, Attr) ->
    call_instruction(Insn), attribute(Attr).
 
+
+//-----------------------------
 // Signature (function type)
+//-----------------------------
 
 call_instruction:signature[Insn] = Type ->
    call_instruction(Insn), function_type(Type).
@@ -59,7 +79,8 @@ call_instruction:return_type[Insn] = Type <-
    function_type:return[Signature] = Type.
 
 
-// Constraints:
+//------------------------------------------------------------------------------
+// [Constraints]
 //
 //  (1) Only ‘zeroext‘, ‘signext‘, and ‘inreg‘ attributes
 //      are valid for return values.
@@ -74,6 +95,7 @@ call_instruction:return_type[Insn] = Type <-
 //  (5) All arguments must be of first class type.
 //  (6) Only ‘noreturn‘, ‘nounwind‘, ‘readonly‘ and ‘readnone‘
 //      attributes are valid as function attributes.
+//------------------------------------------------------------------------------
 
 call_instruction(Insn) -> call_instruction:function[Insn] = _.
 call_instruction(Insn) -> call_instruction:signature[Insn] = _.
@@ -94,43 +116,49 @@ call_instruction:function_attribute(_, Attr)
    function_attribute:readnone[] = Attr ;
    function_attribute:cold[] = Attr. // c6
 
+
 // cc compatibility
-/*TODO: This constraint does not capture what we want.
-        The goal is to assosiate every call instruction
-        with its target function declaration(s).
-instruction:function[Insn] = Func, //Here Func is the functions that Insn belongs to.
-   call_instruction:calling_convention[Insn] = Conv
- ->
-   function:calling_convention[Func] = Conv. // c2
-*/
+//
+// TODO: This constraint does not capture what we want.
+//       The goal is to assosiate every call instruction
+//       with its target function declaration(s).
+
+// instruction:function[Insn] = Func, //Here Func is the functions that Insn belongs to.
+//    call_instruction:calling_convention[Insn] = Conv
+//  ->
+//    function:calling_convention[Func] = Conv. // c2
+
 
 // Signature conformance
-call_instruction:signature[Insn] = Signature,
-   function_type:param[Signature, Index] = _
+call_instruction:signature[Insn] = Signature
+ , function_type:param[Signature, Index] = _
  ->
    call_instruction:arg[Insn, Index] = _.
 
-call_instruction:signature[Insn] = Signature,
-   function_type:param[Signature, Index] = Type,
-   call_instruction:arg[Insn, Index] = Arg
+
+call_instruction:signature[Insn] = Signature
+ , function_type:param[Signature, Index] = Type
+ , call_instruction:arg[Insn, Index] = Arg
  ->
    operand:type[Arg] = Type. // c4
 
-call_instruction:signature[Insn] = Signature,
-   call_instruction:arg[Insn, Index] = _
+
+call_instruction:signature[Insn] = Signature
+ , call_instruction:arg[Insn, Index] = _
  ->
    function_type:param[Signature, Index] = _ ;
    function_type:varargs(Signature).
 
-call_instruction:return_type[Insn] = Type,
-   void_type[] != Type
+
+call_instruction:return_type[Insn] = Type, void_type[] != Type
  ->
    instruction:type[Insn] = Type. // c3
 
-call_instruction:return_type[Insn] = Type,
-   void_type[] = Type
+
+call_instruction:return_type[Insn] = Type, void_type[] = Type
  ->
    !instruction:type[Insn] = _. // c3 vice versa
+
 
 // only first class arguments allowed
 call_instruction:arg[_, _] = Arg

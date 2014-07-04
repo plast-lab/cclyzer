@@ -3,6 +3,7 @@
 
 select_instruction(Insn) -> instruction(Insn).
 
+
 // The ‘select‘ instruction is used to choose one value
 // based on a condition, without branching.
 
@@ -16,7 +17,8 @@ select_instruction:second_operand[Insn] = Value ->
    select_instruction(Insn), operand(Value).
 
 
-// Constraints:
+//------------------------------------------------------------------------------
+// [Constraints]
 //
 // The ‘select‘ instruction requires:
 //  (i)  an ‘i1’ value or a vector of ‘i1’ values
@@ -30,38 +32,42 @@ select_instruction:second_operand[Insn] = Value ->
 // If the condition is a scalar, the value arguments can still be
 // vectors, in which case the entire vectors are selected, instead
 // of individual elements.
+//------------------------------------------------------------------------------
 
 select_instruction(Insn) -> select_instruction:condition[Insn] = _.
 select_instruction(Insn) -> select_instruction:first_operand[Insn] = _.
 select_instruction(Insn) -> select_instruction:second_operand[Insn] = _.
 
-select_instruction:condition[_] = Cond,
-   operand:type[Cond] = Type
+
+select_instruction:condition[_] = Cond, operand:type[Cond] = Type
  ->
-   boolean_type(Type); vector_type:boolean(Type).
+   boolean_type(Type) ; vector_type:boolean(Type).
+
 
 // The two operands must be of the same first-class type.
 
-select_instruction(Insn),
-   instruction:type[Insn] = Type
+select_instruction(Insn), instruction:type[Insn] = Type
  ->
    type:firstclass(Type).
 
-instruction:type[Insn] = Type,
-   select_instruction:first_operand[Insn] = Left
+
+instruction:type[Insn] = Type
+ , select_instruction:first_operand[Insn] = Left
  ->
    operand:type[Left] = Type.
 
-instruction:type[Insn] = Type,
-   select_instruction:second_operand[Insn] = Right
+
+instruction:type[Insn] = Type
+ , select_instruction:second_operand[Insn] = Right
  ->
    operand:type[Right] = Type.
+
 
 // If the condition is of type vector, then all operands
 // must have the same size.
 
-instruction:type[Insn] = Type,
-   select_instruction:condition[Insn] = Cond,
-   operand:type[Cond] = CType
+instruction:type[Insn] = Type
+ , select_instruction:condition[Insn] = Cond
+ , operand:type[Cond] = CType
  ->
    vector:compatible(CType, Type).

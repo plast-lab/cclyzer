@@ -6,6 +6,7 @@ ret_instruction(Insn) -> instruction(Insn).
 terminator_instruction(Insn) <-
    ret_instruction(Insn).
 
+
 // The ‘ret‘ instruction optionally accepts a single
 // argument, the return value.
 
@@ -16,12 +17,18 @@ ret_instruction:void(Insn) -> ret_instruction(Insn).
 ret_instruction:void(Insn) -> !ret_instruction:value[Insn] = _.
 
 
+//------------------------------------------------------------------------------
+// [Well Formed Functions]
+//
 // A function is not well formed if:
 //  (i)   it it has a non-void return type and contains a ‘ret‘
 //        instruction with no return value or
+//
 //  (ii)  a return value with a type that does not match its type, or
+//
 //  (iii) if it has a void return type and contains a ‘ret‘
 //        instruction with a return value.
+//------------------------------------------------------------------------------
 
 function:wellformed(Func) <-
    function(Func), !function:illformed(Func).
@@ -51,8 +58,11 @@ function:illformed(Func) <-
    instruction:function[Insn] = Func.
 
 
-// Constraints:
+//------------------------------------------------------------------------------
+// [Constraints]
+//
 //  (i) The type of the return value must be a ‘first class‘ type.
+//------------------------------------------------------------------------------
 
 ret_instruction:value[_] = Value
  ->

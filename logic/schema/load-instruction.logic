@@ -9,6 +9,7 @@ load_instruction:alignment[Insn] = Alignment ->
 load_instruction:ordering[Insn] = Ord ->
    load_instruction(Insn), ordering(Ord).
 
+
 // If the load is marked as volatile, then the optimizer is not allowed
 // to modify the number or order of execution of this load with other
 // volatile operations.
@@ -16,11 +17,13 @@ load_instruction:ordering[Insn] = Ord ->
 load_instruction:volatile(Insn) ->
    load_instruction(Insn).
 
+
 // If the load is marked as atomic, it takes an extra ordering
 // and optional singlethread argument.
 
 load_instruction:atomic(Insn) <-
    load_instruction:ordering[Insn] = _.
+
 
 // The argument to the load instruction specifies the memory address
 // from which to load.
@@ -36,9 +39,13 @@ load_instruction:ptr_type[Insn] = Type <-
    operand:type[Pointer] = Type.
 
 
-// Constraints:
+//------------------------------------------------------------------------------
+// [Constraints]
+//
 //  (i)  The pointer must point to a first class type.
+//
 //  (ii) The release and acq_rel orderings are not valid on load instructions.
+//------------------------------------------------------------------------------
 
 load_instruction(Insn) -> load_instruction:address[Insn] = _.
 
@@ -47,8 +54,8 @@ load_instruction:ptr_type[_] = Type
    pointer_type:firstclass(Type).
 
 
-load_instruction:ptr_type[Insn] = Type,
-   pointer_type:component[Type]  = Comp
+load_instruction:ptr_type[Insn] = Type
+ , pointer_type:component[Type]  = Comp
  ->
    instruction:type[Insn] = Comp.
 

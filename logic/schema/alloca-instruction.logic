@@ -12,12 +12,16 @@ alloca_instruction:size[Insn] = Size ->
 alloca_instruction:type[Insn] = Type ->
    alloca_instruction(Insn), type(Type).
 
-// Constraints:
+
+//------------------------------------------------------------------------------
+// [Constraints]
+//
 // The ‘alloca‘ instruction returns a pointer.
+//------------------------------------------------------------------------------
 
 alloca_instruction(Insn) -> alloca_instruction:type[Insn] = _.
 
-alloca_instruction:type[Insn] = Type,
-   instruction:type[Insn] = Pointer
+
+alloca_instruction:type[Insn] = Type, instruction:type[Insn] = Pointer
  ->
    pointer_type:component[Pointer] = Type.

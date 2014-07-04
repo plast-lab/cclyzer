@@ -47,10 +47,15 @@ store_instruction:val_type[Insn] = Type <-
    operand:type[Value] = Type.
 
 
-// Constraints:
+//------------------------------------------------------------------------------
+// [Constraints]
+//
 //  (i)  The type of the <pointer> operand must be a pointer to
 //       the first class type of the <value> operand.
-//  (ii) The acquire and acq_rel orderings aren’t valid on store instructions.
+//
+//  (ii) The acquire and acq_rel orderings aren’t valid on store
+//       instructions.
+//------------------------------------------------------------------------------
 
 store_instruction(Insn) -> !instruction:to[Insn] = _.
 store_instruction(Insn) -> store_instruction:address[Insn] = _.
@@ -62,8 +67,8 @@ store_instruction:ptr_type[_] = Type
    pointer_type:firstclass(Type).
 
 
-store_instruction:ptr_type[Insn] = Type,
-   pointer_type:component[Type]  = Comp
+store_instruction:ptr_type[Insn] = Type
+ , pointer_type:component[Type]  = Comp
  ->
    store_instruction:val_type[Insn] = Comp.
 

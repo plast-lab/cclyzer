@@ -1,6 +1,6 @@
-//////////////////////////////
-// Variables and Immediates //
-//////////////////////////////
+//------------
+// Variables
+//------------
 
 variable(Var), variable:id(Var:Ref) -> string(Ref).
 variable:type[Var] = Type -> variable(Var), type(Type).
@@ -17,6 +17,11 @@ variable:firstclass(Var) <-
    variable:type[Var] = Type,
    type:firstclass(Type).
 
+
+//--------------
+// Immediates
+//--------------
+
 immediate(Imm), immediate:value(Imm:Ref) -> string(Ref).
 immediate:type[Imm] = Type -> immediate(Imm), type(Type).
 
@@ -24,6 +29,9 @@ immediate:type[Imm] = Type -> immediate(Imm), type(Type).
 constant_expression(Imm) -> immediate(Imm).
 
 lang:isEntity[`constant_expression] = true.
+
+
+// Auxiliary Predicates
 
 immediate:eq(Imm1, Imm2) <-
    immediate:value(Imm1:Val1),
@@ -38,12 +46,15 @@ immediate:ne(Imm1, Imm2) <-
 lang:derivationType[`immediate:ne] = "Derived".
 
 // immediates cannot be labels
-immediate:type[_] = type -> label_type[] != type.
+immediate:type[_] = type
+ ->
+   label_type[] != type.
 
 
-//////////////////////////////////////////////////
-// Operand (as union of {variable, immediate}). //
-//////////////////////////////////////////////////
+
+//--------------------------------------------------
+// [Operands] as union of {variable, immediate}
+//--------------------------------------------------
 
 operand(Operand) -> .
 
@@ -58,8 +69,8 @@ lang:physical:storageModel[`operand] = "ScalableSparse".
 lang:constructor(`operand:by_variable).
 lang:constructor(`operand:by_immediate).
 
-// Type predicate
 
+// Type predicate
 operand:type[Operand] = Type <-
    operand:by_variable[Var] = Operand,
    variable:type[Var] = Type.
@@ -67,6 +78,7 @@ operand:type[Operand] = Type <-
 operand:type[Operand] = Type <-
    operand:by_immediate[Imm] = Operand,
    immediate:type[Imm] = Type.
+
 
 // View predicates
 operand:as_variable[Operand] = Var <-

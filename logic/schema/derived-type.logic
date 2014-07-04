@@ -5,9 +5,10 @@
 // http://llvm.org/docs/LangRef.html#structure-type
 // http://llvm.org/docs/LangRef.html#vector-type
 
-////////////////////////////////////////
-// Type Hierarchy under derived types //
-////////////////////////////////////////
+
+//------------------------------------------------------------------------------
+// Type Hierarchy under derived types
+//------------------------------------------------------------------------------
 
 derived_type(Type)   -> type(Type).
 function_type(Type)  -> derived_type(Type).
@@ -20,9 +21,10 @@ opaque_struct_type(Type) -> struct_type(Type).
 
 lang:isEntity[`opaque_struct_type] = true.
 
-///////////////////////
-// First Class Types //
-///////////////////////
+
+//----------------------
+// First Class Types
+//----------------------
 
 type:firstclass(Type) <-
    type(Type),
@@ -30,9 +32,9 @@ type:firstclass(Type) <-
    !void_type[] = Type.
 
 
-/////////////////
-// Struct type //
-/////////////////
+//----------------------
+// Struct type
+//----------------------
 
 struct_type:field[Type, Index] = Field ->
    struct_type(Type), int[64](Index), type(Field).
@@ -41,9 +43,9 @@ struct_type:nfields[Type] = Total ->
    struct_type(Type), int[64](Total).
 
 
-////////////////
-// Array Type //
-////////////////
+//----------------------
+// Array Type
+//----------------------
 
 array_type:component[Type] = Comp ->
    array_type(Type), type(Comp).
@@ -55,9 +57,9 @@ array_type(Type) -> array_type:component[Type] = _.
 array_type(Type) -> array_type:size[Type] = _.
 
 
-///////////////////
-// Function type //
-///////////////////
+//----------------------
+// Function type
+//----------------------
 
 function_type:varargs(Type) -> function_type(Type).
 
@@ -76,9 +78,9 @@ function_type:return[_] = Ret
    label_type[] != Ret.
 
 
-//////////////////
-// Pointer type //
-//////////////////
+//----------------------
+// Pointer type
+//----------------------
 
 pointer_type:component[Type] = Comp ->
    pointer_type(Type), type(Comp).
@@ -118,9 +120,9 @@ pointer_type:component[_] = Comp
    !label_type[] = Comp.
 
 
-/////////////////
-// Vector type //
-/////////////////
+//----------------------
+// Vector type
+//----------------------
 
 vector_type:component[Type] = Comp ->
    vector_type(Type), type(Comp).
@@ -148,7 +150,9 @@ vector_type:pointer(Type) <-
    vector_type:component[Type] = Comp,
    pointer_type(Comp).
 
-// Constraints:
+
+//------------------------------------------------------------------------------
+// [Constraints and Vector Compatibiliry]
 //
 //  (1) A vector type requires a size (number of elements)
 //      and a component type.
@@ -156,16 +160,20 @@ vector_type:pointer(Type) <-
 //      larger than 0.
 //  (3) The component type can be any integer or floating point type,
 //      or a pointer to these types.
+//------------------------------------------------------------------------------
 
 vector_type(Type) -> vector_type:component[Type] = _.
 vector_type(Type) -> vector_type:size[Type] = _.
 vector_type:size[_] = Size -> Size > 0.
 
-vector_type:component[_] = Comp ->
-   integer_type(Comp);
-   fp_type(Comp);
-   pointer_type:integer(Comp);
-   pointer_type:fp(Comp).
+
+vector_type:component[_] = Comp
+ ->
+   integer_type(Comp)
+ ; fp_type(Comp)
+ ; pointer_type:integer(Comp)
+ ; pointer_type:fp(Comp).
+
 
 // Helper predicate
 
@@ -177,6 +185,7 @@ vector:eq_size_3(Type1, Type2, Type3) <-
    vector_type:size[Type1] = Size,
    vector_type:size[Type2] = Size,
    vector_type:size[Type3] = Size.
+
 
 // Two types are vector-compatible if:
 //  (i)  neither is a vector, or

@@ -6,12 +6,14 @@ atomicrmw_instruction(Insn) -> instruction(Insn).
 atomicrmw_instruction:ordering[Insn] = Ord ->
    atomicrmw_instruction(Insn), ordering(Ord).
 
+
 // If the atomicrmw is marked as volatile, then the optimizer is not allowed
 // to modify the number or order of execution of this atomirmw with other
 // volatile operations.
 
 atomicrmw_instruction:volatile(Insn) ->
    atomicrmw_instruction(Insn).
+
 
 // There are three arguments to the atomicrmw instruction:
 //  (i)   an operation to apply,
@@ -27,8 +29,13 @@ atomicrmw_instruction:address[Insn] = Ptr ->
 atomicrmw_instruction:value[Insn] = Value ->
    atomicrmw_instruction(Insn), operand(Value).
 
+
+//------------------------------------------------------------------------------
+// [Atomic Operation]
+//
 // The operation to apply for the ‘atomicrmw‘ instruction
 // must be one of the following:
+//------------------------------------------------------------------------------
 
 operation(Op), operation:id(Op:Ref) -> string(Ref).
 operation:xchg[] = Op <- operation:id(Op:"xchg").
@@ -54,9 +61,12 @@ operation(Op)
  ; operation:umax[] = Op ; operation:umin[] = Op.
 
 
-// Constraints:
+//------------------------------------------------------------------------------
+// [Constraints]
+//
 // (i)  The type of ‘<value>’ must be an integer type.
 // (ii) The type of the ‘<pointer>‘ operand must be a pointer to that type.
+//------------------------------------------------------------------------------
 
 atomicrmw_instruction(Insn) -> atomicrmw_instruction:ordering[Insn] = _.
 atomicrmw_instruction(Insn) -> atomicrmw_instruction:operation[Insn] = _.
@@ -64,22 +74,20 @@ atomicrmw_instruction(Insn) -> atomicrmw_instruction:address[Insn] = _.
 atomicrmw_instruction(Insn) -> atomicrmw_instruction:value[Insn] = _.
 
 
-atomicrmw_instruction:value[_] = Value,
-   operand:type[Value] = Type
+atomicrmw_instruction:value[_] = Value, operand:type[Value] = Type
  ->
    integer_type(Type).
 
 
-atomicrmw_instruction:address[_] = Ptr,
-   operand:type[Ptr] = Type
+atomicrmw_instruction:address[_] = Ptr, operand:type[Ptr] = Type
  ->
    pointer_type(Type).
 
 
-atomicrmw_instruction(Insn),
-   atomicrmw_instruction:address[Insn] = Ptr,
-   atomicrmw_instruction:value[Insn] = Value,
-   operand:type[Ptr] = Type,
-   pointer_type:component[Type] = Comp
+atomicrmw_instruction(Insn)
+ , atomicrmw_instruction:address[Insn] = Ptr
+ , atomicrmw_instruction:value[Insn] = Value
+ , operand:type[Ptr] = Type
+ , pointer_type:component[Type] = Comp
  ->
    operand:type[Value] = Comp.

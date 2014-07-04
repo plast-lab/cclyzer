@@ -28,30 +28,37 @@ shufflevector_instruction:mask_type[Insn] = Type <-
    immediate:type[Mask] = Type.
 
 
-// Constraints:
+//------------------------------------------------------------------------------
+// [Constraints]
 //
 // 1. The 'shufflevector' instruction takes three arguments:
 //  (i)  two vectors of the same type, and
 //  (ii) a shuffle mask argument.
+//
 // 2. The shuffle mask is required to be:
 //  (i) a constant vector
 //  (ii) with i32-integer component type.
 //
 // 3. The result is a vector
 //  (i)  whose length is the same as the shuffle mask and
-//  (ii) whose element type is the same as the element type of the first two operands.
+//  (ii) whose element type is the same as the element type of the first
+//       two operands.
+//------------------------------------------------------------------------------
 
 shufflevector_instruction(Insn)
  ->
    shufflevector_instruction:first_vector[Insn]  = _.
 
+
 shufflevector_instruction(Insn)
  ->
    shufflevector_instruction:second_vector[Insn] = _.
 
+
 shufflevector_instruction(Insn)
  ->
    shufflevector_instruction:mask[Insn] = _.
+
 
 shufflevector_instruction:input_type[_] = Input
  ->
@@ -61,6 +68,7 @@ shufflevector_instruction:input_type[_] = Input
 shufflevector_instruction:mask_type[_] = Mask
  ->
    vector_type:i32(Mask).
+
 
 // The type of the elements of the two input and one output vectors.
 // !! Functional dependency violation encodes (3.ii) constraint !!
@@ -73,7 +81,7 @@ shufflevector_instruction:element_type[Insn] = Comp <-
    vector_type:component[Type] = Comp.
 
 
-instruction:type[Insn] = Result,
-   shufflevector_instruction:mask_type[Insn] = Mask
+instruction:type[Insn] = Result
+ , shufflevector_instruction:mask_type[Insn] = Mask
  ->
    vector:compatible(Result, Mask).
