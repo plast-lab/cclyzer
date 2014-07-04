@@ -9,27 +9,35 @@ or_instruction:first_operand[Insn] = Left ->
 or_instruction:second_operand[Insn] = Right ->
    or_instruction(Insn), operand(Right).
 
-// Constraints:
-// The two arguments to the ‘or‘ instruction must be:
-//    (i)  integer or
-//    (ii) vector of integer values.
-// Both arguments must have identical types.
-// The resulting value is the same type as its operands.
+
+//------------------------------------------------------------------------------
+// [Constraints]
+//
+// 1) The two arguments to the ‘or‘ instruction must be:
+//      (i)  integer or
+//      (ii) vector of integer values.
+//
+// 2) Both arguments must have identical types.
+//
+// 3) The resulting value is the same type as its operands.
+//------------------------------------------------------------------------------
 
 or_instruction(Insn) -> or_instruction:first_operand[Insn] = _.
 or_instruction(Insn) -> or_instruction:second_operand[Insn] = _.
 
-or_instruction(Insn),
-   instruction:type[Insn] = Type
+
+or_instruction(Insn), instruction:type[Insn] = Type
  ->
    integer_type(Type); vector_type:integer(Type).
 
-instruction:type[Insn] = Type,
-   or_instruction:first_operand[Insn] = Left
+
+instruction:type[Insn] = Type
+ , or_instruction:first_operand[Insn] = Left
  ->
    operand:type[Left] = Type.
 
-instruction:type[Insn] = Type,
-   or_instruction:second_operand[Insn] = Right
+
+instruction:type[Insn] = Type
+ , or_instruction:second_operand[Insn] = Right
  ->
    operand:type[Right] = Type.

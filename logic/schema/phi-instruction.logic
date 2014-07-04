@@ -3,6 +3,7 @@
 
 phi_instruction(Insn) -> instruction(Insn).
 
+
 phi_instruction:type[Insn] = Type -> phi_instruction(Insn), type(Type).
 
 phi_instruction:pair:value[Insn, Index] = Value ->
@@ -14,25 +15,31 @@ phi_instruction:pair:label[Insn, Index] = Label ->
 phi_instruction:npairs[Insn] = Total ->
    phi_instruction(Insn), int[64](Total).
 
-// Constraints:
+
+//------------------------------------------------------------------------------
+// [Constraints]
+//
 // The ‘phi‘ instruction takes a list of pairs as arguments,
 // with one pair for each predecessor basic block of the current block.
-// (i)  Only values of first class type may be used as the value arguments
-//      to the PHI node.
-// (ii) Only labels may be used as the label arguments.
+//   (i)  Only values of first class type may be used as the value arguments
+//        to the PHI node.
+//   (ii) Only labels may be used as the label arguments.
+//------------------------------------------------------------------------------
 
 phi_instruction(Insn) -> phi_instruction:npairs[Insn] = _.
 phi_instruction:type[Insn] = Type -> instruction:type[Insn] = Type.
 phi_instruction:pair:label[_, _] = Label -> variable:label(Label).
 phi_instruction:pair:value[_, _] = Value -> operand:firstclass(Value).
 
-phi_instruction:type[Insn] = Type,
-   phi_instruction:pair:value[Insn, _] = Operand
+
+phi_instruction:type[Insn] = Type
+ , phi_instruction:pair:value[Insn, _] = Operand
  ->
    operand:type[Operand] = Type.
 
-phi_instruction:pair:label[Insn, Index] = _,
-   phi_instruction:npairs[Insn] = Total
+
+phi_instruction:pair:label[Insn, Index] = _
+ , phi_instruction:npairs[Insn] = Total
  ->
    0 <= Index,
    Index < Total.

@@ -9,17 +9,22 @@ terminator_instruction(Insn) <-
 resume_instruction:operand[Insn] = Operand ->
    resume_instruction(Insn), operand(Operand).
 
-// Constraints:
-// The ‘resume‘ instruction requires one argument, which
-// must have the same type as the result of any ‘landingpad‘
-// instruction in the same function.
+
+//------------------------------------------------------------------------------
+// [Constraints]
+//
+// 1) The ‘resume‘ instruction requires one argument, which
+//    must have the same type as the result of any ‘landingpad‘
+//    instruction in the same function.
+//------------------------------------------------------------------------------
 
 resume_instruction(Insn) -> resume_instruction:operand[Insn] = _.
 
-resume_instruction:operand[Insn] = Operand,
-   landingpad_instruction(Insn2),
-   instruction:type[Insn2] = Type,
-   instruction:function[Insn]  = Func,
-   instruction:function[Insn2] = Func
+
+resume_instruction:operand[Insn] = Operand
+ , landingpad_instruction(Insn2)
+ , instruction:type[Insn2] = Type
+ , instruction:function[Insn]  = Func
+ , instruction:function[Insn2] = Func
  ->
    operand:type[Operand] = Type.

@@ -13,7 +13,9 @@ ptrtoint_instruction:from_type[Insn] = Type <-
    ptrtoint_instruction:from[Insn] = Value,
    operand:type[Value] = Type.
 
-// Constraints:
+
+//------------------------------------------------------------------------------
+// [Constraints]
 //
 // The ‘ptrtoint‘ instruction takes:
 //  (i)  a value to cast, which must be pointer or vector of pointer values,
@@ -23,6 +25,7 @@ ptrtoint_instruction:from_type[Insn] = Type <-
 // If the value to be casted is a vector pointer type:
 //  (i)  the type must be a vector integer type,
 //  (ii) with the same number of elements.
+//------------------------------------------------------------------------------
 
 ptrtoint_instruction(Insn) -> ptrtoint_instruction:from[Insn] = _.
 ptrtoint_instruction(Insn) -> ptrtoint_instruction:to_type[Insn] = _.
@@ -43,8 +46,8 @@ ptrtoint_instruction:to_type[_] = Type
    integer_type(Type); vector_type:integer(Type).
 
 
-ptrtoint_instruction(Insn),
-   ptrtoint_instruction:from_type[Insn] = From,
-   ptrtoint_instruction:to_type[Insn] = To
+ptrtoint_instruction(Insn)
+ , ptrtoint_instruction:from_type[Insn] = From
+ , ptrtoint_instruction:to_type[Insn] = To
  ->
    vector:compatible(From, To).
