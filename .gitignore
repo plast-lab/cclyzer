@@ -1,6 +1,6 @@
 /build/*
 /bin/*
-/data/*
+data
 /logic/import/import-predicates.logic
 /logic/import/import-entities.logic
 /import-generator/src/blox/common/Common.pb.cc
