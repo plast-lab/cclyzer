@@ -6,8 +6,13 @@ fence_instruction(Insn) -> instruction(Insn).
 fence_instruction:ordering[Insn] = Ord ->
    fence_instruction(Insn), ordering(Ord).
 
-// Constraints:
-// They can only be given acquire, release, acq_rel, and seq_cst orderings.
+
+//-------------------------------------------------------------------
+// [Constraints]
+//
+// They can only be given acquire, release, acq_rel, and seq_cst
+// orderings.
+//-------------------------------------------------------------------
 
 fence_instruction(Insn) -> fence_instruction:ordering[Insn] = _.
 
