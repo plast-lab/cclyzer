@@ -6,10 +6,41 @@ void_type[] = Type     -> primitive_type(Type).
 label_type[] = Type    -> primitive_type(Type).
 metadata_type[] = Type -> primitive_type(Type).
 
+
+// Boolean alias
+
+boolean_type(Type) <-
+   int1_type[]  = Type.
+
+
+// Standard types as constants
+
+void_type[]  = Type <- primitive_type(Type), type:id(Type:"void").
+label_type[] = Type <- primitive_type(Type), type:id(Type:"label").
+metadata_type[] = Type <- primitive_type(Type), type:id(Type:"metadata").
+x86mmx_type[]   = Type <- primitive_type(Type), type:id(Type:"x86mmx").
+
+
+//------------------------------------------------------------------------------
+// [Integer Types] and their selectors
+//------------------------------------------------------------------------------
+
 int1_type[]  = Type -> integer_type(Type).
 int8_type[]  = Type -> integer_type(Type).
 int32_type[] = Type -> integer_type(Type).
 int64_type[] = Type -> integer_type(Type).
+
+// Standard types as constants
+
+int1_type[]  = Type <- integer_type(Type), type:id(Type:"i1").
+int8_type[]  = Type <- integer_type(Type), type:id(Type:"i8").
+int32_type[] = Type <- integer_type(Type), type:id(Type:"i32").
+int64_type[] = Type <- integer_type(Type), type:id(Type:"i64").
+
+
+//------------------------------------------------------------------------------
+// [Floating Point Types] and their selectors
+//------------------------------------------------------------------------------
 
 double_type[] = Type -> fp_type(Type).
 float_type[]  = Type -> fp_type(Type).
@@ -17,10 +48,6 @@ half_type[]   = Type -> fp_type(Type).
 fp128_type[]  = Type -> fp_type(Type).
 
 // Standard types as constants
-int1_type[]  = Type <- integer_type(Type), type:id(Type:"i1").
-int8_type[]  = Type <- integer_type(Type), type:id(Type:"i8").
-int32_type[] = Type <- integer_type(Type), type:id(Type:"i32").
-int64_type[] = Type <- integer_type(Type), type:id(Type:"i64").
 
 double_type[] = Type <- fp_type(Type), type:id(Type:"double").
 float_type[]  = Type <- fp_type(Type), type:id(Type:"float").
@@ -28,12 +55,3 @@ half_type[]   = Type <- fp_type(Type), type:id(Type:"half").
 fp128_type[]  = Type <- fp_type(Type), type:id(Type:"fp128").
 x86_fp80_type[]  = Type <- fp_type(Type), type:id(Type:"x86_fp80").
 ppc_fp128_type[] = Type <- fp_type(Type), type:id(Type:"ppc_fp128").
-
-void_type[]  = Type <- primitive_type(Type), type:id(Type:"void").
-label_type[] = Type <- primitive_type(Type), type:id(Type:"label").
-metadata_type[] = Type <- primitive_type(Type), type:id(Type:"metadata").
-x86mmx_type[]   = Type <- primitive_type(Type), type:id(Type:"x86mmx").
-
-// Boolean alias
-boolean_type(Type) <-
-   int1_type[]  = Type.
