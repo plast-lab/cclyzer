@@ -13,7 +13,9 @@ sitofp_instruction:from_type[Insn] = Type <-
    sitofp_instruction:from[Insn] = Value,
    operand:type[Value] = Type.
 
-// Constraints:
+
+//------------------------------------------------------------------------------
+// [Constraints]
 //
 // The ‘sitofp‘ instruction takes:
 //  (i)  a value to cast, which must be a scalar or vector integer value,
@@ -22,6 +24,7 @@ sitofp_instruction:from_type[Insn] = Type <-
 // If the value to be casted is a vector integer type:
 //  (i)  the type must be a vector floating point type,
 //  (ii) with the same number of elements.
+//------------------------------------------------------------------------------
 
 sitofp_instruction(Insn) -> sitofp_instruction:from[Insn] = _.
 sitofp_instruction(Insn) -> sitofp_instruction:to_type[Insn] = _.
@@ -42,8 +45,8 @@ sitofp_instruction:to_type[_] = Type
    fp_type(Type); vector_type:fp(Type).
 
 
-sitofp_instruction(Insn),
-   sitofp_instruction:from_type[Insn] = From,
-   sitofp_instruction:to_type[Insn] = To
+sitofp_instruction(Insn)
+ , sitofp_instruction:from_type[Insn] = From
+ , sitofp_instruction:to_type[Insn] = To
  ->
    vector:compatible(From, To).

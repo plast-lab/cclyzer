@@ -13,17 +13,20 @@ sext_instruction:from_type[Insn] = Type <-
    sext_instruction:from[Insn] = Value,
    operand:type[Value] = Type.
 
-// Constraints:
+
+//------------------------------------------------------------------------------
+// [Constraints]
 //
-// The ‘sext‘ instruction takes:
-//  (i)  a value to cast,
-//  (ii) and a type to cast it to.
+// 1) The ‘sext‘ instruction takes:
+//      (i)  a value to cast,
+//      (ii) and a type to cast it to.
 //
-// Both source and destination types must be:
-//  (i)  integers or
-//  (ii) vectors of the same number of integers.
+// 2) Both source and destination types must be:
+//      (i)  integers or
+//      (ii) vectors of the same number of integers.
 //
-// The source type must be smaller than the destination type.
+// 3) The source type must be smaller than the destination type.
+//------------------------------------------------------------------------------
 
 sext_instruction(Insn) -> sext_instruction:from[Insn] = _.
 sext_instruction(Insn) -> sext_instruction:to_type[Insn] = _.
@@ -44,8 +47,8 @@ sext_instruction:to_type[_] = Type
    integer_type(Type); vector_type:integer(Type).
 
 
-sext_instruction(Insn),
-   sext_instruction:from_type[Insn] = From,
-   sext_instruction:to_type[Insn] = To
+sext_instruction(Insn)
+ , sext_instruction:from_type[Insn] = From
+ , sext_instruction:to_type[Insn] = To
  ->
    vector:compatible(From, To).
