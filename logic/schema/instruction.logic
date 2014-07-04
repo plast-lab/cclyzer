@@ -11,6 +11,7 @@ terminator_instruction(Insn) -> instruction(Insn).
 lang:derivationType[`terminator_instruction] = "DerivedAndStored".
 lang:isEntity[`terminator_instruction] = false.
 
+
 // Instruction Flags
 instruction:flag(Insn, Flag) -> instruction(Insn), flag(Flag).
 
@@ -29,6 +30,7 @@ instruction:next_index[Insn, Index] = Next ->
 
 // prevent import-generator from producing file predicates
 lang:derivationType[`instruction:next_index] = "DerivedAndStored".
+
 
 //------------------------------------
 // Sequence of instructions
