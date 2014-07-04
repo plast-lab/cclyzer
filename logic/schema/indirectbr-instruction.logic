@@ -6,10 +6,12 @@ indirectbr_instruction(Insn) -> instruction(Insn).
 terminator_instruction(Insn) <-
    indirectbr_instruction(Insn).
 
+
 // The ‘address‘ argument is the address of the label to jump to.
 
 indirectbr_instruction:address[Insn] = Address ->
    indirectbr_instruction(Insn), operand(Address).
+
 
 // The rest of the arguments indicate the full set
 // of possible destinations that the address may point to.
@@ -23,24 +25,30 @@ indirectbr_instruction:nlabels[Insn] = Total ->
    indirectbr_instruction(Insn), int[64](Total).
 
 
-// Constraints:
+
+//------------------------------------------------------------------------------
+// [Constraints]
+//
 //  (1) Address must be derived from a blockaddress constant.
+//
 //  (2) The ‘blockaddress‘ constant computes the address of the
 //      specified basic block in the specified function, and always
 //      has an i8* type.
+//------------------------------------------------------------------------------
+
 
 indirectbr_instruction(Insn) -> indirectbr_instruction:nlabels[Insn] = _.
 indirectbr_instruction(Insn) -> indirectbr_instruction:address[Insn] = _.
 indirectbr_instruction:label[_, _] = Var -> variable:label(Var).
 
-indirectbr_instruction:label[Insn, Index] = _,
-   indirectbr_instruction:nlabels[Insn] = Total
+
+indirectbr_instruction:label[Insn, Index] = _
+ , indirectbr_instruction:nlabels[Insn] = Total
  ->
-   0 <= Index,
-   Index < Total.
+   0 <= Index, Index < Total.
 
 
-indirectbr_instruction:address[_] = Address,
-   operand:type[Address] = Type
+indirectbr_instruction:address[_] = Address
+ , operand:type[Address] = Type
  ->
    int8_type[] = Type.
