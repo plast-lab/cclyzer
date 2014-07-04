@@ -3,6 +3,7 @@
 
 insertelement_instruction(Insn) -> instruction(Insn).
 
+
 insertelement_instruction:base[Insn] = Vector ->
    insertelement_instruction(Insn), operand(Vector).
 
@@ -19,28 +20,31 @@ insertelement_instruction:type[Insn] = Comp <-
    vector_type:component[Type] = Comp.
 
 
+//------------------------------------------------------------------------------
 // Constraints:
 //
-// The 'insertelement' instruction takes three operands:
+// The ‘insertelement‘ instruction takes three operands:
 //    (i)   the first operand is a value of vector type
 //    (ii)  the second operand is a scalar value whose type must equal
 //          the element type of the first operand, and
 //    (iii) the third operand is an index of i32-integer type.
 //
 // The result is a vector of the same type as the first operand.
+//------------------------------------------------------------------------------
 
 insertelement_instruction(Insn) -> insertelement_instruction:base[Insn] = _.
 insertelement_instruction(Insn) -> insertelement_instruction:index[Insn] = _.
 insertelement_instruction(Insn) -> insertelement_instruction:value[Insn] = _.
 
-insertelement_instruction:base[_] = Vector,
-   operand:type[Vector] = Type
+
+insertelement_instruction:base[_] = Vector
+ , operand:type[Vector] = Type
  ->
    vector_type(Type).
 
 
-insertelement_instruction:index[_] = Index,
-   operand:type[Index] = Type
+insertelement_instruction:index[_] = Index
+ , operand:type[Index] = Type
  ->
    int32_type[] = Type.
 
@@ -51,7 +55,7 @@ insertelement_instruction:value[Insn] = Value,
    insertelement_instruction:type[Insn] = Type.
 
 
-insertelement_instruction:base[Insn] = Vector,
-   operand:type[Vector] = Type
+insertelement_instruction:base[Insn] = Vector
+ , operand:type[Vector] = Type
  ->
    instruction:type[Insn] = Type.

@@ -3,6 +3,7 @@
 
 extractelement_instruction(Insn) -> instruction(Insn).
 
+
 extractelement_instruction:base[Insn] = Vector ->
    extractelement_instruction(Insn), operand(Vector).
 
@@ -16,26 +17,29 @@ extractelement_instruction:type[Insn] = Comp <-
    vector_type:component[Type] = Comp.
 
 
-// Constraints:
+//------------------------------------------------------------------------------
+// [Constraints]
 //
-// The 'extractelement' instruction takes two operands:
+// The ‘extractelement‘ instruction takes two operands:
 //    (i)  the first operand is a value of vector type
 //    (ii) and the second operand is an index of i32-integer type.
 //
 // The result is a scalar of the same type as the component type
 // of the vector value.
+//------------------------------------------------------------------------------
 
 extractelement_instruction(Insn) -> extractelement_instruction:base[Insn] = _.
 extractelement_instruction(Insn) -> extractelement_instruction:index[Insn] = _.
 
-extractelement_instruction:base[_] = Vector,
-   operand:type[Vector] = Type
+
+extractelement_instruction:base[_] = Vector
+ , operand:type[Vector] = Type
  ->
    vector_type(Type).
 
 
-extractelement_instruction:index[_] = Index,
-   operand:type[Index] = Type
+extractelement_instruction:index[_] = Index
+ , operand:type[Index] = Type
  ->
    int32_type[] = Type.
 
