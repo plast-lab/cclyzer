@@ -13,15 +13,18 @@ uitofp_instruction:from_type[Insn] = Type <-
    uitofp_instruction:from[Insn] = Value,
    operand:type[Value] = Type.
 
-// Constraints:
+
+//------------------------------------------------------------------------------
+// [Constraints]
 //
 // The ‘uitofp‘ instruction takes:
-//  (i)  a value to cast, which must be a scalar or vector integer value,
+//      (i)  a value to cast, which must be a scalar or vector integer value,
 //  (ii) and a type to cast it to, which must be a floating point type.
 //
 // If the value to be casted is a vector integer type:
 //  (i)  the type must be a vector floating point type,
 //  (ii) with the same number of elements.
+//------------------------------------------------------------------------------
 
 uitofp_instruction(Insn) -> uitofp_instruction:from[Insn] = _.
 uitofp_instruction(Insn) -> uitofp_instruction:to_type[Insn] = _.
@@ -42,8 +45,8 @@ uitofp_instruction:to_type[_] = Type
    fp_type(Type); vector_type:fp(Type).
 
 
-uitofp_instruction(Insn),
-   uitofp_instruction:from_type[Insn] = From,
-   uitofp_instruction:to_type[Insn] = To
+uitofp_instruction(Insn)
+ , uitofp_instruction:from_type[Insn] = From
+ , uitofp_instruction:to_type[Insn] = To
  ->
    vector:compatible(From, To).
