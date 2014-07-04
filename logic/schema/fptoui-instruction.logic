@@ -13,16 +13,20 @@ fptoui_instruction:from_type[Insn] = Type <-
    fptoui_instruction:from[Insn] = Value,
    operand:type[Value] = Type.
 
-// Constraints:
+
+//-------------------------------------------------------------------
+// [Constraints]
 //
-// The ‘fptoui‘ instruction takes:
-//  (i)  a value to cast, which must be a scalar or vector
-//       floating point value,
-//  (ii) and a type to cast it to, which must be an integer type.
+// 1) The ‘fptoui‘ instruction takes:
+//      (i)  a value to cast, which must be a scalar or vector
+//           floating point value,
+//      (ii) and a type to cast it to, which must be an integer
+//           type.
 //
-// If the value to be casted is a vector floating point type:
-//  (i)  the type must be a vector integer type,
-//  (ii) with the same number of elements.
+// 2) If the value to be casted is a vector floating point type:
+//      (i)  the type must be a vector integer type,
+//      (ii) with the same number of elements.
+//-------------------------------------------------------------------
 
 fptoui_instruction(Insn) -> fptoui_instruction:from[Insn] = _.
 fptoui_instruction(Insn) -> fptoui_instruction:to_type[Insn] = _.
@@ -43,8 +47,8 @@ fptoui_instruction:to_type[_] = Type
    integer_type(Type); vector_type:integer(Type).
 
 
-fptoui_instruction(Insn),
-   fptoui_instruction:from_type[Insn] = From,
-   fptoui_instruction:to_type[Insn] = To
+fptoui_instruction(Insn)
+ , fptoui_instruction:from_type[Insn] = From
+ , fptoui_instruction:to_type[Insn] = To
  ->
    vector:compatible(From, To).

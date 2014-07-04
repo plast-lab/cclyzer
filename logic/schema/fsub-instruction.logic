@@ -9,27 +9,36 @@ fsub_instruction:first_operand[Insn] = Left ->
 fsub_instruction:second_operand[Insn] = Right ->
    fsub_instruction(Insn), operand(Right).
 
-// Constraints:
-// The two arguments to the ‘fsub‘ instruction must be:
-//    (i)  floating point or
-//    (ii) vector of floating point values.
-// Both arguments must have identical types.
-// The resulting value is the same type as its operands.
+
+//-------------------------------------------------------------------
+// [Constraints]
+//
+// 1) The two arguments to the ‘fsub‘ instruction must be:
+//      (i)  floating point or
+//      (ii) vector of floating point values.
+//
+// 2) Both arguments must have identical types.
+//
+// 3) The resulting value is the same type as its operands.
+//-------------------------------------------------------------------
 
 fsub_instruction(Insn) -> fsub_instruction:first_operand[Insn] = _.
 fsub_instruction(Insn) -> fsub_instruction:second_operand[Insn] = _.
 
-fsub_instruction(Insn),
-   instruction:type[Insn] = Type
+
+fsub_instruction(Insn)
+ , instruction:type[Insn] = Type
  ->
    fp_type(Type); vector_type:fp(Type).
 
-instruction:type[Insn] = Type,
-   fsub_instruction:first_operand[Insn] = Left
+
+instruction:type[Insn] = Type
+ , fsub_instruction:first_operand[Insn] = Left
  ->
    operand:type[Left] = Type.
 
-instruction:type[Insn] = Type,
-   fsub_instruction:second_operand[Insn] = Right
+
+instruction:type[Insn] = Type
+ , fsub_instruction:second_operand[Insn] = Right
  ->
    operand:type[Right] = Type.

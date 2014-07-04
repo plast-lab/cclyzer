@@ -12,9 +12,16 @@ fcmp_instruction:first_operand[Insn] = Left ->
 fcmp_instruction:second_operand[Insn] = Right ->
    fcmp_instruction(Insn), operand(Right).
 
-// Condition Code and selectors for the 'fcmp' Instruction, as enum
+
+//------------------------------------------------------------------------------
+// [Condition Codes]
+//
+// Condition Code enum representation for the ‘fcmp‘ instruction, and
+// its selectors.
+//------------------------------------------------------------------------------
 
 fcmp_condition(Cond), fcmp_condition:id(Cond:Ref) -> string(Ref).
+
 
 fcmp_condition:false[] = Cond <- fcmp_condition:id(Cond:"false").
 fcmp_condition:true[]  = Cond <- fcmp_condition:id(Cond:"true").
@@ -33,16 +40,21 @@ fcmp_condition:ule[]   = Cond <- fcmp_condition:id(Cond:"ule").
 fcmp_condition:une[]   = Cond <- fcmp_condition:id(Cond:"une").
 fcmp_condition:uno[]   = Cond <- fcmp_condition:id(Cond:"uno").
 
+
+// the enum enforcement by constraint
+
 fcmp_condition(Cond)
-->
-   fcmp_condition:false[] = Cond; fcmp_condition:true[] = Cond;
-   fcmp_condition:oeq[]   = Cond; fcmp_condition:ogt[]  = Cond;
-   fcmp_condition:oge[]   = Cond; fcmp_condition:olt[]  = Cond;
-   fcmp_condition:ole[]   = Cond; fcmp_condition:one[]  = Cond;
-   fcmp_condition:ord[]   = Cond; fcmp_condition:ueq[]  = Cond;
-   fcmp_condition:ugt[]   = Cond; fcmp_condition:uge[]  = Cond;
-   fcmp_condition:ult[]   = Cond; fcmp_condition:ule[]  = Cond;
-   fcmp_condition:une[]   = Cond; fcmp_condition:uno[]  = Cond.
+ ->
+   fcmp_condition:false[] = Cond ; fcmp_condition:true[] = Cond
+ ; fcmp_condition:oeq[]   = Cond ; fcmp_condition:ogt[]  = Cond
+ ; fcmp_condition:oge[]   = Cond ; fcmp_condition:olt[]  = Cond
+ ; fcmp_condition:ole[]   = Cond ; fcmp_condition:one[]  = Cond
+ ; fcmp_condition:ord[]   = Cond ; fcmp_condition:ueq[]  = Cond
+ ; fcmp_condition:ugt[]   = Cond ; fcmp_condition:uge[]  = Cond
+ ; fcmp_condition:ult[]   = Cond ; fcmp_condition:ule[]  = Cond
+ ; fcmp_condition:une[]   = Cond ; fcmp_condition:uno[]  = Cond.
+
+
 
 // Abbreviations
 
@@ -55,22 +67,28 @@ fcmp_instruction:to_type[Insn]  = Type <-
    instruction:type[Insn] = Type.
 
 
-// Constraints:
-// The ‘fcmp‘ instruction returns:
-//  (i)  a boolean value or
-//  (ii) a vector of boolean values
-// based on comparison of its two:
-//  (i)  floating point or
-//  (ii) floating point vector operands.
-// They must also be identical types.
+//-------------------------------------------------------------------
+// [Constraints]
 //
-// If the operands are floating point vectors
-//  (i)  the result type is a boolean vector
-//  (ii) with the same number of elements.
+// 1) The ‘fcmp‘ instruction returns:
+//      (i)  a boolean value or
+//      (ii) a vector of boolean values
+//
+//    based on comparison of its two:
+//      (i)  floating point or
+//      (ii) floating point vector operands.
+//
+// 2) They must also be identical types.
+//
+// 3) If the operands are floating point vectors
+//      (i)  the result type is a boolean vector
+//      (ii) with the same number of elements.
+//-------------------------------------------------------------------
 
 fcmp_instruction(Insn) -> fcmp_instruction:condition[Insn] = _.
 fcmp_instruction(Insn) -> fcmp_instruction:first_operand[Insn] = _.
 fcmp_instruction(Insn) -> fcmp_instruction:second_operand[Insn] = _.
+
 
 fcmp_instruction:to_type[_] = Type
  ->
@@ -82,17 +100,17 @@ fcmp_instruction:from_type[_] = Type
    fp_type(Type) ; vector_type:fp(Type).
 
 
-fcmp_instruction(Insn),
-   fcmp_instruction:first_operand[Insn]  = Left,
-   fcmp_instruction:second_operand[Insn] = Right,
-   operand:type[Left]  = Type1,
-   operand:type[Right] = Type2
+fcmp_instruction(Insn)
+ , fcmp_instruction:first_operand[Insn]  = Left
+ , fcmp_instruction:second_operand[Insn] = Right
+ , operand:type[Left]  = Type1
+ , operand:type[Right] = Type2
  ->
    Type1 = Type2.
 
 
-fcmp_instruction(Insn),
-   fcmp_instruction:from_type[Insn] = From,
-   fcmp_instruction:to_type[Insn] = To
+fcmp_instruction(Insn)
+ , fcmp_instruction:from_type[Insn] = From
+ , fcmp_instruction:to_type[Insn] = To
  ->
    vector:compatible(From, To).
