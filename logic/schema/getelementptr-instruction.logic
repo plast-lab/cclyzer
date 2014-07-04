@@ -7,23 +7,32 @@ getelementptr_instruction:inbounds(Insn) -> getelementptr_instruction(Insn).
 getelementptr_instruction:base[Insn] = Ptr ->
    getelementptr_instruction(Insn), operand(Ptr).
 
-// The remaining arguments are indices that indicate which of the elements
-// of the aggregate object are indexed. The interpretation of each index is
-// dependent on the type being indexed into.
 
-// The first index always indexes the pointer value given as the first argument,
-// the second index indexes a value of the type pointed to (not necessarily the
-// value directly pointed to, since the first index can be non-zero), etc.
-// The first type indexed into must be a pointer value, subsequent types can be
-// arrays, vectors, and structs. Note that subsequent types being indexed into
-// can never be pointers, since that would require loading the pointer before
+//------------------------------------------------------------------------------
+// [GEP Indices]
+//
+// The remaining arguments are indices that indicate which of the
+// elements of the aggregate object are indexed. The interpretation of
+// each index is dependent on the type being indexed into.
+
+// The first index always indexes the pointer value given as the first
+// argument, the second index indexes a value of the type pointed to
+// (not necessarily the value directly pointed to, since the first
+// index can be non-zero), etc.  The first type indexed into must be a
+// pointer value, subsequent types can be arrays, vectors, and
+// structs. Note that subsequent types being indexed into can never be
+// pointers, since that would require loading the pointer before
 // continuing calculation.
+//------------------------------------------------------------------------------
+
 
 getelementptr_instruction:nindices[Insn] = Total ->
    getelementptr_instruction(Insn), int[64](Total).
 
 getelementptr_instruction:index[Insn, Index] = Idx ->
    getelementptr_instruction(Insn), int[64](Index), operand(Idx).
+
+
 
 // Auxiliary type predicates
 
@@ -35,10 +44,13 @@ getelementptr_instruction:index_type(Insn, Type) <-
    getelementptr_instruction:index[Insn, _] = Idx,
    operand:type[Idx] = Type.
 
+
+//----------------------------------------------------------------
 // [Determining Fields]
 //
 // In a similar manner as in a ‘extractvalue‘ instruction.
 // The resulting type for each dereference
+//----------------------------------------------------------------
 
 instruction:next_index[Insn, Index] = Index + 1 <-
    getelementptr_instruction:index[Insn, Index] = _.
@@ -83,7 +95,10 @@ getelementptr_instruction:value_type[Insn] = Type <-
    getelementptr_instruction:nindices[Insn] = Total,
    getelementptr_instruction:interm_type[Insn, Total] = Type.
 
-// Constraints:
+
+
+//------------------------------------------------------------------------------
+// [Constraints]
 //
 //  (1) The first operand of a ‘getelementptr' instruction is
 //      always a pointer or a vector of pointers.
@@ -107,9 +122,12 @@ getelementptr_instruction:value_type[Insn] = Type <-
 //
 //  The ‘getelementptr‘ instruction returns a pointer to the element
 //  specified by the indices.
+//------------------------------------------------------------------------------
+
 
 getelementptr_instruction(Insn) -> getelementptr_instruction:base[Insn] = _.
 getelementptr_instruction(Insn) -> getelementptr_instruction:nindices[Insn] = _.
+
 getelementptr_instruction(Insn)
  ->
    getelementptr_instruction:value_type[Insn] = _. // c2
@@ -125,22 +143,22 @@ getelementptr_instruction:index_type(_, Type)
    integer_type(Type); vector_type:integer(Type). // c4
 
 
-getelementptr_instruction(Insn),
-   getelementptr_instruction:base_type[Insn] = Base,
-   getelementptr_instruction:index_type(Insn, Idx)
+getelementptr_instruction(Insn)
+ , getelementptr_instruction:base_type[Insn] = Base
+ , getelementptr_instruction:index_type(Insn, Idx)
  ->
    vector:compatible(Base, Idx). // c5
 
 
-getelementptr_instruction:value_type[Insn] = Value,
-   instruction:type[Insn] = Ptr
+getelementptr_instruction:value_type[Insn] = Value, instruction:type[Insn] = Ptr
  ->
    gep:vector_based(Insn) ;
    pointer_type:component[Ptr] = Value. // creturn
 
-gep:vector_based(Insn),
-   getelementptr_instruction:value_type[Insn] = Value,
-   instruction:type[Insn] = Vector,
-   vector_type:component[Vector] = Ptr
+
+gep:vector_based(Insn)
+ , getelementptr_instruction:value_type[Insn] = Value
+ , instruction:type[Insn] = Vector
+ , vector_type:component[Vector] = Ptr
  ->
    pointer_type:component[Ptr] = Value. // creturn
