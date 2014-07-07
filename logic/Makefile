@@ -96,13 +96,3 @@ $(schema.pb): $(import.outdir)/%.pb: $(schema.ph) | $(import.outdir)
 .PHONY: import.src
 import.src: $(schema.pb)
 	$(importgen.exe) --ignore import/.ignored-predicates --dir ./data --delim '\t' -o import $^
-
-
-
-# define process-script
-#   $(M4) --define=ENTITIES=$(entities)     \
-#         --define=PREDICATES=$(predicates) \
-#         --define=SCHEMA=$(logic.outdir)   \
-#         --define=WORKSPACE=$(workspace)   \
-#         $(logic.tmpl) > $1
-# endef
