@@ -57,3 +57,4 @@ Build LLVM-Datalog as follows:
 
     $ cd /path/to/llvm-datalog/
     $ make
+    $ make install
