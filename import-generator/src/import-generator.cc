@@ -68,7 +68,6 @@ int main(int argc, char* argv[])
 
             if(predicatesToIgnore.find(p->getName()) == ignoreEnd)
             {
-                cout << p->getName() << endl;
                 switch (p->getPredicateType())
                 {
                 case Predicate::REFMODE_ENTITY:
