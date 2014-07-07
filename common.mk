@@ -15,7 +15,7 @@ PROTOC      := /usr/bin/protoc
 # Other tools
 factgen.exe   := fact-generator
 importgen.exe := import-generator
-
+template.lb   := run.template
 
 #--------------------
 # Directory Tree
@@ -37,7 +37,7 @@ INSTALL_LIB  = $(DESTDIR)/lib
 #---------------------------------------------------
 
 define create-destdir
-$1.outdir = $(OUTDIR)/$(notdir $(CURDIR))
+$1.outdir = $(OUTDIR)/$(or $2,$(notdir $(CURDIR)))
 
 $$($1.outdir): | $(OUTDIR)
 	$(MKDIR) $$@
