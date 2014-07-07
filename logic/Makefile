@@ -69,30 +69,12 @@ lookup.clean:
 #------------------------------
 
 import.proj   := import/import.project
-import.src    := $(addprefix import/,import-entities.logic import-predicates.logic)
+import.src    := $(wildcard import/*.logic)
 import.outdir := $(logic.outdir)/import
 import.ph     := $(import.outdir)/.placeholder
 
 $(import.outdir): | $(logic.outdir)
 	$(MKDIR) $@
-
-
-# Generate protobuf messages for schema
-
-schema.pb  := $(schema.src:schema/%.logic=$(import.outdir)/%.pb)
-
-.INTERMEDIATE: $(schema.pb)
-
-export PATH := $(INSTALL_BIN):$(PATH)
-$(schema.pb): $(import.outdir)/%.pb: schema/%.logic | $(schema.ph) $(import.outdir)
-	$(call generate-protobuf-message,$(schema.outdir)/$*.lbb,$@)
-
-
-# Generate import logic
-
-export PATH := $(INSTALL_BIN):$(PATH)
-$(import.src): $(schema.pb)
-	$(importgen.exe) --ignore import/.ignored-predicates --dir ./data --delim '\t' -o import $^
 
 export LB_LIBRARY_PATH := $(schema.outdir)
 $(import.ph): $(import.proj) $(import.src) | $(import.outdir)
@@ -108,11 +90,23 @@ import: $(import.ph)
 .PHONY: import.clean
 import.clean:
 	$(RM) -r $(import.outdir)
-	$(RM) import/import-entities.logic
-	$(RM) import/import-predicates.logic
 
-# TODO add generated source files to clean
-# TODO include non-generated logic files as source
+
+# Generate protobuf messages for schema
+
+schema.pb  := $(schema.src:schema/%.logic=$(import.outdir)/%.pb)
+
+.INTERMEDIATE: $(schema.pb)
+
+export PATH := $(INSTALL_BIN):$(PATH)
+$(schema.pb): $(import.outdir)/%.pb: $(schema.ph) | $(import.outdir)
+	$(call generate-protobuf-message,$(schema.outdir)/$*.lbb,$@)
+
+.PHONY: import.src
+export PATH := $(INSTALL_BIN):$(PATH)
+import.src: $(schema.pb)
+	$(importgen.exe) --ignore import/.ignored-predicates --dir ./data --delim '\t' -o import $^
+
 
 #-----------------------------------
 # Phony targets

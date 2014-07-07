@@ -1,0 +1,4402 @@
+_add_instruction:first_operand$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_add_instruction:first_operand$by_immediate] = "\t".
+lang:physical:filePath[`_add_instruction:first_operand$by_immediate] = "./data/predicates/add_instruction-first_operand-by_immediate.dlm".
+
++instruction:id(e0:v0),
++add_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++add_instruction:first_operand[e0] = e2
+<-
+   _add_instruction:first_operand$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_add_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_add_instruction:first_operand$by_variable] = "\t".
+lang:physical:filePath[`_add_instruction:first_operand$by_variable] = "./data/predicates/add_instruction-first_operand-by_variable.dlm".
+
++instruction:id(e0:v0),
++add_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++add_instruction:first_operand[e0] = e2
+<-
+   _add_instruction:first_operand$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_add_instruction:second_operand$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_add_instruction:second_operand$by_immediate] = "\t".
+lang:physical:filePath[`_add_instruction:second_operand$by_immediate] = "./data/predicates/add_instruction-second_operand-by_immediate.dlm".
+
++instruction:id(e0:v0),
++add_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++add_instruction:second_operand[e0] = e2
+<-
+   _add_instruction:second_operand$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_add_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_add_instruction:second_operand$by_variable] = "\t".
+lang:physical:filePath[`_add_instruction:second_operand$by_variable] = "./data/predicates/add_instruction-second_operand-by_variable.dlm".
+
++instruction:id(e0:v0),
++add_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++add_instruction:second_operand[e0] = e2
+<-
+   _add_instruction:second_operand$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_alias:aliasee(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_alias:aliasee] = "\t".
+lang:physical:filePath[`_alias:aliasee] = "./data/predicates/alias-aliasee.dlm".
+
++alias:value(e0:v0),
++alias(e0),
++alias:aliasee[e0] = v1
+<-
+   _alias:aliasee(v0, v1).
+
+
+
+_alias:linkage_type(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_alias:linkage_type] = "\t".
+lang:physical:filePath[`_alias:linkage_type] = "./data/predicates/alias-linkage_type.dlm".
+
++alias:value(e0:v0),
++alias(e0),
++linkage_type:id(e1:v1),
++linkage_type(e1),
++alias:linkage_type[e0] = e1
+<-
+   _alias:linkage_type(v0, v1).
+
+
+
+_alias:type(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_alias:type] = "\t".
+lang:physical:filePath[`_alias:type] = "./data/predicates/alias-type.dlm".
+
++alias:value(e0:v0),
++alias(e0),
++type:id(e1:v1),
++type(e1),
++alias:type[e0] = e1
+<-
+   _alias:type(v0, v1).
+
+
+
+_alias:visibility(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_alias:visibility] = "\t".
+lang:physical:filePath[`_alias:visibility] = "./data/predicates/alias-visibility.dlm".
+
++alias:value(e0:v0),
++alias(e0),
++visibility:id(e1:v1),
++visibility(e1),
++alias:visibility[e0] = e1
+<-
+   _alias:visibility(v0, v1).
+
+
+
+_alloca_instruction:alignment(v0, v1) -> string(v0), int[64](v1).
+
+lang:physical:delimiter[`_alloca_instruction:alignment] = "\t".
+lang:physical:filePath[`_alloca_instruction:alignment] = "./data/predicates/alloca_instruction-alignment.dlm".
+
++instruction:id(e0:v0),
++alloca_instruction(e0),
++alloca_instruction:alignment[e0] = v1
+<-
+   _alloca_instruction:alignment(v0, v1).
+
+
+
+_alloca_instruction:size$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_alloca_instruction:size$by_immediate] = "\t".
+lang:physical:filePath[`_alloca_instruction:size$by_immediate] = "./data/predicates/alloca_instruction-size-by_immediate.dlm".
+
++instruction:id(e0:v0),
++alloca_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++alloca_instruction:size[e0] = e2
+<-
+   _alloca_instruction:size$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_alloca_instruction:size$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_alloca_instruction:size$by_variable] = "\t".
+lang:physical:filePath[`_alloca_instruction:size$by_variable] = "./data/predicates/alloca_instruction-size-by_variable.dlm".
+
++instruction:id(e0:v0),
++alloca_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++alloca_instruction:size[e0] = e2
+<-
+   _alloca_instruction:size$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_alloca_instruction:type(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_alloca_instruction:type] = "\t".
+lang:physical:filePath[`_alloca_instruction:type] = "./data/predicates/alloca_instruction-type.dlm".
+
++instruction:id(e0:v0),
++alloca_instruction(e0),
++type:id(e1:v1),
++type(e1),
++alloca_instruction:type[e0] = e1
+<-
+   _alloca_instruction:type(v0, v1).
+
+
+
+_and_instruction:first_operand$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_and_instruction:first_operand$by_immediate] = "\t".
+lang:physical:filePath[`_and_instruction:first_operand$by_immediate] = "./data/predicates/and_instruction-first_operand-by_immediate.dlm".
+
++instruction:id(e0:v0),
++and_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++and_instruction:first_operand[e0] = e2
+<-
+   _and_instruction:first_operand$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_and_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_and_instruction:first_operand$by_variable] = "\t".
+lang:physical:filePath[`_and_instruction:first_operand$by_variable] = "./data/predicates/and_instruction-first_operand-by_variable.dlm".
+
++instruction:id(e0:v0),
++and_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++and_instruction:first_operand[e0] = e2
+<-
+   _and_instruction:first_operand$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_and_instruction:second_operand$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_and_instruction:second_operand$by_immediate] = "\t".
+lang:physical:filePath[`_and_instruction:second_operand$by_immediate] = "./data/predicates/and_instruction-second_operand-by_immediate.dlm".
+
++instruction:id(e0:v0),
++and_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++and_instruction:second_operand[e0] = e2
+<-
+   _and_instruction:second_operand$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_and_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_and_instruction:second_operand$by_variable] = "\t".
+lang:physical:filePath[`_and_instruction:second_operand$by_variable] = "./data/predicates/and_instruction-second_operand-by_variable.dlm".
+
++instruction:id(e0:v0),
++and_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++and_instruction:second_operand[e0] = e2
+<-
+   _and_instruction:second_operand$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_array_type:component(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_array_type:component] = "\t".
+lang:physical:filePath[`_array_type:component] = "./data/predicates/array_type-component.dlm".
+
++type:id(e0:v0),
++array_type(e0),
++type:id(e1:v1),
++type(e1),
++array_type:component[e0] = e1
+<-
+   _array_type:component(v0, v1).
+
+
+
+_array_type:size(v0, v1) -> string(v0), int[64](v1).
+
+lang:physical:delimiter[`_array_type:size] = "\t".
+lang:physical:filePath[`_array_type:size] = "./data/predicates/array_type-size.dlm".
+
++type:id(e0:v0),
++array_type(e0),
++array_type:size[e0] = v1
+<-
+   _array_type:size(v0, v1).
+
+
+
+_ashr_instruction:first_operand$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_ashr_instruction:first_operand$by_immediate] = "\t".
+lang:physical:filePath[`_ashr_instruction:first_operand$by_immediate] = "./data/predicates/ashr_instruction-first_operand-by_immediate.dlm".
+
++instruction:id(e0:v0),
++ashr_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++ashr_instruction:first_operand[e0] = e2
+<-
+   _ashr_instruction:first_operand$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_ashr_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_ashr_instruction:first_operand$by_variable] = "\t".
+lang:physical:filePath[`_ashr_instruction:first_operand$by_variable] = "./data/predicates/ashr_instruction-first_operand-by_variable.dlm".
+
++instruction:id(e0:v0),
++ashr_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++ashr_instruction:first_operand[e0] = e2
+<-
+   _ashr_instruction:first_operand$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_ashr_instruction:second_operand$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_ashr_instruction:second_operand$by_immediate] = "\t".
+lang:physical:filePath[`_ashr_instruction:second_operand$by_immediate] = "./data/predicates/ashr_instruction-second_operand-by_immediate.dlm".
+
++instruction:id(e0:v0),
++ashr_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++ashr_instruction:second_operand[e0] = e2
+<-
+   _ashr_instruction:second_operand$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_ashr_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_ashr_instruction:second_operand$by_variable] = "\t".
+lang:physical:filePath[`_ashr_instruction:second_operand$by_variable] = "./data/predicates/ashr_instruction-second_operand-by_variable.dlm".
+
++instruction:id(e0:v0),
++ashr_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++ashr_instruction:second_operand[e0] = e2
+<-
+   _ashr_instruction:second_operand$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_atomicrmw_instruction:address$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_atomicrmw_instruction:address$by_immediate] = "\t".
+lang:physical:filePath[`_atomicrmw_instruction:address$by_immediate] = "./data/predicates/atomicrmw_instruction-address-by_immediate.dlm".
+
++instruction:id(e0:v0),
++atomicrmw_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++atomicrmw_instruction:address[e0] = e2
+<-
+   _atomicrmw_instruction:address$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_atomicrmw_instruction:address$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_atomicrmw_instruction:address$by_variable] = "\t".
+lang:physical:filePath[`_atomicrmw_instruction:address$by_variable] = "./data/predicates/atomicrmw_instruction-address-by_variable.dlm".
+
++instruction:id(e0:v0),
++atomicrmw_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++atomicrmw_instruction:address[e0] = e2
+<-
+   _atomicrmw_instruction:address$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_atomicrmw_instruction:operation(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_atomicrmw_instruction:operation] = "\t".
+lang:physical:filePath[`_atomicrmw_instruction:operation] = "./data/predicates/atomicrmw_instruction-operation.dlm".
+
++instruction:id(e0:v0),
++atomicrmw_instruction(e0),
++operation:id(e1:v1),
++operation(e1),
++atomicrmw_instruction:operation[e0] = e1
+<-
+   _atomicrmw_instruction:operation(v0, v1).
+
+
+
+_atomicrmw_instruction:ordering(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_atomicrmw_instruction:ordering] = "\t".
+lang:physical:filePath[`_atomicrmw_instruction:ordering] = "./data/predicates/atomicrmw_instruction-ordering.dlm".
+
++instruction:id(e0:v0),
++atomicrmw_instruction(e0),
++ordering:id(e1:v1),
++ordering(e1),
++atomicrmw_instruction:ordering[e0] = e1
+<-
+   _atomicrmw_instruction:ordering(v0, v1).
+
+
+
+_atomicrmw_instruction:value$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_atomicrmw_instruction:value$by_immediate] = "\t".
+lang:physical:filePath[`_atomicrmw_instruction:value$by_immediate] = "./data/predicates/atomicrmw_instruction-value-by_immediate.dlm".
+
++instruction:id(e0:v0),
++atomicrmw_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++atomicrmw_instruction:value[e0] = e2
+<-
+   _atomicrmw_instruction:value$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_atomicrmw_instruction:value$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_atomicrmw_instruction:value$by_variable] = "\t".
+lang:physical:filePath[`_atomicrmw_instruction:value$by_variable] = "./data/predicates/atomicrmw_instruction-value-by_variable.dlm".
+
++instruction:id(e0:v0),
++atomicrmw_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++atomicrmw_instruction:value[e0] = e2
+<-
+   _atomicrmw_instruction:value$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_atomicrmw_instruction:volatile(v0) -> string(v0).
+
+lang:physical:delimiter[`_atomicrmw_instruction:volatile] = "\t".
+lang:physical:filePath[`_atomicrmw_instruction:volatile] = "./data/predicates/atomicrmw_instruction-volatile.dlm".
+
++instruction:id(e0:v0),
++atomicrmw_instruction(e0),
++atomicrmw_instruction:volatile(e0)
+<-
+   _atomicrmw_instruction:volatile(v0).
+
+
+
+_basicblock:pred_aux(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_basicblock:pred_aux] = "\t".
+lang:physical:filePath[`_basicblock:pred_aux] = "./data/predicates/basicblock-pred_aux.dlm".
+
++variable:id(e0:v0),
++variable(e0),
++variable:id(e1:v1),
++variable(e1),
++basicblock:pred_aux(e0,e1)
+<-
+   _basicblock:pred_aux(v0, v1).
+
+
+
+_bitcast_instruction:from$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_bitcast_instruction:from$by_immediate] = "\t".
+lang:physical:filePath[`_bitcast_instruction:from$by_immediate] = "./data/predicates/bitcast_instruction-from-by_immediate.dlm".
+
++instruction:id(e0:v0),
++bitcast_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++bitcast_instruction:from[e0] = e2
+<-
+   _bitcast_instruction:from$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_bitcast_instruction:from$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_bitcast_instruction:from$by_variable] = "\t".
+lang:physical:filePath[`_bitcast_instruction:from$by_variable] = "./data/predicates/bitcast_instruction-from-by_variable.dlm".
+
++instruction:id(e0:v0),
++bitcast_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++bitcast_instruction:from[e0] = e2
+<-
+   _bitcast_instruction:from$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_bitcast_instruction:to_type(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_bitcast_instruction:to_type] = "\t".
+lang:physical:filePath[`_bitcast_instruction:to_type] = "./data/predicates/bitcast_instruction-to_type.dlm".
+
++instruction:id(e0:v0),
++bitcast_instruction(e0),
++type:id(e1:v1),
++type(e1),
++bitcast_instruction:to_type[e0] = e1
+<-
+   _bitcast_instruction:to_type(v0, v1).
+
+
+
+_br_cond_instruction:condition$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_br_cond_instruction:condition$by_immediate] = "\t".
+lang:physical:filePath[`_br_cond_instruction:condition$by_immediate] = "./data/predicates/br_cond_instruction-condition-by_immediate.dlm".
+
++instruction:id(e0:v0),
++br_cond_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++br_cond_instruction:condition[e0] = e2
+<-
+   _br_cond_instruction:condition$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_br_cond_instruction:condition$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_br_cond_instruction:condition$by_variable] = "\t".
+lang:physical:filePath[`_br_cond_instruction:condition$by_variable] = "./data/predicates/br_cond_instruction-condition-by_variable.dlm".
+
++instruction:id(e0:v0),
++br_cond_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++br_cond_instruction:condition[e0] = e2
+<-
+   _br_cond_instruction:condition$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_br_cond_instruction:iffalse(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_br_cond_instruction:iffalse] = "\t".
+lang:physical:filePath[`_br_cond_instruction:iffalse] = "./data/predicates/br_cond_instruction-iffalse.dlm".
+
++instruction:id(e0:v0),
++br_cond_instruction(e0),
++variable:id(e1:v1),
++variable(e1),
++br_cond_instruction:iffalse[e0] = e1
+<-
+   _br_cond_instruction:iffalse(v0, v1).
+
+
+
+_br_cond_instruction:iftrue(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_br_cond_instruction:iftrue] = "\t".
+lang:physical:filePath[`_br_cond_instruction:iftrue] = "./data/predicates/br_cond_instruction-iftrue.dlm".
+
++instruction:id(e0:v0),
++br_cond_instruction(e0),
++variable:id(e1:v1),
++variable(e1),
++br_cond_instruction:iftrue[e0] = e1
+<-
+   _br_cond_instruction:iftrue(v0, v1).
+
+
+
+_br_uncond_instruction:dest(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_br_uncond_instruction:dest] = "\t".
+lang:physical:filePath[`_br_uncond_instruction:dest] = "./data/predicates/br_uncond_instruction-dest.dlm".
+
++instruction:id(e0:v0),
++br_uncond_instruction(e0),
++variable:id(e1:v1),
++variable(e1),
++br_uncond_instruction:dest[e0] = e1
+<-
+   _br_uncond_instruction:dest(v0, v1).
+
+
+
+_call_instruction:arg$by_immediate(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
+
+lang:physical:delimiter[`_call_instruction:arg$by_immediate] = "\t".
+lang:physical:filePath[`_call_instruction:arg$by_immediate] = "./data/predicates/call_instruction-arg-by_immediate.dlm".
+
++instruction:id(e0:v0),
++call_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++call_instruction:arg[e0,v1] = e2
+<-
+   _call_instruction:arg$by_immediate(v0, v1, v2),
+   immediate:value(e1:v2),
+   immediate(e1).
+
+_call_instruction:arg$by_variable(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
+
+lang:physical:delimiter[`_call_instruction:arg$by_variable] = "\t".
+lang:physical:filePath[`_call_instruction:arg$by_variable] = "./data/predicates/call_instruction-arg-by_variable.dlm".
+
++instruction:id(e0:v0),
++call_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++call_instruction:arg[e0,v1] = e2
+<-
+   _call_instruction:arg$by_variable(v0, v1, v2),
+   variable:id(e1:v2),
+   variable(e1).
+
+
+
+_call_instruction:calling_convention(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_call_instruction:calling_convention] = "\t".
+lang:physical:filePath[`_call_instruction:calling_convention] = "./data/predicates/call_instruction-calling_convention.dlm".
+
++instruction:id(e0:v0),
++call_instruction(e0),
++calling_convention:value(e1:v1),
++calling_convention(e1),
++call_instruction:calling_convention[e0] = e1
+<-
+   _call_instruction:calling_convention(v0, v1).
+
+
+
+_call_instruction:function$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_call_instruction:function$by_immediate] = "\t".
+lang:physical:filePath[`_call_instruction:function$by_immediate] = "./data/predicates/call_instruction-function-by_immediate.dlm".
+
++instruction:id(e0:v0),
++call_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++call_instruction:function[e0] = e2
+<-
+   _call_instruction:function$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_call_instruction:function$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_call_instruction:function$by_variable] = "\t".
+lang:physical:filePath[`_call_instruction:function$by_variable] = "./data/predicates/call_instruction-function-by_variable.dlm".
+
++instruction:id(e0:v0),
++call_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++call_instruction:function[e0] = e2
+<-
+   _call_instruction:function$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_call_instruction:function_attribute(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_call_instruction:function_attribute] = "\t".
+lang:physical:filePath[`_call_instruction:function_attribute] = "./data/predicates/call_instruction-function_attribute.dlm".
+
++instruction:id(e0:v0),
++call_instruction(e0),
++attribute:value(e1:v1),
++attribute(e1),
++call_instruction:function_attribute(e0,e1)
+<-
+   _call_instruction:function_attribute(v0, v1).
+
+
+
+_call_instruction:param_attribute(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
+
+lang:physical:delimiter[`_call_instruction:param_attribute] = "\t".
+lang:physical:filePath[`_call_instruction:param_attribute] = "./data/predicates/call_instruction-param_attribute.dlm".
+
++instruction:id(e0:v0),
++call_instruction(e0),
++attribute:value(e1:v2),
++attribute(e1),
++call_instruction:param_attribute(e0,v1,e1)
+<-
+   _call_instruction:param_attribute(v0, v1, v2).
+
+
+
+_call_instruction:return_attribute(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_call_instruction:return_attribute] = "\t".
+lang:physical:filePath[`_call_instruction:return_attribute] = "./data/predicates/call_instruction-return_attribute.dlm".
+
++instruction:id(e0:v0),
++call_instruction(e0),
++attribute:value(e1:v1),
++attribute(e1),
++call_instruction:return_attribute(e0,e1)
+<-
+   _call_instruction:return_attribute(v0, v1).
+
+
+
+_call_instruction:tail(v0) -> string(v0).
+
+lang:physical:delimiter[`_call_instruction:tail] = "\t".
+lang:physical:filePath[`_call_instruction:tail] = "./data/predicates/call_instruction-tail.dlm".
+
++instruction:id(e0:v0),
++call_instruction(e0),
++call_instruction:tail(e0)
+<-
+   _call_instruction:tail(v0).
+
+
+
+
+
+_cmpxchg_instruction:address$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_cmpxchg_instruction:address$by_immediate] = "\t".
+lang:physical:filePath[`_cmpxchg_instruction:address$by_immediate] = "./data/predicates/cmpxchg_instruction-address-by_immediate.dlm".
+
++instruction:id(e0:v0),
++cmpxchg_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++cmpxchg_instruction:address[e0] = e2
+<-
+   _cmpxchg_instruction:address$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_cmpxchg_instruction:address$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_cmpxchg_instruction:address$by_variable] = "\t".
+lang:physical:filePath[`_cmpxchg_instruction:address$by_variable] = "./data/predicates/cmpxchg_instruction-address-by_variable.dlm".
+
++instruction:id(e0:v0),
++cmpxchg_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++cmpxchg_instruction:address[e0] = e2
+<-
+   _cmpxchg_instruction:address$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_cmpxchg_instruction:cmp$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_cmpxchg_instruction:cmp$by_immediate] = "\t".
+lang:physical:filePath[`_cmpxchg_instruction:cmp$by_immediate] = "./data/predicates/cmpxchg_instruction-cmp-by_immediate.dlm".
+
++instruction:id(e0:v0),
++cmpxchg_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++cmpxchg_instruction:cmp[e0] = e2
+<-
+   _cmpxchg_instruction:cmp$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_cmpxchg_instruction:cmp$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_cmpxchg_instruction:cmp$by_variable] = "\t".
+lang:physical:filePath[`_cmpxchg_instruction:cmp$by_variable] = "./data/predicates/cmpxchg_instruction-cmp-by_variable.dlm".
+
++instruction:id(e0:v0),
++cmpxchg_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++cmpxchg_instruction:cmp[e0] = e2
+<-
+   _cmpxchg_instruction:cmp$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_cmpxchg_instruction:new$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_cmpxchg_instruction:new$by_immediate] = "\t".
+lang:physical:filePath[`_cmpxchg_instruction:new$by_immediate] = "./data/predicates/cmpxchg_instruction-new-by_immediate.dlm".
+
++instruction:id(e0:v0),
++cmpxchg_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++cmpxchg_instruction:new[e0] = e2
+<-
+   _cmpxchg_instruction:new$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_cmpxchg_instruction:new$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_cmpxchg_instruction:new$by_variable] = "\t".
+lang:physical:filePath[`_cmpxchg_instruction:new$by_variable] = "./data/predicates/cmpxchg_instruction-new-by_variable.dlm".
+
++instruction:id(e0:v0),
++cmpxchg_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++cmpxchg_instruction:new[e0] = e2
+<-
+   _cmpxchg_instruction:new$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_cmpxchg_instruction:ordering(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_cmpxchg_instruction:ordering] = "\t".
+lang:physical:filePath[`_cmpxchg_instruction:ordering] = "./data/predicates/cmpxchg_instruction-ordering.dlm".
+
++instruction:id(e0:v0),
++cmpxchg_instruction(e0),
++ordering:id(e1:v1),
++ordering(e1),
++cmpxchg_instruction:ordering[e0] = e1
+<-
+   _cmpxchg_instruction:ordering(v0, v1).
+
+
+
+_cmpxchg_instruction:volatile(v0) -> string(v0).
+
+lang:physical:delimiter[`_cmpxchg_instruction:volatile] = "\t".
+lang:physical:filePath[`_cmpxchg_instruction:volatile] = "./data/predicates/cmpxchg_instruction-volatile.dlm".
+
++instruction:id(e0:v0),
++cmpxchg_instruction(e0),
++cmpxchg_instruction:volatile(e0)
+<-
+   _cmpxchg_instruction:volatile(v0).
+
+
+
+_constant:to_int(v0, v1) -> string(v0), int[64](v1).
+
+lang:physical:delimiter[`_constant:to_int] = "\t".
+lang:physical:filePath[`_constant:to_int] = "./data/predicates/constant-to_int.dlm".
+
++immediate:value(e0:v0),
++immediate(e0),
++constant:to_int[e0] = v1
+<-
+   _constant:to_int(v0, v1).
+
+
+
+_extractelement_instruction:base$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_extractelement_instruction:base$by_immediate] = "\t".
+lang:physical:filePath[`_extractelement_instruction:base$by_immediate] = "./data/predicates/extractelement_instruction-base-by_immediate.dlm".
+
++instruction:id(e0:v0),
++extractelement_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++extractelement_instruction:base[e0] = e2
+<-
+   _extractelement_instruction:base$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_extractelement_instruction:base$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_extractelement_instruction:base$by_variable] = "\t".
+lang:physical:filePath[`_extractelement_instruction:base$by_variable] = "./data/predicates/extractelement_instruction-base-by_variable.dlm".
+
++instruction:id(e0:v0),
++extractelement_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++extractelement_instruction:base[e0] = e2
+<-
+   _extractelement_instruction:base$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_extractelement_instruction:index$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_extractelement_instruction:index$by_immediate] = "\t".
+lang:physical:filePath[`_extractelement_instruction:index$by_immediate] = "./data/predicates/extractelement_instruction-index-by_immediate.dlm".
+
++instruction:id(e0:v0),
++extractelement_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++extractelement_instruction:index[e0] = e2
+<-
+   _extractelement_instruction:index$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_extractelement_instruction:index$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_extractelement_instruction:index$by_variable] = "\t".
+lang:physical:filePath[`_extractelement_instruction:index$by_variable] = "./data/predicates/extractelement_instruction-index-by_variable.dlm".
+
++instruction:id(e0:v0),
++extractelement_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++extractelement_instruction:index[e0] = e2
+<-
+   _extractelement_instruction:index$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_extractvalue_instruction:base$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_extractvalue_instruction:base$by_immediate] = "\t".
+lang:physical:filePath[`_extractvalue_instruction:base$by_immediate] = "./data/predicates/extractvalue_instruction-base-by_immediate.dlm".
+
++instruction:id(e0:v0),
++extractvalue_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++extractvalue_instruction:base[e0] = e2
+<-
+   _extractvalue_instruction:base$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_extractvalue_instruction:base$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_extractvalue_instruction:base$by_variable] = "\t".
+lang:physical:filePath[`_extractvalue_instruction:base$by_variable] = "./data/predicates/extractvalue_instruction-base-by_variable.dlm".
+
++instruction:id(e0:v0),
++extractvalue_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++extractvalue_instruction:base[e0] = e2
+<-
+   _extractvalue_instruction:base$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_extractvalue_instruction:index(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
+
+lang:physical:delimiter[`_extractvalue_instruction:index] = "\t".
+lang:physical:filePath[`_extractvalue_instruction:index] = "./data/predicates/extractvalue_instruction-index.dlm".
+
++instruction:id(e0:v0),
++extractvalue_instruction(e0),
++immediate:value(e1:v2),
++immediate(e1),
++extractvalue_instruction:index[e0,v1] = e1
+<-
+   _extractvalue_instruction:index(v0, v1, v2).
+
+
+
+_extractvalue_instruction:nindices(v0, v1) -> string(v0), int[64](v1).
+
+lang:physical:delimiter[`_extractvalue_instruction:nindices] = "\t".
+lang:physical:filePath[`_extractvalue_instruction:nindices] = "./data/predicates/extractvalue_instruction-nindices.dlm".
+
++instruction:id(e0:v0),
++extractvalue_instruction(e0),
++extractvalue_instruction:nindices[e0] = v1
+<-
+   _extractvalue_instruction:nindices(v0, v1).
+
+
+
+_fadd_instruction:first_operand$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_fadd_instruction:first_operand$by_immediate] = "\t".
+lang:physical:filePath[`_fadd_instruction:first_operand$by_immediate] = "./data/predicates/fadd_instruction-first_operand-by_immediate.dlm".
+
++instruction:id(e0:v0),
++fadd_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++fadd_instruction:first_operand[e0] = e2
+<-
+   _fadd_instruction:first_operand$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_fadd_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_fadd_instruction:first_operand$by_variable] = "\t".
+lang:physical:filePath[`_fadd_instruction:first_operand$by_variable] = "./data/predicates/fadd_instruction-first_operand-by_variable.dlm".
+
++instruction:id(e0:v0),
++fadd_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++fadd_instruction:first_operand[e0] = e2
+<-
+   _fadd_instruction:first_operand$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_fadd_instruction:second_operand$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_fadd_instruction:second_operand$by_immediate] = "\t".
+lang:physical:filePath[`_fadd_instruction:second_operand$by_immediate] = "./data/predicates/fadd_instruction-second_operand-by_immediate.dlm".
+
++instruction:id(e0:v0),
++fadd_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++fadd_instruction:second_operand[e0] = e2
+<-
+   _fadd_instruction:second_operand$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_fadd_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_fadd_instruction:second_operand$by_variable] = "\t".
+lang:physical:filePath[`_fadd_instruction:second_operand$by_variable] = "./data/predicates/fadd_instruction-second_operand-by_variable.dlm".
+
++instruction:id(e0:v0),
++fadd_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++fadd_instruction:second_operand[e0] = e2
+<-
+   _fadd_instruction:second_operand$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_fcmp_instruction:condition(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_fcmp_instruction:condition] = "\t".
+lang:physical:filePath[`_fcmp_instruction:condition] = "./data/predicates/fcmp_instruction-condition.dlm".
+
++instruction:id(e0:v0),
++fcmp_instruction(e0),
++fcmp_condition:id(e1:v1),
++fcmp_condition(e1),
++fcmp_instruction:condition[e0] = e1
+<-
+   _fcmp_instruction:condition(v0, v1).
+
+
+
+_fcmp_instruction:first_operand$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_fcmp_instruction:first_operand$by_immediate] = "\t".
+lang:physical:filePath[`_fcmp_instruction:first_operand$by_immediate] = "./data/predicates/fcmp_instruction-first_operand-by_immediate.dlm".
+
++instruction:id(e0:v0),
++fcmp_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++fcmp_instruction:first_operand[e0] = e2
+<-
+   _fcmp_instruction:first_operand$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_fcmp_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_fcmp_instruction:first_operand$by_variable] = "\t".
+lang:physical:filePath[`_fcmp_instruction:first_operand$by_variable] = "./data/predicates/fcmp_instruction-first_operand-by_variable.dlm".
+
++instruction:id(e0:v0),
++fcmp_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++fcmp_instruction:first_operand[e0] = e2
+<-
+   _fcmp_instruction:first_operand$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_fcmp_instruction:second_operand$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_fcmp_instruction:second_operand$by_immediate] = "\t".
+lang:physical:filePath[`_fcmp_instruction:second_operand$by_immediate] = "./data/predicates/fcmp_instruction-second_operand-by_immediate.dlm".
+
++instruction:id(e0:v0),
++fcmp_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++fcmp_instruction:second_operand[e0] = e2
+<-
+   _fcmp_instruction:second_operand$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_fcmp_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_fcmp_instruction:second_operand$by_variable] = "\t".
+lang:physical:filePath[`_fcmp_instruction:second_operand$by_variable] = "./data/predicates/fcmp_instruction-second_operand-by_variable.dlm".
+
++instruction:id(e0:v0),
++fcmp_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++fcmp_instruction:second_operand[e0] = e2
+<-
+   _fcmp_instruction:second_operand$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_fdiv_instruction:first_operand$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_fdiv_instruction:first_operand$by_immediate] = "\t".
+lang:physical:filePath[`_fdiv_instruction:first_operand$by_immediate] = "./data/predicates/fdiv_instruction-first_operand-by_immediate.dlm".
+
++instruction:id(e0:v0),
++fdiv_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++fdiv_instruction:first_operand[e0] = e2
+<-
+   _fdiv_instruction:first_operand$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_fdiv_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_fdiv_instruction:first_operand$by_variable] = "\t".
+lang:physical:filePath[`_fdiv_instruction:first_operand$by_variable] = "./data/predicates/fdiv_instruction-first_operand-by_variable.dlm".
+
++instruction:id(e0:v0),
++fdiv_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++fdiv_instruction:first_operand[e0] = e2
+<-
+   _fdiv_instruction:first_operand$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_fdiv_instruction:second_operand$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_fdiv_instruction:second_operand$by_immediate] = "\t".
+lang:physical:filePath[`_fdiv_instruction:second_operand$by_immediate] = "./data/predicates/fdiv_instruction-second_operand-by_immediate.dlm".
+
++instruction:id(e0:v0),
++fdiv_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++fdiv_instruction:second_operand[e0] = e2
+<-
+   _fdiv_instruction:second_operand$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_fdiv_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_fdiv_instruction:second_operand$by_variable] = "\t".
+lang:physical:filePath[`_fdiv_instruction:second_operand$by_variable] = "./data/predicates/fdiv_instruction-second_operand-by_variable.dlm".
+
++instruction:id(e0:v0),
++fdiv_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++fdiv_instruction:second_operand[e0] = e2
+<-
+   _fdiv_instruction:second_operand$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_fence_instruction:ordering(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_fence_instruction:ordering] = "\t".
+lang:physical:filePath[`_fence_instruction:ordering] = "./data/predicates/fence_instruction-ordering.dlm".
+
++instruction:id(e0:v0),
++fence_instruction(e0),
++ordering:id(e1:v1),
++ordering(e1),
++fence_instruction:ordering[e0] = e1
+<-
+   _fence_instruction:ordering(v0, v1).
+
+
+
+_fmul_instruction:first_operand$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_fmul_instruction:first_operand$by_immediate] = "\t".
+lang:physical:filePath[`_fmul_instruction:first_operand$by_immediate] = "./data/predicates/fmul_instruction-first_operand-by_immediate.dlm".
+
++instruction:id(e0:v0),
++fmul_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++fmul_instruction:first_operand[e0] = e2
+<-
+   _fmul_instruction:first_operand$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_fmul_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_fmul_instruction:first_operand$by_variable] = "\t".
+lang:physical:filePath[`_fmul_instruction:first_operand$by_variable] = "./data/predicates/fmul_instruction-first_operand-by_variable.dlm".
+
++instruction:id(e0:v0),
++fmul_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++fmul_instruction:first_operand[e0] = e2
+<-
+   _fmul_instruction:first_operand$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_fmul_instruction:second_operand$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_fmul_instruction:second_operand$by_immediate] = "\t".
+lang:physical:filePath[`_fmul_instruction:second_operand$by_immediate] = "./data/predicates/fmul_instruction-second_operand-by_immediate.dlm".
+
++instruction:id(e0:v0),
++fmul_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++fmul_instruction:second_operand[e0] = e2
+<-
+   _fmul_instruction:second_operand$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_fmul_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_fmul_instruction:second_operand$by_variable] = "\t".
+lang:physical:filePath[`_fmul_instruction:second_operand$by_variable] = "./data/predicates/fmul_instruction-second_operand-by_variable.dlm".
+
++instruction:id(e0:v0),
++fmul_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++fmul_instruction:second_operand[e0] = e2
+<-
+   _fmul_instruction:second_operand$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_fpext_instruction:from$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_fpext_instruction:from$by_immediate] = "\t".
+lang:physical:filePath[`_fpext_instruction:from$by_immediate] = "./data/predicates/fpext_instruction-from-by_immediate.dlm".
+
++instruction:id(e0:v0),
++fpext_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++fpext_instruction:from[e0] = e2
+<-
+   _fpext_instruction:from$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_fpext_instruction:from$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_fpext_instruction:from$by_variable] = "\t".
+lang:physical:filePath[`_fpext_instruction:from$by_variable] = "./data/predicates/fpext_instruction-from-by_variable.dlm".
+
++instruction:id(e0:v0),
++fpext_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++fpext_instruction:from[e0] = e2
+<-
+   _fpext_instruction:from$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_fpext_instruction:to_type(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_fpext_instruction:to_type] = "\t".
+lang:physical:filePath[`_fpext_instruction:to_type] = "./data/predicates/fpext_instruction-to_type.dlm".
+
++instruction:id(e0:v0),
++fpext_instruction(e0),
++type:id(e1:v1),
++fp_type(e1),
++fpext_instruction:to_type[e0] = e1
+<-
+   _fpext_instruction:to_type(v0, v1).
+
+
+
+_fptosi_instruction:from$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_fptosi_instruction:from$by_immediate] = "\t".
+lang:physical:filePath[`_fptosi_instruction:from$by_immediate] = "./data/predicates/fptosi_instruction-from-by_immediate.dlm".
+
++instruction:id(e0:v0),
++fptosi_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++fptosi_instruction:from[e0] = e2
+<-
+   _fptosi_instruction:from$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_fptosi_instruction:from$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_fptosi_instruction:from$by_variable] = "\t".
+lang:physical:filePath[`_fptosi_instruction:from$by_variable] = "./data/predicates/fptosi_instruction-from-by_variable.dlm".
+
++instruction:id(e0:v0),
++fptosi_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++fptosi_instruction:from[e0] = e2
+<-
+   _fptosi_instruction:from$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_fptosi_instruction:to_type(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_fptosi_instruction:to_type] = "\t".
+lang:physical:filePath[`_fptosi_instruction:to_type] = "./data/predicates/fptosi_instruction-to_type.dlm".
+
++instruction:id(e0:v0),
++fptosi_instruction(e0),
++type:id(e1:v1),
++type(e1),
++fptosi_instruction:to_type[e0] = e1
+<-
+   _fptosi_instruction:to_type(v0, v1).
+
+
+
+_fptoui_instruction:from$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_fptoui_instruction:from$by_immediate] = "\t".
+lang:physical:filePath[`_fptoui_instruction:from$by_immediate] = "./data/predicates/fptoui_instruction-from-by_immediate.dlm".
+
++instruction:id(e0:v0),
++fptoui_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++fptoui_instruction:from[e0] = e2
+<-
+   _fptoui_instruction:from$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_fptoui_instruction:from$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_fptoui_instruction:from$by_variable] = "\t".
+lang:physical:filePath[`_fptoui_instruction:from$by_variable] = "./data/predicates/fptoui_instruction-from-by_variable.dlm".
+
++instruction:id(e0:v0),
++fptoui_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++fptoui_instruction:from[e0] = e2
+<-
+   _fptoui_instruction:from$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_fptoui_instruction:to_type(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_fptoui_instruction:to_type] = "\t".
+lang:physical:filePath[`_fptoui_instruction:to_type] = "./data/predicates/fptoui_instruction-to_type.dlm".
+
++instruction:id(e0:v0),
++fptoui_instruction(e0),
++type:id(e1:v1),
++type(e1),
++fptoui_instruction:to_type[e0] = e1
+<-
+   _fptoui_instruction:to_type(v0, v1).
+
+
+
+_fptrunc_instruction:from$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_fptrunc_instruction:from$by_immediate] = "\t".
+lang:physical:filePath[`_fptrunc_instruction:from$by_immediate] = "./data/predicates/fptrunc_instruction-from-by_immediate.dlm".
+
++instruction:id(e0:v0),
++fptrunc_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++fptrunc_instruction:from[e0] = e2
+<-
+   _fptrunc_instruction:from$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_fptrunc_instruction:from$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_fptrunc_instruction:from$by_variable] = "\t".
+lang:physical:filePath[`_fptrunc_instruction:from$by_variable] = "./data/predicates/fptrunc_instruction-from-by_variable.dlm".
+
++instruction:id(e0:v0),
++fptrunc_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++fptrunc_instruction:from[e0] = e2
+<-
+   _fptrunc_instruction:from$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_fptrunc_instruction:to_type(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_fptrunc_instruction:to_type] = "\t".
+lang:physical:filePath[`_fptrunc_instruction:to_type] = "./data/predicates/fptrunc_instruction-to_type.dlm".
+
++instruction:id(e0:v0),
++fptrunc_instruction(e0),
++type:id(e1:v1),
++fp_type(e1),
++fptrunc_instruction:to_type[e0] = e1
+<-
+   _fptrunc_instruction:to_type(v0, v1).
+
+
+
+_frem_instruction:first_operand$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_frem_instruction:first_operand$by_immediate] = "\t".
+lang:physical:filePath[`_frem_instruction:first_operand$by_immediate] = "./data/predicates/frem_instruction-first_operand-by_immediate.dlm".
+
++instruction:id(e0:v0),
++frem_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++frem_instruction:first_operand[e0] = e2
+<-
+   _frem_instruction:first_operand$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_frem_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_frem_instruction:first_operand$by_variable] = "\t".
+lang:physical:filePath[`_frem_instruction:first_operand$by_variable] = "./data/predicates/frem_instruction-first_operand-by_variable.dlm".
+
++instruction:id(e0:v0),
++frem_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++frem_instruction:first_operand[e0] = e2
+<-
+   _frem_instruction:first_operand$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_frem_instruction:second_operand$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_frem_instruction:second_operand$by_immediate] = "\t".
+lang:physical:filePath[`_frem_instruction:second_operand$by_immediate] = "./data/predicates/frem_instruction-second_operand-by_immediate.dlm".
+
++instruction:id(e0:v0),
++frem_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++frem_instruction:second_operand[e0] = e2
+<-
+   _frem_instruction:second_operand$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_frem_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_frem_instruction:second_operand$by_variable] = "\t".
+lang:physical:filePath[`_frem_instruction:second_operand$by_variable] = "./data/predicates/frem_instruction-second_operand-by_variable.dlm".
+
++instruction:id(e0:v0),
++frem_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++frem_instruction:second_operand[e0] = e2
+<-
+   _frem_instruction:second_operand$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_fsub_instruction:first_operand$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_fsub_instruction:first_operand$by_immediate] = "\t".
+lang:physical:filePath[`_fsub_instruction:first_operand$by_immediate] = "./data/predicates/fsub_instruction-first_operand-by_immediate.dlm".
+
++instruction:id(e0:v0),
++fsub_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++fsub_instruction:first_operand[e0] = e2
+<-
+   _fsub_instruction:first_operand$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_fsub_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_fsub_instruction:first_operand$by_variable] = "\t".
+lang:physical:filePath[`_fsub_instruction:first_operand$by_variable] = "./data/predicates/fsub_instruction-first_operand-by_variable.dlm".
+
++instruction:id(e0:v0),
++fsub_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++fsub_instruction:first_operand[e0] = e2
+<-
+   _fsub_instruction:first_operand$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_fsub_instruction:second_operand$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_fsub_instruction:second_operand$by_immediate] = "\t".
+lang:physical:filePath[`_fsub_instruction:second_operand$by_immediate] = "./data/predicates/fsub_instruction-second_operand-by_immediate.dlm".
+
++instruction:id(e0:v0),
++fsub_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++fsub_instruction:second_operand[e0] = e2
+<-
+   _fsub_instruction:second_operand$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_fsub_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_fsub_instruction:second_operand$by_variable] = "\t".
+lang:physical:filePath[`_fsub_instruction:second_operand$by_variable] = "./data/predicates/fsub_instruction-second_operand-by_variable.dlm".
+
++instruction:id(e0:v0),
++fsub_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++fsub_instruction:second_operand[e0] = e2
+<-
+   _fsub_instruction:second_operand$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_function:alignment(v0, v1) -> string(v0), int[64](v1).
+
+lang:physical:delimiter[`_function:alignment] = "\t".
+lang:physical:filePath[`_function:alignment] = "./data/predicates/function-alignment.dlm".
+
++function_decl:id(e0:v0),
++function_decl(e0),
++function:alignment[e0] = v1
+<-
+   _function:alignment(v0, v1).
+
+
+
+_function:attributes(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_function:attributes] = "\t".
+lang:physical:filePath[`_function:attributes] = "./data/predicates/function-attributes.dlm".
+
++function_decl:id(e0:v0),
++function_decl(e0),
++attribute:value(e1:v1),
++attribute(e1),
++function:attributes(e0,e1)
+<-
+   _function:attributes(v0, v1).
+
+
+
+_function:calling_convention(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_function:calling_convention] = "\t".
+lang:physical:filePath[`_function:calling_convention] = "./data/predicates/function-calling_convention.dlm".
+
++function_decl:id(e0:v0),
++function_decl(e0),
++calling_convention:value(e1:v1),
++calling_convention(e1),
++function:calling_convention[e0] = e1
+<-
+   _function:calling_convention(v0, v1).
+
+
+
+_function:gc(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_function:gc] = "\t".
+lang:physical:filePath[`_function:gc] = "./data/predicates/function-gc.dlm".
+
++function_decl:id(e0:v0),
++function_decl(e0),
++function:gc[e0] = v1
+<-
+   _function:gc(v0, v1).
+
+
+
+_function:linkage_type(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_function:linkage_type] = "\t".
+lang:physical:filePath[`_function:linkage_type] = "./data/predicates/function-linkage_type.dlm".
+
++function_decl:id(e0:v0),
++function_decl(e0),
++linkage_type:id(e1:v1),
++linkage_type(e1),
++function:linkage_type[e0] = e1
+<-
+   _function:linkage_type(v0, v1).
+
+
+
+_function:name(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_function:name] = "\t".
+lang:physical:filePath[`_function:name] = "./data/predicates/function-name.dlm".
+
++function_decl:id(e0:v0),
++function_decl(e0),
++function:name[e0] = v1
+<-
+   _function:name(v0, v1).
+
+
+
+_function:param(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
+
+lang:physical:delimiter[`_function:param] = "\t".
+lang:physical:filePath[`_function:param] = "./data/predicates/function-param.dlm".
+
++function_decl:id(e0:v0),
++function(e0),
++variable:id(e1:v2),
++variable(e1),
++function:param[e0,v1] = e1
+<-
+   _function:param(v0, v1, v2).
+
+
+
+_function:param_attribute(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
+
+lang:physical:delimiter[`_function:param_attribute] = "\t".
+lang:physical:filePath[`_function:param_attribute] = "./data/predicates/function-param_attribute.dlm".
+
++function_decl:id(e0:v0),
++function_decl(e0),
++attribute:value(e1:v2),
++attribute(e1),
++function:param_attribute(e0,v1,e1)
+<-
+   _function:param_attribute(v0, v1, v2).
+
+
+
+_function:return_attribute(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_function:return_attribute] = "\t".
+lang:physical:filePath[`_function:return_attribute] = "./data/predicates/function-return_attribute.dlm".
+
++function_decl:id(e0:v0),
++function_decl(e0),
++attribute:value(e1:v1),
++attribute(e1),
++function:return_attribute(e0,e1)
+<-
+   _function:return_attribute(v0, v1).
+
+
+
+_function:section(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_function:section] = "\t".
+lang:physical:filePath[`_function:section] = "./data/predicates/function-section.dlm".
+
++function_decl:id(e0:v0),
++function(e0),
++function:section[e0] = v1
+<-
+   _function:section(v0, v1).
+
+
+
+_function:type(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_function:type] = "\t".
+lang:physical:filePath[`_function:type] = "./data/predicates/function-type.dlm".
+
++function_decl:id(e0:v0),
++function_decl(e0),
++type:id(e1:v1),
++function_type(e1),
++function:type[e0] = e1
+<-
+   _function:type(v0, v1).
+
+
+
+_function:unnamed_addr(v0) -> string(v0).
+
+lang:physical:delimiter[`_function:unnamed_addr] = "\t".
+lang:physical:filePath[`_function:unnamed_addr] = "./data/predicates/function-unnamed_addr.dlm".
+
++function_decl:id(e0:v0),
++function_decl(e0),
++function:unnamed_addr(e0)
+<-
+   _function:unnamed_addr(v0).
+
+
+
+_function:visibility(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_function:visibility] = "\t".
+lang:physical:filePath[`_function:visibility] = "./data/predicates/function-visibility.dlm".
+
++function_decl:id(e0:v0),
++function_decl(e0),
++visibility:id(e1:v1),
++visibility(e1),
++function:visibility[e0] = e1
+<-
+   _function:visibility(v0, v1).
+
+
+
+_function_type:nparams(v0, v1) -> string(v0), int[64](v1).
+
+lang:physical:delimiter[`_function_type:nparams] = "\t".
+lang:physical:filePath[`_function_type:nparams] = "./data/predicates/function_type-nparams.dlm".
+
++type:id(e0:v0),
++function_type(e0),
++function_type:nparams[e0] = v1
+<-
+   _function_type:nparams(v0, v1).
+
+
+
+_function_type:param(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
+
+lang:physical:delimiter[`_function_type:param] = "\t".
+lang:physical:filePath[`_function_type:param] = "./data/predicates/function_type-param.dlm".
+
++type:id(e0:v0),
++function_type(e0),
++type:id(e1:v2),
++type(e1),
++function_type:param[e0,v1] = e1
+<-
+   _function_type:param(v0, v1, v2).
+
+
+
+_function_type:return(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_function_type:return] = "\t".
+lang:physical:filePath[`_function_type:return] = "./data/predicates/function_type-return.dlm".
+
++type:id(e0:v0),
++function_type(e0),
++type:id(e1:v1),
++type(e1),
++function_type:return[e0] = e1
+<-
+   _function_type:return(v0, v1).
+
+
+
+_function_type:varargs(v0) -> string(v0).
+
+lang:physical:delimiter[`_function_type:varargs] = "\t".
+lang:physical:filePath[`_function_type:varargs] = "./data/predicates/function_type-varargs.dlm".
+
++type:id(e0:v0),
++function_type(e0),
++function_type:varargs(e0)
+<-
+   _function_type:varargs(v0).
+
+
+
+_getelementptr_instruction:base$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_getelementptr_instruction:base$by_immediate] = "\t".
+lang:physical:filePath[`_getelementptr_instruction:base$by_immediate] = "./data/predicates/getelementptr_instruction-base-by_immediate.dlm".
+
++instruction:id(e0:v0),
++getelementptr_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++getelementptr_instruction:base[e0] = e2
+<-
+   _getelementptr_instruction:base$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_getelementptr_instruction:base$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_getelementptr_instruction:base$by_variable] = "\t".
+lang:physical:filePath[`_getelementptr_instruction:base$by_variable] = "./data/predicates/getelementptr_instruction-base-by_variable.dlm".
+
++instruction:id(e0:v0),
++getelementptr_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++getelementptr_instruction:base[e0] = e2
+<-
+   _getelementptr_instruction:base$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_getelementptr_instruction:inbounds(v0) -> string(v0).
+
+lang:physical:delimiter[`_getelementptr_instruction:inbounds] = "\t".
+lang:physical:filePath[`_getelementptr_instruction:inbounds] = "./data/predicates/getelementptr_instruction-inbounds.dlm".
+
++instruction:id(e0:v0),
++getelementptr_instruction(e0),
++getelementptr_instruction:inbounds(e0)
+<-
+   _getelementptr_instruction:inbounds(v0).
+
+
+
+_getelementptr_instruction:index$by_immediate(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
+
+lang:physical:delimiter[`_getelementptr_instruction:index$by_immediate] = "\t".
+lang:physical:filePath[`_getelementptr_instruction:index$by_immediate] = "./data/predicates/getelementptr_instruction-index-by_immediate.dlm".
+
++instruction:id(e0:v0),
++getelementptr_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++getelementptr_instruction:index[e0,v1] = e2
+<-
+   _getelementptr_instruction:index$by_immediate(v0, v1, v2),
+   immediate:value(e1:v2),
+   immediate(e1).
+
+_getelementptr_instruction:index$by_variable(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
+
+lang:physical:delimiter[`_getelementptr_instruction:index$by_variable] = "\t".
+lang:physical:filePath[`_getelementptr_instruction:index$by_variable] = "./data/predicates/getelementptr_instruction-index-by_variable.dlm".
+
++instruction:id(e0:v0),
++getelementptr_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++getelementptr_instruction:index[e0,v1] = e2
+<-
+   _getelementptr_instruction:index$by_variable(v0, v1, v2),
+   variable:id(e1:v2),
+   variable(e1).
+
+
+
+_getelementptr_instruction:nindices(v0, v1) -> string(v0), int[64](v1).
+
+lang:physical:delimiter[`_getelementptr_instruction:nindices] = "\t".
+lang:physical:filePath[`_getelementptr_instruction:nindices] = "./data/predicates/getelementptr_instruction-nindices.dlm".
+
++instruction:id(e0:v0),
++getelementptr_instruction(e0),
++getelementptr_instruction:nindices[e0] = v1
+<-
+   _getelementptr_instruction:nindices(v0, v1).
+
+
+
+_global_variable:align(v0, v1) -> string(v0), int[64](v1).
+
+lang:physical:delimiter[`_global_variable:align] = "\t".
+lang:physical:filePath[`_global_variable:align] = "./data/predicates/global_variable-align.dlm".
+
++immediate:value(e0:v0),
++global_variable(e0),
++global_variable:align[e0] = v1
+<-
+   _global_variable:align(v0, v1).
+
+
+
+_global_variable:flag(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_global_variable:flag] = "\t".
+lang:physical:filePath[`_global_variable:flag] = "./data/predicates/global_variable-flag.dlm".
+
++immediate:value(e0:v0),
++global_variable(e0),
++flag:value(e1:v1),
++flag(e1),
++global_variable:flag(e0,e1)
+<-
+   _global_variable:flag(v0, v1).
+
+
+
+_global_variable:initializer(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_global_variable:initializer] = "\t".
+lang:physical:filePath[`_global_variable:initializer] = "./data/predicates/global_variable-initializer.dlm".
+
++immediate:value(e0:v0),
++global_variable(e0),
++global_variable:initializer[e0] = v1
+<-
+   _global_variable:initializer(v0, v1).
+
+
+
+_global_variable:linkage_type(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_global_variable:linkage_type] = "\t".
+lang:physical:filePath[`_global_variable:linkage_type] = "./data/predicates/global_variable-linkage_type.dlm".
+
++immediate:value(e0:v0),
++global_variable(e0),
++linkage_type:id(e1:v1),
++linkage_type(e1),
++global_variable:linkage_type[e0] = e1
+<-
+   _global_variable:linkage_type(v0, v1).
+
+
+
+_global_variable:section(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_global_variable:section] = "\t".
+lang:physical:filePath[`_global_variable:section] = "./data/predicates/global_variable-section.dlm".
+
++immediate:value(e0:v0),
++global_variable(e0),
++global_variable:section[e0] = v1
+<-
+   _global_variable:section(v0, v1).
+
+
+
+_global_variable:threadlocal_mode(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_global_variable:threadlocal_mode] = "\t".
+lang:physical:filePath[`_global_variable:threadlocal_mode] = "./data/predicates/global_variable-threadlocal_mode.dlm".
+
++immediate:value(e0:v0),
++global_variable(e0),
++threadlocal_mode:id(e1:v1),
++threadlocal_mode(e1),
++global_variable:threadlocal_mode[e0] = e1
+<-
+   _global_variable:threadlocal_mode(v0, v1).
+
+
+
+_global_variable:type(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_global_variable:type] = "\t".
+lang:physical:filePath[`_global_variable:type] = "./data/predicates/global_variable-type.dlm".
+
++immediate:value(e0:v0),
++global_variable(e0),
++type:id(e1:v1),
++type(e1),
++global_variable:type[e0] = e1
+<-
+   _global_variable:type(v0, v1).
+
+
+
+_global_variable:visibility(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_global_variable:visibility] = "\t".
+lang:physical:filePath[`_global_variable:visibility] = "./data/predicates/global_variable-visibility.dlm".
+
++immediate:value(e0:v0),
++global_variable(e0),
++visibility:id(e1:v1),
++visibility(e1),
++global_variable:visibility[e0] = e1
+<-
+   _global_variable:visibility(v0, v1).
+
+
+
+_icmp_instruction:condition(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_icmp_instruction:condition] = "\t".
+lang:physical:filePath[`_icmp_instruction:condition] = "./data/predicates/icmp_instruction-condition.dlm".
+
++instruction:id(e0:v0),
++icmp_instruction(e0),
++icmp_condition:id(e1:v1),
++icmp_condition(e1),
++icmp_instruction:condition[e0] = e1
+<-
+   _icmp_instruction:condition(v0, v1).
+
+
+
+_icmp_instruction:first_operand$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_icmp_instruction:first_operand$by_immediate] = "\t".
+lang:physical:filePath[`_icmp_instruction:first_operand$by_immediate] = "./data/predicates/icmp_instruction-first_operand-by_immediate.dlm".
+
++instruction:id(e0:v0),
++icmp_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++icmp_instruction:first_operand[e0] = e2
+<-
+   _icmp_instruction:first_operand$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_icmp_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_icmp_instruction:first_operand$by_variable] = "\t".
+lang:physical:filePath[`_icmp_instruction:first_operand$by_variable] = "./data/predicates/icmp_instruction-first_operand-by_variable.dlm".
+
++instruction:id(e0:v0),
++icmp_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++icmp_instruction:first_operand[e0] = e2
+<-
+   _icmp_instruction:first_operand$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_icmp_instruction:second_operand$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_icmp_instruction:second_operand$by_immediate] = "\t".
+lang:physical:filePath[`_icmp_instruction:second_operand$by_immediate] = "./data/predicates/icmp_instruction-second_operand-by_immediate.dlm".
+
++instruction:id(e0:v0),
++icmp_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++icmp_instruction:second_operand[e0] = e2
+<-
+   _icmp_instruction:second_operand$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_icmp_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_icmp_instruction:second_operand$by_variable] = "\t".
+lang:physical:filePath[`_icmp_instruction:second_operand$by_variable] = "./data/predicates/icmp_instruction-second_operand-by_variable.dlm".
+
++instruction:id(e0:v0),
++icmp_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++icmp_instruction:second_operand[e0] = e2
+<-
+   _icmp_instruction:second_operand$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_immediate:type(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_immediate:type] = "\t".
+lang:physical:filePath[`_immediate:type] = "./data/predicates/immediate-type.dlm".
+
++immediate:value(e0:v0),
++immediate(e0),
++type:id(e1:v1),
++type(e1),
++immediate:type[e0] = e1
+<-
+   _immediate:type(v0, v1).
+
+
+
+_indirectbr_instruction:address$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_indirectbr_instruction:address$by_immediate] = "\t".
+lang:physical:filePath[`_indirectbr_instruction:address$by_immediate] = "./data/predicates/indirectbr_instruction-address-by_immediate.dlm".
+
++instruction:id(e0:v0),
++indirectbr_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++indirectbr_instruction:address[e0] = e2
+<-
+   _indirectbr_instruction:address$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_indirectbr_instruction:address$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_indirectbr_instruction:address$by_variable] = "\t".
+lang:physical:filePath[`_indirectbr_instruction:address$by_variable] = "./data/predicates/indirectbr_instruction-address-by_variable.dlm".
+
++instruction:id(e0:v0),
++indirectbr_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++indirectbr_instruction:address[e0] = e2
+<-
+   _indirectbr_instruction:address$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_indirectbr_instruction:label(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
+
+lang:physical:delimiter[`_indirectbr_instruction:label] = "\t".
+lang:physical:filePath[`_indirectbr_instruction:label] = "./data/predicates/indirectbr_instruction-label.dlm".
+
++instruction:id(e0:v0),
++indirectbr_instruction(e0),
++variable:id(e1:v2),
++variable(e1),
++indirectbr_instruction:label[e0,v1] = e1
+<-
+   _indirectbr_instruction:label(v0, v1, v2).
+
+
+
+_indirectbr_instruction:nlabels(v0, v1) -> string(v0), int[64](v1).
+
+lang:physical:delimiter[`_indirectbr_instruction:nlabels] = "\t".
+lang:physical:filePath[`_indirectbr_instruction:nlabels] = "./data/predicates/indirectbr_instruction-nlabels.dlm".
+
++instruction:id(e0:v0),
++indirectbr_instruction(e0),
++indirectbr_instruction:nlabels[e0] = v1
+<-
+   _indirectbr_instruction:nlabels(v0, v1).
+
+
+
+_insertelement_instruction:base$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_insertelement_instruction:base$by_immediate] = "\t".
+lang:physical:filePath[`_insertelement_instruction:base$by_immediate] = "./data/predicates/insertelement_instruction-base-by_immediate.dlm".
+
++instruction:id(e0:v0),
++insertelement_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++insertelement_instruction:base[e0] = e2
+<-
+   _insertelement_instruction:base$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_insertelement_instruction:base$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_insertelement_instruction:base$by_variable] = "\t".
+lang:physical:filePath[`_insertelement_instruction:base$by_variable] = "./data/predicates/insertelement_instruction-base-by_variable.dlm".
+
++instruction:id(e0:v0),
++insertelement_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++insertelement_instruction:base[e0] = e2
+<-
+   _insertelement_instruction:base$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_insertelement_instruction:index$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_insertelement_instruction:index$by_immediate] = "\t".
+lang:physical:filePath[`_insertelement_instruction:index$by_immediate] = "./data/predicates/insertelement_instruction-index-by_immediate.dlm".
+
++instruction:id(e0:v0),
++insertelement_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++insertelement_instruction:index[e0] = e2
+<-
+   _insertelement_instruction:index$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_insertelement_instruction:index$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_insertelement_instruction:index$by_variable] = "\t".
+lang:physical:filePath[`_insertelement_instruction:index$by_variable] = "./data/predicates/insertelement_instruction-index-by_variable.dlm".
+
++instruction:id(e0:v0),
++insertelement_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++insertelement_instruction:index[e0] = e2
+<-
+   _insertelement_instruction:index$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_insertelement_instruction:value$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_insertelement_instruction:value$by_immediate] = "\t".
+lang:physical:filePath[`_insertelement_instruction:value$by_immediate] = "./data/predicates/insertelement_instruction-value-by_immediate.dlm".
+
++instruction:id(e0:v0),
++insertelement_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++insertelement_instruction:value[e0] = e2
+<-
+   _insertelement_instruction:value$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_insertelement_instruction:value$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_insertelement_instruction:value$by_variable] = "\t".
+lang:physical:filePath[`_insertelement_instruction:value$by_variable] = "./data/predicates/insertelement_instruction-value-by_variable.dlm".
+
++instruction:id(e0:v0),
++insertelement_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++insertelement_instruction:value[e0] = e2
+<-
+   _insertelement_instruction:value$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_insertvalue_instruction:base$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_insertvalue_instruction:base$by_immediate] = "\t".
+lang:physical:filePath[`_insertvalue_instruction:base$by_immediate] = "./data/predicates/insertvalue_instruction-base-by_immediate.dlm".
+
++instruction:id(e0:v0),
++insertvalue_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++insertvalue_instruction:base[e0] = e2
+<-
+   _insertvalue_instruction:base$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_insertvalue_instruction:base$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_insertvalue_instruction:base$by_variable] = "\t".
+lang:physical:filePath[`_insertvalue_instruction:base$by_variable] = "./data/predicates/insertvalue_instruction-base-by_variable.dlm".
+
++instruction:id(e0:v0),
++insertvalue_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++insertvalue_instruction:base[e0] = e2
+<-
+   _insertvalue_instruction:base$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_insertvalue_instruction:index(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
+
+lang:physical:delimiter[`_insertvalue_instruction:index] = "\t".
+lang:physical:filePath[`_insertvalue_instruction:index] = "./data/predicates/insertvalue_instruction-index.dlm".
+
++instruction:id(e0:v0),
++insertvalue_instruction(e0),
++immediate:value(e1:v2),
++immediate(e1),
++insertvalue_instruction:index[e0,v1] = e1
+<-
+   _insertvalue_instruction:index(v0, v1, v2).
+
+
+
+_insertvalue_instruction:nindices(v0, v1) -> string(v0), int[64](v1).
+
+lang:physical:delimiter[`_insertvalue_instruction:nindices] = "\t".
+lang:physical:filePath[`_insertvalue_instruction:nindices] = "./data/predicates/insertvalue_instruction-nindices.dlm".
+
++instruction:id(e0:v0),
++insertvalue_instruction(e0),
++insertvalue_instruction:nindices[e0] = v1
+<-
+   _insertvalue_instruction:nindices(v0, v1).
+
+
+
+_insertvalue_instruction:value$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_insertvalue_instruction:value$by_immediate] = "\t".
+lang:physical:filePath[`_insertvalue_instruction:value$by_immediate] = "./data/predicates/insertvalue_instruction-value-by_immediate.dlm".
+
++instruction:id(e0:v0),
++insertvalue_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++insertvalue_instruction:value[e0] = e2
+<-
+   _insertvalue_instruction:value$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_insertvalue_instruction:value$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_insertvalue_instruction:value$by_variable] = "\t".
+lang:physical:filePath[`_insertvalue_instruction:value$by_variable] = "./data/predicates/insertvalue_instruction-value-by_variable.dlm".
+
++instruction:id(e0:v0),
++insertvalue_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++insertvalue_instruction:value[e0] = e2
+<-
+   _insertvalue_instruction:value$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_instruction:bb_entry(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_instruction:bb_entry] = "\t".
+lang:physical:filePath[`_instruction:bb_entry] = "./data/predicates/instruction-bb_entry.dlm".
+
++instruction:id(e0:v0),
++instruction(e0),
++variable:id(e1:v1),
++variable(e1),
++instruction:bb_entry[e0] = e1
+<-
+   _instruction:bb_entry(v0, v1).
+
+
+
+_instruction:flag(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_instruction:flag] = "\t".
+lang:physical:filePath[`_instruction:flag] = "./data/predicates/instruction-flag.dlm".
+
++instruction:id(e0:v0),
++instruction(e0),
++flag:value(e1:v1),
++flag(e1),
++instruction:flag(e0,e1)
+<-
+   _instruction:flag(v0, v1).
+
+
+
+_instruction:function(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_instruction:function] = "\t".
+lang:physical:filePath[`_instruction:function] = "./data/predicates/instruction-function.dlm".
+
++instruction:id(e0:v0),
++instruction(e0),
++function_decl:id(e1:v1),
++function(e1),
++instruction:function[e0] = e1
+<-
+   _instruction:function(v0, v1).
+
+
+
+_instruction:next(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_instruction:next] = "\t".
+lang:physical:filePath[`_instruction:next] = "./data/predicates/instruction-next.dlm".
+
++instruction:id(e0:v0),
++instruction(e0),
++instruction:id(e1:v1),
++instruction(e1),
++instruction:next[e0] = e1
+<-
+   _instruction:next(v0, v1).
+
+
+
+_instruction:to(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_instruction:to] = "\t".
+lang:physical:filePath[`_instruction:to] = "./data/predicates/instruction-to.dlm".
+
++instruction:id(e0:v0),
++instruction(e0),
++variable:id(e1:v1),
++variable(e1),
++instruction:to[e0] = e1
+<-
+   _instruction:to(v0, v1).
+
+
+
+_inttoptr_instruction:from$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_inttoptr_instruction:from$by_immediate] = "\t".
+lang:physical:filePath[`_inttoptr_instruction:from$by_immediate] = "./data/predicates/inttoptr_instruction-from-by_immediate.dlm".
+
++instruction:id(e0:v0),
++inttoptr_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++inttoptr_instruction:from[e0] = e2
+<-
+   _inttoptr_instruction:from$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_inttoptr_instruction:from$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_inttoptr_instruction:from$by_variable] = "\t".
+lang:physical:filePath[`_inttoptr_instruction:from$by_variable] = "./data/predicates/inttoptr_instruction-from-by_variable.dlm".
+
++instruction:id(e0:v0),
++inttoptr_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++inttoptr_instruction:from[e0] = e2
+<-
+   _inttoptr_instruction:from$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_inttoptr_instruction:to_type(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_inttoptr_instruction:to_type] = "\t".
+lang:physical:filePath[`_inttoptr_instruction:to_type] = "./data/predicates/inttoptr_instruction-to_type.dlm".
+
++instruction:id(e0:v0),
++inttoptr_instruction(e0),
++type:id(e1:v1),
++type(e1),
++inttoptr_instruction:to_type[e0] = e1
+<-
+   _inttoptr_instruction:to_type(v0, v1).
+
+
+
+_invoke_instruction:arg$by_immediate(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
+
+lang:physical:delimiter[`_invoke_instruction:arg$by_immediate] = "\t".
+lang:physical:filePath[`_invoke_instruction:arg$by_immediate] = "./data/predicates/invoke_instruction-arg-by_immediate.dlm".
+
++instruction:id(e0:v0),
++invoke_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++invoke_instruction:arg[e0,v1] = e2
+<-
+   _invoke_instruction:arg$by_immediate(v0, v1, v2),
+   immediate:value(e1:v2),
+   immediate(e1).
+
+_invoke_instruction:arg$by_variable(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
+
+lang:physical:delimiter[`_invoke_instruction:arg$by_variable] = "\t".
+lang:physical:filePath[`_invoke_instruction:arg$by_variable] = "./data/predicates/invoke_instruction-arg-by_variable.dlm".
+
++instruction:id(e0:v0),
++invoke_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++invoke_instruction:arg[e0,v1] = e2
+<-
+   _invoke_instruction:arg$by_variable(v0, v1, v2),
+   variable:id(e1:v2),
+   variable(e1).
+
+
+
+_invoke_instruction:calling_convention(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_invoke_instruction:calling_convention] = "\t".
+lang:physical:filePath[`_invoke_instruction:calling_convention] = "./data/predicates/invoke_instruction-calling_convention.dlm".
+
++instruction:id(e0:v0),
++invoke_instruction(e0),
++calling_convention:value(e1:v1),
++calling_convention(e1),
++invoke_instruction:calling_convention[e0] = e1
+<-
+   _invoke_instruction:calling_convention(v0, v1).
+
+
+
+_invoke_instruction:exception_label(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_invoke_instruction:exception_label] = "\t".
+lang:physical:filePath[`_invoke_instruction:exception_label] = "./data/predicates/invoke_instruction-exception_label.dlm".
+
++instruction:id(e0:v0),
++invoke_instruction(e0),
++variable:id(e1:v1),
++variable(e1),
++invoke_instruction:exception_label[e0] = e1
+<-
+   _invoke_instruction:exception_label(v0, v1).
+
+
+
+_invoke_instruction:function$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_invoke_instruction:function$by_immediate] = "\t".
+lang:physical:filePath[`_invoke_instruction:function$by_immediate] = "./data/predicates/invoke_instruction-function-by_immediate.dlm".
+
++instruction:id(e0:v0),
++invoke_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++invoke_instruction:function[e0] = e2
+<-
+   _invoke_instruction:function$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_invoke_instruction:function$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_invoke_instruction:function$by_variable] = "\t".
+lang:physical:filePath[`_invoke_instruction:function$by_variable] = "./data/predicates/invoke_instruction-function-by_variable.dlm".
+
++instruction:id(e0:v0),
++invoke_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++invoke_instruction:function[e0] = e2
+<-
+   _invoke_instruction:function$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_invoke_instruction:function_attribute(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_invoke_instruction:function_attribute] = "\t".
+lang:physical:filePath[`_invoke_instruction:function_attribute] = "./data/predicates/invoke_instruction-function_attribute.dlm".
+
++instruction:id(e0:v0),
++invoke_instruction(e0),
++attribute:value(e1:v1),
++attribute(e1),
++invoke_instruction:function_attribute(e0,e1)
+<-
+   _invoke_instruction:function_attribute(v0, v1).
+
+
+
+_invoke_instruction:normal_label(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_invoke_instruction:normal_label] = "\t".
+lang:physical:filePath[`_invoke_instruction:normal_label] = "./data/predicates/invoke_instruction-normal_label.dlm".
+
++instruction:id(e0:v0),
++invoke_instruction(e0),
++variable:id(e1:v1),
++variable(e1),
++invoke_instruction:normal_label[e0] = e1
+<-
+   _invoke_instruction:normal_label(v0, v1).
+
+
+
+_invoke_instruction:param_attribute(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
+
+lang:physical:delimiter[`_invoke_instruction:param_attribute] = "\t".
+lang:physical:filePath[`_invoke_instruction:param_attribute] = "./data/predicates/invoke_instruction-param_attribute.dlm".
+
++instruction:id(e0:v0),
++invoke_instruction(e0),
++attribute:value(e1:v2),
++attribute(e1),
++invoke_instruction:param_attribute(e0,v1,e1)
+<-
+   _invoke_instruction:param_attribute(v0, v1, v2).
+
+
+
+_invoke_instruction:return_attribute(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_invoke_instruction:return_attribute] = "\t".
+lang:physical:filePath[`_invoke_instruction:return_attribute] = "./data/predicates/invoke_instruction-return_attribute.dlm".
+
++instruction:id(e0:v0),
++invoke_instruction(e0),
++attribute:value(e1:v1),
++attribute(e1),
++invoke_instruction:return_attribute(e0,e1)
+<-
+   _invoke_instruction:return_attribute(v0, v1).
+
+
+
+_landingpad_instruction:clause:catch_tmp(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
+
+lang:physical:delimiter[`_landingpad_instruction:clause:catch_tmp] = "\t".
+lang:physical:filePath[`_landingpad_instruction:clause:catch_tmp] = "./data/predicates/landingpad_instruction-clause-catch_tmp.dlm".
+
++instruction:id(e0:v0),
++landingpad_instruction(e0),
++immediate:value(e1:v2),
++global_variable(e1),
++landingpad_instruction:clause:catch_tmp[e0,v1] = e1
+<-
+   _landingpad_instruction:clause:catch_tmp(v0, v1, v2).
+
+
+
+_landingpad_instruction:clause:filter_tmp(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
+
+lang:physical:delimiter[`_landingpad_instruction:clause:filter_tmp] = "\t".
+lang:physical:filePath[`_landingpad_instruction:clause:filter_tmp] = "./data/predicates/landingpad_instruction-clause-filter_tmp.dlm".
+
++instruction:id(e0:v0),
++landingpad_instruction(e0),
++immediate:value(e1:v2),
++immediate(e1),
++landingpad_instruction:clause:filter_tmp[e0,v1] = e1
+<-
+   _landingpad_instruction:clause:filter_tmp(v0, v1, v2).
+
+
+
+_landingpad_instruction:cleanup(v0) -> string(v0).
+
+lang:physical:delimiter[`_landingpad_instruction:cleanup] = "\t".
+lang:physical:filePath[`_landingpad_instruction:cleanup] = "./data/predicates/landingpad_instruction-cleanup.dlm".
+
++instruction:id(e0:v0),
++landingpad_instruction(e0),
++landingpad_instruction:cleanup(e0)
+<-
+   _landingpad_instruction:cleanup(v0).
+
+
+
+_landingpad_instruction:nclauses(v0, v1) -> string(v0), int[64](v1).
+
+lang:physical:delimiter[`_landingpad_instruction:nclauses] = "\t".
+lang:physical:filePath[`_landingpad_instruction:nclauses] = "./data/predicates/landingpad_instruction-nclauses.dlm".
+
++instruction:id(e0:v0),
++landingpad_instruction(e0),
++landingpad_instruction:nclauses[e0] = v1
+<-
+   _landingpad_instruction:nclauses(v0, v1).
+
+
+
+_landingpad_instruction:pers_fn(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_landingpad_instruction:pers_fn] = "\t".
+lang:physical:filePath[`_landingpad_instruction:pers_fn] = "./data/predicates/landingpad_instruction-pers_fn.dlm".
+
++instruction:id(e0:v0),
++landingpad_instruction(e0),
++immediate:value(e1:v1),
++immediate(e1),
++landingpad_instruction:pers_fn[e0] = e1
+<-
+   _landingpad_instruction:pers_fn(v0, v1).
+
+
+
+_landingpad_instruction:type(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_landingpad_instruction:type] = "\t".
+lang:physical:filePath[`_landingpad_instruction:type] = "./data/predicates/landingpad_instruction-type.dlm".
+
++instruction:id(e0:v0),
++landingpad_instruction(e0),
++type:id(e1:v1),
++type(e1),
++landingpad_instruction:type[e0] = e1
+<-
+   _landingpad_instruction:type(v0, v1).
+
+
+
+_load_instruction:address$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_load_instruction:address$by_immediate] = "\t".
+lang:physical:filePath[`_load_instruction:address$by_immediate] = "./data/predicates/load_instruction-address-by_immediate.dlm".
+
++instruction:id(e0:v0),
++load_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++load_instruction:address[e0] = e2
+<-
+   _load_instruction:address$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_load_instruction:address$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_load_instruction:address$by_variable] = "\t".
+lang:physical:filePath[`_load_instruction:address$by_variable] = "./data/predicates/load_instruction-address-by_variable.dlm".
+
++instruction:id(e0:v0),
++load_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++load_instruction:address[e0] = e2
+<-
+   _load_instruction:address$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_load_instruction:alignment(v0, v1) -> string(v0), int[64](v1).
+
+lang:physical:delimiter[`_load_instruction:alignment] = "\t".
+lang:physical:filePath[`_load_instruction:alignment] = "./data/predicates/load_instruction-alignment.dlm".
+
++instruction:id(e0:v0),
++load_instruction(e0),
++load_instruction:alignment[e0] = v1
+<-
+   _load_instruction:alignment(v0, v1).
+
+
+
+_load_instruction:ordering(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_load_instruction:ordering] = "\t".
+lang:physical:filePath[`_load_instruction:ordering] = "./data/predicates/load_instruction-ordering.dlm".
+
++instruction:id(e0:v0),
++load_instruction(e0),
++ordering:id(e1:v1),
++ordering(e1),
++load_instruction:ordering[e0] = e1
+<-
+   _load_instruction:ordering(v0, v1).
+
+
+
+_load_instruction:volatile(v0) -> string(v0).
+
+lang:physical:delimiter[`_load_instruction:volatile] = "\t".
+lang:physical:filePath[`_load_instruction:volatile] = "./data/predicates/load_instruction-volatile.dlm".
+
++instruction:id(e0:v0),
++load_instruction(e0),
++load_instruction:volatile(e0)
+<-
+   _load_instruction:volatile(v0).
+
+
+
+_lshr_instruction:first_operand$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_lshr_instruction:first_operand$by_immediate] = "\t".
+lang:physical:filePath[`_lshr_instruction:first_operand$by_immediate] = "./data/predicates/lshr_instruction-first_operand-by_immediate.dlm".
+
++instruction:id(e0:v0),
++lshr_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++lshr_instruction:first_operand[e0] = e2
+<-
+   _lshr_instruction:first_operand$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_lshr_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_lshr_instruction:first_operand$by_variable] = "\t".
+lang:physical:filePath[`_lshr_instruction:first_operand$by_variable] = "./data/predicates/lshr_instruction-first_operand-by_variable.dlm".
+
++instruction:id(e0:v0),
++lshr_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++lshr_instruction:first_operand[e0] = e2
+<-
+   _lshr_instruction:first_operand$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_lshr_instruction:second_operand$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_lshr_instruction:second_operand$by_immediate] = "\t".
+lang:physical:filePath[`_lshr_instruction:second_operand$by_immediate] = "./data/predicates/lshr_instruction-second_operand-by_immediate.dlm".
+
++instruction:id(e0:v0),
++lshr_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++lshr_instruction:second_operand[e0] = e2
+<-
+   _lshr_instruction:second_operand$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_lshr_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_lshr_instruction:second_operand$by_variable] = "\t".
+lang:physical:filePath[`_lshr_instruction:second_operand$by_variable] = "./data/predicates/lshr_instruction-second_operand-by_variable.dlm".
+
++instruction:id(e0:v0),
++lshr_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++lshr_instruction:second_operand[e0] = e2
+<-
+   _lshr_instruction:second_operand$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_mul_instruction:first_operand$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_mul_instruction:first_operand$by_immediate] = "\t".
+lang:physical:filePath[`_mul_instruction:first_operand$by_immediate] = "./data/predicates/mul_instruction-first_operand-by_immediate.dlm".
+
++instruction:id(e0:v0),
++mul_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++mul_instruction:first_operand[e0] = e2
+<-
+   _mul_instruction:first_operand$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_mul_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_mul_instruction:first_operand$by_variable] = "\t".
+lang:physical:filePath[`_mul_instruction:first_operand$by_variable] = "./data/predicates/mul_instruction-first_operand-by_variable.dlm".
+
++instruction:id(e0:v0),
++mul_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++mul_instruction:first_operand[e0] = e2
+<-
+   _mul_instruction:first_operand$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_mul_instruction:second_operand$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_mul_instruction:second_operand$by_immediate] = "\t".
+lang:physical:filePath[`_mul_instruction:second_operand$by_immediate] = "./data/predicates/mul_instruction-second_operand-by_immediate.dlm".
+
++instruction:id(e0:v0),
++mul_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++mul_instruction:second_operand[e0] = e2
+<-
+   _mul_instruction:second_operand$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_mul_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_mul_instruction:second_operand$by_variable] = "\t".
+lang:physical:filePath[`_mul_instruction:second_operand$by_variable] = "./data/predicates/mul_instruction-second_operand-by_variable.dlm".
+
++instruction:id(e0:v0),
++mul_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++mul_instruction:second_operand[e0] = e2
+<-
+   _mul_instruction:second_operand$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+
+
+
+
+_or_instruction:first_operand$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_or_instruction:first_operand$by_immediate] = "\t".
+lang:physical:filePath[`_or_instruction:first_operand$by_immediate] = "./data/predicates/or_instruction-first_operand-by_immediate.dlm".
+
++instruction:id(e0:v0),
++or_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++or_instruction:first_operand[e0] = e2
+<-
+   _or_instruction:first_operand$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_or_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_or_instruction:first_operand$by_variable] = "\t".
+lang:physical:filePath[`_or_instruction:first_operand$by_variable] = "./data/predicates/or_instruction-first_operand-by_variable.dlm".
+
++instruction:id(e0:v0),
++or_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++or_instruction:first_operand[e0] = e2
+<-
+   _or_instruction:first_operand$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_or_instruction:second_operand$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_or_instruction:second_operand$by_immediate] = "\t".
+lang:physical:filePath[`_or_instruction:second_operand$by_immediate] = "./data/predicates/or_instruction-second_operand-by_immediate.dlm".
+
++instruction:id(e0:v0),
++or_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++or_instruction:second_operand[e0] = e2
+<-
+   _or_instruction:second_operand$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_or_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_or_instruction:second_operand$by_variable] = "\t".
+lang:physical:filePath[`_or_instruction:second_operand$by_variable] = "./data/predicates/or_instruction-second_operand-by_variable.dlm".
+
++instruction:id(e0:v0),
++or_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++or_instruction:second_operand[e0] = e2
+<-
+   _or_instruction:second_operand$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_phi_instruction:npairs(v0, v1) -> string(v0), int[64](v1).
+
+lang:physical:delimiter[`_phi_instruction:npairs] = "\t".
+lang:physical:filePath[`_phi_instruction:npairs] = "./data/predicates/phi_instruction-npairs.dlm".
+
++instruction:id(e0:v0),
++phi_instruction(e0),
++phi_instruction:npairs[e0] = v1
+<-
+   _phi_instruction:npairs(v0, v1).
+
+
+
+_phi_instruction:pair:label(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
+
+lang:physical:delimiter[`_phi_instruction:pair:label] = "\t".
+lang:physical:filePath[`_phi_instruction:pair:label] = "./data/predicates/phi_instruction-pair-label.dlm".
+
++instruction:id(e0:v0),
++phi_instruction(e0),
++variable:id(e1:v2),
++variable(e1),
++phi_instruction:pair:label[e0,v1] = e1
+<-
+   _phi_instruction:pair:label(v0, v1, v2).
+
+
+
+_phi_instruction:pair:value$by_immediate(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
+
+lang:physical:delimiter[`_phi_instruction:pair:value$by_immediate] = "\t".
+lang:physical:filePath[`_phi_instruction:pair:value$by_immediate] = "./data/predicates/phi_instruction-pair-value-by_immediate.dlm".
+
++instruction:id(e0:v0),
++phi_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++phi_instruction:pair:value[e0,v1] = e2
+<-
+   _phi_instruction:pair:value$by_immediate(v0, v1, v2),
+   immediate:value(e1:v2),
+   immediate(e1).
+
+_phi_instruction:pair:value$by_variable(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
+
+lang:physical:delimiter[`_phi_instruction:pair:value$by_variable] = "\t".
+lang:physical:filePath[`_phi_instruction:pair:value$by_variable] = "./data/predicates/phi_instruction-pair-value-by_variable.dlm".
+
++instruction:id(e0:v0),
++phi_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++phi_instruction:pair:value[e0,v1] = e2
+<-
+   _phi_instruction:pair:value$by_variable(v0, v1, v2),
+   variable:id(e1:v2),
+   variable(e1).
+
+
+
+_phi_instruction:type(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_phi_instruction:type] = "\t".
+lang:physical:filePath[`_phi_instruction:type] = "./data/predicates/phi_instruction-type.dlm".
+
++instruction:id(e0:v0),
++phi_instruction(e0),
++type:id(e1:v1),
++type(e1),
++phi_instruction:type[e0] = e1
+<-
+   _phi_instruction:type(v0, v1).
+
+
+
+_pointer_type:addr_space(v0, v1) -> string(v0), int[64](v1).
+
+lang:physical:delimiter[`_pointer_type:addr_space] = "\t".
+lang:physical:filePath[`_pointer_type:addr_space] = "./data/predicates/pointer_type-addr_space.dlm".
+
++type:id(e0:v0),
++pointer_type(e0),
++pointer_type:addr_space[e0] = v1
+<-
+   _pointer_type:addr_space(v0, v1).
+
+
+
+_pointer_type:component(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_pointer_type:component] = "\t".
+lang:physical:filePath[`_pointer_type:component] = "./data/predicates/pointer_type-component.dlm".
+
++type:id(e0:v0),
++pointer_type(e0),
++type:id(e1:v1),
++type(e1),
++pointer_type:component[e0] = e1
+<-
+   _pointer_type:component(v0, v1).
+
+
+
+_ptrtoint_instruction:from$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_ptrtoint_instruction:from$by_immediate] = "\t".
+lang:physical:filePath[`_ptrtoint_instruction:from$by_immediate] = "./data/predicates/ptrtoint_instruction-from-by_immediate.dlm".
+
++instruction:id(e0:v0),
++ptrtoint_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++ptrtoint_instruction:from[e0] = e2
+<-
+   _ptrtoint_instruction:from$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_ptrtoint_instruction:from$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_ptrtoint_instruction:from$by_variable] = "\t".
+lang:physical:filePath[`_ptrtoint_instruction:from$by_variable] = "./data/predicates/ptrtoint_instruction-from-by_variable.dlm".
+
++instruction:id(e0:v0),
++ptrtoint_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++ptrtoint_instruction:from[e0] = e2
+<-
+   _ptrtoint_instruction:from$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_ptrtoint_instruction:to_type(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_ptrtoint_instruction:to_type] = "\t".
+lang:physical:filePath[`_ptrtoint_instruction:to_type] = "./data/predicates/ptrtoint_instruction-to_type.dlm".
+
++instruction:id(e0:v0),
++ptrtoint_instruction(e0),
++type:id(e1:v1),
++type(e1),
++ptrtoint_instruction:to_type[e0] = e1
+<-
+   _ptrtoint_instruction:to_type(v0, v1).
+
+
+
+_resume_instruction:operand$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_resume_instruction:operand$by_immediate] = "\t".
+lang:physical:filePath[`_resume_instruction:operand$by_immediate] = "./data/predicates/resume_instruction-operand-by_immediate.dlm".
+
++instruction:id(e0:v0),
++resume_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++resume_instruction:operand[e0] = e2
+<-
+   _resume_instruction:operand$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_resume_instruction:operand$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_resume_instruction:operand$by_variable] = "\t".
+lang:physical:filePath[`_resume_instruction:operand$by_variable] = "./data/predicates/resume_instruction-operand-by_variable.dlm".
+
++instruction:id(e0:v0),
++resume_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++resume_instruction:operand[e0] = e2
+<-
+   _resume_instruction:operand$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_ret_instruction:value$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_ret_instruction:value$by_immediate] = "\t".
+lang:physical:filePath[`_ret_instruction:value$by_immediate] = "./data/predicates/ret_instruction-value-by_immediate.dlm".
+
++instruction:id(e0:v0),
++ret_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++ret_instruction:value[e0] = e2
+<-
+   _ret_instruction:value$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_ret_instruction:value$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_ret_instruction:value$by_variable] = "\t".
+lang:physical:filePath[`_ret_instruction:value$by_variable] = "./data/predicates/ret_instruction-value-by_variable.dlm".
+
++instruction:id(e0:v0),
++ret_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++ret_instruction:value[e0] = e2
+<-
+   _ret_instruction:value$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_ret_instruction:void(v0) -> string(v0).
+
+lang:physical:delimiter[`_ret_instruction:void] = "\t".
+lang:physical:filePath[`_ret_instruction:void] = "./data/predicates/ret_instruction-void.dlm".
+
++instruction:id(e0:v0),
++ret_instruction(e0),
++ret_instruction:void(e0)
+<-
+   _ret_instruction:void(v0).
+
+
+
+_sdiv_instruction:first_operand$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_sdiv_instruction:first_operand$by_immediate] = "\t".
+lang:physical:filePath[`_sdiv_instruction:first_operand$by_immediate] = "./data/predicates/sdiv_instruction-first_operand-by_immediate.dlm".
+
++instruction:id(e0:v0),
++sdiv_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++sdiv_instruction:first_operand[e0] = e2
+<-
+   _sdiv_instruction:first_operand$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_sdiv_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_sdiv_instruction:first_operand$by_variable] = "\t".
+lang:physical:filePath[`_sdiv_instruction:first_operand$by_variable] = "./data/predicates/sdiv_instruction-first_operand-by_variable.dlm".
+
++instruction:id(e0:v0),
++sdiv_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++sdiv_instruction:first_operand[e0] = e2
+<-
+   _sdiv_instruction:first_operand$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_sdiv_instruction:second_operand$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_sdiv_instruction:second_operand$by_immediate] = "\t".
+lang:physical:filePath[`_sdiv_instruction:second_operand$by_immediate] = "./data/predicates/sdiv_instruction-second_operand-by_immediate.dlm".
+
++instruction:id(e0:v0),
++sdiv_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++sdiv_instruction:second_operand[e0] = e2
+<-
+   _sdiv_instruction:second_operand$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_sdiv_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_sdiv_instruction:second_operand$by_variable] = "\t".
+lang:physical:filePath[`_sdiv_instruction:second_operand$by_variable] = "./data/predicates/sdiv_instruction-second_operand-by_variable.dlm".
+
++instruction:id(e0:v0),
++sdiv_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++sdiv_instruction:second_operand[e0] = e2
+<-
+   _sdiv_instruction:second_operand$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_select_instruction:condition$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_select_instruction:condition$by_immediate] = "\t".
+lang:physical:filePath[`_select_instruction:condition$by_immediate] = "./data/predicates/select_instruction-condition-by_immediate.dlm".
+
++instruction:id(e0:v0),
++select_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++select_instruction:condition[e0] = e2
+<-
+   _select_instruction:condition$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_select_instruction:condition$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_select_instruction:condition$by_variable] = "\t".
+lang:physical:filePath[`_select_instruction:condition$by_variable] = "./data/predicates/select_instruction-condition-by_variable.dlm".
+
++instruction:id(e0:v0),
++select_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++select_instruction:condition[e0] = e2
+<-
+   _select_instruction:condition$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_select_instruction:first_operand$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_select_instruction:first_operand$by_immediate] = "\t".
+lang:physical:filePath[`_select_instruction:first_operand$by_immediate] = "./data/predicates/select_instruction-first_operand-by_immediate.dlm".
+
++instruction:id(e0:v0),
++select_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++select_instruction:first_operand[e0] = e2
+<-
+   _select_instruction:first_operand$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_select_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_select_instruction:first_operand$by_variable] = "\t".
+lang:physical:filePath[`_select_instruction:first_operand$by_variable] = "./data/predicates/select_instruction-first_operand-by_variable.dlm".
+
++instruction:id(e0:v0),
++select_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++select_instruction:first_operand[e0] = e2
+<-
+   _select_instruction:first_operand$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_select_instruction:second_operand$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_select_instruction:second_operand$by_immediate] = "\t".
+lang:physical:filePath[`_select_instruction:second_operand$by_immediate] = "./data/predicates/select_instruction-second_operand-by_immediate.dlm".
+
++instruction:id(e0:v0),
++select_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++select_instruction:second_operand[e0] = e2
+<-
+   _select_instruction:second_operand$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_select_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_select_instruction:second_operand$by_variable] = "\t".
+lang:physical:filePath[`_select_instruction:second_operand$by_variable] = "./data/predicates/select_instruction-second_operand-by_variable.dlm".
+
++instruction:id(e0:v0),
++select_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++select_instruction:second_operand[e0] = e2
+<-
+   _select_instruction:second_operand$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_sext_instruction:from$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_sext_instruction:from$by_immediate] = "\t".
+lang:physical:filePath[`_sext_instruction:from$by_immediate] = "./data/predicates/sext_instruction-from-by_immediate.dlm".
+
++instruction:id(e0:v0),
++sext_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++sext_instruction:from[e0] = e2
+<-
+   _sext_instruction:from$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_sext_instruction:from$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_sext_instruction:from$by_variable] = "\t".
+lang:physical:filePath[`_sext_instruction:from$by_variable] = "./data/predicates/sext_instruction-from-by_variable.dlm".
+
++instruction:id(e0:v0),
++sext_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++sext_instruction:from[e0] = e2
+<-
+   _sext_instruction:from$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_sext_instruction:to_type(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_sext_instruction:to_type] = "\t".
+lang:physical:filePath[`_sext_instruction:to_type] = "./data/predicates/sext_instruction-to_type.dlm".
+
++instruction:id(e0:v0),
++sext_instruction(e0),
++type:id(e1:v1),
++type(e1),
++sext_instruction:to_type[e0] = e1
+<-
+   _sext_instruction:to_type(v0, v1).
+
+
+
+_shl_instruction:first_operand$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_shl_instruction:first_operand$by_immediate] = "\t".
+lang:physical:filePath[`_shl_instruction:first_operand$by_immediate] = "./data/predicates/shl_instruction-first_operand-by_immediate.dlm".
+
++instruction:id(e0:v0),
++shl_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++shl_instruction:first_operand[e0] = e2
+<-
+   _shl_instruction:first_operand$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_shl_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_shl_instruction:first_operand$by_variable] = "\t".
+lang:physical:filePath[`_shl_instruction:first_operand$by_variable] = "./data/predicates/shl_instruction-first_operand-by_variable.dlm".
+
++instruction:id(e0:v0),
++shl_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++shl_instruction:first_operand[e0] = e2
+<-
+   _shl_instruction:first_operand$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_shl_instruction:second_operand$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_shl_instruction:second_operand$by_immediate] = "\t".
+lang:physical:filePath[`_shl_instruction:second_operand$by_immediate] = "./data/predicates/shl_instruction-second_operand-by_immediate.dlm".
+
++instruction:id(e0:v0),
++shl_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++shl_instruction:second_operand[e0] = e2
+<-
+   _shl_instruction:second_operand$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_shl_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_shl_instruction:second_operand$by_variable] = "\t".
+lang:physical:filePath[`_shl_instruction:second_operand$by_variable] = "./data/predicates/shl_instruction-second_operand-by_variable.dlm".
+
++instruction:id(e0:v0),
++shl_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++shl_instruction:second_operand[e0] = e2
+<-
+   _shl_instruction:second_operand$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_shufflevector_instruction:first_vector$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_shufflevector_instruction:first_vector$by_immediate] = "\t".
+lang:physical:filePath[`_shufflevector_instruction:first_vector$by_immediate] = "./data/predicates/shufflevector_instruction-first_vector-by_immediate.dlm".
+
++instruction:id(e0:v0),
++shufflevector_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++shufflevector_instruction:first_vector[e0] = e2
+<-
+   _shufflevector_instruction:first_vector$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_shufflevector_instruction:first_vector$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_shufflevector_instruction:first_vector$by_variable] = "\t".
+lang:physical:filePath[`_shufflevector_instruction:first_vector$by_variable] = "./data/predicates/shufflevector_instruction-first_vector-by_variable.dlm".
+
++instruction:id(e0:v0),
++shufflevector_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++shufflevector_instruction:first_vector[e0] = e2
+<-
+   _shufflevector_instruction:first_vector$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_shufflevector_instruction:mask(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_shufflevector_instruction:mask] = "\t".
+lang:physical:filePath[`_shufflevector_instruction:mask] = "./data/predicates/shufflevector_instruction-mask.dlm".
+
++instruction:id(e0:v0),
++shufflevector_instruction(e0),
++immediate:value(e1:v1),
++immediate(e1),
++shufflevector_instruction:mask[e0] = e1
+<-
+   _shufflevector_instruction:mask(v0, v1).
+
+
+
+_shufflevector_instruction:second_vector$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_shufflevector_instruction:second_vector$by_immediate] = "\t".
+lang:physical:filePath[`_shufflevector_instruction:second_vector$by_immediate] = "./data/predicates/shufflevector_instruction-second_vector-by_immediate.dlm".
+
++instruction:id(e0:v0),
++shufflevector_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++shufflevector_instruction:second_vector[e0] = e2
+<-
+   _shufflevector_instruction:second_vector$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_shufflevector_instruction:second_vector$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_shufflevector_instruction:second_vector$by_variable] = "\t".
+lang:physical:filePath[`_shufflevector_instruction:second_vector$by_variable] = "./data/predicates/shufflevector_instruction-second_vector-by_variable.dlm".
+
++instruction:id(e0:v0),
++shufflevector_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++shufflevector_instruction:second_vector[e0] = e2
+<-
+   _shufflevector_instruction:second_vector$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_sitofp_instruction:from$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_sitofp_instruction:from$by_immediate] = "\t".
+lang:physical:filePath[`_sitofp_instruction:from$by_immediate] = "./data/predicates/sitofp_instruction-from-by_immediate.dlm".
+
++instruction:id(e0:v0),
++sitofp_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++sitofp_instruction:from[e0] = e2
+<-
+   _sitofp_instruction:from$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_sitofp_instruction:from$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_sitofp_instruction:from$by_variable] = "\t".
+lang:physical:filePath[`_sitofp_instruction:from$by_variable] = "./data/predicates/sitofp_instruction-from-by_variable.dlm".
+
++instruction:id(e0:v0),
++sitofp_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++sitofp_instruction:from[e0] = e2
+<-
+   _sitofp_instruction:from$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_sitofp_instruction:to_type(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_sitofp_instruction:to_type] = "\t".
+lang:physical:filePath[`_sitofp_instruction:to_type] = "./data/predicates/sitofp_instruction-to_type.dlm".
+
++instruction:id(e0:v0),
++sitofp_instruction(e0),
++type:id(e1:v1),
++type(e1),
++sitofp_instruction:to_type[e0] = e1
+<-
+   _sitofp_instruction:to_type(v0, v1).
+
+
+
+_srem_instruction:first_operand$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_srem_instruction:first_operand$by_immediate] = "\t".
+lang:physical:filePath[`_srem_instruction:first_operand$by_immediate] = "./data/predicates/srem_instruction-first_operand-by_immediate.dlm".
+
++instruction:id(e0:v0),
++srem_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++srem_instruction:first_operand[e0] = e2
+<-
+   _srem_instruction:first_operand$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_srem_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_srem_instruction:first_operand$by_variable] = "\t".
+lang:physical:filePath[`_srem_instruction:first_operand$by_variable] = "./data/predicates/srem_instruction-first_operand-by_variable.dlm".
+
++instruction:id(e0:v0),
++srem_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++srem_instruction:first_operand[e0] = e2
+<-
+   _srem_instruction:first_operand$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_srem_instruction:second_operand$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_srem_instruction:second_operand$by_immediate] = "\t".
+lang:physical:filePath[`_srem_instruction:second_operand$by_immediate] = "./data/predicates/srem_instruction-second_operand-by_immediate.dlm".
+
++instruction:id(e0:v0),
++srem_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++srem_instruction:second_operand[e0] = e2
+<-
+   _srem_instruction:second_operand$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_srem_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_srem_instruction:second_operand$by_variable] = "\t".
+lang:physical:filePath[`_srem_instruction:second_operand$by_variable] = "./data/predicates/srem_instruction-second_operand-by_variable.dlm".
+
++instruction:id(e0:v0),
++srem_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++srem_instruction:second_operand[e0] = e2
+<-
+   _srem_instruction:second_operand$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_store_instruction:address$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_store_instruction:address$by_immediate] = "\t".
+lang:physical:filePath[`_store_instruction:address$by_immediate] = "./data/predicates/store_instruction-address-by_immediate.dlm".
+
++instruction:id(e0:v0),
++store_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++store_instruction:address[e0] = e2
+<-
+   _store_instruction:address$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_store_instruction:address$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_store_instruction:address$by_variable] = "\t".
+lang:physical:filePath[`_store_instruction:address$by_variable] = "./data/predicates/store_instruction-address-by_variable.dlm".
+
++instruction:id(e0:v0),
++store_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++store_instruction:address[e0] = e2
+<-
+   _store_instruction:address$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_store_instruction:alignment(v0, v1) -> string(v0), int[64](v1).
+
+lang:physical:delimiter[`_store_instruction:alignment] = "\t".
+lang:physical:filePath[`_store_instruction:alignment] = "./data/predicates/store_instruction-alignment.dlm".
+
++instruction:id(e0:v0),
++store_instruction(e0),
++store_instruction:alignment[e0] = v1
+<-
+   _store_instruction:alignment(v0, v1).
+
+
+
+_store_instruction:ordering(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_store_instruction:ordering] = "\t".
+lang:physical:filePath[`_store_instruction:ordering] = "./data/predicates/store_instruction-ordering.dlm".
+
++instruction:id(e0:v0),
++store_instruction(e0),
++ordering:id(e1:v1),
++ordering(e1),
++store_instruction:ordering[e0] = e1
+<-
+   _store_instruction:ordering(v0, v1).
+
+
+
+_store_instruction:value$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_store_instruction:value$by_immediate] = "\t".
+lang:physical:filePath[`_store_instruction:value$by_immediate] = "./data/predicates/store_instruction-value-by_immediate.dlm".
+
++instruction:id(e0:v0),
++store_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++store_instruction:value[e0] = e2
+<-
+   _store_instruction:value$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_store_instruction:value$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_store_instruction:value$by_variable] = "\t".
+lang:physical:filePath[`_store_instruction:value$by_variable] = "./data/predicates/store_instruction-value-by_variable.dlm".
+
++instruction:id(e0:v0),
++store_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++store_instruction:value[e0] = e2
+<-
+   _store_instruction:value$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_store_instruction:volatile(v0) -> string(v0).
+
+lang:physical:delimiter[`_store_instruction:volatile] = "\t".
+lang:physical:filePath[`_store_instruction:volatile] = "./data/predicates/store_instruction-volatile.dlm".
+
++instruction:id(e0:v0),
++store_instruction(e0),
++store_instruction:volatile(e0)
+<-
+   _store_instruction:volatile(v0).
+
+
+
+_struct_type:field(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
+
+lang:physical:delimiter[`_struct_type:field] = "\t".
+lang:physical:filePath[`_struct_type:field] = "./data/predicates/struct_type-field.dlm".
+
++type:id(e0:v0),
++struct_type(e0),
++type:id(e1:v2),
++type(e1),
++struct_type:field[e0,v1] = e1
+<-
+   _struct_type:field(v0, v1, v2).
+
+
+
+_struct_type:nfields(v0, v1) -> string(v0), int[64](v1).
+
+lang:physical:delimiter[`_struct_type:nfields] = "\t".
+lang:physical:filePath[`_struct_type:nfields] = "./data/predicates/struct_type-nfields.dlm".
+
++type:id(e0:v0),
++struct_type(e0),
++struct_type:nfields[e0] = v1
+<-
+   _struct_type:nfields(v0, v1).
+
+
+
+_sub_instruction:first_operand$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_sub_instruction:first_operand$by_immediate] = "\t".
+lang:physical:filePath[`_sub_instruction:first_operand$by_immediate] = "./data/predicates/sub_instruction-first_operand-by_immediate.dlm".
+
++instruction:id(e0:v0),
++sub_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++sub_instruction:first_operand[e0] = e2
+<-
+   _sub_instruction:first_operand$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_sub_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_sub_instruction:first_operand$by_variable] = "\t".
+lang:physical:filePath[`_sub_instruction:first_operand$by_variable] = "./data/predicates/sub_instruction-first_operand-by_variable.dlm".
+
++instruction:id(e0:v0),
++sub_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++sub_instruction:first_operand[e0] = e2
+<-
+   _sub_instruction:first_operand$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_sub_instruction:second_operand$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_sub_instruction:second_operand$by_immediate] = "\t".
+lang:physical:filePath[`_sub_instruction:second_operand$by_immediate] = "./data/predicates/sub_instruction-second_operand-by_immediate.dlm".
+
++instruction:id(e0:v0),
++sub_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++sub_instruction:second_operand[e0] = e2
+<-
+   _sub_instruction:second_operand$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_sub_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_sub_instruction:second_operand$by_variable] = "\t".
+lang:physical:filePath[`_sub_instruction:second_operand$by_variable] = "./data/predicates/sub_instruction-second_operand-by_variable.dlm".
+
++instruction:id(e0:v0),
++sub_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++sub_instruction:second_operand[e0] = e2
+<-
+   _sub_instruction:second_operand$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_switch_instruction:case:label(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
+
+lang:physical:delimiter[`_switch_instruction:case:label] = "\t".
+lang:physical:filePath[`_switch_instruction:case:label] = "./data/predicates/switch_instruction-case-label.dlm".
+
++instruction:id(e0:v0),
++switch_instruction(e0),
++variable:id(e1:v2),
++variable(e1),
++switch_instruction:case:label[e0,v1] = e1
+<-
+   _switch_instruction:case:label(v0, v1, v2).
+
+
+
+_switch_instruction:case:value(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
+
+lang:physical:delimiter[`_switch_instruction:case:value] = "\t".
+lang:physical:filePath[`_switch_instruction:case:value] = "./data/predicates/switch_instruction-case-value.dlm".
+
++instruction:id(e0:v0),
++switch_instruction(e0),
++immediate:value(e1:v2),
++immediate(e1),
++switch_instruction:case:value[e0,v1] = e1
+<-
+   _switch_instruction:case:value(v0, v1, v2).
+
+
+
+_switch_instruction:default_label(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_switch_instruction:default_label] = "\t".
+lang:physical:filePath[`_switch_instruction:default_label] = "./data/predicates/switch_instruction-default_label.dlm".
+
++instruction:id(e0:v0),
++switch_instruction(e0),
++variable:id(e1:v1),
++variable(e1),
++switch_instruction:default_label[e0] = e1
+<-
+   _switch_instruction:default_label(v0, v1).
+
+
+
+_switch_instruction:ncases(v0, v1) -> string(v0), int[64](v1).
+
+lang:physical:delimiter[`_switch_instruction:ncases] = "\t".
+lang:physical:filePath[`_switch_instruction:ncases] = "./data/predicates/switch_instruction-ncases.dlm".
+
++instruction:id(e0:v0),
++switch_instruction(e0),
++switch_instruction:ncases[e0] = v1
+<-
+   _switch_instruction:ncases(v0, v1).
+
+
+
+_switch_instruction:operand$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_switch_instruction:operand$by_immediate] = "\t".
+lang:physical:filePath[`_switch_instruction:operand$by_immediate] = "./data/predicates/switch_instruction-operand-by_immediate.dlm".
+
++instruction:id(e0:v0),
++switch_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++switch_instruction:operand[e0] = e2
+<-
+   _switch_instruction:operand$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_switch_instruction:operand$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_switch_instruction:operand$by_variable] = "\t".
+lang:physical:filePath[`_switch_instruction:operand$by_variable] = "./data/predicates/switch_instruction-operand-by_variable.dlm".
+
++instruction:id(e0:v0),
++switch_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++switch_instruction:operand[e0] = e2
+<-
+   _switch_instruction:operand$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_trunc_instruction:from$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_trunc_instruction:from$by_immediate] = "\t".
+lang:physical:filePath[`_trunc_instruction:from$by_immediate] = "./data/predicates/trunc_instruction-from-by_immediate.dlm".
+
++instruction:id(e0:v0),
++trunc_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++trunc_instruction:from[e0] = e2
+<-
+   _trunc_instruction:from$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_trunc_instruction:from$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_trunc_instruction:from$by_variable] = "\t".
+lang:physical:filePath[`_trunc_instruction:from$by_variable] = "./data/predicates/trunc_instruction-from-by_variable.dlm".
+
++instruction:id(e0:v0),
++trunc_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++trunc_instruction:from[e0] = e2
+<-
+   _trunc_instruction:from$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_trunc_instruction:to_type(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_trunc_instruction:to_type] = "\t".
+lang:physical:filePath[`_trunc_instruction:to_type] = "./data/predicates/trunc_instruction-to_type.dlm".
+
++instruction:id(e0:v0),
++trunc_instruction(e0),
++type:id(e1:v1),
++type(e1),
++trunc_instruction:to_type[e0] = e1
+<-
+   _trunc_instruction:to_type(v0, v1).
+
+
+
+_udiv_instruction:first_operand$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_udiv_instruction:first_operand$by_immediate] = "\t".
+lang:physical:filePath[`_udiv_instruction:first_operand$by_immediate] = "./data/predicates/udiv_instruction-first_operand-by_immediate.dlm".
+
++instruction:id(e0:v0),
++udiv_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++udiv_instruction:first_operand[e0] = e2
+<-
+   _udiv_instruction:first_operand$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_udiv_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_udiv_instruction:first_operand$by_variable] = "\t".
+lang:physical:filePath[`_udiv_instruction:first_operand$by_variable] = "./data/predicates/udiv_instruction-first_operand-by_variable.dlm".
+
++instruction:id(e0:v0),
++udiv_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++udiv_instruction:first_operand[e0] = e2
+<-
+   _udiv_instruction:first_operand$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_udiv_instruction:second_operand$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_udiv_instruction:second_operand$by_immediate] = "\t".
+lang:physical:filePath[`_udiv_instruction:second_operand$by_immediate] = "./data/predicates/udiv_instruction-second_operand-by_immediate.dlm".
+
++instruction:id(e0:v0),
++udiv_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++udiv_instruction:second_operand[e0] = e2
+<-
+   _udiv_instruction:second_operand$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_udiv_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_udiv_instruction:second_operand$by_variable] = "\t".
+lang:physical:filePath[`_udiv_instruction:second_operand$by_variable] = "./data/predicates/udiv_instruction-second_operand-by_variable.dlm".
+
++instruction:id(e0:v0),
++udiv_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++udiv_instruction:second_operand[e0] = e2
+<-
+   _udiv_instruction:second_operand$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_uitofp_instruction:from$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_uitofp_instruction:from$by_immediate] = "\t".
+lang:physical:filePath[`_uitofp_instruction:from$by_immediate] = "./data/predicates/uitofp_instruction-from-by_immediate.dlm".
+
++instruction:id(e0:v0),
++uitofp_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++uitofp_instruction:from[e0] = e2
+<-
+   _uitofp_instruction:from$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_uitofp_instruction:from$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_uitofp_instruction:from$by_variable] = "\t".
+lang:physical:filePath[`_uitofp_instruction:from$by_variable] = "./data/predicates/uitofp_instruction-from-by_variable.dlm".
+
++instruction:id(e0:v0),
++uitofp_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++uitofp_instruction:from[e0] = e2
+<-
+   _uitofp_instruction:from$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_uitofp_instruction:to_type(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_uitofp_instruction:to_type] = "\t".
+lang:physical:filePath[`_uitofp_instruction:to_type] = "./data/predicates/uitofp_instruction-to_type.dlm".
+
++instruction:id(e0:v0),
++uitofp_instruction(e0),
++type:id(e1:v1),
++type(e1),
++uitofp_instruction:to_type[e0] = e1
+<-
+   _uitofp_instruction:to_type(v0, v1).
+
+
+
+_urem_instruction:first_operand$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_urem_instruction:first_operand$by_immediate] = "\t".
+lang:physical:filePath[`_urem_instruction:first_operand$by_immediate] = "./data/predicates/urem_instruction-first_operand-by_immediate.dlm".
+
++instruction:id(e0:v0),
++urem_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++urem_instruction:first_operand[e0] = e2
+<-
+   _urem_instruction:first_operand$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_urem_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_urem_instruction:first_operand$by_variable] = "\t".
+lang:physical:filePath[`_urem_instruction:first_operand$by_variable] = "./data/predicates/urem_instruction-first_operand-by_variable.dlm".
+
++instruction:id(e0:v0),
++urem_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++urem_instruction:first_operand[e0] = e2
+<-
+   _urem_instruction:first_operand$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_urem_instruction:second_operand$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_urem_instruction:second_operand$by_immediate] = "\t".
+lang:physical:filePath[`_urem_instruction:second_operand$by_immediate] = "./data/predicates/urem_instruction-second_operand-by_immediate.dlm".
+
++instruction:id(e0:v0),
++urem_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++urem_instruction:second_operand[e0] = e2
+<-
+   _urem_instruction:second_operand$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_urem_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_urem_instruction:second_operand$by_variable] = "\t".
+lang:physical:filePath[`_urem_instruction:second_operand$by_variable] = "./data/predicates/urem_instruction-second_operand-by_variable.dlm".
+
++instruction:id(e0:v0),
++urem_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++urem_instruction:second_operand[e0] = e2
+<-
+   _urem_instruction:second_operand$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_va_arg_instruction:type(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_va_arg_instruction:type] = "\t".
+lang:physical:filePath[`_va_arg_instruction:type] = "./data/predicates/va_arg_instruction-type.dlm".
+
++instruction:id(e0:v0),
++va_arg_instruction(e0),
++type:id(e1:v1),
++type(e1),
++va_arg_instruction:type[e0] = e1
+<-
+   _va_arg_instruction:type(v0, v1).
+
+
+
+_va_arg_instruction:va_list$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_va_arg_instruction:va_list$by_immediate] = "\t".
+lang:physical:filePath[`_va_arg_instruction:va_list$by_immediate] = "./data/predicates/va_arg_instruction-va_list-by_immediate.dlm".
+
++instruction:id(e0:v0),
++va_arg_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++va_arg_instruction:va_list[e0] = e2
+<-
+   _va_arg_instruction:va_list$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_va_arg_instruction:va_list$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_va_arg_instruction:va_list$by_variable] = "\t".
+lang:physical:filePath[`_va_arg_instruction:va_list$by_variable] = "./data/predicates/va_arg_instruction-va_list-by_variable.dlm".
+
++instruction:id(e0:v0),
++va_arg_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++va_arg_instruction:va_list[e0] = e2
+<-
+   _va_arg_instruction:va_list$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_variable:type(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_variable:type] = "\t".
+lang:physical:filePath[`_variable:type] = "./data/predicates/variable-type.dlm".
+
++variable:id(e0:v0),
++variable(e0),
++type:id(e1:v1),
++type(e1),
++variable:type[e0] = e1
+<-
+   _variable:type(v0, v1).
+
+
+
+_vector_type:component(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_vector_type:component] = "\t".
+lang:physical:filePath[`_vector_type:component] = "./data/predicates/vector_type-component.dlm".
+
++type:id(e0:v0),
++vector_type(e0),
++type:id(e1:v1),
++type(e1),
++vector_type:component[e0] = e1
+<-
+   _vector_type:component(v0, v1).
+
+
+
+_vector_type:size(v0, v1) -> string(v0), int[64](v1).
+
+lang:physical:delimiter[`_vector_type:size] = "\t".
+lang:physical:filePath[`_vector_type:size] = "./data/predicates/vector_type-size.dlm".
+
++type:id(e0:v0),
++vector_type(e0),
++vector_type:size[e0] = v1
+<-
+   _vector_type:size(v0, v1).
+
+
+
+_xor_instruction:first_operand$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_xor_instruction:first_operand$by_immediate] = "\t".
+lang:physical:filePath[`_xor_instruction:first_operand$by_immediate] = "./data/predicates/xor_instruction-first_operand-by_immediate.dlm".
+
++instruction:id(e0:v0),
++xor_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++xor_instruction:first_operand[e0] = e2
+<-
+   _xor_instruction:first_operand$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_xor_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_xor_instruction:first_operand$by_variable] = "\t".
+lang:physical:filePath[`_xor_instruction:first_operand$by_variable] = "./data/predicates/xor_instruction-first_operand-by_variable.dlm".
+
++instruction:id(e0:v0),
++xor_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++xor_instruction:first_operand[e0] = e2
+<-
+   _xor_instruction:first_operand$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_xor_instruction:second_operand$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_xor_instruction:second_operand$by_immediate] = "\t".
+lang:physical:filePath[`_xor_instruction:second_operand$by_immediate] = "./data/predicates/xor_instruction-second_operand-by_immediate.dlm".
+
++instruction:id(e0:v0),
++xor_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++xor_instruction:second_operand[e0] = e2
+<-
+   _xor_instruction:second_operand$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_xor_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_xor_instruction:second_operand$by_variable] = "\t".
+lang:physical:filePath[`_xor_instruction:second_operand$by_variable] = "./data/predicates/xor_instruction-second_operand-by_variable.dlm".
+
++instruction:id(e0:v0),
++xor_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++xor_instruction:second_operand[e0] = e2
+<-
+   _xor_instruction:second_operand$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_zext_instruction:from$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_zext_instruction:from$by_immediate] = "\t".
+lang:physical:filePath[`_zext_instruction:from$by_immediate] = "./data/predicates/zext_instruction-from-by_immediate.dlm".
+
++instruction:id(e0:v0),
++zext_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++zext_instruction:from[e0] = e2
+<-
+   _zext_instruction:from$by_immediate(v0, v1),
+   immediate:value(e1:v1),
+   immediate(e1).
+
+_zext_instruction:from$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_zext_instruction:from$by_variable] = "\t".
+lang:physical:filePath[`_zext_instruction:from$by_variable] = "./data/predicates/zext_instruction-from-by_variable.dlm".
+
++instruction:id(e0:v0),
++zext_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++zext_instruction:from[e0] = e2
+<-
+   _zext_instruction:from$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
+_zext_instruction:to_type(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_zext_instruction:to_type] = "\t".
+lang:physical:filePath[`_zext_instruction:to_type] = "./data/predicates/zext_instruction-to_type.dlm".
+
++instruction:id(e0:v0),
++zext_instruction(e0),
++type:id(e1:v1),
++type(e1),
++zext_instruction:to_type[e0] = e1
+<-
+   _zext_instruction:to_type(v0, v1).
+
+
+
