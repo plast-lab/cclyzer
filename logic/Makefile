@@ -21,10 +21,12 @@ projects := schema import method-lookup
 
 all:
 
+install:
+
 clean:
 	$(RM) -r $(logic.outdir)
 
-.PHONY: all clean
+.PHONY: all clean install
 
 
 #------------------------------
