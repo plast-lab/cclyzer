@@ -97,9 +97,7 @@ $(schema.pb): $(import.outdir)/%.pb: $(schema.ph) | $(import.outdir)
 # Generate import sources; this will recreate $(import.src) files
 .PHONY: import.src
 import.src: $(schema.pb)
-	$(importgen.exe) --ignore import/.ignored-predicates --dir ./data --delim '\t' -o import $^
-
-# TODO ./data -> $(data.link)
+	$(importgen.exe) --ignore import/.ignored-predicates --dir $(data.link) --delim '\t' -o import $^
 
 
 

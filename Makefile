@@ -69,15 +69,6 @@ $(eval $(call create-destdir,tests,tests))
 .PHONY: tests.setup tests.import tests.load tests.clean
 
 
-#-----------------------------------------
-# Dependencies from other Makefiles
-#
-# TODO: rearrange
-#-----------------------------------------
-
-data.link := data
-
-
 #----------------------------
 # Prompt routines
 #----------------------------
