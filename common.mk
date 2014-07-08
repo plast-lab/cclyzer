@@ -40,7 +40,6 @@ data.link   := data
 
 OUTDIR       = $(LEVEL)/build
 DESTDIR     ?= $(LEVEL)
-SAMPLEDIR   ?= $(LEVEL)/etc/sample-data
 
 INSTALL_BIN  = $(DESTDIR)/bin
 INSTALL_LIB  = $(DESTDIR)/lib
