@@ -10,5 +10,5 @@ exec --storedBlock "import-entities"
 echo "Importing predicates"
 exec --storedBlock "import-predicates"
 echo "Installing compiled Datalog method-lookup logic in LOOKUP"
-installProject --dir IMPORT --libPath SCHEMA
+installProject --dir LOOKUP --libPath SCHEMA
 commit
