@@ -11,3 +11,4 @@ function_attribute:nounwind[] = Attr <- attribute:value(Attr:"nounwind").
 function_attribute:readonly[] = Attr <- attribute:value(Attr:"readonly").
 function_attribute:readnone[] = Attr <- attribute:value(Attr:"readnone").
 function_attribute:cold[] = Attr <- attribute:value(Attr:"cold").
+function_attribute:returns_twice[] = Attr <- attribute:value(Attr:"returns_twice").

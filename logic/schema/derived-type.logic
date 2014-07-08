@@ -171,8 +171,15 @@ vector_type:component[_] = Comp
  ->
    integer_type(Comp)
  ; fp_type(Comp)
- ; pointer_type:integer(Comp)
- ; pointer_type:fp(Comp).
+ ; pointer_type(Comp).
+
+/* The original version of the constraint also contained these two atoms:
+ *  ; pointer_type:integer(Comp)
+ *  ; pointer_type:fp(Comp).
+ * The LLVM reference manual states that:
+ * '... elementtype may be any integer or floating point type, or a pointer to these types.'
+ * However, in practice we have seen that the LLVM IR supports pointers to arbitrary types. 
+ */
 
 
 // Helper predicate

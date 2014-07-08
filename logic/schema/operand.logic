@@ -58,6 +58,8 @@ immediate:type[_] = type
 
 operand(Operand) -> .
 
+lang:physical:capacity[`operand] = 8388608.
+
 // Constructors
 operand:by_variable[Var] = Operand  ->
    variable(Var), operand(Operand).

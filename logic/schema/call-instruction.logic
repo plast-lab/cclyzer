@@ -114,7 +114,8 @@ call_instruction:function_attribute(_, Attr)
    function_attribute:nounwind[] = Attr ;
    function_attribute:readonly[] = Attr ;
    function_attribute:readnone[] = Attr ;
-   function_attribute:cold[] = Attr. // c6
+   function_attribute:cold[] = Attr ;
+   function_attribute:returns_twice[] = Attr. // c6
 
 
 // cc compatibility

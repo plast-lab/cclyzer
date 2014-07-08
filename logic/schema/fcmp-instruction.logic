@@ -28,7 +28,7 @@ fcmp_condition:true[]  = Cond <- fcmp_condition:id(Cond:"true").
 fcmp_condition:oeq[]   = Cond <- fcmp_condition:id(Cond:"oeq").
 fcmp_condition:ogt[]   = Cond <- fcmp_condition:id(Cond:"ogt").
 fcmp_condition:oge[]   = Cond <- fcmp_condition:id(Cond:"oge").
-fcmp_condition:olt[]   = Cond <- fcmp_condition:id(Cond:"ol").
+fcmp_condition:olt[]   = Cond <- fcmp_condition:id(Cond:"olt").
 fcmp_condition:ole[]   = Cond <- fcmp_condition:id(Cond:"ole").
 fcmp_condition:one[]   = Cond <- fcmp_condition:id(Cond:"one").
 fcmp_condition:ord[]   = Cond <- fcmp_condition:id(Cond:"ord").
@@ -53,7 +53,6 @@ fcmp_condition(Cond)
  ; fcmp_condition:ugt[]   = Cond ; fcmp_condition:uge[]  = Cond
  ; fcmp_condition:ult[]   = Cond ; fcmp_condition:ule[]  = Cond
  ; fcmp_condition:une[]   = Cond ; fcmp_condition:uno[]  = Cond.
-
 
 
 // Abbreviations
