@@ -39,6 +39,7 @@ vpath %.h  $(include_dirs)
 protodir    := $(LOGICBLOX_HOME)/lib/protobuf
 proto.proto := $(addprefix $(protodir)/,blox/common/Common.proto blox/compiler/BloxCompiler.proto)
 proto.cc    := $(proto.proto:$(protodir)/%.proto=$(srcdir)/%.pb.cc)
+proto.h     := $(proto.cc:$(srcdir)/%.pb.cc=include/%.pb.h)
 
 vpath %.proto $(protodir)
 
@@ -55,7 +56,7 @@ proto: $(proto.cc)
 # Phony targets to clear auto-generated files
 .PHONY: clean-proto
 clean-proto:
-	$(RM) $(proto.cc) $(proto.cc:$(srcdir)/%.pb.cc=include/%.pb.h)
+	$(RM) $(proto.cc) $(proto.h)
 
 # Add auto-generated files to sources
 sources += $(proto.cc)
@@ -97,7 +98,7 @@ install: $(program)
 # Automatic Dependency Generation
 #-----------------------------------
 
-ifneq "$(MAKECMDGOALS)" "clean"
+ifeq (,$(filter $(MAKECMDGOALS),clean clean-proto))
 
   ifeq ($(LOGICBLOX_HOME),)		# error checking
     $(error LOGICBLOX_HOME variable is not set)
