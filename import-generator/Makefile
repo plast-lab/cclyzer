@@ -61,6 +61,10 @@ clean-proto:
 # Add auto-generated files to sources
 sources += $(proto.cc)
 
+# Add dependency so that proto-related files are generated before
+# including .d files
+$(dependencies): | $(proto.cc)
+
 
 #-----------------------------------
 # Basic Rules
