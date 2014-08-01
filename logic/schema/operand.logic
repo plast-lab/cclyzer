@@ -25,6 +25,22 @@ variable:firstclass(Var) <-
 immediate(Imm), immediate:value(Imm:Ref) -> string(Ref).
 immediate:type[Imm] = Type -> immediate(Imm), type(Type).
 
+immediate:actual_value[Imm] = Val -> immediate(Imm), string(Val).
+
+immediate:last_colon_pos[Imm] = Pos -> immediate(Imm), uint[32](Pos).
+
+immediate:last_colon_pos[Imm] = Pos
+ <-
+   agg<<Pos = max(P)>> immediate:value(Imm:Ref),
+                 string:substring[Ref, P, 1] = ":".
+
+immediate:actual_value[Imm] = Val
+ <-
+   immediate:value(Imm:Ref),
+   immediate:last_colon_pos[Imm] = ColonPos,
+   string:length[Ref] = Len,
+   string:substring[Ref, ColonPos + 1, Len - ColonPos - 1] = Val.
+
 // TODO: what do we need this predicate?
 constant_expression(Imm) -> immediate(Imm).
 
