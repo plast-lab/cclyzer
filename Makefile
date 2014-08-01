@@ -66,7 +66,7 @@ vpath %.template $(INSTALL_BIN)/
 $(eval $(call create-destdir,tests,tests))
 
 # Phony testing targets that apply to all benchmarks
-.PHONY: tests.setup tests.import tests.load tests.clean
+.PHONY: tests.setup tests.export tests.load tests.clean
 
 
 #----------------------------
@@ -106,11 +106,11 @@ $$($1.outdir): | $(tests.outdir)
 # Fact-generation step
 
 export PATH := $(INSTALL_BIN):$(PATH)
-test-$1.import: tests.setup | $$($1.csv)
+test-$1.export: tests.setup | $$($1.csv)
 	$(call prompt-echo, $1, "Cleaning up older facts ...")
 	$(call prompt, $1)
 	$(RM) -r $$($1.csv)
-	$(call prompt-echo, $1, "Importing facts ...")
+	$(call prompt-echo, $1, "Exporting facts ...")
 	$(call prompt, $1)
 	$(factgen.exe) -i $$($1.dir)/ -o $$($1.csv)
 	$(call prompt-echo, $1, "Stored facts in $$($1.csv)/")
@@ -118,8 +118,8 @@ test-$1.import: tests.setup | $$($1.csv)
 
 # Database-generation step
 
-test-$1.load: $$($1.lb) test-$1.import
-	$(call prompt-echo, $1, "Loading into database ...")
+test-$1.load: $$($1.lb) test-$1.export
+	$(call prompt-echo, $1, "Importing to database ...")
 	$(QUIET) $(RM) $(data.link)
 	$(QUIET) ln -s $$(abspath $$($1.csv)) $(data.link)
 	$(call prompt, $1)
@@ -147,7 +147,7 @@ test-$1.clean:
 # Phony targets dependencies
 
 tests.setup  : $(targets.install)
-tests.import : test-$1.import
+tests.export : test-$1.export
 tests.load   : test-$1.load
 tests.clean  : test-$1.clean
 
