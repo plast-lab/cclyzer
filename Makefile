@@ -118,12 +118,12 @@ test-$1.import: tests.setup | $$($1.csv)
 
 # Database-generation step
 
-test-$1.load: test-$1.import $$($1.lb)
+test-$1.load: $$($1.lb) test-$1.import
 	$(call prompt-echo, $1, "Loading into database ...")
 	$(QUIET) $(RM) $(data.link)
 	$(QUIET) ln -s $$(abspath $$($1.csv)) $(data.link)
 	$(call prompt, $1)
-	$(call deploy-datalog-project,$$($1.lb))
+	$(call deploy-datalog-project,$$<)
 
 
 # Create datalog script
@@ -132,7 +132,7 @@ test-$1.load: test-$1.import $$($1.lb)
 $$($1.lb): $(template.lb)
 	$(call prompt-echo, $1, "Generating script ...")
 	$(call prompt, $1)
-	$(M4) --define=WORKSPACE=$$($1.db) $$< > $$@
+	$(M4) --define=WORKSPACE=$$($1.db) --define=DIR=$$($1.outdir)/ $$< > $$@
 
 
 # Cleaning target

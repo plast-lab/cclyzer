@@ -1,7 +1,7 @@
 _add_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_add_instruction] = "\t".
-lang:physical:filePath[`_add_instruction] = "data/entities/add_instruction.dlm".
+lang:physical:filePath[`_add_instruction] = "facts/entities/add_instruction.dlm".
 
 +instruction:id(e0:v0),
 +add_instruction(e0)
@@ -13,7 +13,7 @@ lang:physical:filePath[`_add_instruction] = "data/entities/add_instruction.dlm".
 _alias(v0) -> string(v0).
 
 lang:physical:delimiter[`_alias] = "\t".
-lang:physical:filePath[`_alias] = "data/entities/alias.dlm".
+lang:physical:filePath[`_alias] = "facts/entities/alias.dlm".
 
 +alias:value(e0:v0),
 +alias(e0)
@@ -25,7 +25,7 @@ lang:physical:filePath[`_alias] = "data/entities/alias.dlm".
 _alloca_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_alloca_instruction] = "\t".
-lang:physical:filePath[`_alloca_instruction] = "data/entities/alloca_instruction.dlm".
+lang:physical:filePath[`_alloca_instruction] = "facts/entities/alloca_instruction.dlm".
 
 +instruction:id(e0:v0),
 +alloca_instruction(e0)
@@ -37,7 +37,7 @@ lang:physical:filePath[`_alloca_instruction] = "data/entities/alloca_instruction
 _and_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_and_instruction] = "\t".
-lang:physical:filePath[`_and_instruction] = "data/entities/and_instruction.dlm".
+lang:physical:filePath[`_and_instruction] = "facts/entities/and_instruction.dlm".
 
 +instruction:id(e0:v0),
 +and_instruction(e0)
@@ -49,7 +49,7 @@ lang:physical:filePath[`_and_instruction] = "data/entities/and_instruction.dlm".
 _array_type(v0) -> string(v0).
 
 lang:physical:delimiter[`_array_type] = "\t".
-lang:physical:filePath[`_array_type] = "data/entities/array_type.dlm".
+lang:physical:filePath[`_array_type] = "facts/entities/array_type.dlm".
 
 +type:id(e0:v0),
 +array_type(e0)
@@ -61,7 +61,7 @@ lang:physical:filePath[`_array_type] = "data/entities/array_type.dlm".
 _ashr_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_ashr_instruction] = "\t".
-lang:physical:filePath[`_ashr_instruction] = "data/entities/ashr_instruction.dlm".
+lang:physical:filePath[`_ashr_instruction] = "facts/entities/ashr_instruction.dlm".
 
 +instruction:id(e0:v0),
 +ashr_instruction(e0)
@@ -73,7 +73,7 @@ lang:physical:filePath[`_ashr_instruction] = "data/entities/ashr_instruction.dlm
 _atomicrmw_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_atomicrmw_instruction] = "\t".
-lang:physical:filePath[`_atomicrmw_instruction] = "data/entities/atomicrmw_instruction.dlm".
+lang:physical:filePath[`_atomicrmw_instruction] = "facts/entities/atomicrmw_instruction.dlm".
 
 +instruction:id(e0:v0),
 +atomicrmw_instruction(e0)
@@ -85,7 +85,7 @@ lang:physical:filePath[`_atomicrmw_instruction] = "data/entities/atomicrmw_instr
 _bitcast_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_bitcast_instruction] = "\t".
-lang:physical:filePath[`_bitcast_instruction] = "data/entities/bitcast_instruction.dlm".
+lang:physical:filePath[`_bitcast_instruction] = "facts/entities/bitcast_instruction.dlm".
 
 +instruction:id(e0:v0),
 +bitcast_instruction(e0)
@@ -97,7 +97,7 @@ lang:physical:filePath[`_bitcast_instruction] = "data/entities/bitcast_instructi
 _br_cond_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_br_cond_instruction] = "\t".
-lang:physical:filePath[`_br_cond_instruction] = "data/entities/br_cond_instruction.dlm".
+lang:physical:filePath[`_br_cond_instruction] = "facts/entities/br_cond_instruction.dlm".
 
 +instruction:id(e0:v0),
 +br_cond_instruction(e0)
@@ -109,7 +109,7 @@ lang:physical:filePath[`_br_cond_instruction] = "data/entities/br_cond_instructi
 _br_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_br_instruction] = "\t".
-lang:physical:filePath[`_br_instruction] = "data/entities/br_instruction.dlm".
+lang:physical:filePath[`_br_instruction] = "facts/entities/br_instruction.dlm".
 
 +instruction:id(e0:v0),
 +br_instruction(e0)
@@ -121,7 +121,7 @@ lang:physical:filePath[`_br_instruction] = "data/entities/br_instruction.dlm".
 _br_uncond_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_br_uncond_instruction] = "\t".
-lang:physical:filePath[`_br_uncond_instruction] = "data/entities/br_uncond_instruction.dlm".
+lang:physical:filePath[`_br_uncond_instruction] = "facts/entities/br_uncond_instruction.dlm".
 
 +instruction:id(e0:v0),
 +br_uncond_instruction(e0)
@@ -133,7 +133,7 @@ lang:physical:filePath[`_br_uncond_instruction] = "data/entities/br_uncond_instr
 _call_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_call_instruction] = "\t".
-lang:physical:filePath[`_call_instruction] = "data/entities/call_instruction.dlm".
+lang:physical:filePath[`_call_instruction] = "facts/entities/call_instruction.dlm".
 
 +instruction:id(e0:v0),
 +call_instruction(e0)
@@ -145,7 +145,7 @@ lang:physical:filePath[`_call_instruction] = "data/entities/call_instruction.dlm
 _cmpxchg_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_cmpxchg_instruction] = "\t".
-lang:physical:filePath[`_cmpxchg_instruction] = "data/entities/cmpxchg_instruction.dlm".
+lang:physical:filePath[`_cmpxchg_instruction] = "facts/entities/cmpxchg_instruction.dlm".
 
 +instruction:id(e0:v0),
 +cmpxchg_instruction(e0)
@@ -157,7 +157,7 @@ lang:physical:filePath[`_cmpxchg_instruction] = "data/entities/cmpxchg_instructi
 _constant_expression(v0) -> string(v0).
 
 lang:physical:delimiter[`_constant_expression] = "\t".
-lang:physical:filePath[`_constant_expression] = "data/entities/constant_expression.dlm".
+lang:physical:filePath[`_constant_expression] = "facts/entities/constant_expression.dlm".
 
 +immediate:value(e0:v0),
 +constant_expression(e0)
@@ -169,7 +169,7 @@ lang:physical:filePath[`_constant_expression] = "data/entities/constant_expressi
 _extractelement_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_extractelement_instruction] = "\t".
-lang:physical:filePath[`_extractelement_instruction] = "data/entities/extractelement_instruction.dlm".
+lang:physical:filePath[`_extractelement_instruction] = "facts/entities/extractelement_instruction.dlm".
 
 +instruction:id(e0:v0),
 +extractelement_instruction(e0)
@@ -181,7 +181,7 @@ lang:physical:filePath[`_extractelement_instruction] = "data/entities/extractele
 _extractvalue_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_extractvalue_instruction] = "\t".
-lang:physical:filePath[`_extractvalue_instruction] = "data/entities/extractvalue_instruction.dlm".
+lang:physical:filePath[`_extractvalue_instruction] = "facts/entities/extractvalue_instruction.dlm".
 
 +instruction:id(e0:v0),
 +extractvalue_instruction(e0)
@@ -193,7 +193,7 @@ lang:physical:filePath[`_extractvalue_instruction] = "data/entities/extractvalue
 _fadd_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_fadd_instruction] = "\t".
-lang:physical:filePath[`_fadd_instruction] = "data/entities/fadd_instruction.dlm".
+lang:physical:filePath[`_fadd_instruction] = "facts/entities/fadd_instruction.dlm".
 
 +instruction:id(e0:v0),
 +fadd_instruction(e0)
@@ -205,7 +205,7 @@ lang:physical:filePath[`_fadd_instruction] = "data/entities/fadd_instruction.dlm
 _fcmp_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_fcmp_instruction] = "\t".
-lang:physical:filePath[`_fcmp_instruction] = "data/entities/fcmp_instruction.dlm".
+lang:physical:filePath[`_fcmp_instruction] = "facts/entities/fcmp_instruction.dlm".
 
 +instruction:id(e0:v0),
 +fcmp_instruction(e0)
@@ -217,7 +217,7 @@ lang:physical:filePath[`_fcmp_instruction] = "data/entities/fcmp_instruction.dlm
 _fdiv_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_fdiv_instruction] = "\t".
-lang:physical:filePath[`_fdiv_instruction] = "data/entities/fdiv_instruction.dlm".
+lang:physical:filePath[`_fdiv_instruction] = "facts/entities/fdiv_instruction.dlm".
 
 +instruction:id(e0:v0),
 +fdiv_instruction(e0)
@@ -229,7 +229,7 @@ lang:physical:filePath[`_fdiv_instruction] = "data/entities/fdiv_instruction.dlm
 _fence_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_fence_instruction] = "\t".
-lang:physical:filePath[`_fence_instruction] = "data/entities/fence_instruction.dlm".
+lang:physical:filePath[`_fence_instruction] = "facts/entities/fence_instruction.dlm".
 
 +instruction:id(e0:v0),
 +fence_instruction(e0)
@@ -241,7 +241,7 @@ lang:physical:filePath[`_fence_instruction] = "data/entities/fence_instruction.d
 _fmul_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_fmul_instruction] = "\t".
-lang:physical:filePath[`_fmul_instruction] = "data/entities/fmul_instruction.dlm".
+lang:physical:filePath[`_fmul_instruction] = "facts/entities/fmul_instruction.dlm".
 
 +instruction:id(e0:v0),
 +fmul_instruction(e0)
@@ -253,7 +253,7 @@ lang:physical:filePath[`_fmul_instruction] = "data/entities/fmul_instruction.dlm
 _fp_type(v0) -> string(v0).
 
 lang:physical:delimiter[`_fp_type] = "\t".
-lang:physical:filePath[`_fp_type] = "data/entities/fp_type.dlm".
+lang:physical:filePath[`_fp_type] = "facts/entities/fp_type.dlm".
 
 +type:id(e0:v0),
 +fp_type(e0)
@@ -265,7 +265,7 @@ lang:physical:filePath[`_fp_type] = "data/entities/fp_type.dlm".
 _fpext_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_fpext_instruction] = "\t".
-lang:physical:filePath[`_fpext_instruction] = "data/entities/fpext_instruction.dlm".
+lang:physical:filePath[`_fpext_instruction] = "facts/entities/fpext_instruction.dlm".
 
 +instruction:id(e0:v0),
 +fpext_instruction(e0)
@@ -277,7 +277,7 @@ lang:physical:filePath[`_fpext_instruction] = "data/entities/fpext_instruction.d
 _fptosi_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_fptosi_instruction] = "\t".
-lang:physical:filePath[`_fptosi_instruction] = "data/entities/fptosi_instruction.dlm".
+lang:physical:filePath[`_fptosi_instruction] = "facts/entities/fptosi_instruction.dlm".
 
 +instruction:id(e0:v0),
 +fptosi_instruction(e0)
@@ -289,7 +289,7 @@ lang:physical:filePath[`_fptosi_instruction] = "data/entities/fptosi_instruction
 _fptoui_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_fptoui_instruction] = "\t".
-lang:physical:filePath[`_fptoui_instruction] = "data/entities/fptoui_instruction.dlm".
+lang:physical:filePath[`_fptoui_instruction] = "facts/entities/fptoui_instruction.dlm".
 
 +instruction:id(e0:v0),
 +fptoui_instruction(e0)
@@ -301,7 +301,7 @@ lang:physical:filePath[`_fptoui_instruction] = "data/entities/fptoui_instruction
 _fptrunc_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_fptrunc_instruction] = "\t".
-lang:physical:filePath[`_fptrunc_instruction] = "data/entities/fptrunc_instruction.dlm".
+lang:physical:filePath[`_fptrunc_instruction] = "facts/entities/fptrunc_instruction.dlm".
 
 +instruction:id(e0:v0),
 +fptrunc_instruction(e0)
@@ -313,7 +313,7 @@ lang:physical:filePath[`_fptrunc_instruction] = "data/entities/fptrunc_instructi
 _frem_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_frem_instruction] = "\t".
-lang:physical:filePath[`_frem_instruction] = "data/entities/frem_instruction.dlm".
+lang:physical:filePath[`_frem_instruction] = "facts/entities/frem_instruction.dlm".
 
 +instruction:id(e0:v0),
 +frem_instruction(e0)
@@ -325,7 +325,7 @@ lang:physical:filePath[`_frem_instruction] = "data/entities/frem_instruction.dlm
 _fsub_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_fsub_instruction] = "\t".
-lang:physical:filePath[`_fsub_instruction] = "data/entities/fsub_instruction.dlm".
+lang:physical:filePath[`_fsub_instruction] = "facts/entities/fsub_instruction.dlm".
 
 +instruction:id(e0:v0),
 +fsub_instruction(e0)
@@ -337,7 +337,7 @@ lang:physical:filePath[`_fsub_instruction] = "data/entities/fsub_instruction.dlm
 _function(v0) -> string(v0).
 
 lang:physical:delimiter[`_function] = "\t".
-lang:physical:filePath[`_function] = "data/entities/function.dlm".
+lang:physical:filePath[`_function] = "facts/entities/function.dlm".
 
 +function_decl:id(e0:v0),
 +function(e0)
@@ -349,7 +349,7 @@ lang:physical:filePath[`_function] = "data/entities/function.dlm".
 _function_decl(v0) -> string(v0).
 
 lang:physical:delimiter[`_function_decl] = "\t".
-lang:physical:filePath[`_function_decl] = "data/entities/function_decl.dlm".
+lang:physical:filePath[`_function_decl] = "facts/entities/function_decl.dlm".
 
 +function_decl:id(e0:v0),
 +function_decl(e0)
@@ -361,7 +361,7 @@ lang:physical:filePath[`_function_decl] = "data/entities/function_decl.dlm".
 _function_type(v0) -> string(v0).
 
 lang:physical:delimiter[`_function_type] = "\t".
-lang:physical:filePath[`_function_type] = "data/entities/function_type.dlm".
+lang:physical:filePath[`_function_type] = "facts/entities/function_type.dlm".
 
 +type:id(e0:v0),
 +function_type(e0)
@@ -373,7 +373,7 @@ lang:physical:filePath[`_function_type] = "data/entities/function_type.dlm".
 _getelementptr_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_getelementptr_instruction] = "\t".
-lang:physical:filePath[`_getelementptr_instruction] = "data/entities/getelementptr_instruction.dlm".
+lang:physical:filePath[`_getelementptr_instruction] = "facts/entities/getelementptr_instruction.dlm".
 
 +instruction:id(e0:v0),
 +getelementptr_instruction(e0)
@@ -385,7 +385,7 @@ lang:physical:filePath[`_getelementptr_instruction] = "data/entities/getelementp
 _global_variable(v0) -> string(v0).
 
 lang:physical:delimiter[`_global_variable] = "\t".
-lang:physical:filePath[`_global_variable] = "data/entities/global_variable.dlm".
+lang:physical:filePath[`_global_variable] = "facts/entities/global_variable.dlm".
 
 +immediate:value(e0:v0),
 +global_variable(e0)
@@ -397,7 +397,7 @@ lang:physical:filePath[`_global_variable] = "data/entities/global_variable.dlm".
 _icmp_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_icmp_instruction] = "\t".
-lang:physical:filePath[`_icmp_instruction] = "data/entities/icmp_instruction.dlm".
+lang:physical:filePath[`_icmp_instruction] = "facts/entities/icmp_instruction.dlm".
 
 +instruction:id(e0:v0),
 +icmp_instruction(e0)
@@ -409,7 +409,7 @@ lang:physical:filePath[`_icmp_instruction] = "data/entities/icmp_instruction.dlm
 _immediate(v0) -> string(v0).
 
 lang:physical:delimiter[`_immediate] = "\t".
-lang:physical:filePath[`_immediate] = "data/entities/immediate.dlm".
+lang:physical:filePath[`_immediate] = "facts/entities/immediate.dlm".
 
 +immediate:value(e0:v0),
 +immediate(e0)
@@ -421,7 +421,7 @@ lang:physical:filePath[`_immediate] = "data/entities/immediate.dlm".
 _indirectbr_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_indirectbr_instruction] = "\t".
-lang:physical:filePath[`_indirectbr_instruction] = "data/entities/indirectbr_instruction.dlm".
+lang:physical:filePath[`_indirectbr_instruction] = "facts/entities/indirectbr_instruction.dlm".
 
 +instruction:id(e0:v0),
 +indirectbr_instruction(e0)
@@ -433,7 +433,7 @@ lang:physical:filePath[`_indirectbr_instruction] = "data/entities/indirectbr_ins
 _insertelement_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_insertelement_instruction] = "\t".
-lang:physical:filePath[`_insertelement_instruction] = "data/entities/insertelement_instruction.dlm".
+lang:physical:filePath[`_insertelement_instruction] = "facts/entities/insertelement_instruction.dlm".
 
 +instruction:id(e0:v0),
 +insertelement_instruction(e0)
@@ -445,7 +445,7 @@ lang:physical:filePath[`_insertelement_instruction] = "data/entities/inserteleme
 _insertvalue_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_insertvalue_instruction] = "\t".
-lang:physical:filePath[`_insertvalue_instruction] = "data/entities/insertvalue_instruction.dlm".
+lang:physical:filePath[`_insertvalue_instruction] = "facts/entities/insertvalue_instruction.dlm".
 
 +instruction:id(e0:v0),
 +insertvalue_instruction(e0)
@@ -457,7 +457,7 @@ lang:physical:filePath[`_insertvalue_instruction] = "data/entities/insertvalue_i
 _integer_type(v0) -> string(v0).
 
 lang:physical:delimiter[`_integer_type] = "\t".
-lang:physical:filePath[`_integer_type] = "data/entities/integer_type.dlm".
+lang:physical:filePath[`_integer_type] = "facts/entities/integer_type.dlm".
 
 +type:id(e0:v0),
 +integer_type(e0)
@@ -469,7 +469,7 @@ lang:physical:filePath[`_integer_type] = "data/entities/integer_type.dlm".
 _inttoptr_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_inttoptr_instruction] = "\t".
-lang:physical:filePath[`_inttoptr_instruction] = "data/entities/inttoptr_instruction.dlm".
+lang:physical:filePath[`_inttoptr_instruction] = "facts/entities/inttoptr_instruction.dlm".
 
 +instruction:id(e0:v0),
 +inttoptr_instruction(e0)
@@ -481,7 +481,7 @@ lang:physical:filePath[`_inttoptr_instruction] = "data/entities/inttoptr_instruc
 _invoke_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_invoke_instruction] = "\t".
-lang:physical:filePath[`_invoke_instruction] = "data/entities/invoke_instruction.dlm".
+lang:physical:filePath[`_invoke_instruction] = "facts/entities/invoke_instruction.dlm".
 
 +instruction:id(e0:v0),
 +invoke_instruction(e0)
@@ -493,7 +493,7 @@ lang:physical:filePath[`_invoke_instruction] = "data/entities/invoke_instruction
 _landingpad_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_landingpad_instruction] = "\t".
-lang:physical:filePath[`_landingpad_instruction] = "data/entities/landingpad_instruction.dlm".
+lang:physical:filePath[`_landingpad_instruction] = "facts/entities/landingpad_instruction.dlm".
 
 +instruction:id(e0:v0),
 +landingpad_instruction(e0)
@@ -505,7 +505,7 @@ lang:physical:filePath[`_landingpad_instruction] = "data/entities/landingpad_ins
 _load_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_load_instruction] = "\t".
-lang:physical:filePath[`_load_instruction] = "data/entities/load_instruction.dlm".
+lang:physical:filePath[`_load_instruction] = "facts/entities/load_instruction.dlm".
 
 +instruction:id(e0:v0),
 +load_instruction(e0)
@@ -517,7 +517,7 @@ lang:physical:filePath[`_load_instruction] = "data/entities/load_instruction.dlm
 _lshr_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_lshr_instruction] = "\t".
-lang:physical:filePath[`_lshr_instruction] = "data/entities/lshr_instruction.dlm".
+lang:physical:filePath[`_lshr_instruction] = "facts/entities/lshr_instruction.dlm".
 
 +instruction:id(e0:v0),
 +lshr_instruction(e0)
@@ -529,7 +529,7 @@ lang:physical:filePath[`_lshr_instruction] = "data/entities/lshr_instruction.dlm
 _mul_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_mul_instruction] = "\t".
-lang:physical:filePath[`_mul_instruction] = "data/entities/mul_instruction.dlm".
+lang:physical:filePath[`_mul_instruction] = "facts/entities/mul_instruction.dlm".
 
 +instruction:id(e0:v0),
 +mul_instruction(e0)
@@ -541,7 +541,7 @@ lang:physical:filePath[`_mul_instruction] = "data/entities/mul_instruction.dlm".
 _opaque_struct_type(v0) -> string(v0).
 
 lang:physical:delimiter[`_opaque_struct_type] = "\t".
-lang:physical:filePath[`_opaque_struct_type] = "data/entities/opaque_struct_type.dlm".
+lang:physical:filePath[`_opaque_struct_type] = "facts/entities/opaque_struct_type.dlm".
 
 +type:id(e0:v0),
 +opaque_struct_type(e0)
@@ -553,7 +553,7 @@ lang:physical:filePath[`_opaque_struct_type] = "data/entities/opaque_struct_type
 _or_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_or_instruction] = "\t".
-lang:physical:filePath[`_or_instruction] = "data/entities/or_instruction.dlm".
+lang:physical:filePath[`_or_instruction] = "facts/entities/or_instruction.dlm".
 
 +instruction:id(e0:v0),
 +or_instruction(e0)
@@ -565,7 +565,7 @@ lang:physical:filePath[`_or_instruction] = "data/entities/or_instruction.dlm".
 _phi_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_phi_instruction] = "\t".
-lang:physical:filePath[`_phi_instruction] = "data/entities/phi_instruction.dlm".
+lang:physical:filePath[`_phi_instruction] = "facts/entities/phi_instruction.dlm".
 
 +instruction:id(e0:v0),
 +phi_instruction(e0)
@@ -577,7 +577,7 @@ lang:physical:filePath[`_phi_instruction] = "data/entities/phi_instruction.dlm".
 _pointer_type(v0) -> string(v0).
 
 lang:physical:delimiter[`_pointer_type] = "\t".
-lang:physical:filePath[`_pointer_type] = "data/entities/pointer_type.dlm".
+lang:physical:filePath[`_pointer_type] = "facts/entities/pointer_type.dlm".
 
 +type:id(e0:v0),
 +pointer_type(e0)
@@ -589,7 +589,7 @@ lang:physical:filePath[`_pointer_type] = "data/entities/pointer_type.dlm".
 _primitive_type(v0) -> string(v0).
 
 lang:physical:delimiter[`_primitive_type] = "\t".
-lang:physical:filePath[`_primitive_type] = "data/entities/primitive_type.dlm".
+lang:physical:filePath[`_primitive_type] = "facts/entities/primitive_type.dlm".
 
 +type:id(e0:v0),
 +primitive_type(e0)
@@ -601,7 +601,7 @@ lang:physical:filePath[`_primitive_type] = "data/entities/primitive_type.dlm".
 _ptrtoint_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_ptrtoint_instruction] = "\t".
-lang:physical:filePath[`_ptrtoint_instruction] = "data/entities/ptrtoint_instruction.dlm".
+lang:physical:filePath[`_ptrtoint_instruction] = "facts/entities/ptrtoint_instruction.dlm".
 
 +instruction:id(e0:v0),
 +ptrtoint_instruction(e0)
@@ -613,7 +613,7 @@ lang:physical:filePath[`_ptrtoint_instruction] = "data/entities/ptrtoint_instruc
 _resume_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_resume_instruction] = "\t".
-lang:physical:filePath[`_resume_instruction] = "data/entities/resume_instruction.dlm".
+lang:physical:filePath[`_resume_instruction] = "facts/entities/resume_instruction.dlm".
 
 +instruction:id(e0:v0),
 +resume_instruction(e0)
@@ -625,7 +625,7 @@ lang:physical:filePath[`_resume_instruction] = "data/entities/resume_instruction
 _ret_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_ret_instruction] = "\t".
-lang:physical:filePath[`_ret_instruction] = "data/entities/ret_instruction.dlm".
+lang:physical:filePath[`_ret_instruction] = "facts/entities/ret_instruction.dlm".
 
 +instruction:id(e0:v0),
 +ret_instruction(e0)
@@ -637,7 +637,7 @@ lang:physical:filePath[`_ret_instruction] = "data/entities/ret_instruction.dlm".
 _sdiv_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_sdiv_instruction] = "\t".
-lang:physical:filePath[`_sdiv_instruction] = "data/entities/sdiv_instruction.dlm".
+lang:physical:filePath[`_sdiv_instruction] = "facts/entities/sdiv_instruction.dlm".
 
 +instruction:id(e0:v0),
 +sdiv_instruction(e0)
@@ -649,7 +649,7 @@ lang:physical:filePath[`_sdiv_instruction] = "data/entities/sdiv_instruction.dlm
 _select_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_select_instruction] = "\t".
-lang:physical:filePath[`_select_instruction] = "data/entities/select_instruction.dlm".
+lang:physical:filePath[`_select_instruction] = "facts/entities/select_instruction.dlm".
 
 +instruction:id(e0:v0),
 +select_instruction(e0)
@@ -661,7 +661,7 @@ lang:physical:filePath[`_select_instruction] = "data/entities/select_instruction
 _sext_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_sext_instruction] = "\t".
-lang:physical:filePath[`_sext_instruction] = "data/entities/sext_instruction.dlm".
+lang:physical:filePath[`_sext_instruction] = "facts/entities/sext_instruction.dlm".
 
 +instruction:id(e0:v0),
 +sext_instruction(e0)
@@ -673,7 +673,7 @@ lang:physical:filePath[`_sext_instruction] = "data/entities/sext_instruction.dlm
 _shl_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_shl_instruction] = "\t".
-lang:physical:filePath[`_shl_instruction] = "data/entities/shl_instruction.dlm".
+lang:physical:filePath[`_shl_instruction] = "facts/entities/shl_instruction.dlm".
 
 +instruction:id(e0:v0),
 +shl_instruction(e0)
@@ -685,7 +685,7 @@ lang:physical:filePath[`_shl_instruction] = "data/entities/shl_instruction.dlm".
 _shufflevector_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_shufflevector_instruction] = "\t".
-lang:physical:filePath[`_shufflevector_instruction] = "data/entities/shufflevector_instruction.dlm".
+lang:physical:filePath[`_shufflevector_instruction] = "facts/entities/shufflevector_instruction.dlm".
 
 +instruction:id(e0:v0),
 +shufflevector_instruction(e0)
@@ -697,7 +697,7 @@ lang:physical:filePath[`_shufflevector_instruction] = "data/entities/shufflevect
 _sitofp_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_sitofp_instruction] = "\t".
-lang:physical:filePath[`_sitofp_instruction] = "data/entities/sitofp_instruction.dlm".
+lang:physical:filePath[`_sitofp_instruction] = "facts/entities/sitofp_instruction.dlm".
 
 +instruction:id(e0:v0),
 +sitofp_instruction(e0)
@@ -709,7 +709,7 @@ lang:physical:filePath[`_sitofp_instruction] = "data/entities/sitofp_instruction
 _srem_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_srem_instruction] = "\t".
-lang:physical:filePath[`_srem_instruction] = "data/entities/srem_instruction.dlm".
+lang:physical:filePath[`_srem_instruction] = "facts/entities/srem_instruction.dlm".
 
 +instruction:id(e0:v0),
 +srem_instruction(e0)
@@ -721,7 +721,7 @@ lang:physical:filePath[`_srem_instruction] = "data/entities/srem_instruction.dlm
 _store_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_store_instruction] = "\t".
-lang:physical:filePath[`_store_instruction] = "data/entities/store_instruction.dlm".
+lang:physical:filePath[`_store_instruction] = "facts/entities/store_instruction.dlm".
 
 +instruction:id(e0:v0),
 +store_instruction(e0)
@@ -733,7 +733,7 @@ lang:physical:filePath[`_store_instruction] = "data/entities/store_instruction.d
 _struct_type(v0) -> string(v0).
 
 lang:physical:delimiter[`_struct_type] = "\t".
-lang:physical:filePath[`_struct_type] = "data/entities/struct_type.dlm".
+lang:physical:filePath[`_struct_type] = "facts/entities/struct_type.dlm".
 
 +type:id(e0:v0),
 +struct_type(e0)
@@ -745,7 +745,7 @@ lang:physical:filePath[`_struct_type] = "data/entities/struct_type.dlm".
 _sub_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_sub_instruction] = "\t".
-lang:physical:filePath[`_sub_instruction] = "data/entities/sub_instruction.dlm".
+lang:physical:filePath[`_sub_instruction] = "facts/entities/sub_instruction.dlm".
 
 +instruction:id(e0:v0),
 +sub_instruction(e0)
@@ -757,7 +757,7 @@ lang:physical:filePath[`_sub_instruction] = "data/entities/sub_instruction.dlm".
 _switch_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_switch_instruction] = "\t".
-lang:physical:filePath[`_switch_instruction] = "data/entities/switch_instruction.dlm".
+lang:physical:filePath[`_switch_instruction] = "facts/entities/switch_instruction.dlm".
 
 +instruction:id(e0:v0),
 +switch_instruction(e0)
@@ -769,7 +769,7 @@ lang:physical:filePath[`_switch_instruction] = "data/entities/switch_instruction
 _trunc_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_trunc_instruction] = "\t".
-lang:physical:filePath[`_trunc_instruction] = "data/entities/trunc_instruction.dlm".
+lang:physical:filePath[`_trunc_instruction] = "facts/entities/trunc_instruction.dlm".
 
 +instruction:id(e0:v0),
 +trunc_instruction(e0)
@@ -781,7 +781,7 @@ lang:physical:filePath[`_trunc_instruction] = "data/entities/trunc_instruction.d
 _udiv_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_udiv_instruction] = "\t".
-lang:physical:filePath[`_udiv_instruction] = "data/entities/udiv_instruction.dlm".
+lang:physical:filePath[`_udiv_instruction] = "facts/entities/udiv_instruction.dlm".
 
 +instruction:id(e0:v0),
 +udiv_instruction(e0)
@@ -793,7 +793,7 @@ lang:physical:filePath[`_udiv_instruction] = "data/entities/udiv_instruction.dlm
 _uitofp_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_uitofp_instruction] = "\t".
-lang:physical:filePath[`_uitofp_instruction] = "data/entities/uitofp_instruction.dlm".
+lang:physical:filePath[`_uitofp_instruction] = "facts/entities/uitofp_instruction.dlm".
 
 +instruction:id(e0:v0),
 +uitofp_instruction(e0)
@@ -805,7 +805,7 @@ lang:physical:filePath[`_uitofp_instruction] = "data/entities/uitofp_instruction
 _unreachable_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_unreachable_instruction] = "\t".
-lang:physical:filePath[`_unreachable_instruction] = "data/entities/unreachable_instruction.dlm".
+lang:physical:filePath[`_unreachable_instruction] = "facts/entities/unreachable_instruction.dlm".
 
 +instruction:id(e0:v0),
 +unreachable_instruction(e0)
@@ -817,7 +817,7 @@ lang:physical:filePath[`_unreachable_instruction] = "data/entities/unreachable_i
 _urem_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_urem_instruction] = "\t".
-lang:physical:filePath[`_urem_instruction] = "data/entities/urem_instruction.dlm".
+lang:physical:filePath[`_urem_instruction] = "facts/entities/urem_instruction.dlm".
 
 +instruction:id(e0:v0),
 +urem_instruction(e0)
@@ -829,7 +829,7 @@ lang:physical:filePath[`_urem_instruction] = "data/entities/urem_instruction.dlm
 _va_arg_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_va_arg_instruction] = "\t".
-lang:physical:filePath[`_va_arg_instruction] = "data/entities/va_arg_instruction.dlm".
+lang:physical:filePath[`_va_arg_instruction] = "facts/entities/va_arg_instruction.dlm".
 
 +instruction:id(e0:v0),
 +va_arg_instruction(e0)
@@ -841,7 +841,7 @@ lang:physical:filePath[`_va_arg_instruction] = "data/entities/va_arg_instruction
 _variable(v0) -> string(v0).
 
 lang:physical:delimiter[`_variable] = "\t".
-lang:physical:filePath[`_variable] = "data/entities/variable.dlm".
+lang:physical:filePath[`_variable] = "facts/entities/variable.dlm".
 
 +variable:id(e0:v0),
 +variable(e0)
@@ -853,7 +853,7 @@ lang:physical:filePath[`_variable] = "data/entities/variable.dlm".
 _vector_type(v0) -> string(v0).
 
 lang:physical:delimiter[`_vector_type] = "\t".
-lang:physical:filePath[`_vector_type] = "data/entities/vector_type.dlm".
+lang:physical:filePath[`_vector_type] = "facts/entities/vector_type.dlm".
 
 +type:id(e0:v0),
 +vector_type(e0)
@@ -865,7 +865,7 @@ lang:physical:filePath[`_vector_type] = "data/entities/vector_type.dlm".
 _xor_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_xor_instruction] = "\t".
-lang:physical:filePath[`_xor_instruction] = "data/entities/xor_instruction.dlm".
+lang:physical:filePath[`_xor_instruction] = "facts/entities/xor_instruction.dlm".
 
 +instruction:id(e0:v0),
 +xor_instruction(e0)
@@ -877,7 +877,7 @@ lang:physical:filePath[`_xor_instruction] = "data/entities/xor_instruction.dlm".
 _zext_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_zext_instruction] = "\t".
-lang:physical:filePath[`_zext_instruction] = "data/entities/zext_instruction.dlm".
+lang:physical:filePath[`_zext_instruction] = "facts/entities/zext_instruction.dlm".
 
 +instruction:id(e0:v0),
 +zext_instruction(e0)

@@ -31,7 +31,7 @@ template.lb   := run.template
 # engine as a directive to where lies the data to be imported
 #-------------------------------------------------------------------------
 
-data.link   := data
+data.link   := facts
 
 
 #--------------------
