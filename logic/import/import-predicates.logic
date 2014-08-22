@@ -10,7 +10,7 @@ lang:physical:filePath[`_add_instruction:first_operand$by_immediate] = "facts/pr
 +add_instruction:first_operand[e0] = e2
 <-
    _add_instruction:first_operand$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _add_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
@@ -42,7 +42,7 @@ lang:physical:filePath[`_add_instruction:second_operand$by_immediate] = "facts/p
 +add_instruction:second_operand[e0] = e2
 <-
    _add_instruction:second_operand$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _add_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
@@ -145,7 +145,7 @@ lang:physical:filePath[`_alloca_instruction:size$by_immediate] = "facts/predicat
 +alloca_instruction:size[e0] = e2
 <-
    _alloca_instruction:size$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _alloca_instruction:size$by_variable(v0, v1) -> string(v0), string(v1).
@@ -192,7 +192,7 @@ lang:physical:filePath[`_and_instruction:first_operand$by_immediate] = "facts/pr
 +and_instruction:first_operand[e0] = e2
 <-
    _and_instruction:first_operand$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _and_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
@@ -224,7 +224,7 @@ lang:physical:filePath[`_and_instruction:second_operand$by_immediate] = "facts/p
 +and_instruction:second_operand[e0] = e2
 <-
    _and_instruction:second_operand$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _and_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
@@ -284,7 +284,7 @@ lang:physical:filePath[`_ashr_instruction:first_operand$by_immediate] = "facts/p
 +ashr_instruction:first_operand[e0] = e2
 <-
    _ashr_instruction:first_operand$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _ashr_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
@@ -316,7 +316,7 @@ lang:physical:filePath[`_ashr_instruction:second_operand$by_immediate] = "facts/
 +ashr_instruction:second_operand[e0] = e2
 <-
    _ashr_instruction:second_operand$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _ashr_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
@@ -348,7 +348,7 @@ lang:physical:filePath[`_atomicrmw_instruction:address$by_immediate] = "facts/pr
 +atomicrmw_instruction:address[e0] = e2
 <-
    _atomicrmw_instruction:address$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _atomicrmw_instruction:address$by_variable(v0, v1) -> string(v0), string(v1).
@@ -410,7 +410,7 @@ lang:physical:filePath[`_atomicrmw_instruction:value$by_immediate] = "facts/pred
 +atomicrmw_instruction:value[e0] = e2
 <-
    _atomicrmw_instruction:value$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _atomicrmw_instruction:value$by_variable(v0, v1) -> string(v0), string(v1).
@@ -470,7 +470,7 @@ lang:physical:filePath[`_bitcast_instruction:from$by_immediate] = "facts/predica
 +bitcast_instruction:from[e0] = e2
 <-
    _bitcast_instruction:from$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _bitcast_instruction:from$by_variable(v0, v1) -> string(v0), string(v1).
@@ -517,7 +517,7 @@ lang:physical:filePath[`_br_cond_instruction:condition$by_immediate] = "facts/pr
 +br_cond_instruction:condition[e0] = e2
 <-
    _br_cond_instruction:condition$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _br_cond_instruction:condition$by_variable(v0, v1) -> string(v0), string(v1).
@@ -594,7 +594,7 @@ lang:physical:filePath[`_call_instruction:arg$by_immediate] = "facts/predicates/
 +call_instruction:arg[e0,v1] = e2
 <-
    _call_instruction:arg$by_immediate(v0, v1, v2),
-   immediate:value(e1:v2),
+   immediate:id(e1:v2),
    immediate(e1).
 
 _call_instruction:arg$by_variable(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
@@ -641,7 +641,7 @@ lang:physical:filePath[`_call_instruction:function$by_immediate] = "facts/predic
 +call_instruction:function[e0] = e2
 <-
    _call_instruction:function$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _call_instruction:function$by_variable(v0, v1) -> string(v0), string(v1).
@@ -733,7 +733,7 @@ lang:physical:filePath[`_cmpxchg_instruction:address$by_immediate] = "facts/pred
 +cmpxchg_instruction:address[e0] = e2
 <-
    _cmpxchg_instruction:address$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _cmpxchg_instruction:address$by_variable(v0, v1) -> string(v0), string(v1).
@@ -765,7 +765,7 @@ lang:physical:filePath[`_cmpxchg_instruction:cmp$by_immediate] = "facts/predicat
 +cmpxchg_instruction:cmp[e0] = e2
 <-
    _cmpxchg_instruction:cmp$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _cmpxchg_instruction:cmp$by_variable(v0, v1) -> string(v0), string(v1).
@@ -797,7 +797,7 @@ lang:physical:filePath[`_cmpxchg_instruction:new$by_immediate] = "facts/predicat
 +cmpxchg_instruction:new[e0] = e2
 <-
    _cmpxchg_instruction:new$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _cmpxchg_instruction:new$by_variable(v0, v1) -> string(v0), string(v1).
@@ -850,7 +850,7 @@ _constant:to_int(v0, v1) -> string(v0), int[64](v1).
 lang:physical:delimiter[`_constant:to_int] = "\t".
 lang:physical:filePath[`_constant:to_int] = "facts/predicates/constant-to_int.dlm".
 
-+immediate:value(e0:v0),
++immediate:id(e0:v0),
 +immediate(e0),
 +constant:to_int[e0] = v1
 <-
@@ -870,7 +870,7 @@ lang:physical:filePath[`_extractelement_instruction:base$by_immediate] = "facts/
 +extractelement_instruction:base[e0] = e2
 <-
    _extractelement_instruction:base$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _extractelement_instruction:base$by_variable(v0, v1) -> string(v0), string(v1).
@@ -902,7 +902,7 @@ lang:physical:filePath[`_extractelement_instruction:index$by_immediate] = "facts
 +extractelement_instruction:index[e0] = e2
 <-
    _extractelement_instruction:index$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _extractelement_instruction:index$by_variable(v0, v1) -> string(v0), string(v1).
@@ -934,7 +934,7 @@ lang:physical:filePath[`_extractvalue_instruction:base$by_immediate] = "facts/pr
 +extractvalue_instruction:base[e0] = e2
 <-
    _extractvalue_instruction:base$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _extractvalue_instruction:base$by_variable(v0, v1) -> string(v0), string(v1).
@@ -961,7 +961,7 @@ lang:physical:filePath[`_extractvalue_instruction:index] = "facts/predicates/ext
 
 +instruction:id(e0:v0),
 +extractvalue_instruction(e0),
-+immediate:value(e1:v2),
++immediate:id(e1:v2),
 +immediate(e1),
 +extractvalue_instruction:index[e0,v1] = e1
 <-
@@ -994,7 +994,7 @@ lang:physical:filePath[`_fadd_instruction:first_operand$by_immediate] = "facts/p
 +fadd_instruction:first_operand[e0] = e2
 <-
    _fadd_instruction:first_operand$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _fadd_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
@@ -1026,7 +1026,7 @@ lang:physical:filePath[`_fadd_instruction:second_operand$by_immediate] = "facts/
 +fadd_instruction:second_operand[e0] = e2
 <-
    _fadd_instruction:second_operand$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _fadd_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
@@ -1073,7 +1073,7 @@ lang:physical:filePath[`_fcmp_instruction:first_operand$by_immediate] = "facts/p
 +fcmp_instruction:first_operand[e0] = e2
 <-
    _fcmp_instruction:first_operand$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _fcmp_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
@@ -1105,7 +1105,7 @@ lang:physical:filePath[`_fcmp_instruction:second_operand$by_immediate] = "facts/
 +fcmp_instruction:second_operand[e0] = e2
 <-
    _fcmp_instruction:second_operand$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _fcmp_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
@@ -1137,7 +1137,7 @@ lang:physical:filePath[`_fdiv_instruction:first_operand$by_immediate] = "facts/p
 +fdiv_instruction:first_operand[e0] = e2
 <-
    _fdiv_instruction:first_operand$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _fdiv_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
@@ -1169,7 +1169,7 @@ lang:physical:filePath[`_fdiv_instruction:second_operand$by_immediate] = "facts/
 +fdiv_instruction:second_operand[e0] = e2
 <-
    _fdiv_instruction:second_operand$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _fdiv_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
@@ -1216,7 +1216,7 @@ lang:physical:filePath[`_fmul_instruction:first_operand$by_immediate] = "facts/p
 +fmul_instruction:first_operand[e0] = e2
 <-
    _fmul_instruction:first_operand$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _fmul_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
@@ -1248,7 +1248,7 @@ lang:physical:filePath[`_fmul_instruction:second_operand$by_immediate] = "facts/
 +fmul_instruction:second_operand[e0] = e2
 <-
    _fmul_instruction:second_operand$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _fmul_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
@@ -1280,7 +1280,7 @@ lang:physical:filePath[`_fpext_instruction:from$by_immediate] = "facts/predicate
 +fpext_instruction:from[e0] = e2
 <-
    _fpext_instruction:from$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _fpext_instruction:from$by_variable(v0, v1) -> string(v0), string(v1).
@@ -1327,7 +1327,7 @@ lang:physical:filePath[`_fptosi_instruction:from$by_immediate] = "facts/predicat
 +fptosi_instruction:from[e0] = e2
 <-
    _fptosi_instruction:from$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _fptosi_instruction:from$by_variable(v0, v1) -> string(v0), string(v1).
@@ -1374,7 +1374,7 @@ lang:physical:filePath[`_fptoui_instruction:from$by_immediate] = "facts/predicat
 +fptoui_instruction:from[e0] = e2
 <-
    _fptoui_instruction:from$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _fptoui_instruction:from$by_variable(v0, v1) -> string(v0), string(v1).
@@ -1421,7 +1421,7 @@ lang:physical:filePath[`_fptrunc_instruction:from$by_immediate] = "facts/predica
 +fptrunc_instruction:from[e0] = e2
 <-
    _fptrunc_instruction:from$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _fptrunc_instruction:from$by_variable(v0, v1) -> string(v0), string(v1).
@@ -1468,7 +1468,7 @@ lang:physical:filePath[`_frem_instruction:first_operand$by_immediate] = "facts/p
 +frem_instruction:first_operand[e0] = e2
 <-
    _frem_instruction:first_operand$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _frem_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
@@ -1500,7 +1500,7 @@ lang:physical:filePath[`_frem_instruction:second_operand$by_immediate] = "facts/
 +frem_instruction:second_operand[e0] = e2
 <-
    _frem_instruction:second_operand$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _frem_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
@@ -1532,7 +1532,7 @@ lang:physical:filePath[`_fsub_instruction:first_operand$by_immediate] = "facts/p
 +fsub_instruction:first_operand[e0] = e2
 <-
    _fsub_instruction:first_operand$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _fsub_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
@@ -1564,7 +1564,7 @@ lang:physical:filePath[`_fsub_instruction:second_operand$by_immediate] = "facts/
 +fsub_instruction:second_operand[e0] = e2
 <-
    _fsub_instruction:second_operand$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _fsub_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
@@ -1837,7 +1837,7 @@ lang:physical:filePath[`_getelementptr_instruction:base$by_immediate] = "facts/p
 +getelementptr_instruction:base[e0] = e2
 <-
    _getelementptr_instruction:base$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _getelementptr_instruction:base$by_variable(v0, v1) -> string(v0), string(v1).
@@ -1882,7 +1882,7 @@ lang:physical:filePath[`_getelementptr_instruction:index$by_immediate] = "facts/
 +getelementptr_instruction:index[e0,v1] = e2
 <-
    _getelementptr_instruction:index$by_immediate(v0, v1, v2),
-   immediate:value(e1:v2),
+   immediate:id(e1:v2),
    immediate(e1).
 
 _getelementptr_instruction:index$by_variable(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
@@ -1920,7 +1920,7 @@ _global_variable:align(v0, v1) -> string(v0), int[64](v1).
 lang:physical:delimiter[`_global_variable:align] = "\t".
 lang:physical:filePath[`_global_variable:align] = "facts/predicates/global_variable-align.dlm".
 
-+immediate:value(e0:v0),
++immediate:id(e0:v0),
 +global_variable(e0),
 +global_variable:align[e0] = v1
 <-
@@ -1933,7 +1933,7 @@ _global_variable:flag(v0, v1) -> string(v0), string(v1).
 lang:physical:delimiter[`_global_variable:flag] = "\t".
 lang:physical:filePath[`_global_variable:flag] = "facts/predicates/global_variable-flag.dlm".
 
-+immediate:value(e0:v0),
++immediate:id(e0:v0),
 +global_variable(e0),
 +flag:value(e1:v1),
 +flag(e1),
@@ -1948,7 +1948,7 @@ _global_variable:initializer(v0, v1) -> string(v0), string(v1).
 lang:physical:delimiter[`_global_variable:initializer] = "\t".
 lang:physical:filePath[`_global_variable:initializer] = "facts/predicates/global_variable-initializer.dlm".
 
-+immediate:value(e0:v0),
++immediate:id(e0:v0),
 +global_variable(e0),
 +global_variable:initializer[e0] = v1
 <-
@@ -1961,7 +1961,7 @@ _global_variable:linkage_type(v0, v1) -> string(v0), string(v1).
 lang:physical:delimiter[`_global_variable:linkage_type] = "\t".
 lang:physical:filePath[`_global_variable:linkage_type] = "facts/predicates/global_variable-linkage_type.dlm".
 
-+immediate:value(e0:v0),
++immediate:id(e0:v0),
 +global_variable(e0),
 +linkage_type:id(e1:v1),
 +linkage_type(e1),
@@ -1976,7 +1976,7 @@ _global_variable:section(v0, v1) -> string(v0), string(v1).
 lang:physical:delimiter[`_global_variable:section] = "\t".
 lang:physical:filePath[`_global_variable:section] = "facts/predicates/global_variable-section.dlm".
 
-+immediate:value(e0:v0),
++immediate:id(e0:v0),
 +global_variable(e0),
 +global_variable:section[e0] = v1
 <-
@@ -1989,7 +1989,7 @@ _global_variable:threadlocal_mode(v0, v1) -> string(v0), string(v1).
 lang:physical:delimiter[`_global_variable:threadlocal_mode] = "\t".
 lang:physical:filePath[`_global_variable:threadlocal_mode] = "facts/predicates/global_variable-threadlocal_mode.dlm".
 
-+immediate:value(e0:v0),
++immediate:id(e0:v0),
 +global_variable(e0),
 +threadlocal_mode:id(e1:v1),
 +threadlocal_mode(e1),
@@ -2004,7 +2004,7 @@ _global_variable:type(v0, v1) -> string(v0), string(v1).
 lang:physical:delimiter[`_global_variable:type] = "\t".
 lang:physical:filePath[`_global_variable:type] = "facts/predicates/global_variable-type.dlm".
 
-+immediate:value(e0:v0),
++immediate:id(e0:v0),
 +global_variable(e0),
 +type:id(e1:v1),
 +type(e1),
@@ -2019,7 +2019,7 @@ _global_variable:visibility(v0, v1) -> string(v0), string(v1).
 lang:physical:delimiter[`_global_variable:visibility] = "\t".
 lang:physical:filePath[`_global_variable:visibility] = "facts/predicates/global_variable-visibility.dlm".
 
-+immediate:value(e0:v0),
++immediate:id(e0:v0),
 +global_variable(e0),
 +visibility:id(e1:v1),
 +visibility(e1),
@@ -2056,7 +2056,7 @@ lang:physical:filePath[`_icmp_instruction:first_operand$by_immediate] = "facts/p
 +icmp_instruction:first_operand[e0] = e2
 <-
    _icmp_instruction:first_operand$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _icmp_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
@@ -2088,7 +2088,7 @@ lang:physical:filePath[`_icmp_instruction:second_operand$by_immediate] = "facts/
 +icmp_instruction:second_operand[e0] = e2
 <-
    _icmp_instruction:second_operand$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _icmp_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
@@ -2113,7 +2113,7 @@ _immediate:type(v0, v1) -> string(v0), string(v1).
 lang:physical:delimiter[`_immediate:type] = "\t".
 lang:physical:filePath[`_immediate:type] = "facts/predicates/immediate-type.dlm".
 
-+immediate:value(e0:v0),
++immediate:id(e0:v0),
 +immediate(e0),
 +type:id(e1:v1),
 +type(e1),
@@ -2135,7 +2135,7 @@ lang:physical:filePath[`_indirectbr_instruction:address$by_immediate] = "facts/p
 +indirectbr_instruction:address[e0] = e2
 <-
    _indirectbr_instruction:address$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _indirectbr_instruction:address$by_variable(v0, v1) -> string(v0), string(v1).
@@ -2195,7 +2195,7 @@ lang:physical:filePath[`_insertelement_instruction:base$by_immediate] = "facts/p
 +insertelement_instruction:base[e0] = e2
 <-
    _insertelement_instruction:base$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _insertelement_instruction:base$by_variable(v0, v1) -> string(v0), string(v1).
@@ -2227,7 +2227,7 @@ lang:physical:filePath[`_insertelement_instruction:index$by_immediate] = "facts/
 +insertelement_instruction:index[e0] = e2
 <-
    _insertelement_instruction:index$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _insertelement_instruction:index$by_variable(v0, v1) -> string(v0), string(v1).
@@ -2259,7 +2259,7 @@ lang:physical:filePath[`_insertelement_instruction:value$by_immediate] = "facts/
 +insertelement_instruction:value[e0] = e2
 <-
    _insertelement_instruction:value$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _insertelement_instruction:value$by_variable(v0, v1) -> string(v0), string(v1).
@@ -2291,7 +2291,7 @@ lang:physical:filePath[`_insertvalue_instruction:base$by_immediate] = "facts/pre
 +insertvalue_instruction:base[e0] = e2
 <-
    _insertvalue_instruction:base$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _insertvalue_instruction:base$by_variable(v0, v1) -> string(v0), string(v1).
@@ -2318,7 +2318,7 @@ lang:physical:filePath[`_insertvalue_instruction:index] = "facts/predicates/inse
 
 +instruction:id(e0:v0),
 +insertvalue_instruction(e0),
-+immediate:value(e1:v2),
++immediate:id(e1:v2),
 +immediate(e1),
 +insertvalue_instruction:index[e0,v1] = e1
 <-
@@ -2351,7 +2351,7 @@ lang:physical:filePath[`_insertvalue_instruction:value$by_immediate] = "facts/pr
 +insertvalue_instruction:value[e0] = e2
 <-
    _insertvalue_instruction:value$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _insertvalue_instruction:value$by_variable(v0, v1) -> string(v0), string(v1).
@@ -2458,7 +2458,7 @@ lang:physical:filePath[`_inttoptr_instruction:from$by_immediate] = "facts/predic
 +inttoptr_instruction:from[e0] = e2
 <-
    _inttoptr_instruction:from$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _inttoptr_instruction:from$by_variable(v0, v1) -> string(v0), string(v1).
@@ -2505,7 +2505,7 @@ lang:physical:filePath[`_invoke_instruction:arg$by_immediate] = "facts/predicate
 +invoke_instruction:arg[e0,v1] = e2
 <-
    _invoke_instruction:arg$by_immediate(v0, v1, v2),
-   immediate:value(e1:v2),
+   immediate:id(e1:v2),
    immediate(e1).
 
 _invoke_instruction:arg$by_variable(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
@@ -2567,7 +2567,7 @@ lang:physical:filePath[`_invoke_instruction:function$by_immediate] = "facts/pred
 +invoke_instruction:function[e0] = e2
 <-
    _invoke_instruction:function$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _invoke_instruction:function$by_variable(v0, v1) -> string(v0), string(v1).
@@ -2654,7 +2654,7 @@ lang:physical:filePath[`_landingpad_instruction:clause:catch_tmp] = "facts/predi
 
 +instruction:id(e0:v0),
 +landingpad_instruction(e0),
-+immediate:value(e1:v2),
++immediate:id(e1:v2),
 +global_variable(e1),
 +landingpad_instruction:clause:catch_tmp[e0,v1] = e1
 <-
@@ -2669,7 +2669,7 @@ lang:physical:filePath[`_landingpad_instruction:clause:filter_tmp] = "facts/pred
 
 +instruction:id(e0:v0),
 +landingpad_instruction(e0),
-+immediate:value(e1:v2),
++immediate:id(e1:v2),
 +immediate(e1),
 +landingpad_instruction:clause:filter_tmp[e0,v1] = e1
 <-
@@ -2710,7 +2710,7 @@ lang:physical:filePath[`_landingpad_instruction:pers_fn] = "facts/predicates/lan
 
 +instruction:id(e0:v0),
 +landingpad_instruction(e0),
-+immediate:value(e1:v1),
++immediate:id(e1:v1),
 +immediate(e1),
 +landingpad_instruction:pers_fn[e0] = e1
 <-
@@ -2745,7 +2745,7 @@ lang:physical:filePath[`_load_instruction:address$by_immediate] = "facts/predica
 +load_instruction:address[e0] = e2
 <-
    _load_instruction:address$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _load_instruction:address$by_variable(v0, v1) -> string(v0), string(v1).
@@ -2818,7 +2818,7 @@ lang:physical:filePath[`_lshr_instruction:first_operand$by_immediate] = "facts/p
 +lshr_instruction:first_operand[e0] = e2
 <-
    _lshr_instruction:first_operand$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _lshr_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
@@ -2850,7 +2850,7 @@ lang:physical:filePath[`_lshr_instruction:second_operand$by_immediate] = "facts/
 +lshr_instruction:second_operand[e0] = e2
 <-
    _lshr_instruction:second_operand$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _lshr_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
@@ -2882,7 +2882,7 @@ lang:physical:filePath[`_mul_instruction:first_operand$by_immediate] = "facts/pr
 +mul_instruction:first_operand[e0] = e2
 <-
    _mul_instruction:first_operand$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _mul_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
@@ -2914,7 +2914,7 @@ lang:physical:filePath[`_mul_instruction:second_operand$by_immediate] = "facts/p
 +mul_instruction:second_operand[e0] = e2
 <-
    _mul_instruction:second_operand$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _mul_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
@@ -2950,7 +2950,7 @@ lang:physical:filePath[`_or_instruction:first_operand$by_immediate] = "facts/pre
 +or_instruction:first_operand[e0] = e2
 <-
    _or_instruction:first_operand$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _or_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
@@ -2982,7 +2982,7 @@ lang:physical:filePath[`_or_instruction:second_operand$by_immediate] = "facts/pr
 +or_instruction:second_operand[e0] = e2
 <-
    _or_instruction:second_operand$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _or_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
@@ -3042,7 +3042,7 @@ lang:physical:filePath[`_phi_instruction:pair:value$by_immediate] = "facts/predi
 +phi_instruction:pair:value[e0,v1] = e2
 <-
    _phi_instruction:pair:value$by_immediate(v0, v1, v2),
-   immediate:value(e1:v2),
+   immediate:id(e1:v2),
    immediate(e1).
 
 _phi_instruction:pair:value$by_variable(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
@@ -3117,7 +3117,7 @@ lang:physical:filePath[`_ptrtoint_instruction:from$by_immediate] = "facts/predic
 +ptrtoint_instruction:from[e0] = e2
 <-
    _ptrtoint_instruction:from$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _ptrtoint_instruction:from$by_variable(v0, v1) -> string(v0), string(v1).
@@ -3164,7 +3164,7 @@ lang:physical:filePath[`_resume_instruction:operand$by_immediate] = "facts/predi
 +resume_instruction:operand[e0] = e2
 <-
    _resume_instruction:operand$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _resume_instruction:operand$by_variable(v0, v1) -> string(v0), string(v1).
@@ -3196,7 +3196,7 @@ lang:physical:filePath[`_ret_instruction:value$by_immediate] = "facts/predicates
 +ret_instruction:value[e0] = e2
 <-
    _ret_instruction:value$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _ret_instruction:value$by_variable(v0, v1) -> string(v0), string(v1).
@@ -3241,7 +3241,7 @@ lang:physical:filePath[`_sdiv_instruction:first_operand$by_immediate] = "facts/p
 +sdiv_instruction:first_operand[e0] = e2
 <-
    _sdiv_instruction:first_operand$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _sdiv_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
@@ -3273,7 +3273,7 @@ lang:physical:filePath[`_sdiv_instruction:second_operand$by_immediate] = "facts/
 +sdiv_instruction:second_operand[e0] = e2
 <-
    _sdiv_instruction:second_operand$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _sdiv_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
@@ -3305,7 +3305,7 @@ lang:physical:filePath[`_select_instruction:condition$by_immediate] = "facts/pre
 +select_instruction:condition[e0] = e2
 <-
    _select_instruction:condition$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _select_instruction:condition$by_variable(v0, v1) -> string(v0), string(v1).
@@ -3337,7 +3337,7 @@ lang:physical:filePath[`_select_instruction:first_operand$by_immediate] = "facts
 +select_instruction:first_operand[e0] = e2
 <-
    _select_instruction:first_operand$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _select_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
@@ -3369,7 +3369,7 @@ lang:physical:filePath[`_select_instruction:second_operand$by_immediate] = "fact
 +select_instruction:second_operand[e0] = e2
 <-
    _select_instruction:second_operand$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _select_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
@@ -3401,7 +3401,7 @@ lang:physical:filePath[`_sext_instruction:from$by_immediate] = "facts/predicates
 +sext_instruction:from[e0] = e2
 <-
    _sext_instruction:from$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _sext_instruction:from$by_variable(v0, v1) -> string(v0), string(v1).
@@ -3448,7 +3448,7 @@ lang:physical:filePath[`_shl_instruction:first_operand$by_immediate] = "facts/pr
 +shl_instruction:first_operand[e0] = e2
 <-
    _shl_instruction:first_operand$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _shl_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
@@ -3480,7 +3480,7 @@ lang:physical:filePath[`_shl_instruction:second_operand$by_immediate] = "facts/p
 +shl_instruction:second_operand[e0] = e2
 <-
    _shl_instruction:second_operand$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _shl_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
@@ -3512,7 +3512,7 @@ lang:physical:filePath[`_shufflevector_instruction:first_vector$by_immediate] = 
 +shufflevector_instruction:first_vector[e0] = e2
 <-
    _shufflevector_instruction:first_vector$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _shufflevector_instruction:first_vector$by_variable(v0, v1) -> string(v0), string(v1).
@@ -3539,7 +3539,7 @@ lang:physical:filePath[`_shufflevector_instruction:mask] = "facts/predicates/shu
 
 +instruction:id(e0:v0),
 +shufflevector_instruction(e0),
-+immediate:value(e1:v1),
++immediate:id(e1:v1),
 +immediate(e1),
 +shufflevector_instruction:mask[e0] = e1
 <-
@@ -3559,7 +3559,7 @@ lang:physical:filePath[`_shufflevector_instruction:second_vector$by_immediate] =
 +shufflevector_instruction:second_vector[e0] = e2
 <-
    _shufflevector_instruction:second_vector$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _shufflevector_instruction:second_vector$by_variable(v0, v1) -> string(v0), string(v1).
@@ -3591,7 +3591,7 @@ lang:physical:filePath[`_sitofp_instruction:from$by_immediate] = "facts/predicat
 +sitofp_instruction:from[e0] = e2
 <-
    _sitofp_instruction:from$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _sitofp_instruction:from$by_variable(v0, v1) -> string(v0), string(v1).
@@ -3638,7 +3638,7 @@ lang:physical:filePath[`_srem_instruction:first_operand$by_immediate] = "facts/p
 +srem_instruction:first_operand[e0] = e2
 <-
    _srem_instruction:first_operand$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _srem_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
@@ -3670,7 +3670,7 @@ lang:physical:filePath[`_srem_instruction:second_operand$by_immediate] = "facts/
 +srem_instruction:second_operand[e0] = e2
 <-
    _srem_instruction:second_operand$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _srem_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
@@ -3702,7 +3702,7 @@ lang:physical:filePath[`_store_instruction:address$by_immediate] = "facts/predic
 +store_instruction:address[e0] = e2
 <-
    _store_instruction:address$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _store_instruction:address$by_variable(v0, v1) -> string(v0), string(v1).
@@ -3762,7 +3762,7 @@ lang:physical:filePath[`_store_instruction:value$by_immediate] = "facts/predicat
 +store_instruction:value[e0] = e2
 <-
    _store_instruction:value$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _store_instruction:value$by_variable(v0, v1) -> string(v0), string(v1).
@@ -3835,7 +3835,7 @@ lang:physical:filePath[`_sub_instruction:first_operand$by_immediate] = "facts/pr
 +sub_instruction:first_operand[e0] = e2
 <-
    _sub_instruction:first_operand$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _sub_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
@@ -3867,7 +3867,7 @@ lang:physical:filePath[`_sub_instruction:second_operand$by_immediate] = "facts/p
 +sub_instruction:second_operand[e0] = e2
 <-
    _sub_instruction:second_operand$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _sub_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
@@ -3909,7 +3909,7 @@ lang:physical:filePath[`_switch_instruction:case:value] = "facts/predicates/swit
 
 +instruction:id(e0:v0),
 +switch_instruction(e0),
-+immediate:value(e1:v2),
++immediate:id(e1:v2),
 +immediate(e1),
 +switch_instruction:case:value[e0,v1] = e1
 <-
@@ -3957,7 +3957,7 @@ lang:physical:filePath[`_switch_instruction:operand$by_immediate] = "facts/predi
 +switch_instruction:operand[e0] = e2
 <-
    _switch_instruction:operand$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _switch_instruction:operand$by_variable(v0, v1) -> string(v0), string(v1).
@@ -3989,7 +3989,7 @@ lang:physical:filePath[`_trunc_instruction:from$by_immediate] = "facts/predicate
 +trunc_instruction:from[e0] = e2
 <-
    _trunc_instruction:from$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _trunc_instruction:from$by_variable(v0, v1) -> string(v0), string(v1).
@@ -4036,7 +4036,7 @@ lang:physical:filePath[`_udiv_instruction:first_operand$by_immediate] = "facts/p
 +udiv_instruction:first_operand[e0] = e2
 <-
    _udiv_instruction:first_operand$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _udiv_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
@@ -4068,7 +4068,7 @@ lang:physical:filePath[`_udiv_instruction:second_operand$by_immediate] = "facts/
 +udiv_instruction:second_operand[e0] = e2
 <-
    _udiv_instruction:second_operand$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _udiv_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
@@ -4100,7 +4100,7 @@ lang:physical:filePath[`_uitofp_instruction:from$by_immediate] = "facts/predicat
 +uitofp_instruction:from[e0] = e2
 <-
    _uitofp_instruction:from$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _uitofp_instruction:from$by_variable(v0, v1) -> string(v0), string(v1).
@@ -4147,7 +4147,7 @@ lang:physical:filePath[`_urem_instruction:first_operand$by_immediate] = "facts/p
 +urem_instruction:first_operand[e0] = e2
 <-
    _urem_instruction:first_operand$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _urem_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
@@ -4179,7 +4179,7 @@ lang:physical:filePath[`_urem_instruction:second_operand$by_immediate] = "facts/
 +urem_instruction:second_operand[e0] = e2
 <-
    _urem_instruction:second_operand$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _urem_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
@@ -4226,7 +4226,7 @@ lang:physical:filePath[`_va_arg_instruction:va_list$by_immediate] = "facts/predi
 +va_arg_instruction:va_list[e0] = e2
 <-
    _va_arg_instruction:va_list$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _va_arg_instruction:va_list$by_variable(v0, v1) -> string(v0), string(v1).
@@ -4301,7 +4301,7 @@ lang:physical:filePath[`_xor_instruction:first_operand$by_immediate] = "facts/pr
 +xor_instruction:first_operand[e0] = e2
 <-
    _xor_instruction:first_operand$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _xor_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
@@ -4333,7 +4333,7 @@ lang:physical:filePath[`_xor_instruction:second_operand$by_immediate] = "facts/p
 +xor_instruction:second_operand[e0] = e2
 <-
    _xor_instruction:second_operand$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _xor_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
@@ -4365,7 +4365,7 @@ lang:physical:filePath[`_zext_instruction:from$by_immediate] = "facts/predicates
 +zext_instruction:from[e0] = e2
 <-
    _zext_instruction:from$by_immediate(v0, v1),
-   immediate:value(e1:v1),
+   immediate:id(e1:v1),
    immediate(e1).
 
 _zext_instruction:from$by_variable(v0, v1) -> string(v0), string(v1).

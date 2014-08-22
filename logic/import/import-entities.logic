@@ -159,7 +159,7 @@ _constant_expression(v0) -> string(v0).
 lang:physical:delimiter[`_constant_expression] = "\t".
 lang:physical:filePath[`_constant_expression] = "facts/entities/constant_expression.dlm".
 
-+immediate:value(e0:v0),
++immediate:id(e0:v0),
 +constant_expression(e0)
 <-
    _constant_expression(v0).
@@ -387,7 +387,7 @@ _global_variable(v0) -> string(v0).
 lang:physical:delimiter[`_global_variable] = "\t".
 lang:physical:filePath[`_global_variable] = "facts/entities/global_variable.dlm".
 
-+immediate:value(e0:v0),
++immediate:id(e0:v0),
 +global_variable(e0)
 <-
    _global_variable(v0).
@@ -411,7 +411,7 @@ _immediate(v0) -> string(v0).
 lang:physical:delimiter[`_immediate] = "\t".
 lang:physical:filePath[`_immediate] = "facts/entities/immediate.dlm".
 
-+immediate:value(e0:v0),
++immediate:id(e0:v0),
 +immediate(e0)
 <-
    _immediate(v0).

@@ -22,24 +22,31 @@ variable:firstclass(Var) <-
 // Immediates
 //--------------
 
-immediate(Imm), immediate:value(Imm:Ref) -> string(Ref).
+immediate(Imm), immediate:id(Imm:Ref) -> string(Ref).
 immediate:type[Imm] = Type -> immediate(Imm), type(Type).
+immediate:value[Imm] = Val -> immediate(Imm), string(Val).
 
-immediate:actual_value[Imm] = Val -> immediate(Imm), string(Val).
 
-immediate:last_colon_pos[Imm] = Pos -> immediate(Imm), uint[32](Pos).
+// Auxiliary predicate that computes the last colon position of the
+// immediate's refmode
 
-immediate:last_colon_pos[Imm] = Pos
- <-
-   agg<<Pos = max(P)>> immediate:value(Imm:Ref),
-                 string:substring[Ref, P, 1] = ":".
+immediate:last_colon_pos[Imm] = Pos ->
+   immediate(Imm), uint[32](Pos).
 
-immediate:actual_value[Imm] = Val
- <-
-   immediate:value(Imm:Ref),
+immediate:last_colon_pos[Imm] = Pos  <-
+   agg<<Pos = max(P)>> immediate:id(Imm:Ref), string:substring[Ref, P, 1] = ":".
+
+
+// Compute the actual value of the immediate, since the refmode
+// includes more fields in order to uniquely identify this constant
+// from other that happen to have the exact same value.
+
+immediate:value[Imm] = Val <-
+   immediate:id(Imm:Ref),
    immediate:last_colon_pos[Imm] = ColonPos,
    string:length[Ref] = Len,
    string:substring[Ref, ColonPos + 1, Len - ColonPos - 1] = Val.
+
 
 // TODO: what do we need this predicate?
 constant_expression(Imm) -> immediate(Imm).
@@ -50,8 +57,8 @@ lang:isEntity[`constant_expression] = true.
 // Auxiliary Predicates
 
 immediate:eq(Imm1, Imm2) <-
-   immediate:value(Imm1:Val1),
-   immediate:value(Imm2:Val2),
+   immediate:value[Imm1] = Val1,
+   immediate:value[Imm2] = Val2,
    Val1 = Val2. // is this enough??
 
 immediate:ne(Imm1, Imm2) <-
