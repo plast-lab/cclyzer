@@ -1,6 +1,10 @@
 //----------------------------------------------------------------------
 // Each function declaration should be mapped to exactly one function
 // definition.
+//
+// In principle, not all function declarations will map directly to a
+// function definition. For instance, function calls that belong to
+// dynamically linked libraries cannot be resolved.
 //----------------------------------------------------------------------
 
 function:definition[Decl] = Def ->
@@ -26,3 +30,16 @@ call_instruction:function_decl[Insn] = FuncDecl <-
    operand:as_immediate[Op] = Imm,
    immediate:value[Imm] = FuncName,
    function:name[FuncDecl] = FuncName.
+
+// Is this always true??
+direct_call_instruction(Insn) -> call_instruction:function_decl[Insn] = _.
+
+
+
+//----------------------------------------------------------------------
+// Mapping from call instructions to the actual function definitions
+//----------------------------------------------------------------------
+
+call_instruction:function_defn[Insn] = FuncDef <-
+   call_instruction:function_decl[Insn] = FuncDecl,
+   function:definition[FuncDecl] = FuncDef.
