@@ -11,7 +11,7 @@ include blox.mk
 # Generate build directory for logic
 $(eval $(call create-destdir,logic))
 
-# Projects
+# Projects (add directory here to enable it)
 projects := schema import method-lookup
 
 
@@ -39,20 +39,26 @@ $1.proj   := $1/$1.project
 $1.src    := $(wildcard $1/*.logic)
 $1.outdir := $(logic.outdir)/$1
 $1.ph     := $$($1.outdir)/.placeholder
+$1.deps   := $1/deps.mk
 
 # Create output directory
 $$($1.outdir): | $(logic.outdir)
 	$(MKDIR) $$@
 
-# Set LB_LIBRARY_PATH
-ifneq ($1,schema)
-  export LB_LIBRARY_PATH := $(schema.outdir)
-endif
+# Auto-generate project dependencies
+export PATH := $(LEVEL)/bin:$(PATH)
+$$($1.deps): $$($1.proj) | $$($1.outdir)
+	project-dependencies.sh . $$< $$($1.ph) > $$@
+
+# Include deps.mk Makefile segment
+include $$($1.deps)
+
 
 # Compile project
 $$($1.ph): $$($1.proj) $$($1.src) | $$($1.outdir)
 	$(call compile-datalog-project, $$<,$$(@D))
 	$(QUIET) touch $$@
+
 
 # Project build target
 .PHONY: $1
@@ -71,14 +77,6 @@ endef
 
 # !! Generate rules per project !!
 $(foreach project,$(projects),$(eval $(call project_template,$(project))))
-
-
-#------------------------------
-#  Project Inter-Dependencies
-#------------------------------
-
-$(import.ph): $(schema.ph)
-$(method-lookup.ph): $(schema.ph)
 
 
 
