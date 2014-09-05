@@ -21,6 +21,8 @@ projects := schema import symbol-lookup
 
 all:
 
+force:
+
 install:
 
 uninstall:
@@ -28,7 +30,7 @@ uninstall:
 clean:
 	$(RM) -r $(logic.outdir)
 
-.PHONY: all clean install uninstall
+.PHONY: all clean install uninstall force
 
 
 #------------------------------
@@ -116,7 +118,7 @@ define process-script
         $2 > $1
 endef
 
-$(template.out): $(template.in)
+$(template.out): $(template.in) force
 	$(call process-script,$@,$<)
 
 install: $(template.out)
