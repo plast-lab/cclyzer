@@ -1,0 +1,29 @@
+// Basic predicate declarations
+callgraph:edge(From, To) -> function(From), function_decl(To).
+reachable_function(Func) -> function_decl(Func).
+
+lang:isEntity[`reachable_function] = false.
+
+callgraph:edge(Caller, Callee), reachable_function(Callee)
+ <-
+   reachable_function(Caller),
+   instruction:function[Insn] = Caller,
+   call_instruction:function[Insn] = Callee.
+
+
+reachable_function(Main) <-
+   function:name[Main] = "@main",
+   function(Main).
+
+// Functions registered to @atexit are reachable if the @atexit call
+// is reachable
+
+reachable_function(Callback) <-
+   reachable_function(Caller),
+   instruction:function[Insn] = Caller,
+   call_instruction:function[Insn] = AtExit,
+   function:name[AtExit] = "@atexit",
+   call_instruction:arg[Insn, 0] = Operand,
+   operand:as_immediate[Operand] = Imm,
+   immediate:value[Imm] = FuncName,
+   function:name[Callback] = FuncName.

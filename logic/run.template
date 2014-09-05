@@ -12,3 +12,9 @@ exec --storedBlock "import-entities"
 echo "Importing predicates"
 exec --storedBlock "import-predicates"
 commit
+
+transaction
+echo "Installing compiled Datalog callgraph logic in CALLGRAPH ..."
+installProject --dir CALLGRAPH --libPath SCHEMA:LOOKUP
+commit
+echo "Done loading"

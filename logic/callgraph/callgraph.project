@@ -1,0 +1,5 @@
+llvm:callgraph, projectname
+llvm:schema, library
+llvm:lookup, library
+
+callgraph.logic, active

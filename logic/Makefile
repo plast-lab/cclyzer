@@ -12,7 +12,7 @@ include blox.mk
 $(eval $(call create-destdir,logic))
 
 # Projects (add directory here to enable it)
-projects := schema import symbol-lookup
+projects := schema import symbol-lookup callgraph
 
 
 #-----------------------------------
@@ -115,6 +115,7 @@ define process-script
   $(M4) --define=SCHEMA=$(schema.outdir:$(LEVEL)/%=./%)         \
 		--define=IMPORT=$(import.outdir:$(LEVEL)/%=./%)         \
         --define=LOOKUP=$(symbol-lookup.outdir:$(LEVEL)/%=./%)  \
+        --define=CALLGRAPH=$(callgraph.outdir:$(LEVEL)/%=./%)   \
         $2 > $1
 endef
 
