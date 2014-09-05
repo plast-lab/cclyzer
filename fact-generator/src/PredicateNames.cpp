@@ -320,7 +320,7 @@ namespace predicate_names{
     const char * vaargInsnType = "va_arg_instruction:type";
 
     const char * callInsn = "call_instruction";
-    const char * callInsnFunction = "call_instruction:function";
+    const char * callInsnFunction = "call_instruction:raw_function";
     const char * directCallInsn = "direct_call_instruction";
     const char * indirectCallInsn = "indirect_call_instruction";
     const char * callCallConv = "call_instruction:calling_convention";

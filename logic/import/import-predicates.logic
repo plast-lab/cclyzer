@@ -629,38 +629,6 @@ lang:physical:filePath[`_call_instruction:calling_convention] = "facts/predicate
 
 
 
-_call_instruction:function$by_immediate(v0, v1) -> string(v0), string(v1).
-
-lang:physical:delimiter[`_call_instruction:function$by_immediate] = "\t".
-lang:physical:filePath[`_call_instruction:function$by_immediate] = "facts/predicates/call_instruction-function-by_immediate.dlm".
-
-+instruction:id(e0:v0),
-+call_instruction(e0),
-+operand:by_immediate[e1] = e2,
-+operand(e2),
-+call_instruction:function[e0] = e2
-<-
-   _call_instruction:function$by_immediate(v0, v1),
-   immediate:id(e1:v1),
-   immediate(e1).
-
-_call_instruction:function$by_variable(v0, v1) -> string(v0), string(v1).
-
-lang:physical:delimiter[`_call_instruction:function$by_variable] = "\t".
-lang:physical:filePath[`_call_instruction:function$by_variable] = "facts/predicates/call_instruction-function-by_variable.dlm".
-
-+instruction:id(e0:v0),
-+call_instruction(e0),
-+operand:by_variable[e1] = e2,
-+operand(e2),
-+call_instruction:function[e0] = e2
-<-
-   _call_instruction:function$by_variable(v0, v1),
-   variable:id(e1:v1),
-   variable(e1).
-
-
-
 _call_instruction:function_attribute(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_call_instruction:function_attribute] = "\t".
@@ -688,6 +656,38 @@ lang:physical:filePath[`_call_instruction:param_attribute] = "facts/predicates/c
 +call_instruction:param_attribute(e0,v1,e1)
 <-
    _call_instruction:param_attribute(v0, v1, v2).
+
+
+
+_call_instruction:raw_function$by_immediate(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_call_instruction:raw_function$by_immediate] = "\t".
+lang:physical:filePath[`_call_instruction:raw_function$by_immediate] = "facts/predicates/call_instruction-raw_function-by_immediate.dlm".
+
++instruction:id(e0:v0),
++call_instruction(e0),
++operand:by_immediate[e1] = e2,
++operand(e2),
++call_instruction:raw_function[e0] = e2
+<-
+   _call_instruction:raw_function$by_immediate(v0, v1),
+   immediate:id(e1:v1),
+   immediate(e1).
+
+_call_instruction:raw_function$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_call_instruction:raw_function$by_variable] = "\t".
+lang:physical:filePath[`_call_instruction:raw_function$by_variable] = "facts/predicates/call_instruction-raw_function-by_variable.dlm".
+
++instruction:id(e0:v0),
++call_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++call_instruction:raw_function[e0] = e2
+<-
+   _call_instruction:raw_function$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
 
 
 

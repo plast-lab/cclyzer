@@ -5,8 +5,14 @@ call_instruction(Insn) -> instruction(Insn).
 
 
 // Function operand: can be either a constant or a variable
-call_instruction:function[Insn] = Func ->
+call_instruction:raw_function[Insn] = Func ->
    call_instruction(Insn), operand(Func).
+
+// Resolved function of call instruction. Initially empty.
+call_instruction:function[Insn] = Func ->
+   call_instruction(Insn), function_decl(Func).
+
+lang:derivationType[`call_instruction:function] = "DerivedAndStored".
 
 
 // Eligible for tail call optimizations
@@ -31,11 +37,11 @@ direct_call_instruction(Insn)   -> call_instruction(Insn).
 indirect_call_instruction(Insn) -> call_instruction(Insn).
 
 direct_call_instruction(Insn) <-
-   call_instruction:function[Insn] = Func,
+   call_instruction:raw_function[Insn] = Func,
    operand:as_immediate[Func] = _.
 
 indirect_call_instruction(Insn) <-
-   call_instruction:function[Insn] = Func,
+   call_instruction:raw_function[Insn] = Func,
    operand:as_variable[Func] = _.
 
 
@@ -69,7 +75,7 @@ call_instruction:signature[Insn] = Type ->
    call_instruction(Insn), function_type(Type).
 
 call_instruction:signature[Insn] = Type <-
-   call_instruction:function[Insn] = Func,
+   call_instruction:raw_function[Insn] = Func,
    operand:type[Func] = PtrType,
    pointer_type:component[PtrType] = Type,
    function_type(Type).
@@ -97,7 +103,7 @@ call_instruction:return_type[Insn] = Type <-
 //      attributes are valid as function attributes.
 //------------------------------------------------------------------------------
 
-call_instruction(Insn) -> call_instruction:function[Insn] = _.
+call_instruction(Insn) -> call_instruction:raw_function[Insn] = _.
 call_instruction(Insn) -> call_instruction:signature[Insn] = _.
 
 // attribute compatibility

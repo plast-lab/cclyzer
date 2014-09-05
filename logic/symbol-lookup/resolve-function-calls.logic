@@ -1,0 +1,57 @@
+//----------------------------------------------------------------------
+// Some of the following do not have any use right now, since we
+// always end up with a single bitcode file and don't care about
+// multiple compilation units, etc.
+//
+// We assume the following, due to are whole-program analysis scheme:
+//
+//   1. For any referenced function, there will exist at least one
+//      function declaration (that may also be a definition).
+//
+//   2. If a function definition exists, then no declarations will be
+//      visible. This means that we do not have to deal with any
+//      indirections when creating the mapping from call instructions
+//      to functions being called. When a function definition exists,
+//      then the call instruction will be mapped to it. Otherwise, it
+//      will be mapped to a function declaration.
+//
+//   3. In principle, not all function declarations will map directly
+//      to a function definition. For instance, function calls that
+//      belong to dynamically linked libraries cannot be resolved.
+//      Thus, they will be mapped to function declarations instead.
+//
+//   4. There will exist at most one definition per function.
+//----------------------------------------------------------------------
+
+
+
+// Mapping from call instructions to their declarations
+
+call_instruction:function[Insn] = FuncDecl <-
+   direct_call_instruction(Insn),
+   call_instruction:raw_function[Insn] = Op,
+   operand:as_immediate[Op] = Imm,
+   immediate:value[Imm] = FuncName,
+   function:name[FuncDecl] = FuncName.
+
+
+// Is this always true for our tests?
+direct_call_instruction(Insn) -> call_instruction:function[Insn] = _.
+
+
+//----------------------------------------------------------------------
+// This is for future use (if we ever introduce multiple compilation
+// units as input).
+//
+// * Each function declaration should be mapped to exactly one
+//   function definition.
+//
+// * Each function declaration, which also happens to be a definition,
+//   maps to itself.
+//----------------------------------------------------------------------
+
+function:definition[Decl] = Def ->
+   function_decl(Decl), function(Def).
+
+function:definition[Func] = Func <-
+   function(Func).

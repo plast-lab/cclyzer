@@ -12,7 +12,7 @@ include blox.mk
 $(eval $(call create-destdir,logic))
 
 # Projects (add directory here to enable it)
-projects := schema import method-lookup
+projects := schema import symbol-lookup
 
 
 #-----------------------------------
@@ -40,6 +40,7 @@ $1.src    := $(wildcard $1/*.logic)
 $1.outdir := $(logic.outdir)/$1
 $1.ph     := $$($1.outdir)/.placeholder
 $1.deps   := $1/deps.mk
+
 
 # Create output directory
 $$($1.outdir): | $(logic.outdir)
@@ -109,7 +110,7 @@ template.out := $(INSTALL_BIN)/$(template.lb)
 define process-script
   $(M4) --define=SCHEMA=$(schema.outdir:$(LEVEL)/%=./%)         \
 		--define=IMPORT=$(import.outdir:$(LEVEL)/%=./%)         \
-        --define=LOOKUP=$(method-lookup.outdir:$(LEVEL)/%=./%)  \
+        --define=LOOKUP=$(symbol-lookup.outdir:$(LEVEL)/%=./%)  \
         $2 > $1
 endef
 
