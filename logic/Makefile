@@ -86,7 +86,7 @@ $(foreach project,$(projects),$(eval $(call project_template,$(project))))
 #------------------------------
 
 schema.pb   := $(schema.src:schema/%.logic=$(import.outdir)/%.pb)
-export PATH := $(INSTALL_BIN):$(PATH)
+export PATH := $(INSTALL_BIN):$(LEVEL)/bin:$(PATH)
 
 # Generate protobuf messages from schema
 .INTERMEDIATE: $(schema.pb)
