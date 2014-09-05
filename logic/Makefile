@@ -23,10 +23,12 @@ all:
 
 install:
 
+uninstall:
+
 clean:
 	$(RM) -r $(logic.outdir)
 
-.PHONY: all clean install
+.PHONY: all clean install uninstall
 
 
 #------------------------------
@@ -118,3 +120,6 @@ $(template.out): $(template.in)
 	$(call process-script,$@,$<)
 
 install: $(template.out)
+
+uninstall:
+	$(RM) $(template.out)

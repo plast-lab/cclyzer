@@ -2,12 +2,13 @@ LEVEL := .
 
 all:
 
-module.logic    := logic
-module.facts    := fact-generator
-module.imports  := import-generator
-modules         := $(module.logic) $(module.facts) $(module.imports)
-targets.clean   := $(addsuffix .clean,$(modules))
-targets.install := $(addsuffix .install,$(modules))
+module.logic      := logic
+module.facts      := fact-generator
+module.imports    := import-generator
+modules           := $(module.logic) $(module.facts) $(module.imports)
+targets.clean     := $(addsuffix .clean,$(modules))
+targets.install   := $(addsuffix .install,$(modules))
+targets.uninstall := $(addsuffix .uninstall,$(modules))
 
 include $(LEVEL)/common.mk
 
@@ -25,6 +26,9 @@ $(targets.clean): %.clean:
 $(targets.install): %.install:
 	$(MAKE) --directory=$* install
 
+$(targets.uninstall): %.uninstall:
+	$(MAKE) --directory=$* uninstall
+
 
 #--------------------------
 #  Common Phony Targets
@@ -39,6 +43,9 @@ clean: $(targets.clean)
 
 .PHONY: install $(targets.install)
 install: $(targets.install)
+
+.PHONY: uninstall $(targets.uninstall)
+uninstall: $(targets.uninstall)
 
 
 

@@ -70,6 +70,11 @@ check-syntax:
 install: $(program)
 	$(INSTALL) -m 0755 $< $(INSTALL_BIN)
 
+.PHONY: uninstall
+uninstall:
+	$(RM) $(INSTALL_BIN)/$(notdir $(program))
+
+
 #-----------------------------------
 # Automatic Dependency Generation
 #-----------------------------------
