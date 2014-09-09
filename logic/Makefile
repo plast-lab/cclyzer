@@ -57,10 +57,9 @@ $$($1.deps): $$($1.proj) | $$($1.outdir)
 	project-dependencies.sh . $$< $$($1.ph) > $$@
 
 
-# When a single .project file changes, *all* project dependency
-# Makefile modules must be renewed since their generation involves
-# reading all project files in order to compute the mapping from
-# project file to project id.
+# When a single `.project' file changes, *all* project-dependency
+# Makefile modules must be renewed, since their generation involves
+# reading all `.project' files to acquire their /project IDs/.
 
 $$($1.deps): $(project.files)
 
@@ -79,14 +78,23 @@ $$($1.ph): $$($1.proj) $$($1.src) | $$($1.outdir)
 .PHONY: $1
 $1: $$($1.ph)
 
-# Project clean target
+# Project clean targets
 .PHONY: $1.clean
 $1.clean:
 	$(RM) -r $$($1.outdir)
 
+.PHONY: $1.clean-deps
+$1.clean-deps:
+	$(RM) $$($1.deps)
+
+.PHONY: $1.cleanall
+$1.cleanall: $1.clean $1.clean-deps
+
 # Phony target dependencies
-all: $1
-clean: $1.clean
+all:        $1
+clean:      $1.clean
+clean-deps: $1.clean-deps
+cleanall:   $1.cleanall
 
 endef
 
