@@ -12,7 +12,8 @@ include blox.mk
 $(eval $(call create-destdir,logic))
 
 # Projects (add directory here to enable it)
-projects := schema import symbol-lookup callgraph
+projects      := schema import symbol-lookup callgraph
+project.files := $(shell find -type f -name '*.project')
 
 
 #-----------------------------------
@@ -54,6 +55,15 @@ $$($1.outdir): | $(logic.outdir)
 export PATH := $(LEVEL)/bin:$(PATH)
 $$($1.deps): $$($1.proj) | $$($1.outdir)
 	project-dependencies.sh . $$< $$($1.ph) > $$@
+
+
+# When a single .project file changes, *all* project dependency
+# Makefile modules must be renewed since their generation involves
+# reading all project files in order to compute the mapping from
+# project file to project id.
+
+$$($1.deps): $(project.files)
+
 
 # Include deps.mk Makefile segment
 include $$($1.deps)
