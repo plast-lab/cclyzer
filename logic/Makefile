@@ -65,7 +65,7 @@ $$($1.deps): $(project.files)
 
 
 # Include deps.mk Makefile segment
-include $$($1.deps)
+-include $$($1.deps)
 
 
 # Compile project

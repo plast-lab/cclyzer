@@ -75,6 +75,9 @@ $(eval $(call create-destdir,tests,tests))
 # Phony testing targets that apply to all benchmarks
 .PHONY: tests.setup tests.export tests.load tests.clean
 
+# Modify PATH so that it includes the fact-generator executable
+export PATH := $(INSTALL_BIN):$(PATH)
+
 
 #----------------------------
 # Prompt routines
@@ -112,7 +115,6 @@ $$($1.outdir): | $(tests.outdir)
 
 # Fact-generation step
 
-export PATH := $(INSTALL_BIN):$(PATH)
 test-$1.export: tests.setup | $$($1.csv)
 	$(call prompt-echo, $1, "Cleaning up older facts ...")
 	$(call prompt, $1)

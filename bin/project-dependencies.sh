@@ -34,8 +34,7 @@ for i in $dependencies; do
 done
 
 cat <<EOF
-export LB_LIBRARY_PATH := ${libpath%:}
-
+$target: export LB_LIBRARY_PATH := ${libpath%:}
 $target: $prerequisites
 
 EOF
