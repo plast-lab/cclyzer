@@ -1,8 +1,28 @@
-// Basic predicate declarations
+//--------------------------------------------------------------------
+// [Basic predicate declarations]
+//--------------------------------------------------------------------
+
+
+// Callgraph edge from caller function to callee function
+
 callgraph:edge(From, To) -> function(From), function_decl(To).
+
+
+// function is reachable
+
 reachable_function(Func) -> function_decl(Func).
 
 lang:isEntity[`reachable_function] = false.
+
+
+
+//--------------------------------------------------------------------
+// [Recursive logic, entry points, and other special cases]
+//--------------------------------------------------------------------
+
+
+// Recursive Case: if a call instruction is reachable, then the callee
+// function is also reachable.
 
 callgraph:edge(Caller, Callee), reachable_function(Callee)
  <-
@@ -11,12 +31,15 @@ callgraph:edge(Caller, Callee), reachable_function(Callee)
    call_instruction:function[Insn] = Callee.
 
 
+// Base Case: The @main function is our entry point.
+
 reachable_function(Main) <-
    function:name[Main] = "@main",
    function(Main).
 
-// Functions registered to @atexit are reachable if the @atexit call
-// is reachable
+
+// Functions registered to @atexit are also reachable if the @atexit
+// call is reachable.
 
 reachable_function(Callback) <-
    reachable_function(Caller),
