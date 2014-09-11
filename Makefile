@@ -49,6 +49,56 @@ uninstall: $(targets.uninstall)
 
 
 
+#--------------------------
+#  Gather Resources
+#--------------------------
+
+# Generate build directory for resources
+$(eval $(call create-destdir,resources,resources))
+
+# Add binary resources
+resources.bin := $(addprefix $(resources.outdir)/bin/,\
+                    $(notdir $(shell find $(OUTDIR) -executable -type f)))
+
+$(resources.bin): | $(resources.outdir)/bin
+$(resources.outdir)/bin: | $(resources.outdir)
+	$(MKDIR) $@
+
+.SECONDEXPANSION:
+$(resources.outdir)/bin/%: $$(shell find $(OUTDIR) -executable -type f -name "*%")
+	$(info Adding resource $<)
+	$(QUIET) ln $< $@
+
+
+# Add logic resources
+resources.logic := $(resources.outdir)/logic
+
+$(resources.logic): $(OUTDIR)/logic | $(resources.outdir)
+	$(info Adding resource $<)
+	$(QUIET) ln -s $(abspath $<) $@
+
+
+# All resources are intermediate files
+resources = $(resources.bin) $(resources.logic)
+.INTERMEDIATE: $(resources)
+
+# Phony targets
+.PHONY: resources
+resources: $(resources) | $(resources.outdir)
+	$(info Resources [DONE])
+
+.PHONY: resources.clean
+resources.clean:
+	$(RM) -r $(resources.outdir)
+
+
+#--------------------------
+#  Create Artifact
+#--------------------------
+
+
+
+
 #-----------------------------------------
 #    _            _   _
 #   | |_ ___  ___| |_(_)_ __   __ _
