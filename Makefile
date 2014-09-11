@@ -5,7 +5,8 @@ all:
 module.logic      := logic
 module.facts      := fact-generator
 module.imports    := import-generator
-modules           := $(module.logic) $(module.facts) $(module.imports)
+module.driver     := llvm-datalog
+modules           := $(module.logic) $(module.facts) $(module.imports) $(module.driver)
 targets.clean     := $(addsuffix .clean,$(modules))
 targets.install   := $(addsuffix .install,$(modules))
 targets.uninstall := $(addsuffix .uninstall,$(modules))
@@ -56,36 +57,37 @@ uninstall: $(targets.uninstall)
 # Generate build directory for resources
 $(eval $(call create-destdir,resources,resources))
 
-# Add binary resources
-resources.bin := $(addprefix $(resources.outdir)/bin/,\
-                    $(notdir $(shell find $(OUTDIR) -executable -type f)))
+# Add binary and logic resources
+resources := $(resources.outdir)/logic
+resources += $(resources.outdir)/bin/fact-generator
+resources += $(resources.outdir)/bin/import-generator
 
-$(resources.bin): | $(resources.outdir)/bin
+# Create nested directories
 $(resources.outdir)/bin: | $(resources.outdir)
 	$(MKDIR) $@
 
-.SECONDEXPANSION:
-$(resources.outdir)/bin/%: $$(shell find $(OUTDIR) -executable -type f -name "*%")
-	$(info Adding resource $<)
-	$(QUIET) ln $< $@
+# Binaries
+$(resources.outdir)/bin/fact-generator: $(module.facts)
+$(resources.outdir)/bin/fact-generator: resource := $(OUTDIR)/$(module.facts)/fact-generator
+$(resources.outdir)/bin/import-generator: $(module.imports)
+$(resources.outdir)/bin/import-generator: resource := $(OUTDIR)/$(module.imports)/import-generator
+$(resources.outdir)/bin/%: | $(resources.outdir)/bin
+	$(info Adding resource $(resource))
+	$(QUIET) ln $(resource) $@
 
-
-# Add logic resources
-resources.logic := $(resources.outdir)/logic
-
-$(resources.logic): $(OUTDIR)/logic | $(resources.outdir)
-	$(info Adding resource $<)
-	$(QUIET) ln -s $(abspath $<) $@
+# Compiled Datalog projects
+$(resources.outdir)/logic: resource := $(OUTDIR)/logic
+$(resources.outdir)/logic: $(module.logic) | $(resources.outdir)
+	$(info Adding resource $(resource))
+	$(QUIET) ln -s $(abspath $(resource)) $@
 
 
 # All resources are intermediate files
-resources = $(resources.bin) $(resources.logic)
 .INTERMEDIATE: $(resources)
 
 # Phony targets
 .PHONY: resources
-resources: $(resources) | $(resources.outdir)
-	$(info Resources [DONE])
+resources: $(resources)
 
 .PHONY: resources.clean
 resources.clean:
@@ -93,9 +95,47 @@ resources.clean:
 
 
 #--------------------------
-#  Create Artifact
+#  Create Artifacts
 #--------------------------
 
+$(eval $(call create-destdir,dist,dist))
+
+# Zip artifact
+artifact.zip  := $(dist.outdir)/llvm-datalog.zip
+
+.INTERMEDIATE: $(artifact.zip)
+$(artifact.zip): $(modules) resources | $(dist.outdir)
+	$(info Creating zip artifact $@)
+	$(info Adding python sources)
+	$(QUIET) cp $(OUTDIR)/python/$(@F) $@
+	$(info Adding resources)
+	$(QUIET) ln -s $(OUTDIR)/resources resources
+	zip -r $@ $(resources:$(OUTDIR)/%=%) >/dev/null
+	$(QUIET) $(RM) resources
+
+# Executable artifact
+artifact.exe := $(dist.outdir)/llvm-datalog
+
+$(artifact.exe): $(artifact.zip) dist.force
+	$(info Creating artifact $@)
+	$(QUIET) echo '#!/usr/bin/env python' | cat - $< > $@
+	chmod +x $@
+
+
+# Phony targets
+
+.PHONY: dist
+dist: $(artifact.zip) $(artifact.exe)
+
+.PHONY: dist.clean
+dist.clean:
+	$(RM) -r $(dist.outdir)
+
+.PHONY: dist.force
+dist.force:
+
+all: dist
+clean: dist.clean
 
 
 

@@ -13,7 +13,7 @@ include $(LEVEL)/common.mk
 
 $(eval $(call create-destdir,python,python))
 
-sources := $(filter-out Makefile,$(wildcard *))
+sources := $(filter-out ./Makefile,$(shell find -type f))
 archive := $(python.outdir)/llvm-datalog.zip
 
 
