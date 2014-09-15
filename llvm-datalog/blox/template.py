@@ -1,5 +1,19 @@
+from string import Template
+
+
+class TemplateMetaclass(type):
+    """Instruments every class variable access so that it returns a
+    string.Template.
+
+    """
+
+    def __getattribute__(self, name):
+        return Template(super(TemplateMetaclass, self).__getattribute__(name))
+
+
 class scripts(object):
-    # LogicBlox schema-loading script template
+    __metaclass__ = TemplateMetaclass
+
     LOAD_SCHEMA = '''
     echo "Creating workspace $workspace ..."
     create --overwrite $workspace

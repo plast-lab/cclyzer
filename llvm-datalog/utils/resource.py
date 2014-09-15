@@ -4,7 +4,6 @@ import subprocess
 
 from blox.template import scripts
 from pkg_resources import resource_stream, resource_listdir
-from string import Template
 from tempfile import NamedTemporaryFile, mkdtemp
 
 
@@ -75,7 +74,7 @@ def fact_generation(input_dir, output_dir):
 
 def create_database(workspace, csv_dir):
     # Create script template
-    tpl = Template(scripts.LOAD_SCHEMA)
+    tpl = scripts.LOAD_SCHEMA
 
     # Unpack required projects
     with unpacked_project('schema') as schema_project:
