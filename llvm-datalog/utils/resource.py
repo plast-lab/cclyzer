@@ -6,12 +6,13 @@ from blox.template import scripts
 from pkg_resources import resource_stream, resource_listdir
 from string import Template
 from tempfile import NamedTemporaryFile, mkdtemp
-from utils.singleton import Singleton
 
-# Directory containing resources
-RESOURCE_DIR = 'resources'
 
-class unpacked_binary(object):
+class constants(object):
+    RESOURCE_DIR = 'resources'  # base resource directory
+
+
+class unpacked_binary(constants):
     def __init__(self, resource):
         self._resource = resource
 
@@ -23,7 +24,7 @@ class unpacked_binary(object):
         # Create temporary executable file
         with NamedTemporaryFile(suffix = resource, delete = False) as tempfile:
             # Copy contents from resource stream
-            for byte in resource_stream(RESOURCE_DIR, path_to_resource):
+            for byte in resource_stream(self.RESOURCE_DIR, path_to_resource):
                 tempfile.write(byte)
             tempfile.flush()
             # Store temporary file's name
@@ -38,7 +39,7 @@ class unpacked_binary(object):
         os.unlink(self._executable)
 
 
-class unpacked_project(object):
+class unpacked_project(constants):
     def __init__(self, project):
         self._project = project
         self._outdir = mkdtemp(suffix = project)
@@ -49,7 +50,7 @@ class unpacked_project(object):
         base_dir = os.path.join('logic', project)
 
         # Iterate over all project files
-        for resource in resource_listdir(RESOURCE_DIR, base_dir):
+        for resource in resource_listdir(self.RESOURCE_DIR, base_dir):
             # Skip empty resource paths (apparently, that can happen!!)
             if not resource:
                 continue
@@ -57,7 +58,7 @@ class unpacked_project(object):
             path_to_resource = os.path.join(base_dir, resource)
             with open(os.path.join(self._outdir, resource), 'w') as tempfile:
                 # Copy contents from resource stream
-                for byte in resource_stream(RESOURCE_DIR, path_to_resource):
+                for byte in resource_stream(self.RESOURCE_DIR, path_to_resource):
                     tempfile.write(byte)
 
         return self._outdir
@@ -82,15 +83,12 @@ def create_database(workspace, csv_dir):
             # Create LogicBlox script mappping
             mapping = {'workspace' : workspace,
                        'schema'    : schema_project,
-                       'import'    : import_project
+                       'import'    : import_project,
             }
             # Create LogicBlox script
             with open('load-schema.lb', 'w') as script:
                 script.write(tpl.substitute(mapping))
 
-            print schema_project
-            print import_project
-            print workspace
             # os.chdir(os.path.dirname(workspace))
             os.unlink('facts')
             os.symlink(csv_dir, 'facts')
