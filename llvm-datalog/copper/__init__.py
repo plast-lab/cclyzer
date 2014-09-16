@@ -2,7 +2,7 @@ import os
 import shutil
 import subprocess
 
-from blox.template import scripts, make_temp_script
+from blox.template import scripts, run_script
 from copper.resource import unpacked_binary, unpacked_project
 from functools import wraps
 
@@ -51,9 +51,9 @@ class Analysis(object):
         # Create empty directory
         os.makedirs(outdir)
         # Generate facts
-        print "Exporting facts ..." ###
+        print "Exporting facts ..."
         with unpacked_binary('fact-generator') as executable:
-            subprocess.check_output([executable, "-i", indir, "-o", outdir])
+            subprocess.check_call([executable, "-i", indir, "-o", outdir])
         # Store path to this output directory
         os.unlink('facts')
         os.symlink(outdir, 'facts')
@@ -63,6 +63,7 @@ class Analysis(object):
 
     @inside_output_subdir('db')
     def create_database(self):
+        print "Loading data ..."
         # Unpack required projects
         with unpacked_project('schema') as schema_project:
             with unpacked_project('import') as import_project:
@@ -71,8 +72,36 @@ class Analysis(object):
                            'schema'    : schema_project,
                            'import'    : import_project,
                 }
-                # Create LogicBlox script
-                with make_temp_script(scripts.LOAD_SCHEMA, mapping) as script:
-                    # Execute script while ignoring output
-                    subprocess.check_output(['bloxbatch', '-script', script])
+                # Execute script while ignoring output
+                run_script(scripts.LOAD_SCHEMA, mapping)
+        # Store workspace location
+        self._workspace = self._output_dir
+        print "Stored database in %s" % self._workspace
         return self
+
+    @property
+    def workspace(self):
+        return self._workspace
+
+
+    def load_project(self, project):
+        self._load_project(project, project.deps, [])
+        # self._projects.append(project)
+        return self
+
+
+    def _load_project(self, project, project_deps, libpath):
+        # Base case
+        if not project_deps:
+            with unpacked_project(project.name) as path:
+                # Create LogicBlox script mappping
+                mapping = {'workspace' : self.workspace,
+                           'project'   : path,
+                           'libpath'   : ':'.join(libpath),
+                }
+                # Execute script while ignoring output
+                return run_script(scripts.LOAD_PROJECT, mapping)
+        # Recursion: unpack first project dependency
+        with unpacked_project(project_deps.pop()) as dep_path:
+            libpath.append(dep_path)
+            return self._load_project(project, project_deps, libpath)

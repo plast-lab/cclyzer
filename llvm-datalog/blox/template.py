@@ -1,5 +1,5 @@
-import contextlib
 import os
+import subprocess
 
 from string import Template
 from tempfile import NamedTemporaryFile
@@ -32,15 +32,32 @@ class scripts(object):
     commit
     '''
 
+    LOAD_PROJECT = '''
+    open $workspace
+    transaction
+    echo "Installing compiled Datalog project from $project ..."
+    installProject --dir $project --libPath $libpath
+    commit
+    '''
 
-@contextlib.contextmanager
-def make_temp_script(template, mapping):
-    # Crate LogicBlox script as temporary file
-    script = NamedTemporaryFile(suffix = '.lb', dir = os.getcwd(), delete = False)
-    # Write contents by substituting variables to template
-    script.write(template.substitute(mapping))
-    # Close file and yield control
-    script.close()
-    yield script.name
-    # Remove file
-    os.unlink(script.name)
+
+class make_temp_script(object):
+    def __init__(self, template, mapping):
+        self._contents = template.substitute(mapping)
+
+    def __enter__(self):
+        # Create LogicBlox script as temporary file
+        with NamedTemporaryFile(suffix = '.lb', dir = os.getcwd(), delete = False) as script:
+            # Write contents by substituting variables to template
+            script.write(self._contents)
+            # Store file name
+            self._script = script.name
+        return self._script
+
+    def __exit__(self, type, value, traceback):
+        os.unlink(self._script)
+
+
+def run_script(template, mapping):
+    with make_temp_script(template, mapping) as script:
+        return subprocess.check_call(['bloxbatch', '-script', script])
