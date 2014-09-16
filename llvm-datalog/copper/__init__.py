@@ -14,6 +14,7 @@ class Analysis(object):
     def __init__(self, obj):
         self._input_dir = obj.input_dir
         self._output_dir = obj.output_dir
+        self._projects = []
 
     def inside_output_subdir(subdir):
         """Decorator that temporarily changes output directory."""
@@ -86,13 +87,13 @@ class Analysis(object):
 
     def load_project(self, project):
         self._load_project(project, project.deps, [])
-        # self._projects.append(project)
+        self._projects.append(project)
         return self
 
 
-    def _load_project(self, project, project_deps, libpath):
+    def _load_project(self, project, unpacked_deps, libpath):
         # Base case
-        if not project_deps:
+        if not unpacked_deps:
             with unpacked_project(project.name) as path:
                 # Create LogicBlox script mappping
                 mapping = {'workspace' : self.workspace,
@@ -101,7 +102,9 @@ class Analysis(object):
                 }
                 # Execute script while ignoring output
                 return run_script(scripts.LOAD_PROJECT, mapping)
-        # Recursion: unpack first project dependency
-        with unpacked_project(project_deps.pop()) as dep_path:
+        # We have unpacked dependencies
+        with unpacked_project(unpacked_deps.pop()) as dep_path:
+            # Add unpacked project to library path
             libpath.append(dep_path)
-            return self._load_project(project, project_deps, libpath)
+            # Recursively unpack the remaining dependencies
+            return self._load_project(project, unpacked_deps, libpath)
