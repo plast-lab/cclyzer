@@ -1,4 +1,8 @@
+import contextlib
+import os
+
 from string import Template
+from tempfile import NamedTemporaryFile
 
 class TemplateMetaclass(type):
     """Instruments every class variable access so that it returns a
@@ -27,3 +31,16 @@ class scripts(object):
     exec --storedBlock "import-predicates"
     commit
     '''
+
+
+@contextlib.contextmanager
+def make_temp_script(template, mapping):
+    # Crate LogicBlox script as temporary file
+    script = NamedTemporaryFile(suffix = '.lb', dir = os.getcwd(), delete = False)
+    # Write contents by substituting variables to template
+    script.write(template.substitute(mapping))
+    # Close file and yield control
+    script.close()
+    yield script.name
+    # Remove file
+    os.unlink(script.name)

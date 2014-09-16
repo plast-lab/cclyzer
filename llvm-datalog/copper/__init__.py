@@ -2,7 +2,7 @@ import os
 import shutil
 import subprocess
 
-from blox.template import scripts
+from blox.template import scripts, make_temp_script
 from copper.resource import unpacked_binary, unpacked_project
 from functools import wraps
 
@@ -53,10 +53,7 @@ class Analysis(object):
         # Generate facts
         print "Exporting facts ..." ###
         with unpacked_binary('fact-generator') as executable:
-            ret = subprocess.call([executable, "-i", indir, "-o", outdir])
-        # Error checking
-        if ret != 0:
-            raise SystemError()
+            subprocess.check_output([executable, "-i", indir, "-o", outdir])
         # Store path to this output directory
         os.unlink('facts')
         os.symlink(outdir, 'facts')
@@ -66,9 +63,6 @@ class Analysis(object):
 
     @inside_output_subdir('db')
     def create_database(self):
-        # Create script template
-        tpl = scripts.LOAD_SCHEMA
-
         # Unpack required projects
         with unpacked_project('schema') as schema_project:
             with unpacked_project('import') as import_project:
@@ -78,7 +72,7 @@ class Analysis(object):
                            'import'    : import_project,
                 }
                 # Create LogicBlox script
-                with open('load-schema.lb', 'w') as script:
-                    script.write(tpl.substitute(mapping))
-
-                return subprocess.call(["bloxbatch", "-script", 'load-schema.lb'])
+                with make_temp_script(scripts.LOAD_SCHEMA, mapping) as script:
+                    # Execute script while ignoring output
+                    subprocess.check_output(['bloxbatch', '-script', script])
+        return self
