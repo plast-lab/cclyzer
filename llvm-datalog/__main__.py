@@ -2,8 +2,7 @@ import argparse
 import os
 import shutil
 
-
-from utils.resource import *
+from copper import *
 
 def main():
     # Create CLI parser
@@ -14,6 +13,9 @@ def main():
                         help='output directory')
     # Parse arguments
     args = parser.parse_args()
+
+    # Create analysis
+    analysis = Analysis(args)
 
     # Create empty CSV directory
     csv_dir = os.path.join(args.output_dir, 'facts')

@@ -1,6 +1,5 @@
 from string import Template
 
-
 class TemplateMetaclass(type):
     """Instruments every class variable access so that it returns a
     string.Template.
