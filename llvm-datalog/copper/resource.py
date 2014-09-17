@@ -10,6 +10,10 @@ class constants(object):
 
 
 class unpacked_binary(constants):
+    """A context manager that unpacks a binary resource to a temporary
+    location.
+
+    """
     def __init__(self, resource):
         self._resource = resource
 
@@ -37,6 +41,10 @@ class unpacked_binary(constants):
 
 
 class unpacked_project(constants):
+    """A context manager that unpacks a compiler Datalog project to a
+    temporary location.
+
+    """
     def __init__(self, project):
         self._project = project
         self._outdir = mkdtemp(suffix = project)
