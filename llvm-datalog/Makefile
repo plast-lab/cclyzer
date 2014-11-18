@@ -3,7 +3,9 @@ LEVEL := ..
 # Placeholder
 all:
 
-.PHONY: all clean
+install:
+
+.PHONY: all clean install
 
 # Import common Makefile routines
 include $(LEVEL)/common.mk

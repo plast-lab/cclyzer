@@ -156,30 +156,14 @@ benchmarks := $(dir $(wildcard tests/*/*.bc))
 # Load LogicBlox functions
 include $(LEVEL)/logic/blox.mk
 
-# Look for .template files in this directory
-vpath %.template $(INSTALL_BIN)/
-
 # Generate build directory for tests
 $(eval $(call create-destdir,tests,tests))
 
 # Phony testing targets that apply to all benchmarks
-.PHONY: tests.setup tests.export tests.load tests.clean
+.PHONY: tests.setup tests.run tests.clean
 
 # Modify PATH so that it includes the fact-generator executable
 export PATH := $(INSTALL_BIN):$(PATH)
-
-
-#----------------------------
-# Prompt routines
-#----------------------------
-
-define prompt
-  @echo -n "BENCH [ $(strip $1) ]:   "
-endef
-
-define prompt-echo
-  @echo "BENCH [ $(strip $1) ]: $(strip $2)"
-endef
 
 
 #----------------------------
@@ -190,64 +174,32 @@ define benchmark_template
 
 $1.dir    := tests/$1
 $1.outdir := $(tests.outdir)/$1
-$1.csv    := $$($1.outdir)/facts
-$1.db     := $$($1.outdir)/db
-$1.lb     := test-$1.run.lb
 
 
 # Create subdirectories
 
-$$($1.csv)   : | $$($1.outdir)
-$$($1.db)    : | $$($1.outdir)
 $$($1.outdir): | $(tests.outdir)
 	$(MKDIR) $$@
 
 
-# Fact-generation step
+# Run target
 
-test-$1.export: tests.setup | $$($1.csv)
-	$(call prompt-echo, $1, "Cleaning up older facts ...")
-	$(call prompt, $1)
-	$(RM) -r $$($1.csv)
-	$(call prompt-echo, $1, "Exporting facts ...")
-	$(call prompt, $1)
-	$(factgen.exe) -i $$($1.dir)/ -o $$($1.csv)
-	$(call prompt-echo, $1, "Stored facts in $$($1.csv)/")
-
-
-# Database-generation step
-
-test-$1.load: $$($1.lb) test-$1.export
-	$(call prompt-echo, $1, "Importing to database ...")
-	$(QUIET) $(RM) $(data.link)
-	$(QUIET) ln -s $$(abspath $$($1.csv)) $(data.link)
-	$(call prompt, $1)
-	$(call deploy-datalog-project,$$<)
-
-
-# Create datalog script
-
-.INTERMEDIATE: $$($1.lb)
-$$($1.lb): $(template.lb)
-	$(call prompt-echo, $1, "Generating script ...")
-	$(call prompt, $1)
-	$(M4) --define=WORKSPACE=$$($1.db) --define=DIR=$$($1.outdir)/ $$< > $$@
+test-$1.run: tests.setup
+	echo Analyzing $1 ...
+	$(artifact.exe) -i $$($1.dir) -o $$($1.outdir)
 
 
 # Cleaning target
 
 .PHONY: test-$1.clean
 test-$1.clean:
-	$(RM) -r $$($1.db)/
-	$(RM) -r $$($1.csv)/
 	$(RM) -r $$($1.outdir)/
 
 
 # Phony targets dependencies
 
 tests.setup  : $(targets.install)
-tests.export : test-$1.export
-tests.load   : test-$1.load
+tests.run    : test-$1.run
 tests.clean  : test-$1.clean
 
 endef
