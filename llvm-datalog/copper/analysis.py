@@ -7,7 +7,7 @@ from functools import wraps
 from blox.template import scripts, run_script
 
 from .resource import unpacked_binary, unpacked_project
-from .project import Project
+from .project import Project, UnpackedProject
 
 class Analysis(object):
 
@@ -94,10 +94,10 @@ class Analysis(object):
     def _load_project(self, project, unpacked_deps, libpath):
         # Base case
         if not unpacked_deps:
-            with unpacked_project(project.name) as path:
+            with UnpackedProject(project) as project:
                 # Create LogicBlox script mappping
                 mapping = {'workspace' : self.workspace,
-                           'project'   : path,
+                           'project'   : project.path,
                            'libpath'   : ':'.join(libpath),
                 }
                 # Execute script while ignoring output
