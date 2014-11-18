@@ -12,7 +12,7 @@ def main():
                         help='output directory')
 
     args = parser.parse_args()       # parse arguments
-    analysis = copper.Analysis(args) # create analysis
+    analysis = Analysis(args) # create analysis
     analysis.generate_facts()        # generate CSV facts
     analysis.create_database()       # create database
 
