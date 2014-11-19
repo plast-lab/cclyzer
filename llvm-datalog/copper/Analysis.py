@@ -3,11 +3,10 @@ import shutil
 import subprocess
 
 from functools import wraps
-
 from blox.template import scripts, run_script
 
-from .resource import unpacked_binary, unpacked_project
-from .project import Project, UnpackedProject
+from ..resource import unpacked_binary, unpacked_project
+from ..project import Project, UnpackedProject
 
 class Analysis(object):
 
