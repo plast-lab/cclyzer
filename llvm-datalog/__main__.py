@@ -1,7 +1,12 @@
 import argparse
 import copper
+import logging
 
 def main():
+    # Configure logging
+    logging.basicConfig(filename='copper.log', level=logging.DEBUG)
+    logging.info('Started')
+
     # Create CLI parser
     parser = argparse.ArgumentParser(description='Analyze LLVM bitcode.')
     parser.add_argument('-i', '--input-dir', metavar='DIRECTORY', required = True,
@@ -25,6 +30,7 @@ def main():
     callgraph_proj.deps = ['schema', 'symbol-lookup']
 
     analysis.load_project(callgraph_proj)
+    logging.info('Finished')
 
 if __name__ == '__main__':
     main()
