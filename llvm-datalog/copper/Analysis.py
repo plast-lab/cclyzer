@@ -3,10 +3,9 @@ import shutil
 import subprocess
 
 from functools import wraps
-from blox.template import scripts, run_script
 
-from ..resource import unpacked_binary, unpacked_project
-from ..project import Project, UnpackedProject
+from .resource import unpacked_binary, unpacked_project
+from .project import Project, UnpackedProject
 
 class Analysis(object):
 
@@ -67,13 +66,14 @@ class Analysis(object):
         # Unpack required projects
         with unpacked_project('schema') as schema_project:
             with unpacked_project('import') as import_project:
-                # Create LogicBlox script mappping
-                mapping = {'workspace' : self._output_dir,
-                           'schema'    : schema_project,
-                           'import'    : import_project,
-                }
                 # Execute script while ignoring output
-                run_script(scripts.LOAD_SCHEMA, mapping)
+                return (
+                    blox.LoadSchemaScript()
+                    .with_workspace(self._output_dir)
+                    .with_schema_path(schema_project)
+                    .with_import_path(import_project)
+                    .run()
+                )
         # Store workspace location
         self._workspace = self._output_dir
         print "Stored database in %s" % self._workspace
@@ -94,13 +94,14 @@ class Analysis(object):
         # Base case
         if not unpacked_deps:
             with UnpackedProject(project) as project:
-                # Create LogicBlox script mappping
-                mapping = {'workspace' : self.workspace,
-                           'project'   : project.path,
-                           'libpath'   : ':'.join(libpath),
-                }
                 # Execute script while ignoring output
-                return run_script(scripts.LOAD_PROJECT, mapping)
+                return (
+                    blox.LoadProjectScript()
+                    .with_workspace(self.workspace)
+                    .with_project_path(project.path)
+                    .with_library_path(libpath)
+                    .run()
+                )
         # We have unpacked dependencies
         with unpacked_project(unpacked_deps.pop()) as dep_path:
             # Add unpacked project to library path
