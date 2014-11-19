@@ -1,14 +1,14 @@
 from . import BloxScript
 
 class LoadSchemaScript(BloxScript):
-    LOAD_SCHEMA_TEMPLATE = '''
+    TEMPLATE = '''
     echo "Creating workspace $workspace ..."
     create --overwrite $workspace
     transaction
-    echo "Installing compiled Datalog schema in $schema ..."
-    installProject --dir $schema
-    echo "Installing compiled Datalog import logic in $import ..."
-    installProject --dir $import --libPath $schema
+    echo "Installing compiled Datalog schema in $schema_path ..."
+    installProject --dir $schema_path
+    echo "Installing compiled Datalog import logic in $import_path ..."
+    installProject --dir $import_path --libPath $schema_path
     echo "Importing entities"
     exec --storedBlock "import-entities"
     echo "Importing predicates"
@@ -21,9 +21,8 @@ class LoadSchemaScript(BloxScript):
         facts into a workspace.
 
         """
-
-        super(LoadSchemaScript, self).__init__(LOAD_SCHEMA_TEMPLATE, workspace)
+        BloxScript.__init__(self, LoadSchemaScript.TEMPLATE, workspace)
 
         # Save to substituted variables
-        self.schema  = schema_path
-        self.imprort = import_path
+        self.schema_path = schema_path
+        self.import_path = import_path

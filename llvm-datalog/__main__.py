@@ -1,7 +1,5 @@
 import argparse
-
-from copper.analysis import Analysis
-from copper.project import Project
+import copper
 
 def main():
     # Create CLI parser
@@ -12,17 +10,17 @@ def main():
                         help='output directory')
 
     args = parser.parse_args()       # parse arguments
-    analysis = Analysis(args) # create analysis
+    analysis = copper.Analysis(args) # create analysis
     analysis.generate_facts()        # generate CSV facts
     analysis.create_database()       # create database
 
-    symbol_lookup_proj = Project()
+    symbol_lookup_proj = copper.Project()
     symbol_lookup_proj.name = 'symbol-lookup'
     symbol_lookup_proj.deps = ['schema']
 
     analysis.load_project(symbol_lookup_proj)
 
-    callgraph_proj = Project()
+    callgraph_proj = copper.Project()
     callgraph_proj.name ='callgraph'
     callgraph_proj.deps = ['schema', 'symbol-lookup']
 

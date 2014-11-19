@@ -1,11 +1,12 @@
+import blox
 import os
 import shutil
 import subprocess
-
 from functools import wraps
 
 from .resource import unpacked_binary, unpacked_project
 from .project import Project, UnpackedProject
+
 
 class Analysis(object):
 
@@ -67,13 +68,11 @@ class Analysis(object):
         with unpacked_project('schema') as schema_project:
             with unpacked_project('import') as import_project:
                 # Execute script while ignoring output
-                return (
-                    blox.LoadSchemaScript(
-                        workspace   = self._output_dir,
-                        schema_path = schema_project,
-                        import_path = import_project
-                    ).run()
-                )
+                blox.LoadSchemaScript(
+                    workspace   = self._output_dir,
+                    schema_path = schema_project,
+                    import_path = import_project
+                ).run()
         # Store workspace location
         self._workspace = self._output_dir
         print "Stored database in %s" % self._workspace
@@ -97,7 +96,7 @@ class Analysis(object):
                 # Execute script while ignoring output
                 return (
                     blox.LoadProjectScript(
-                        workspace    = self._output_dir,
+                        workspace    = self._workspace,
                         project_path = project.path,
                         library_path = libpath
                     ).run()
