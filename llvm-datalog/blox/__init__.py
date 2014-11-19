@@ -1,3 +1,3 @@
-from BloxScript import BloxScript
-from LoadSchemaScript import LoadSchemaScript
-from LoadProjectScript import LoadProjectScript
+from script import BloxScript
+from load_schema_script import LoadSchemaScript
+from load_project_script import LoadProjectScript
