@@ -7,13 +7,16 @@ from tempfile import NamedTemporaryFile
 class BloxScript(object):
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, template):
+    def __init__(self, template, workspace):
         """Initialize a LogicBlox script."""
         self._template = template
-        self._mapping = {}
+        self._mapping  = {'workspace' : workspace}
 
     def __getattr__(self, attr):
         return self._mapping(attr)
+
+    def __setattr__(self, attr, value):
+        self._mapping[attr] = value
 
     def run():
         """Execute this script."""
@@ -29,10 +32,6 @@ class BloxScript(object):
             # Execute script
             return subprocess.check_call(['bloxbatch', '-script', script])
 
-    def with_workspace(self, workspace):
-        """The workspace on which this script will be executed."""
-        self._mapping['workspace'] = workspace
-        return self
 
     # Alias call method with run
     __call__ = run

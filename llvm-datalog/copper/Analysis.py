@@ -68,11 +68,11 @@ class Analysis(object):
             with unpacked_project('import') as import_project:
                 # Execute script while ignoring output
                 return (
-                    blox.LoadSchemaScript()
-                    .with_workspace(self._output_dir)
-                    .with_schema_path(schema_project)
-                    .with_import_path(import_project)
-                    .run()
+                    blox.LoadSchemaScript(
+                        workspace   = self._output_dir,
+                        schema_path = schema_project,
+                        import_path = import_project
+                    ).run()
                 )
         # Store workspace location
         self._workspace = self._output_dir
@@ -96,11 +96,11 @@ class Analysis(object):
             with UnpackedProject(project) as project:
                 # Execute script while ignoring output
                 return (
-                    blox.LoadProjectScript()
-                    .with_workspace(self.workspace)
-                    .with_project_path(project.path)
-                    .with_library_path(libpath)
-                    .run()
+                    blox.LoadProjectScript(
+                        workspace    = self._output_dir,
+                        project_path = project.path,
+                        library_path = libpath
+                    ).run()
                 )
         # We have unpacked dependencies
         with unpacked_project(unpacked_deps.pop()) as dep_path:
