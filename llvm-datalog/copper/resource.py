@@ -41,7 +41,7 @@ class unpacked_binary(constants):
 
 
 class unpacked_project(constants):
-    """A context manager that unpacks a compiler Datalog project to a
+    """A context manager that unpacks a compiled Datalog project to a
     temporary location.
 
     """
