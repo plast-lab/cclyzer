@@ -3,7 +3,7 @@ import os
 import logging
 import shutil
 
-from tempfile import NamedTemporaryFile, mkdtemp
+from tempfile import mkdtemp, mkstemp
 from utils import singleton
 
 class FileManager(object):
@@ -26,11 +26,13 @@ class FileManager(object):
     def cleanup_files():
         FileManager().cleanup()
 
-    def gettempfile(self, *f_args, **f_kwargs):
-        tmpfile = NamedTemporaryFile(dir = self.root_directory, delete = False, *f_args, **f_kwargs)
-        tmpfile.manager = self
-        self.register(tmpfile.name)
-        return tmpfile
-
-    def register(self, path):
+    def mktemp(self, *f_args, **f_kwargs):
+        fd, path = mkstemp(dir = self.root_directory, *f_args, **f_kwargs)
         logging.debug("Adding temporary file %s", path)
+        os.close(fd)
+        return path
+
+    def mkdtemp(self, *f_args, **f_kwargs):
+        path = mkdtemp(dir = self.root_directory, *f_args, **f_kwargs)
+        logging.debug("Adding temporary directory %s", path)
+        return path
