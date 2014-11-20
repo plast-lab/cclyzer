@@ -12,12 +12,15 @@ class unpacked_binary(object):
     """
     def __init__(self, resource):
         self._resource = resource
+        self.logger = logging.getLogger(__name__)
 
     def __enter__(self):
         # Compute resource path
         resource = self._resource
         path_to_resource = path.join('bin', resource)
-        path_to_file = path.join(runtime.FileManager().root_directory, path_to_resource)
+        path_to_file = runtime.FileManager().getpath(path_to_resource)
+
+        self.logger.info("Extracting binary %s to %s", resource, path_to_file)
 
         # Create parent directory
         parent_dir = path.dirname(path_to_file)
@@ -48,14 +51,19 @@ class unpacked_project(object):
     """
     def __init__(self, project):
         self._project = project
+        self.logger = logging.getLogger(__name__)
 
     def __enter__(self):
         # Compute resource path
         project = self._project
         base_dir = path.join('logic', project)
-        root_dir = path.join(runtime.FileManager().root_directory, base_dir)
+        root_dir = runtime.FileManager().getpath(base_dir)
 
-        logging.info("Extracting project %s to %s", project, root_dir)
+        # Check if project has been extracted before
+        if path.exists(root_dir):
+            return root_dir
+
+        self.logger.info("Extracting project %s to %s", project, root_dir)
 
         # Iterate over all project files
         for resource in resource_listdir(settings.RESOURCE_DIR, base_dir):
@@ -67,11 +75,7 @@ class unpacked_project(object):
             path_to_resource = path.join(base_dir, resource)
             path_to_file = path.join(root_dir, resource)
 
-            # Check if project has been extracted before
-            if path.exists(path_to_file):
-                continue
-
-            logging.debug("Extracting project file %s to %s", path_to_resource, path_to_file)
+            self.logger.debug("Extracting project file %s", path_to_resource)
 
             # Create parent directory
             parent_dir = path.dirname(path_to_file)

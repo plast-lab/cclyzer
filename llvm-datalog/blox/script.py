@@ -1,5 +1,4 @@
 import abc
-import copper
 import os
 import string
 import subprocess
@@ -7,10 +6,11 @@ import subprocess
 class BloxScript(object):
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, template, workspace):
+    def __init__(self, template, workspace, path):
         """Initialize a LogicBlox script."""
         self._template = template
         self._mapping  = {'workspace' : workspace}
+        self._path     = path
 
     def __getattr__(self, attr):
         return self._mapping(attr)
@@ -28,7 +28,7 @@ class BloxScript(object):
         """Execute this script."""
 
         # Get temporary file path
-        path_to_script = copper.runtime.FileManager().mktemp(suffix = '.lb')
+        path_to_script = self._path
 
         # Write contents of this LogicBlox script
         with open(path_to_script, mode = 'w') as script:

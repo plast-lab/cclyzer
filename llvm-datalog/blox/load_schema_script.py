@@ -16,12 +16,12 @@ class LoadSchemaScript(BloxScript):
     commit
     '''
 
-    def __init__(self, workspace, schema_path, import_path):
+    def __init__(self, workspace, script_path, schema_path, import_path):
         """Initialize a script that loads the basic schema and imports
         facts into a workspace.
 
         """
-        BloxScript.__init__(self, LoadSchemaScript.TEMPLATE, workspace)
+        BloxScript.__init__(self, LoadSchemaScript.TEMPLATE, workspace, script_path)
 
         # Save to substituted variables
         self.schema_path = schema_path

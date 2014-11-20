@@ -9,12 +9,12 @@ class LoadProjectScript(BloxScript):
     commit
     '''
 
-    def __init__(self, workspace, project_path, library_path):
+    def __init__(self, workspace, script_path, project_path, library_path):
         """Initialize a script that loads a project into a
         workspace.
 
         """
-        BloxScript.__init__(self, LoadProjectScript.TEMPLATE, workspace)
+        BloxScript.__init__(self, LoadProjectScript.TEMPLATE, workspace, script_path)
 
         # Transform to string, assuming a sequence was given
         if not isinstance(library_path, basestring):

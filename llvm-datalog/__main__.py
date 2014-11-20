@@ -4,7 +4,7 @@ import logging
 
 def main():
     # Configure logging
-    logging.basicConfig(filename='copper.log', level=logging.DEBUG)
+    logging.basicConfig(filename='copper.log', level=logging.INFO)
     logging.info('Started')
 
     # Create CLI parser

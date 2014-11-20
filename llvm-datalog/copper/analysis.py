@@ -4,15 +4,16 @@ import shutil
 import subprocess
 from functools import wraps
 
+from . import runtime
 from .resource import unpacked_binary, unpacked_project
 from .project import Project, UnpackedProject
-
 
 class Analysis(object):
 
     def __init__(self, obj):
         self._input_dir = obj.input_dir
         self._output_dir = obj.output_dir
+        self._manager = runtime.FileManager()
         self._projects = []
 
     def inside_output_subdir(subdir):
@@ -70,6 +71,7 @@ class Analysis(object):
                 # Execute script while ignoring output
                 blox.LoadSchemaScript(
                     workspace   = self._output_dir,
+                    script_path = self._manager.mktemp(suffix = '.lb'),
                     schema_path = schema_project,
                     import_path = import_project
                 ).run()
@@ -97,6 +99,7 @@ class Analysis(object):
                 return (
                     blox.LoadProjectScript(
                         workspace    = self._workspace,
+                        script_path  = self._manager.mktemp(suffix = '.lb'),
                         project_path = project.path,
                         library_path = libpath
                     ).run()

@@ -12,8 +12,8 @@ class FileManager(object):
     def __init__(self):
         """Initialize the file manager."""
         self._dir = mkdtemp(prefix = 'copper-')
-        print "Initializing file manager", self._dir
-        logging.info("Initializing file manager rooted at %s", self._dir)
+        self.logger = logging.getLogger(__name__)
+        self.logger.info("Initializing file manager, rooted at %s", self._dir)
 
     def cleanup(self):
         shutil.rmtree(self._dir)
@@ -27,12 +27,13 @@ class FileManager(object):
         FileManager().cleanup()
 
     def mktemp(self, *f_args, **f_kwargs):
-        fd, path = mkstemp(dir = self.root_directory, *f_args, **f_kwargs)
-        logging.debug("Adding temporary file %s", path)
+        fd, path = mkstemp(dir = self._dir, *f_args, **f_kwargs)
         os.close(fd)
         return path
 
     def mkdtemp(self, *f_args, **f_kwargs):
-        path = mkdtemp(dir = self.root_directory, *f_args, **f_kwargs)
-        logging.debug("Adding temporary directory %s", path)
+        path = mkdtemp(dir = self._dir, *f_args, **f_kwargs)
         return path
+
+    def getpath(self, path):
+        return os.path.join(self._dir, path)
