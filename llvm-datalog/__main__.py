@@ -19,17 +19,10 @@ def main():
     analysis.generate_facts()        # generate CSV facts
     analysis.create_database()       # create database
 
-    symbol_lookup_proj = copper.Project()
-    symbol_lookup_proj.name = 'symbol-lookup'
-    symbol_lookup_proj.deps = ('schema',)
+    # Load additional projects
+    analysis.load_project(copper.Project.SYMBOL_LOOKUP)
+    analysis.load_project(copper.Project.CALLGRAPH)
 
-    analysis.load_project(symbol_lookup_proj)
-
-    callgraph_proj = copper.Project()
-    callgraph_proj.name ='callgraph'
-    callgraph_proj.deps = ('schema', 'symbol-lookup')
-
-    analysis.load_project(callgraph_proj)
     logging.info('Finished')
 
 if __name__ == '__main__':

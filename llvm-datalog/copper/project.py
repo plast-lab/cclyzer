@@ -1,7 +1,29 @@
 from .resource import unpacked_project
 
 class Project(object):
-    pass
+    def __init__(self, name, *dependencies):
+        self._name = name
+        self._deps = tuple(dependencies)
+
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def dependencies(self):
+        return self._deps
+
+    # Symbol lookup project
+    SYMBOL_LOOKUP = None
+
+    # Callgraph project
+    CALLGRAPH = None
+
+
+# Initialize projects
+Project.SYMBOL_LOOKUP = Project('symbol-lookup', 'schema')
+Project.CALLGRAPH = Project('callgraph', 'schema', 'symbol-lookup')
+
 
 class UnpackedProject(Project):
     """Adapts the Project class by automatically unpacking the project

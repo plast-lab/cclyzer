@@ -87,7 +87,7 @@ class Analysis(object):
 
 
     def load_project(self, project):
-        self._load_project(project, list(project.deps), [])
+        self._load_project(project, list(project.dependencies), [])
         self._projects.append(project)
         return self
 
