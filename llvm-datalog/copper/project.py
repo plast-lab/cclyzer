@@ -13,14 +13,10 @@ class Project(object):
     def dependencies(self):
         return self._deps
 
-    # Symbol lookup project
-    SYMBOL_LOOKUP = None
 
-    # Callgraph project
-    CALLGRAPH = None
+# Initialize projects. This has to be done after class definition,
+# otherwise the class will not have been instantiated. Ugly!!!
 
-
-# Initialize projects
 Project.SYMBOL_LOOKUP = Project('symbol-lookup', 'schema')
 Project.CALLGRAPH = Project('callgraph', 'schema', 'symbol-lookup')
 
