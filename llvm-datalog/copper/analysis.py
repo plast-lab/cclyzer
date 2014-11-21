@@ -56,7 +56,8 @@ class Analysis(object):
         with unpacked_binary('fact-generator') as executable:
             subprocess.check_call([executable, "-i", indir, "-o", outdir])
         # Store path to this output directory
-        os.unlink('facts')
+        if os.path.exists('facts'):
+            os.unlink('facts')
         os.symlink(outdir, 'facts')
         print "Stored facts in %s" % outdir
         return self
@@ -86,7 +87,7 @@ class Analysis(object):
 
 
     def load_project(self, project):
-        self._load_project(project, project.deps, [])
+        self._load_project(project, list(project.deps), [])
         self._projects.append(project)
         return self
 
