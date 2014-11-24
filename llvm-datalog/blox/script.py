@@ -1,4 +1,5 @@
 import abc
+import logging
 import os
 import string
 import subprocess
@@ -27,6 +28,9 @@ class BloxScript(object):
     def run(self):
         """Execute this script."""
 
+        # Create logger
+        logger = logging.getLogger(__name__)
+
         # Get temporary file path
         path_to_script = self._path
 
@@ -38,8 +42,25 @@ class BloxScript(object):
             # Write template to file after variable substitution
             contents = script.write(tpl.substitute(self._mapping))
 
+        # Log event
+        logger.info("bloxbatch -script %s", path_to_script)
+
+        # Redirect error stream to file
+        bloxbatch_log = path_to_script + '.log'
+        record = logger.warn
+
         # Execute script
-        return subprocess.check_call(['bloxbatch', '-script', path_to_script])
+        with open(bloxbatch_log, 'w+') as errlog:
+            try:
+                # Call subprocess
+                subprocess.check_call(
+                    ['bloxbatch', '-script', path_to_script], stderr = errlog)
+            except:
+                record = logger.error
+                raise
+            finally: # Go to the beginning of the log and add new log record
+                errlog.seek(0)
+                record("\n%s", errlog.read())
 
 
     # Alias call method with run
