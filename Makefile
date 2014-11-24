@@ -185,7 +185,7 @@ $$($1.outdir): | $(tests.outdir)
 # Run target
 
 test-$1.run: tests.setup
-	echo Analyzing $1 ...
+	@echo Analyzing $1 ...
 	$(artifact.exe) -i $$($1.dir) -o $$($1.outdir)
 
 
