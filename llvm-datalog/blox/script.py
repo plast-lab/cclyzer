@@ -47,7 +47,7 @@ class BloxScript(object):
 
         # Redirect error stream to file
         bloxbatch_log = path_to_script + '.log'
-        record = logger.warn
+        record = logger.warning
 
         # Execute script
         with open(bloxbatch_log, 'w+') as errlog:
