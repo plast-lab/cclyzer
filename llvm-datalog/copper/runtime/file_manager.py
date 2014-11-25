@@ -4,6 +4,7 @@ import logging
 import shutil
 
 from .. import settings
+from .environment import Environment
 from tempfile import mkdtemp, mkstemp
 from utils import singleton
 
@@ -12,16 +13,8 @@ class FileManager(object):
 
     def __init__(self):
         """Initialize the file manager."""
-        # Create XDG compliant cache directory
-        default_cachedir = os.path.join(os.environ['HOME'], '.cache')
-        xdg_cachedir = os.getenv('XDG_CACHE_HOME', default_cachedir)
-        app_cachedir = os.path.join(xdg_cachedir, settings.APP_NAME)
-
-        # Create cache directory if it doesn't exist
-        if not os.path.exists(app_cachedir):
-            makedirs(app_cachedir)
-
-        self._dir = mkdtemp(prefix = '', dir = app_cachedir)
+        env = Environment()
+        self._dir = mkdtemp(prefix = '', dir = env.user_runtime_dir)
         self.logger = logging.getLogger(__name__)
         self.logger.info("Initializing file manager, rooted at %s", self._dir)
 
