@@ -2,7 +2,7 @@ from functools import wraps
 from timeit import default_timer
 
 class Timer(object):
-    def __init__(self, callback):
+    def __init__(self, callback = None):
         """A timing context manager."""
         self.callback = callback
 
@@ -12,7 +12,8 @@ class Timer(object):
 
     def __exit__(self, type, value, traceback):
         self.end = default_timer()
-        self.callback(self.end - self.start)
+        if self.callback is not None:
+            self.callback(self.end - self.start)
 
     def elapsed_time(self):
         return default_timer() - self.start

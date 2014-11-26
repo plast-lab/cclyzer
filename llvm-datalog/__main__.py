@@ -4,6 +4,9 @@ import copper
 import logging
 import os
 from logging.handlers import RotatingFileHandler, SysLogHandler
+from utils.timer import Timer
+from utils.redirect import stdout_redirected
+
 
 def main():
     with setup_logging():
@@ -14,14 +17,35 @@ def main():
         parser.add_argument('-o', '--output-dir', metavar='DIRECTORY', required = True,
                             help='output directory')
 
+        # Initialize analysis
         args = parser.parse_args()       # parse arguments
         analysis = copper.Analysis(args) # create analysis
-        analysis.generate_facts()        # generate CSV facts
-        analysis.create_database()       # create database
+
+        # Generating CSV facts
+        with task_timing('generating facts'):
+            analysis.generate_facts()
+
+        # Create database and import facts
+        with task_timing('importing facts to database'):
+            analysis.create_database()
 
         # Load additional projects
-        analysis.load_project(copper.Project.SYMBOL_LOOKUP)
-        analysis.load_project(copper.Project.CALLGRAPH)
+        with task_timing('installed symbol-lookup project'):
+            analysis.load_project(copper.Project.SYMBOL_LOOKUP)
+        with task_timing('installed callgraph project'):
+            analysis.load_project(copper.Project.CALLGRAPH)
+
+
+@contextlib.contextmanager
+def task_timing(description, to = os.devnull):
+    # Define closure that prints elapsed time
+    def print_time(elapsed_time):
+        print "    %-32s ... %2.2fs" % (description, elapsed_time)
+
+    # Execute task with timer and stdout redirected to /dev/null
+    with Timer(print_time):
+        with stdout_redirected():
+            yield
 
 
 @contextlib.contextmanager
@@ -60,6 +84,7 @@ def setup_logging(lvl = logging.INFO):
         yield
     finally:
         root_logger.info('Finished')
+
 
 if __name__ == '__main__':
     main()
