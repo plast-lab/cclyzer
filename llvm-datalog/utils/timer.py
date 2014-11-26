@@ -15,4 +15,4 @@ class Timer(object):
         self.callback(self.end - self.start)
 
     def elapsed_time(self):
-        return default_timer() - start
+        return default_timer() - self.start
