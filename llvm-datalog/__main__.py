@@ -5,7 +5,7 @@ import logging
 import os
 from logging.handlers import RotatingFileHandler, SysLogHandler
 from utils.timer import Timer
-from utils.redirect import stdout_redirected
+from utils.contextlib2 import stdout_redirected
 
 
 def main():
