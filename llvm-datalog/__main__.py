@@ -18,22 +18,13 @@ def main():
                             help='output directory')
 
         # Initialize analysis
-        args = parser.parse_args()       # parse arguments
-        analysis = copper.Analysis(args) # create analysis
+        config = copper.AnalysisConfig(parser.parse_args())
+        analysis = copper.Analysis(config) # create analysis
 
-        # Generating CSV facts
-        with task_timing('generating facts'):
-            analysis.generate_facts()
-
-        # Create database and import facts
-        with task_timing('importing facts to database'):
-            analysis.create_database()
-
-        # Load additional projects
-        with task_timing('installed symbol-lookup project'):
-            analysis.load_project(copper.Project.SYMBOL_LOOKUP)
-        with task_timing('installed callgraph project'):
-            analysis.load_project(copper.Project.CALLGRAPH)
+        # Run analysis while timing each step
+        for step in analysis.pipeline:
+            with task_timing(step.message):
+                step.apply(analysis)
 
 
 @contextlib.contextmanager
