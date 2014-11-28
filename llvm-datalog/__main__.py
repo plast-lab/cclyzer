@@ -4,6 +4,7 @@ import copper
 import logging
 import os
 from logging.handlers import RotatingFileHandler, SysLogHandler
+from utils import contextlib2
 from utils.timer import Timer
 from utils.contextlib2 import stdout_redirected
 
@@ -21,22 +22,29 @@ def main():
         config = copper.AnalysisConfig(parser.parse_args())
         analysis = copper.Analysis(config) # create analysis
 
-        # Run analysis while timing each step
+        # Dynamically decorate each analysis step
         for step in analysis.pipeline:
-            with task_timing(step.message):
-                step.apply(analysis)
+            # Time step plus redirect stdout to /dev/null
+            step.apply = task_timing(step.message)(
+                stdout_redirected()(
+                    step.apply
+                )
+            )
+
+        # Run analysis while timing each step, plus total time
+        with task_timing('total time'):
+            analysis.run()
 
 
-@contextlib.contextmanager
-def task_timing(description, to = os.devnull):
+@contextlib2.contextmanager
+def task_timing(description):
     # Define closure that prints elapsed time
     def print_time(elapsed_time):
         print "    %-32s ... %2.2fs" % (description, elapsed_time)
 
-    # Execute task with timer and stdout redirected to /dev/null
+    # Execute task with timer
     with Timer(print_time):
-        with stdout_redirected():
-            yield
+        yield
 
 
 @contextlib.contextmanager
