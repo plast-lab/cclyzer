@@ -40,7 +40,7 @@ def main():
 def task_timing(description):
     # Define closure that prints elapsed time
     def print_time(elapsed_time):
-        print "    %-32s ... %2.2fs" % (description, elapsed_time)
+        print "    %-32s ... %6.2fs" % (description, elapsed_time)
 
     # Execute task with timer
     with Timer(print_time):
