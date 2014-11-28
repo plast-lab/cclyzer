@@ -119,28 +119,3 @@ $(schema.pb): $(import.outdir)/%.pb: $(schema.ph) | $(import.outdir)
 .PHONY: import.src
 import.src: $(schema.pb)
 	$(importgen.exe) --ignore import/.ignored-predicates --dir $(data.link) --delim '\t' -o import $^
-
-
-
-#------------------------------
-#  Template Script Creation
-#------------------------------
-
-template.in  := $(template.lb)
-template.out := $(INSTALL_BIN)/$(template.lb)
-
-define process-script
-  $(M4) --define=SCHEMA=$(schema.outdir:$(LEVEL)/%=./%)         \
-		--define=IMPORT=$(import.outdir:$(LEVEL)/%=./%)         \
-        --define=LOOKUP=$(symbol-lookup.outdir:$(LEVEL)/%=./%)  \
-        --define=CALLGRAPH=$(callgraph.outdir:$(LEVEL)/%=./%)   \
-        $2 > $1
-endef
-
-$(template.out): $(template.in) force
-	$(call process-script,$@,$<)
-
-install: $(template.out)
-
-uninstall:
-	$(RM) $(template.out)
