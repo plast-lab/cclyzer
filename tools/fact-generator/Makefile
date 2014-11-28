@@ -1,11 +1,11 @@
 # Directory depth
-LEVEL := ..
+LEVEL := ../..
 
 # Placeholder
 all:
 
 # Import common Makefile routines
-include $(LEVEL)/common.mk
+include $(LEVEL)/src/common.mk
 
 # Generate build directory
 $(eval $(call create-destdir,factgen))
@@ -16,7 +16,7 @@ outdir       := $(factgen.outdir)
 sources      := $(wildcard $(srcdir)/*.cpp)
 objects      := $(patsubst $(srcdir)/%.cpp,$(outdir)/%.o,$(sources))
 dependencies := $(patsubst $(srcdir)/%.cpp,$(outdir)/%.d,$(sources))
-program      := $(outdir)/$(factgen.exe)
+program      := $(or $(factgen.artifact),$(outdir)/$(factgen.exe))
 include_dirs := include
 
 
@@ -65,14 +65,6 @@ clean:
 .PHONY: check-syntax
 check-syntax:
 	$(COMPILE.cpp) -Wall -Wextra -pedantic -fsyntax-only $(sources)
-
-.PHONY: install
-install: $(program)
-	$(INSTALL) -m 0755 $< $(INSTALL_BIN)
-
-.PHONY: uninstall
-uninstall:
-	$(RM) $(INSTALL_BIN)/$(notdir $(program))
 
 
 #-----------------------------------

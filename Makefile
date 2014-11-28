@@ -2,52 +2,40 @@ LEVEL := .
 
 all:
 
-module.logic      := logic
-module.facts      := fact-generator
-module.imports    := import-generator
-module.driver     := llvm-datalog
-modules           := $(module.logic) $(module.facts) $(module.imports) $(module.driver)
-targets.clean     := $(addsuffix .clean,$(modules))
-targets.install   := $(addsuffix .install,$(modules))
-targets.uninstall := $(addsuffix .uninstall,$(modules))
+module.logic   := logic
+module.driver  := python-egg
+module.facts   := fact-generator
+module.imports := import-generator
+modules        := $(module.logic) $(module.facts) $(module.imports) $(module.driver)
+modules.clean  := $(addsuffix .clean,$(modules))
 
-include $(LEVEL)/common.mk
+include $(LEVEL)/src/common.mk
 
 
-#--------------------------
-#  Accumulating Rules
-#--------------------------
+# Paths to modules
+
+$(addsuffix _PATH, $(module.driver))  := src/main
+$(addsuffix _PATH, $(module.logic))   := src/logic
+$(addsuffix _PATH, $(module.facts))   := tools/fact-generator
+$(addsuffix _PATH, $(module.imports)) := tools/import-generator
+
+
+# Accumulating Rules
 
 $(modules):
-	$(MAKE) --directory=$@
+	$(MAKE) --directory=$($@_PATH)
 
-$(targets.clean): %.clean:
-	$(MAKE) --directory=$* clean
-
-$(targets.install): %.install:
-	$(MAKE) --directory=$* install
-
-$(targets.uninstall): %.uninstall:
-	$(MAKE) --directory=$* uninstall
+$(modules.clean): %.clean:
+	$(MAKE) --directory=$($*_PATH) clean
 
 
-#--------------------------
-#  Common Phony Targets
-#--------------------------
+# Phony targets
 
-.PHONY: all $(modules)
+.PHONY: all clean install uninstall $(modules) $(modules.clean)
 all: $(modules)
 
-.PHONY: clean $(targets.clean)
-clean: $(targets.clean)
+clean: $(modules.clean)
 	$(RM) -r $(OUTDIR)/
-
-.PHONY: install $(targets.install)
-install: $(targets.install)
-
-.PHONY: uninstall $(targets.uninstall)
-uninstall: $(targets.uninstall)
-
 
 
 #--------------------------
@@ -57,39 +45,38 @@ uninstall: $(targets.uninstall)
 # Generate build directory for resources
 $(eval $(call create-destdir,resources,resources))
 
-# Add binary and logic resources
-resources := $(resources.outdir)/logic
-resources += $(resources.outdir)/bin/fact-generator
-resources += $(resources.outdir)/bin/import-generator
-
 # Create nested directories
 $(resources.outdir)/bin: | $(resources.outdir)
 	$(MKDIR) $@
 
-# Binaries
-$(resources.outdir)/bin/fact-generator: $(module.facts)
-$(resources.outdir)/bin/fact-generator: resource := $(OUTDIR)/$(module.facts)/fact-generator
-$(resources.outdir)/bin/import-generator: $(module.imports)
-$(resources.outdir)/bin/import-generator: resource := $(OUTDIR)/$(module.imports)/import-generator
-$(resources.outdir)/bin/%: | $(resources.outdir)/bin
+# Paths to binary and logic resources
+resource.factgen := $(resources.outdir)/bin/fact-generator
+resource.logic   := $(resources.outdir)/logic
+
+# Add binary and logic resources
+resources := $(resource.logic) $(resource.factgen)
+
+# Resource targets
+$(resource.factgen)   :  resource := $(OUTDIR)/$(module.facts)/fact-generator
+$(resource.logic)     :  resource := $(OUTDIR)/logic
+
+$(resource.factgen): | $(resources.outdir)/bin
 	$(info Adding resource $(resource))
 	$(QUIET) ln $(resource) $@
 
-# Compiled Datalog projects
-$(resources.outdir)/logic: resource := $(OUTDIR)/logic
-$(resources.outdir)/logic: $(module.logic) | $(resources.outdir)
+$(resource.logic):   | $(resources.outdir)
 	$(info Adding resource $(resource))
 	$(QUIET) ln -s $(abspath $(resource)) $@
 
+$(resources) : $(modules)
 
 # All resources are intermediate files
 .INTERMEDIATE: $(resources)
 
 # Phony targets
-.PHONY: resources
+.PHONY: resources resources.clean
 resources: $(resources)
 
-.PHONY: resources.clean
 resources.clean:
 	$(RM) -r $(resources.outdir)
 
@@ -100,8 +87,9 @@ resources.clean:
 
 $(eval $(call create-destdir,dist,dist))
 
-# Zip artifact
-artifact.zip  := $(dist.outdir)/llvm-datalog.zip
+# Artifacts
+artifact.zip := $(dist.outdir)/llvm-datalog.zip
+artifact.exe := $(dist.outdir)/llvm-datalog
 
 .INTERMEDIATE: $(artifact.zip)
 $(artifact.zip): $(modules) resources | $(dist.outdir)
@@ -113,9 +101,6 @@ $(artifact.zip): $(modules) resources | $(dist.outdir)
 	zip -r $@ $(resources:$(OUTDIR)/%=%) >/dev/null
 	$(QUIET) $(RM) resources
 
-# Executable artifact
-artifact.exe := $(dist.outdir)/llvm-datalog
-
 $(artifact.exe): $(artifact.zip) dist.force
 	$(info Creating artifact $@)
 	$(QUIET) echo '#!/usr/bin/env python' | cat - $< > $@
@@ -124,19 +109,24 @@ $(artifact.exe): $(artifact.zip) dist.force
 
 # Phony targets
 
-.PHONY: dist
+.PHONY: dist dist.clean dist.force
 dist: $(artifact.zip) $(artifact.exe)
 
-.PHONY: dist.clean
 dist.clean:
 	$(RM) -r $(dist.outdir)
 
-.PHONY: dist.force
 dist.force:
 
 all: dist
 clean: dist.clean
 
+
+# System Installation
+
+install: $(artifact.exe)
+	$(INSTALL) -m 0755 $< $(INSTALL_BIN)
+
+uninstall:
 
 
 #-----------------------------------------
@@ -154,16 +144,13 @@ clean: dist.clean
 benchmarks := $(dir $(wildcard tests/*/*.bc))
 
 # Load LogicBlox functions
-include $(LEVEL)/logic/blox.mk
+include $(LEVEL)/src/logic/blox.mk
 
 # Generate build directory for tests
 $(eval $(call create-destdir,tests,tests))
 
 # Phony testing targets that apply to all benchmarks
 .PHONY: tests.setup tests.run tests.clean
-
-# Modify PATH so that it includes the fact-generator executable
-export PATH := $(INSTALL_BIN):$(PATH)
 
 
 #----------------------------
@@ -198,7 +185,7 @@ test-$1.clean:
 
 # Phony targets dependencies
 
-tests.setup  : $(targets.install)
+tests.setup  : $(targets)
 tests.run    : test-$1.run
 tests.clean  : test-$1.clean
 

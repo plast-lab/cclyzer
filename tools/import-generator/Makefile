@@ -1,11 +1,11 @@
 # Directory depth
-LEVEL := ..
+LEVEL := ../..
 
 # Placeholder
 all:
 
 # Import common Makefile routines
-include $(LEVEL)/common.mk
+include $(LEVEL)/src/common.mk
 
 # Generate build directory
 $(eval $(call create-destdir,importgen))
@@ -16,7 +16,7 @@ outdir       := $(importgen.outdir)
 sources      := $(wildcard $(srcdir)/*.cc)
 objects       = $(patsubst $(srcdir)/%.cc,$(outdir)/%.o,$(sources))
 dependencies := $(patsubst $(srcdir)/%.cc,$(outdir)/%.d,$(sources))
-program      := $(outdir)/$(importgen.exe)
+program      := $(or $(importgen.artifact),$(outdir)/$(importgen.exe))
 include_dirs := include
 
 
@@ -92,14 +92,6 @@ clean:
 .PHONY: check-syntax
 check-syntax:
 	$(COMPILE.cc) -Wall -Wextra -std=c++0x -pedantic -fsyntax-only $(sources)
-
-.PHONY: install
-install: $(program)
-	$(INSTALL) -m 0755 $< $(INSTALL_BIN)
-
-.PHONY: uninstall
-uninstall:
-	$(RM) $(INSTALL_BIN)/$(notdir $(program))
 
 
 #-----------------------------------

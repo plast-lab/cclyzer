@@ -15,23 +15,6 @@ PROTOC      := /usr/bin/protoc
 # Other tools
 factgen.exe   := fact-generator
 importgen.exe := import-generator
-template.lb   := run.template
-
-
-#-------------------------------------------------------------------------
-# [Link to Data]
-#
-# import-generator has to specify a path from where the file
-# predicates will be imported. However, each benchmark will place its
-# facts at a different site. Thus, we introduce a level of indirection
-# though a top-level symbolic link, namely ``data.link'', that will
-# point to the correct location each time.
-#
-# TODO: consider alternatives, such as a command-line option to the LB
-# engine as a directive to where lies the data to be imported
-#-------------------------------------------------------------------------
-
-data.link   := facts
 
 
 #--------------------
@@ -39,7 +22,7 @@ data.link   := facts
 #--------------------
 
 OUTDIR       = $(LEVEL)/build
-DESTDIR     ?= $(LEVEL)
+DESTDIR     ?= /usr/local
 
 INSTALL_BIN  = $(DESTDIR)/bin
 INSTALL_LIB  = $(DESTDIR)/lib
@@ -53,7 +36,8 @@ INSTALL_LIB  = $(DESTDIR)/lib
 #---------------------------------------------------
 
 define create-destdir
-$1.outdir = $(OUTDIR)/$(or $2,$(notdir $(CURDIR)))
+$1.outdir    = $(OUTDIR)/$(or $2,$(notdir $(CURDIR)))
+$1.artifact :=
 
 $$($1.outdir): | $(OUTDIR)
 	$(MKDIR) $$@

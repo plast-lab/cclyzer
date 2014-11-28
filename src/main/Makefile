@@ -1,14 +1,12 @@
-LEVEL := ..
+LEVEL := ../..
 
 # Placeholder
 all:
 
-install:
-
-.PHONY: all clean install
+.PHONY: all clean
 
 # Import common Makefile routines
-include $(LEVEL)/common.mk
+include $(LEVEL)/src/common.mk
 
 
 # Generate build directories for this module
@@ -16,7 +14,7 @@ include $(LEVEL)/common.mk
 $(eval $(call create-destdir,python,python))
 
 sources := $(filter-out ./Makefile,$(shell find -type f))
-archive := $(python.outdir)/llvm-datalog.zip
+archive := $(or $(python.artifact),$(python.outdir)/llvm-datalog.zip)
 
 
 # Build python archive

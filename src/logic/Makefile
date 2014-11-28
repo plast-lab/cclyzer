@@ -1,11 +1,11 @@
 # Directory depth
-LEVEL := ..
+LEVEL := ../..
 
 # Placeholder
 all:
 
 # Import common Makefile routines
-include $(LEVEL)/common.mk
+include $(LEVEL)/src/common.mk
 include blox.mk
 
 # Generate build directory for logic
@@ -23,10 +23,6 @@ project.files := $(shell find -type f -name '*.project')
 all:
 
 force:
-
-install:
-
-uninstall:
 
 clean:
 	$(RM) -r $(logic.outdir)
@@ -102,10 +98,17 @@ endef
 $(foreach project,$(projects),$(eval $(call project_template,$(project))))
 
 
-
-#------------------------------
-#  Generate Import Sources
-#------------------------------
+#------------------------------------------------------------------------------
+#  [Generate Import Sources]
+#
+#   When the schema changes, it is often necessary to regenerate the
+#   import logic. The steps are the following:
+#
+#     i. make sure that PATH contains the import-generator binary
+#    ii. run the `import.src' target of this Makefile
+#
+#   TODO add the above instructions on the project's README
+#------------------------------------------------------------------------------
 
 schema.pb   := $(schema.src:schema/%.logic=$(import.outdir)/%.pb)
 export PATH := $(INSTALL_BIN):$(LEVEL)/bin:$(PATH)
@@ -118,4 +121,4 @@ $(schema.pb): $(import.outdir)/%.pb: $(schema.ph) | $(import.outdir)
 # Generate import sources; this will recreate $(import.src) files
 .PHONY: import.src
 import.src: $(schema.pb)
-	$(importgen.exe) --ignore import/.ignored-predicates --dir $(data.link) --delim '\t' -o import $^
+	$(importgen.exe) --ignore import/.ignored-predicates --dir facts --delim '\t' -o import $^
