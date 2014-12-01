@@ -16,6 +16,9 @@ class Connector(object):
         """A connector to a LogicBlox workspace."""
         self._workspace = workspace
 
+    def queryCount(self, queryString, printOpt = ''):
+        return len(list(self.query(queryString, printOpt)))
+
     def query(self, queryString, printOpt = ''):
         """Run a query on this connector.
 
