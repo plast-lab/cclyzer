@@ -1,3 +1,4 @@
+import collections
 import subprocess
 import sys
 
@@ -16,8 +17,80 @@ class Connector(object):
         """A connector to a LogicBlox workspace."""
         self._workspace = workspace
 
+    def _run_command(self, command_line):
+        # Run the command with separate pipes for stdout/stderr streams
+        p = subprocess.Popen(
+            command_line, shell = True,
+            stdout = subprocess.PIPE,
+            stderr = subprocess.PIPE
+        )
+
+        # Parse output and lazily return each line
+        for line in p.stdout.readlines():
+            yield line.strip()
+
+        # Wait for the process to exit and store the return code
+        returncode = p.wait()
+
+        # Create an error string that contains everything in the stderr stream
+        errors = ''.join(p.stderr.readlines())
+
+        # Prune some redundant warnings
+        for warning in (w.lstrip() for w in _IGNORED_WARNINGS):
+            errors = errors.replace(warning, '')
+
+        # Print the remaining warnings
+        if errors.strip() is not '':
+            print >> sys.stderr, errors
+
+        # Check return code and raise exception at failure indication
+        if returncode != 0:
+            raise subprocess.CalledProcessError(returncode, command_line)
+
+
     def queryCount(self, queryString, printOpt = ''):
         return len(list(self.query(queryString, printOpt)))
+
+
+    def popCount(self, *args):
+        """Get the number of populated facts in the listed predicates.
+
+        This is equivalent to invoking the following command from the
+        shell::
+
+            bloxbatch -db `workspace` -popCount `args[0],args[1],...`
+
+
+        Args:
+          *args (str): the predicates to be counted
+
+        Returns:
+          dict(str,int): A dictionary that maps the predicate names to
+            their counters.
+
+        Raises:
+          subprocess.CalledProcessError: If the popCount subprocess returns non-zero.
+
+        """
+
+        if not args:
+            raise ValueError("Empty argument list of predicate names")
+
+        # Construct command line
+        command_line = "bloxbatch -db %s -popCount %s " % (self._workspace, ','.join(args))
+
+        # Create empty dictionary to hold counters
+        counters = collections.OrderedDict()
+
+        # Parse results and add counters to dictionary
+        for (pred, num) in (
+                line.rsplit(':', 1) for
+                line in self._run_command(command_line)
+        ):
+            counters[pred] = int(num)
+
+        return counters
+
 
     def query(self, queryString, printOpt = ''):
         """Run a query on this connector.
@@ -46,31 +119,4 @@ class Connector(object):
         if printOpt:
             command_line += "print %s" % (printOpt,)
 
-        # Run the command with separate pipes for stdout/stderr streams
-        p = subprocess.Popen(
-            command_line, shell = True,
-            stdout = subprocess.PIPE,
-            stderr = subprocess.PIPE
-        )
-
-        # Parse output and lazily return each line
-        for line in p.stdout.readlines():
-            yield line.strip()
-
-        # Wait for the process to exit and store the return code
-        returncode = p.wait()
-
-        # Create an error string that contains everything in the stderr stream
-        errors = ''.join(p.stderr.readlines())
-
-        # Prune some redundant warnings
-        for warning in (w.lstrip() for w in _IGNORED_WARNINGS):
-            errors = errors.replace(warning, '')
-        
-        # Print the remaining warnings
-        if errors.strip() is not '':
-            print >> sys.stderr, errors
-
-        # Check return code and raise exception at failure indication
-        if returncode != 0:
-            raise subprocess.CalledProcessError(returncode, command_line)
+        return self._run_command(command_line)
