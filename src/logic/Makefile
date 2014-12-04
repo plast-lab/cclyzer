@@ -12,8 +12,8 @@ include blox.mk
 $(eval $(call create-destdir,logic))
 
 # Projects (add directory here to enable it)
-projects      := schema import symbol-lookup callgraph
 project.files := $(shell find -type f -name '*.project')
+projects      := $(patsubst ./%/,%,$(dir $(project.files)))
 
 
 #-----------------------------------
