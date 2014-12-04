@@ -1,16 +1,16 @@
 import os
-from .project import Project
+from .project import Project, ProjectManager
 from .analysis_steps import *
 
 class Analysis(object):
-    def __init__(self, config):
+    def __init__(self, config, projects = ProjectManager()):
         self._config = config
         self._pipeline = [
             CleaningStep(),
             FactGenerationStep(),
             DatabaseCreationStep(),
-            LoadProjectStep(Project.SYMBOL_LOOKUP),
-            LoadProjectStep(Project.CALLGRAPH),
+            LoadProjectStep(projects.SYMBOL_LOOKUP),
+            LoadProjectStep(projects.CALLGRAPH),
         ]
 
     @property

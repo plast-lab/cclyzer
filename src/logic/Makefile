@@ -67,6 +67,7 @@ $$($1.deps): $(project.files)
 # Compile project
 $$($1.ph): $$($1.proj) $$($1.src) | $$($1.outdir)
 	$(call compile-datalog-project, $$<,$$(@D))
+	$(QUIET) $(INSTALL) -m 0644 $$< $$(@D)
 	$(QUIET) touch $$@
 
 
