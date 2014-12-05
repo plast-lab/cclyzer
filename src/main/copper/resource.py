@@ -25,11 +25,11 @@ class unpacked_binary(object):
         # Check if binary exists in cache
         if path.exists(path_to_file):
             # Open both cached and stored artifacts to compare
-            fileobj = resource_stream(settings.RESOURCE_DIR, path_to_resource)
-            cached_fileobj = open(path_to_file, 'rb')
+            cached_obj = open(path_to_file, 'rb')
+            disk_obj = resource_stream(settings.RESOURCE_DIR, path_to_resource)
 
             # File hasn't changed; don't overwrite
-            if all(b1 == b2 for (b1,b2) in izip_longest(fileobj, cached_fileobj)):
+            if all(a == b for (a,b) in izip_longest(disk_obj, cached_obj)):
                 return path_to_file
 
             # Remove existing binary. If the file is being used, this is
@@ -77,6 +77,20 @@ class unpacked_project(object):
 
         # Check if project has been extracted before
         if path.exists(root_dir):
+            # Compare signatures
+            disk_signature = resource_stream(
+                settings.RESOURCE_DIR, path.join(base_dir, '.placeholder')
+            ).read().strip()
+
+            cached_signature = open(
+                path.join(root_dir, '.placeholder'), 'rb'
+            ).read().strip()
+
+            # Project hasn't changed; don't overwrite
+            if disk_signature == cached_signature:
+                return root_dir
+
+            # remove stale cached project
             shutil.rmtree(root_dir)
 
         self.logger.info("Extracting project %s to %s", project, root_dir)
