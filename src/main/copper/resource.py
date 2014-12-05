@@ -1,5 +1,6 @@
 import logging
-from os import chmod, path, makedirs
+import shutil
+from os import chmod, path, makedirs, unlink
 from pkg_resources import resource_stream, resource_listdir
 from . import runtime
 from . import settings
@@ -21,6 +22,11 @@ class unpacked_binary(object):
         path_to_file = runtime.FileManager().getpath(path_to_resource)
 
         self.logger.info("Extracting binary %s to %s", resource, path_to_file)
+
+        # Remove existing binary. If the file is being used, this is
+        # safer than simply truncating it.
+        if path.exists(path_to_file):
+            unlink(path_to_file)
 
         # Create parent directory
         parent_dir = path.dirname(path_to_file)
@@ -61,7 +67,7 @@ class unpacked_project(object):
 
         # Check if project has been extracted before
         if path.exists(root_dir):
-            return root_dir
+            shutil.rmtree(root_dir)
 
         self.logger.info("Extracting project %s to %s", project, root_dir)
 

@@ -14,29 +14,26 @@ class FileManager(object):
     def __init__(self):
         """Initialize the file manager."""
         env = Environment()
-        self._dir = mkdtemp(prefix = '', dir = env.user_runtime_dir)
+        self._tmpdir = mkdtemp(prefix = '', dir = env.user_runtime_dir)
+        self._cachedir = env.user_cache_dir
         self.logger = logging.getLogger(__name__)
-        self.logger.info("Initializing file manager, rooted at %s", self._dir)
+        self.logger.info("Initializing file manager, rooted at %s", self._tmpdir)
 
     def cleanup(self):
-        shutil.rmtree(self._dir)
-
-    @property
-    def root_directory(self):
-        return self._dir
+        shutil.rmtree(self._tmpdir)
 
     @atexit.register
     def cleanup_files():
         FileManager().cleanup()
 
     def mktemp(self, *f_args, **f_kwargs):
-        fd, path = mkstemp(dir = self._dir, *f_args, **f_kwargs)
+        fd, path = mkstemp(dir = self._tmpdir, *f_args, **f_kwargs)
         os.close(fd)
         return path
 
     def mkdtemp(self, *f_args, **f_kwargs):
-        path = mkdtemp(dir = self._dir, *f_args, **f_kwargs)
+        path = mkdtemp(dir = self._tmpdir, *f_args, **f_kwargs)
         return path
 
     def getpath(self, path):
-        return os.path.join(self._dir, path)
+        return os.path.join(self._cachedir, path)
