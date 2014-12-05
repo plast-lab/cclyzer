@@ -36,7 +36,9 @@ vpath %.h $(include_dirs)
 
 CPPFLAGS += $(shell llvm-config --cppflags | sed 's/-fno-rtti//') 
 CXXFLAGS += $(shell llvm-config --cxxflags | sed 's/-fno-rtti//') -fexceptions -g
-LDFLAGS  += $(shell llvm-config --libs) $(shell llvm-config --ldflags) -lpthread -lcurses -ldl -g
+LDFLAGS  += $(shell llvm-config --libs)
+LDFLAGS  += $(filter-out -lz,$(shell llvm-config --ldflags))
+LDFLAGS  += -lpthread -lcurses -ldl -g
 LDFLAGS  += -lboost_system -lboost_filesystem -lboost_program_options
 
 
