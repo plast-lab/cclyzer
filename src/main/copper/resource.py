@@ -34,7 +34,7 @@ class unpacked_binary(object):
             makedirs(parent_dir)
 
         # Create temporary executable file
-        with open(path_to_file, 'w') as binary:
+        with open(path_to_file, 'wb') as binary:
             # Copy contents from resource stream
             for byte in resource_stream(settings.RESOURCE_DIR, path_to_resource):
                 binary.write(byte)
