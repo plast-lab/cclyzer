@@ -1,5 +1,6 @@
 import logging
 import shutil
+from itertools import izip_longest
 from os import chmod, path, makedirs, unlink
 from pkg_resources import resource_stream, resource_listdir
 from . import runtime
@@ -21,12 +22,21 @@ class unpacked_binary(object):
         path_to_resource = path.join('bin', resource)
         path_to_file = runtime.FileManager().getpath(path_to_resource)
 
-        self.logger.info("Extracting binary %s to %s", resource, path_to_file)
-
-        # Remove existing binary. If the file is being used, this is
-        # safer than simply truncating it.
+        # Check if binary exists in cache
         if path.exists(path_to_file):
+            # Open both cached and stored artifacts to compare
+            fileobj = resource_stream(settings.RESOURCE_DIR, path_to_resource)
+            cached_fileobj = open(path_to_file, 'rb')
+
+            # File hasn't changed; don't overwrite
+            if all(b1 == b2 for (b1,b2) in izip_longest(fileobj, cached_fileobj)):
+                return path_to_file
+
+            # Remove existing binary. If the file is being used, this is
+            # safer than simply truncating it.
             unlink(path_to_file)
+
+        self.logger.info("Extracting binary %s to %s", resource, path_to_file)
 
         # Create parent directory
         parent_dir = path.dirname(path_to_file)
