@@ -1,25 +1,53 @@
+LD = /usr/bin/ld.gold
 CC = clang
-CCFLAGS = -S -emit-llvm
+CCFLAGS = -flto
 
-####################
-# Clang Unit Tests #
-####################
+all:
 
-SRCDIR   = .
-OUTDIR   = ./build
-EXAMPLES = $(wildcard $(SRCDIR)/*.c)
+#--------------------
+# Clang Unit Tests
+#--------------------
 
-###################
-# Unit tests in C #
-###################
+srcdir      := .
+outdir      := ./build
+examples.c  := $(wildcard $(srcdir)/*.c)
+examples.o  := $(examples.c:$(srcdir)/%.c=$(outdir)/%.o)
+examples.s  := $(examples.c:$(srcdir)/%.c=$(outdir)/%.s)
+examples.bc := $(examples.c:$(srcdir)/%.c=$(outdir)/%.bc)
 
-all: examples
-examples: $(EXAMPLES:$(SRCDIR)/%.c=$(OUTDIR)/%.s)
+targets     := $(examples.o) $(examples.s) # $(examples.bc)
 
-$(OUTDIR)/%.s : $(SRCDIR)/%.c | $(OUTDIR)
-	$(CC) $(CCFLAGS) $< -o $@
+vpath %.c $(srcdir)
+vpath %.o $(outdir)
 
-$(OUTDIR):
+
+#-------------------
+# Unit tests in C
+#-------------------
+
+all: $(targets)
+
+$(targets): | $(outdir)
+
+$(outdir):
 	mkdir $@
 
-.PHONY: all examples
+# Target specific options
+$(outdir)/%.s  : CCFLAGS += -S -emit-llvm
+$(outdir)/%.bc : CCFLAGS += -Wl,-plugin-opt=also-emit-llvm
+
+
+# Recipes
+$(outdir)/%.o  : %.c
+	$(CC) -c $(CCFLAGS) $< -o $@
+
+$(outdir)/%.s  : %.c
+	$(CC) -c $(CCFLAGS) $< -o $@
+
+$(outdir)/%.bc : %.o
+	$(CC) $(CCFLAGS) $^ -o $*
+
+.PHONY: all clean
+
+clean:
+	rm -rf $(outdir)
