@@ -20,6 +20,19 @@ class Project(object):
     def dependencies(self):
         return self._deps
 
+    def __eq__(self, other):
+        if not isinstance(other, Project):
+            return NotImplemented
+
+        if self.name != other.name:
+            return false
+
+        return set(self._deps) == set(other.dependencies)
+
+    def __ne__(self, other):
+        result = self.__eq__(other)
+        return result if result is NotImplemented else not result
+
 
 class UnpackedProject(Project):
     """Adapts the Project class by automatically unpacking the project
