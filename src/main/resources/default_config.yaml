@@ -1,0 +1,45 @@
+---
+
+Logic Modules:
+  - module: &schema
+      name: schema
+
+  - module: &import
+      name: import
+      dependencies: [schema]
+
+  - module: &symbol-lookup
+      name: symbol-lookup
+      dependencies: [schema]
+
+  - module: &call-graph
+      name: call-graph
+      dependencies: [schema, symbol-lookup]
+
+  - module: &points-to
+      name: points-to
+      dependencies: [schema, symbol-lookup, call-graph]
+
+
+Analysis Steps:
+  - step: *schema
+  - step: *import
+  - step: *symbol-lookup
+  - step: *call-graph
+  - step: *points-to
+
+
+Statistics:
+  Predicate Counts:
+    - predicate: "instruction"
+      project: *schema
+
+    - predicate: "reachable_function"
+      project: *call-graph
+
+    - predicate: "callgraph:edge"
+      project: *call-graph
+
+    - predicate: "var_points_to"
+      project: *points-to
+      header: var-points-to
