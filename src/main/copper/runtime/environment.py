@@ -1,10 +1,8 @@
 import os
 import tempfile
-
 from .. import settings
 from functools import wraps
 from utils import singleton
-
 
 class Environment():
     __metaclass__ = singleton.Singleton
@@ -78,3 +76,8 @@ class Environment():
     @mkdirs
     def user_runtime_dir(self):
         return self._runtime_dir
+
+    @property
+    def user_config_file(self):
+        baseconf = "{}rc".format(settings.APP_NAME)
+        return os.path.join(self.user_config_dir, baseconf)
