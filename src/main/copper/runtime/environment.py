@@ -79,5 +79,4 @@ class Environment():
 
     @property
     def user_config_file(self):
-        baseconf = "{}.yaml".format(settings.APP_NAME)
-        return os.path.join(self.user_config_dir, baseconf)
+        return os.path.join(self.user_config_dir, "config.yaml")
