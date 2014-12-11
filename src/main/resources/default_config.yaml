@@ -12,20 +12,20 @@ Logic Modules:
       name: symbol-lookup
       dependencies: [schema]
 
-  - module: &call-graph
-      name: call-graph
+  - module: &callgraph
+      name: callgraph
       dependencies: [schema, symbol-lookup]
 
   - module: &points-to
       name: points-to
-      dependencies: [schema, symbol-lookup, call-graph]
+      dependencies: [schema, symbol-lookup, callgraph]
 
 
 Analysis Steps:
   - step: *schema
   - step: *import
   - step: *symbol-lookup
-  - step: *call-graph
+  - step: *callgraph
   - step: *points-to
 
 
@@ -35,10 +35,10 @@ Statistics:
       project: *schema
 
     - predicate: "reachable_function"
-      project: *call-graph
+      project: *callgraph
 
     - predicate: "callgraph:edge"
-      project: *call-graph
+      project: *callgraph
 
     - predicate: "var_points_to"
       project: *points-to
