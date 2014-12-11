@@ -61,11 +61,11 @@ $(resource.factgen)   :  resource := $(OUTDIR)/$(module.facts)/fact-generator
 $(resource.logic)     :  resource := $(OUTDIR)/logic
 
 $(resource.factgen): | $(resources.outdir)/bin
-	$(info Adding resource $(resource))
+	$(info Adding resource $(resource) ...)
 	$(QUIET) ln $(resource) $@
 
 $(resource.logic):   | $(resources.outdir)
-	$(info Adding resource $(resource))
+	$(info Adding resource $(resource) ...)
 	$(QUIET) ln -s $(abspath $(resource)) $@
 
 $(resources) : $(modules)
@@ -93,16 +93,16 @@ artifact.exe := $(dist.outdir)/llvm-datalog
 
 .INTERMEDIATE: $(artifact.zip)
 $(artifact.zip): $(modules) resources | $(dist.outdir)
-	$(info Creating zip artifact $@)
-	$(info Adding python sources)
+	$(info Creating zip artifact $@ ...)
+	$(info Adding python sources ...)
 	$(QUIET) cp $(OUTDIR)/python/$(@F) $@
-	$(info Adding resources)
+	$(info Adding resources ...)
 	$(QUIET) ln -s $(OUTDIR)/resources resources
 	zip -r $@ $(resources:$(OUTDIR)/%=%) >/dev/null
 	$(QUIET) $(RM) resources
 
 $(artifact.exe): $(artifact.zip) dist.force
-	$(info Creating artifact $@)
+	$(info Creating artifact $@ ...)
 	$(QUIET) echo '#!/usr/bin/env python' | cat - $< > $@
 	chmod +x $@
 
