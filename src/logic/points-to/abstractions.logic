@@ -1,0 +1,58 @@
+//-----------------------------------------------------------------------
+// [Memory Abstraction]
+//
+// We have two types of memory locations that a variable can point to:
+// (i)  stack locations, and
+// (ii) heap locations.
+//
+// The LLVM bitcode intermediate representation transforms every named
+// variable of type `x` to a pointer to `x`, and adds an `alloca`
+// instruction at the beginning of the function to allocate space for
+// it, in the stack.
+//
+// Thus, every address-of expression of the source code now
+// corresponds to an LLVM bitcode variable.
+//
+// For instance, the statements:
+//
+//     int x, *p;
+//     ...
+//     p = &x;
+//
+// will be transformed to:
+//
+//     i32 *x, **p;
+//     x = alloca i32
+//     p = alloca i32*
+//     ...
+//     store x, p
+//
+//
+// Since an arbitrary number of heap allocations may happend at
+// runtime, we must choose an appropriate abstraction. The most common
+// choice for Andersen type analyses is abstracting an allocation by
+// the instruction that allocates it. This is what we will follow here
+// too.
+//
+//-----------------------------------------------------------------------
+
+memory_allocation(Alloc) -> .
+stack_allocation(Alloc) -> memory_allocation(Alloc).
+heap_allocation(Alloc)  -> memory_allocation(Alloc).
+
+var_points_to(Alloc, Var) ->
+   memory_allocation(Alloc), variable(Var).
+
+ptr_points_to(Alloc, PtrAlloc) ->
+   memory_allocation(Alloc), memory_allocation(PtrAlloc).
+
+// Constructors
+stack_allocation:by_instruction[Insn] = StackAlloc ->
+   alloca_instruction(Insn), stack_allocation(StackAlloc).
+
+heap_allocation:by_instruction[Insn] = HeapAlloc ->
+   instruction(Insn), heap_allocation(HeapAlloc).
+
+lang:physical:storageModel[`memory_allocation] = "ScalableSparse".
+lang:constructor(`stack_allocation:by_instruction).
+lang:constructor(`heap_allocation:by_instruction).

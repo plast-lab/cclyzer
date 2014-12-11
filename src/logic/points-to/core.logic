@@ -1,0 +1,97 @@
+//----------------------------------------------------------------------
+// [Heap and Stack Allocations]
+//
+// Every named variable of the original source code will have a
+// corresponsing `alloca_instruction` that allocates space for it in
+// the stack. Hence, we can use these instructions to track stack
+// allocations.
+//
+// Heap allocations on the other side will be created primarily by
+// calling the `@malloc` function. More heap allocation functions
+// could be added in the future.
+//----------------------------------------------------------------------
+
+stack_allocation(StackAlloc),
+stack_allocation:by_instruction[Insn] = StackAlloc,
+var_points_to(StackAlloc, Var)
+ <-
+   alloca_instruction(Insn),
+   instruction:to[Insn] = Var.
+
+heap_allocation(HeapAlloc),
+heap_allocation:by_instruction[Insn] = HeapAlloc,
+var_points_to(HeapAlloc, Var)
+ <-
+   call_instruction:function[Insn] = Func,
+   function:name[Func] = "@malloc",
+   instruction:to[Insn] = Var.
+
+
+//----------------------------------------------------------------------
+// [Assignment Instructions]
+//
+// There are many types of instructions that essentially copy the
+// points-to set of a variable to another.
+//
+// Cast instructions such as `bitcast` fall to this category. Often
+// the returned type of a `@malloc` function call is different than
+// the declared type of the target variable. The LLVM IR adds a
+// temporary variable of type `i8*` to hold the result and then an
+// intermediate `bitcast` instruction that casts this temporary
+// variable to the right type.
+//
+// Another class of assignment instructions are the interprocedural
+// assignments. This way we can model the implicit flow from (i) the
+// actual arguments to the formal parameters, and from (ii) the return
+// value of the called function to the variable that is assigned the
+// result of the `call instruction`.
+//----------------------------------------------------------------------
+
+assign_instruction(ToVar, FromVar) ->
+   variable(ToVar), variable(FromVar).
+
+var_points_to(Alloc, ToVar) <-
+   assign_instruction(ToVar, FromVar),
+   var_points_to(Alloc, FromVar).
+
+// `bitcast` instructions
+assign_instruction(ToVar, FromVar) <-
+   bitcast_instruction:from[Insn] = From,
+   instruction:to[Insn] = ToVar,
+   operand:as_variable[From] = FromVar.
+
+// actual arg to formal parameter
+assign_instruction(Param, Arg) <-
+   call_instruction:function[Insn] = Callee,
+   call_instruction:arg[Insn, Index] = ArgOp,
+   operand:as_variable[ArgOp] = Arg,
+   function:param[Callee, Index] = Param.
+
+// `return` instruction to `call` instruction target
+assign_instruction(ToVar, RetVar) <-
+   call_instruction:function[CallInsn] = Callee,
+   ret_instruction:value[RetInsn] = Value,
+   instruction:function[RetInsn] = Callee,
+   operand:as_variable[Value] = RetVar,
+   instruction:to[CallInsn] = ToVar.
+
+
+//----------------------------------------------------------------------
+// [Load/Store Instructions]
+//----------------------------------------------------------------------
+
+ptr_points_to(Alloc, BaseAlloc) <-
+   store_instruction:value[Insn] = Op,
+   store_instruction:address[Insn] = PtrOp,
+   operand:as_variable[PtrOp] = PtrVar,
+   operand:as_variable[Op] = Var,
+   var_points_to(BaseAlloc, PtrVar),
+   var_points_to(Alloc, Var).
+
+
+var_points_to(Alloc, ToVar) <-
+   instruction:to[Insn] = ToVar,
+   load_instruction:address[Insn] = PtrOp,
+   operand:as_variable[PtrOp] = PtrVar,
+   var_points_to(BaseAlloc, PtrVar),
+   ptr_points_to(Alloc, BaseAlloc).

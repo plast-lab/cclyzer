@@ -1,0 +1,7 @@
+llvm:points_to, projectname
+llvm:schema, library
+llvm:lookup, library
+llvm:callgraph, library
+
+abstractions.logic, active
+core.logic, active
