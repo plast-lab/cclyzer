@@ -35,17 +35,9 @@ def main():
         with task_timing('total time'):
             analysis.run()
 
-        # Gather statistics
-        stats = (
-            copper.AnalysisStatisticsBuilder(analysis)
-            .count('instruction')
-            .count('reachable_function')
-            .count('callgraph:edge')
-            .build()
-        )
-
+        # Print statistics
         print "\n\n[Statistics]\n"
-        print stats
+        print analysis.stats
 
 
 @contextlib2.contextmanager

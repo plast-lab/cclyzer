@@ -1,10 +1,12 @@
 import os
 from .project import Project, ProjectManager
 from .analysis_steps import *
+from .analysis_stats import AnalysisStatisticsBuilder as StatBuilder
 
 class Analysis(object):
     def __init__(self, config, projects = ProjectManager()):
         self._config = config
+        self._stats = None
         self._pipeline = [
             CleaningStep(),
             FactGenerationStep(),
@@ -13,9 +15,17 @@ class Analysis(object):
             LoadProjectStep(projects.CALLGRAPH),
         ]
 
+
     @property
     def pipeline(self):
         return self._pipeline
+
+    @property
+    def stats(self):
+        # Compute stats if needed
+        if self._stats is None:
+            self.compute_stats()
+        return self._stats
 
     @property
     def input_directory(self):
@@ -37,5 +47,17 @@ class Analysis(object):
         LoadProjectStep(project).apply(self)
 
     def run(self):
+        # Run each step of pipeline
         for step in self.pipeline:
             step.apply(self)
+        # Compute stats
+        self.compute_stats()
+
+    def compute_stats(self):
+        self._stats = (
+            StatBuilder(self)
+            .count('instruction')
+            .count('reachable_function')
+            .count('callgraph:edge')
+            .build()
+        )
