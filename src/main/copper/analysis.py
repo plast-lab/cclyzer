@@ -13,6 +13,7 @@ class Analysis(object):
             DatabaseCreationStep(),
             LoadProjectStep(projects.SYMBOL_LOOKUP),
             LoadProjectStep(projects.CALLGRAPH),
+            LoadProjectStep(projects.POINTS_TO),
         ]
 
 
@@ -59,5 +60,7 @@ class Analysis(object):
             .count('instruction')
             .count('reachable_function')
             .count('callgraph:edge')
+            .count('var_points_to', 'var-points-to')
+            .count('ptr_points_to', 'ptr-points-to')
             .build()
         )
