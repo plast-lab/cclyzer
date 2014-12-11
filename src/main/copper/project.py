@@ -149,3 +149,9 @@ class ProjectManager(object):
 
     def __getitem__(self, projectname):
         return self._projects[projectname]
+
+    def __len__(self):
+        return len(self._projects)
+
+    def __iter__(self):
+        return self._projects.values().__iter__()
