@@ -39,7 +39,7 @@ class BloxScript(object):
             tpl = string.Template(self._template)
 
             # Write template to file after variable substitution
-            contents = script.write(tpl.substitute(self._mapping))
+            script.write(tpl.substitute(self._mapping))
 
         # Log event
         logger.info("bloxbatch -script %s", path_to_script)
