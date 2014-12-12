@@ -1,8 +1,8 @@
 import abc
 import logging
-import os
 import string
 import subprocess
+
 
 class BloxScript(object):
     __metaclass__ = abc.ABCMeta
@@ -10,8 +10,8 @@ class BloxScript(object):
     def __init__(self, template, workspace, path):
         """Initialize a LogicBlox script."""
         self._template = template
-        self._mapping  = {'workspace' : workspace}
-        self._path     = path
+        self._mapping = {'workspace': workspace}
+        self._path = path
 
     def __getattr__(self, attr):
         return self._mapping(attr)
@@ -24,7 +24,6 @@ class BloxScript(object):
         else:
             self._mapping[attr] = value
 
-
     def run(self):
         """Execute this script."""
 
@@ -35,10 +34,10 @@ class BloxScript(object):
         path_to_script = self._path
 
         # Write contents of this LogicBlox script
-        with open(path_to_script, mode = 'w') as script:
+        with open(path_to_script, mode='w') as script:
             # Create template from string
             tpl = string.Template(self._template)
-            
+
             # Write template to file after variable substitution
             contents = script.write(tpl.substitute(self._mapping))
 
@@ -54,14 +53,13 @@ class BloxScript(object):
             try:
                 # Call subprocess
                 subprocess.check_call(
-                    ['bloxbatch', '-script', path_to_script], stderr = errlog)
+                    ['bloxbatch', '-script', path_to_script], stderr=errlog)
             except:
                 record = logger.error
                 raise
-            finally: # Go to the beginning of the log and add new log record
+            finally:  # Go to the beginning of the log and add new log record
                 errlog.seek(0)
                 record("\n%s", errlog.read())
-
 
     # Alias call method with run
     __call__ = run

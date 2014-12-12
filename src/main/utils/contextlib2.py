@@ -1,10 +1,14 @@
-import contextlib
+"""This module provides some additional context-manager related
+functionality.
+
+"""
+
 import functools
 import os
 import sys
 
 
-#---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 # The following stuff has been copied from `contextdecorator'
 # (see http://pypi.python.org/pypi/contextdecorator
 #      http://contextlib2.readthedocs.org/en/latest/)
@@ -15,7 +19,7 @@ import sys
 #
 # TODO Remove and add as dependency when setup.py becomes part of the
 # build process.
-#---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 
 
 class ContextDecorator(object):
@@ -30,7 +34,6 @@ class ContextDecorator(object):
             with self:
                 return f(*args, **kwargs)
         return wrapped
-
 
 
 class GeneratorContextManager(ContextDecorator):
@@ -77,6 +80,7 @@ class GeneratorContextManager(ContextDecorator):
                 if sys.exc_info()[1] is not value:
                     raise
 
+
 def contextmanager(func):
     @functools.wraps(func)
     def helper(*args, **kwargs):
@@ -84,12 +88,11 @@ def contextmanager(func):
     return helper
 
 
-
-#---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 # Additional custom context managers.
 #
 # Most of this stuff can also be found in external modules.
-#---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 
 
 class cd:
@@ -106,7 +109,7 @@ class cd:
 
 
 @contextmanager
-def stdout_redirected(to = os.devnull):
+def stdout_redirected(to=os.devnull):
     stdout_fd = sys.stdout.fileno()
     # Store old stdout
     with os.fdopen(os.dup(stdout_fd), 'wb') as old_stdout:

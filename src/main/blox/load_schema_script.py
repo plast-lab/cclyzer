@@ -1,5 +1,6 @@
 from . import BloxScript
 
+
 class LoadSchemaScript(BloxScript):
     TEMPLATE = '''
     echo "Creating workspace $workspace ..."

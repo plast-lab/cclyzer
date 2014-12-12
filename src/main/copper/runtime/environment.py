@@ -4,6 +4,7 @@ from .. import settings
 from functools import wraps
 from utils import singleton
 
+
 class Environment():
     __metaclass__ = singleton.Singleton
 
@@ -35,7 +36,6 @@ class Environment():
         self._config_dir = app_configdir
         self._runtime_dir = app_runtimedir
 
-
     def mkdirs(prop):
         """Decorator that targets directory returning properties.
 
@@ -52,8 +52,6 @@ class Environment():
             # Return application directory
             return appdir
         return wrapped
-
-
 
     # Define directory-returning properties
 

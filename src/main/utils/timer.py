@@ -1,8 +1,8 @@
-from functools import wraps
 from timeit import default_timer
 
+
 class Timer(object):
-    def __init__(self, callback = None):
+    def __init__(self, callback=None):
         """A timing context manager."""
         self.callback = callback
 

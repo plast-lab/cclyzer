@@ -7,6 +7,7 @@ from . import settings
 from .runtime import FileManager
 from .resource import unpacked_project
 
+
 class Project(object):
     def __init__(self, name, *dependencies):
         self._name = name
@@ -25,7 +26,7 @@ class Project(object):
             return NotImplemented
 
         if self.name != other.name:
-            return false
+            return False
 
         return set(self._deps) == set(other.dependencies)
 
@@ -90,8 +91,6 @@ class ProjectManager(object):
 
             # Construct project path
             project_dir = path.join(logic_dir, project)
-            project_contents = None
-            project_metadata = None
 
             # Find project file
             for resource in resource_listdir(settings.RESOURCE_DIR, project_dir):
@@ -99,8 +98,6 @@ class ProjectManager(object):
                     # Compute path to resource
                     path_to_resource = path.join(project_dir, resource)
                     path_to_file = FileManager().mktemp()
-
-                    data = None
 
                     # Read contents of project file
                     with open(path_to_file, 'w') as f:
@@ -123,7 +120,6 @@ class ProjectManager(object):
             setattr(self, project.replace('-', '_').upper(), p)
             self.logger.info("Found project %s that depends on: %s", project, p.dependencies)
 
-
     def __extract_metadata(self, filename):
         # The fields to be searched
         project_name = None
@@ -145,7 +141,6 @@ class ProjectManager(object):
                     project_libraries.append(value)
 
         return project_name, project_libraries
-
 
     def __getitem__(self, projectname):
         return self._projects[projectname]

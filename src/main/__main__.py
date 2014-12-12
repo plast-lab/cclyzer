@@ -1,3 +1,5 @@
+"""This module is the main entry point for command-line execution."""
+
 import argparse
 import contextlib
 import copper
@@ -10,15 +12,19 @@ from utils.contextlib2 import stdout_redirected
 
 
 def main():
+    """The main function that will be called by command-line execution
+    of the tool.
+
+    """
     with setup_logging():
         # Create CLI parser
         parser = argparse.ArgumentParser(description='Analyze LLVM bitcode.')
-        parser.add_argument('-i', '--input-dir', metavar='DIRECTORY', required = True,
+        parser.add_argument('-i', '--input-dir', metavar='DIRECTORY', required=True,
                             help='directory containing LLVM bitcode files to be analyzed')
-        parser.add_argument('-o', '--output-dir', metavar='DIRECTORY', required = True,
+        parser.add_argument('-o', '--output-dir', metavar='DIRECTORY', required=True,
                             help='output directory')
         parser.add_argument('-q', '--no-config-file', dest='read_config', action='store_false')
-        parser.set_defaults(read_config = True)
+        parser.set_defaults(read_config=True)
 
         # Initialize analysis
         opts = parser.parse_args()
@@ -57,6 +63,10 @@ def main():
 
 @contextlib2.contextmanager
 def task_timing(description):
+    """This is a context manager that prints the elapsed time of some
+    computation. It can also be used as a decorator.
+
+    """
     # Define closure that prints elapsed time
     def print_time(elapsed_time):
         print "    %-32s ... %6.2fs" % (description, elapsed_time)
@@ -67,7 +77,7 @@ def task_timing(description):
 
 
 @contextlib.contextmanager
-def setup_logging(lvl = logging.INFO):
+def setup_logging(lvl=logging.INFO):
     """Configure logging.
 
     This creates a file handler to the application cache and a syslog
@@ -86,7 +96,7 @@ def setup_logging(lvl = logging.INFO):
     # Add rotating file handler
     file_log = os.path.join(env.user_cache_dir, "%s.log" % settings.APP_NAME)
     file_formatter = logging.Formatter("%(asctime)s %(levelname)5.5s - [%(name)s] %(message)s")
-    file_handler = RotatingFileHandler(file_log, maxBytes = (2 ** 20), backupCount = 7)
+    file_handler = RotatingFileHandler(file_log, maxBytes=(2 ** 20), backupCount=7)
     file_handler.setFormatter(file_formatter)
     root_logger.addHandler(file_handler)
 

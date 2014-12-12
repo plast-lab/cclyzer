@@ -1,11 +1,12 @@
 from .. import Analysis
 from ..analysis_steps import *
 from ..analysis_stats import AnalysisStatisticsBuilder as StatBuilder
-from ..project import Project, ProjectManager
+from ..project import ProjectManager
 from .yaml_impl import YamlConfiguration as UserConfiguration
 
+
 class CustomAnalysis(Analysis):
-    def __init__(self, config, projects = ProjectManager()):
+    def __init__(self, config, projects=ProjectManager()):
         super(self.__class__, self).__init__(config, projects)
 
         self._userconfig = UserConfiguration(projects)

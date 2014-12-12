@@ -1,3 +1,10 @@
+"""This module provides a Connector class to a LogicBlox workspace.
+
+This class defines a number of methods that closely resemble the
+existing bloxbatch commands.
+
+"""
+
 import collections
 import subprocess
 import sys
@@ -11,7 +18,6 @@ Please use 'lb' instead of 'bloxbatch'.
 ''',)
 
 
-
 class Connector(object):
     def __init__(self, workspace):
         """A connector to a LogicBlox workspace."""
@@ -20,9 +26,9 @@ class Connector(object):
     def _run_command(self, command_line):
         # Run the command with separate pipes for stdout/stderr streams
         p = subprocess.Popen(
-            command_line, shell = True,
-            stdout = subprocess.PIPE,
-            stderr = subprocess.PIPE
+            command_line, shell=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE
         )
 
         # Parse output and lazily return each line
@@ -47,10 +53,8 @@ class Connector(object):
         if returncode != 0:
             raise subprocess.CalledProcessError(returncode, command_line)
 
-
-    def queryCount(self, queryString, printOpt = ''):
+    def queryCount(self, queryString, printOpt=''):
         return len(list(self.query(queryString, printOpt)))
-
 
     def popCount(self, *args):
         """Get the number of populated facts in the listed predicates.
@@ -69,7 +73,8 @@ class Connector(object):
             their counters.
 
         Raises:
-          subprocess.CalledProcessError: If the popCount subprocess returns non-zero.
+          subprocess.CalledProcessError: If the popCount subprocess
+          returns non-zero.
 
         """
 
@@ -91,8 +96,7 @@ class Connector(object):
 
         return counters
 
-
-    def query(self, queryString, printOpt = ''):
+    def query(self, queryString, printOpt=''):
         """Run a query on this connector.
 
         This is equivalent to invoking the following command from the
@@ -103,14 +107,15 @@ class Connector(object):
 
         Args:
           queryString (str): the query to run
-          printOpt (str, optional): equivalent to bloxbatch query -print option (default '')
+          printOpt (str, optional): equivalent to bloxbatch query
+             ``-print`` option (default '')
 
         Yields:
           str: The next (trimmed) line of the query output
 
         Raises:
-          subprocess.CalledProcessError: If the query subprocess returns non-zero.
-
+          subprocess.CalledProcessError: If the query subprocess
+          returns non-zero.
 
         """
         command_line = "bloxbatch -db %s -query '%s' " % (self._workspace, queryString)

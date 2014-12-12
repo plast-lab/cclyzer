@@ -1,5 +1,6 @@
 from . import BloxScript
 
+
 class LoadProjectScript(BloxScript):
     TEMPLATE = '''
     open $workspace

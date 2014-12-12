@@ -29,7 +29,7 @@ class unpacked_binary(object):
             disk_obj = resource_stream(settings.RESOURCE_DIR, path_to_resource)
 
             # File hasn't changed; don't overwrite
-            if all(a == b for (a,b) in izip_longest(disk_obj, cached_obj)):
+            if all(a == b for (a, b) in izip_longest(disk_obj, cached_obj)):
                 return path_to_file
 
             # Remove existing binary. If the file is being used, this is

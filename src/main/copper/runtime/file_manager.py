@@ -2,11 +2,10 @@ import atexit
 import os
 import logging
 import shutil
-
-from .. import settings
 from .environment import Environment
 from tempfile import mkdtemp, mkstemp
 from utils import singleton
+
 
 class FileManager(object):
     __metaclass__ = singleton.Singleton
@@ -14,7 +13,7 @@ class FileManager(object):
     def __init__(self):
         """Initialize the file manager."""
         env = Environment()
-        self._tmpdir = mkdtemp(prefix = '', dir = env.user_runtime_dir)
+        self._tmpdir = mkdtemp(prefix='', dir=env.user_runtime_dir)
         self._cachedir = env.user_cache_dir
         self.logger = logging.getLogger(__name__)
         self.logger.info("Initializing file manager, rooted at %s", self._tmpdir)
@@ -27,12 +26,12 @@ class FileManager(object):
         FileManager().cleanup()
 
     def mktemp(self, *f_args, **f_kwargs):
-        fd, path = mkstemp(dir = self._tmpdir, *f_args, **f_kwargs)
+        fd, path = mkstemp(dir=self._tmpdir, *f_args, **f_kwargs)
         os.close(fd)
         return path
 
     def mkdtemp(self, *f_args, **f_kwargs):
-        path = mkdtemp(dir = self._tmpdir, *f_args, **f_kwargs)
+        path = mkdtemp(dir=self._tmpdir, *f_args, **f_kwargs)
         return path
 
     def getpath(self, path):

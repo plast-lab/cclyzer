@@ -13,6 +13,7 @@ CORRUPTED_METADATA_WARNING = '''
 Configuration files contains corrupted project metadata. You should remove it!
 '''
 
+
 class YamlConfiguration(object):
     __metaclass__ = singleton.Singleton
 
@@ -27,14 +28,14 @@ class YamlConfiguration(object):
         for project in projects:
             # Create new module
             module = {
-                'name' : project.name,
-                'dependencies' : ', '.join(project.dependencies)
+                'name': project.name,
+                'dependencies': ', '.join(project.dependencies)
             }
-            modules.append({'module' : module})
+            modules.append({'module': module})
 
         return modules
 
-    def __init__(self, projects = ProjectManager()):
+    def __init__(self, projects=ProjectManager()):
         self._config = Environment().user_config_file
         self._projects = projects
         self._data = None
@@ -48,21 +49,18 @@ class YamlConfiguration(object):
         with open(self._config) as f:
             self._data = yaml.safe_load(f)
 
-
     def install_default_config(self):
-        resources, default_conf = settings.RESOURCE_DIR, 'default_config.yaml'        
+        resources, default_conf = settings.RESOURCE_DIR, 'default_config.yaml'
         self._logger.info("Installing configuration file to %s", self._config)
 
         with open(self._config, 'w') as conf:
             default_conf = resource_stream(resources, default_conf)
             shutil.copyfileobj(default_conf, conf)
 
-
     def _read_project_entry(self, entry):
         name = entry['name']
         deps = entry.get('dependencies', [])
         return Project(name, *deps)
-
 
     @property
     def logic_modules(self):
@@ -74,7 +72,6 @@ class YamlConfiguration(object):
             projects.append(project)
 
         return projects
-
 
     @property
     def projects(self):
@@ -97,7 +94,6 @@ class YamlConfiguration(object):
             projects.append(project)
 
         return projects
-
 
     @property
     def statistics(self):

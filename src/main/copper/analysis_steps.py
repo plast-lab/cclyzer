@@ -7,7 +7,7 @@ import subprocess
 from utils.contextlib2 import cd
 from . import runtime
 from .resource import unpacked_binary, unpacked_project
-from .project import Project, UnpackedProject
+from .project import UnpackedProject
 
 
 class AnalysisStep(object):
@@ -18,10 +18,12 @@ class AnalysisStep(object):
         self.logger = logging.getLogger(__name__)
 
     @abc.abstractmethod
-    def apply(self, analysis): pass
+    def apply(self, analysis):
+        pass
 
     @abc.abstractproperty
-    def message(self): pass
+    def message(self):
+        pass
 
 
 class FactGenerationStep(AnalysisStep):
@@ -43,7 +45,7 @@ class FactGenerationStep(AnalysisStep):
     @property
     def message(self):
         return 'generated facts'
-    
+
 
 class DatabaseCreationStep(AnalysisStep):
     def apply(self, analysis):
@@ -59,10 +61,10 @@ class DatabaseCreationStep(AnalysisStep):
                 with cd(analysis.output_directory):
                     # Execute script while ignoring output
                     blox.LoadSchemaScript(
-                        workspace   = dbdir,
-                        script_path = self.manager.mktemp(suffix = '.lb'),
-                        schema_path = schema_project,
-                        import_path = import_project
+                        workspace=dbdir,
+                        script_path=self.manager.mktemp(suffix='.lb'),
+                        schema_path=schema_project,
+                        import_path=import_project
                     ).run()
 
         self.logger.info("Stored database in %s", dbdir)
@@ -80,10 +82,10 @@ class LoadProjectStep(AnalysisStep):
     def apply(self, analysis):
         self.extract_then_apply(analysis)
 
-    def extract_then_apply(self, analysis, project = None, unpacked_deps = None, libpath = []):
+    def extract_then_apply(self, analysis, project=None, unpacked_deps=None, libpath=[]):
         # Handle optional arguments
         if project is None:
-            project  = self._project
+            project = self._project
         if unpacked_deps is None:
             unpacked_deps = list(project.dependencies)
 
@@ -92,10 +94,10 @@ class LoadProjectStep(AnalysisStep):
                 # Execute script while ignoring output
                 return (
                     blox.LoadProjectScript(
-                        workspace    = analysis.database_directory,
-                        script_path  = self.manager.mktemp(suffix = '.lb'),
-                        project_path = project.path,
-                        library_path = libpath
+                        workspace=analysis.database_directory,
+                        script_path=self.manager.mktemp(suffix='.lb'),
+                        project_path=project.path,
+                        library_path=libpath
                     ).run()
                 )
         else:                   # We have remaining dependencies

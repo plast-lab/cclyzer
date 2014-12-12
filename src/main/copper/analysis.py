@@ -1,10 +1,11 @@
 import os
-from .project import Project, ProjectManager
+from .project import ProjectManager
 from .analysis_steps import *
 from .analysis_stats import AnalysisStatisticsBuilder as StatBuilder
 
+
 class Analysis(object):
-    def __init__(self, config, projects = ProjectManager()):
+    def __init__(self, config, projects=ProjectManager()):
         self._config = config
         self._stats = None
         self._pipeline = [
