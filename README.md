@@ -54,6 +54,17 @@ You will also have to install the following packages:
 
     # apt-get install m4 libncurses5-dev libboost-dev libboost-filesystem-dev libboost-program-options-dev libprotobuf-dev
 
+#### YAML Configuration
+
+To be able to easily customize your analysis via a configuration file,
+you will also need to install the `python-yaml` package.
+
+The default user configuration will be automagically installed at
+`~/.config/copper/config.yaml` the first time you run the tool. Then,
+you can tweak this config file, e.g., to change the printed statistics
+and the loaded logic modules.
+
+
 Installation
 ------------
 

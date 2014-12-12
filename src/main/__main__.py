@@ -17,10 +17,25 @@ def main():
                             help='directory containing LLVM bitcode files to be analyzed')
         parser.add_argument('-o', '--output-dir', metavar='DIRECTORY', required = True,
                             help='output directory')
+        parser.add_argument('-q', '--no-config-file', dest='read_config', action='store_false')
+        parser.set_defaults(read_config = True)
 
         # Initialize analysis
-        config = copper.AnalysisConfig(parser.parse_args())
-        analysis = copper.Analysis(config) # create analysis
+        opts = parser.parse_args()
+        config = copper.AnalysisConfig(opts)
+        analysis = copper.Analysis(config)
+
+        # Try loading yaml
+        try:
+            import yaml
+        except ImportError:
+            logging.getLogger().warning('Cannot load yaml')
+            opts.read_config = False
+
+        # Customized analysis
+        if opts.read_config:
+            from copper.config import CustomAnalysis
+            analysis = CustomAnalysis(config)
 
         # Dynamically decorate each analysis step
         for step in analysis.pipeline:

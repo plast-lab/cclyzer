@@ -1,4 +1,5 @@
 LEVEL := .
+COPPER_OPTS ?=
 
 all:
 
@@ -173,7 +174,7 @@ $$($1.outdir): | $(tests.outdir)
 
 test-$1.run: tests.setup
 	@echo Analyzing $1 ...
-	$(artifact.exe) -i $$($1.dir) -o $$($1.outdir)
+	$(artifact.exe) -i $$($1.dir) -o $$($1.outdir) $(COPPER_OPTS)
 
 
 # Cleaning target

@@ -65,7 +65,7 @@ class YamlConfiguration(object):
 
 
     @property
-    def user_logic_modules(self):
+    def logic_modules(self):
         projects = []
 
         # Read projects
@@ -77,7 +77,7 @@ class YamlConfiguration(object):
 
 
     @property
-    def user_projects(self):
+    def projects(self):
         projects = []
 
         # Read analysis steps
@@ -100,7 +100,7 @@ class YamlConfiguration(object):
 
 
     @property
-    def user_statistics(self):
+    def statistics(self):
         stats = []
 
         # Read statistics
