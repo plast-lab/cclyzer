@@ -2,7 +2,7 @@
 # LogicBlox Tools
 #------------------
 
-BLOXCOMPILER_VERSION := $(shell bloxcompiler -version)
+BLOXCOMPILER_VERSION := $(shell bloxcompiler -version 2>/dev/null || bloxcompiler version)
 
 # Compile project command
 ifneq (,$(findstring 3.9,$(BLOXCOMPILER_VERSION)))
