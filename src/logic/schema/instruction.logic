@@ -4,6 +4,8 @@
 
 instruction(Insn), instruction:id(Insn:Ref) -> string(Ref).
 
+lang:physical:capacity[`instruction] = 8388608.
+
 // Terminator Instruction Subset
 terminator_instruction(Insn) -> instruction(Insn).
 
@@ -67,6 +69,8 @@ schema:sanity()
 //------------------------------------
 
 basicblock(BB) -> .
+
+lang:physical:capacity[`basicblock] = 8388608.
 
 basicblock:by_label[Label] = BB ->
    variable(Label), basicblock(BB).

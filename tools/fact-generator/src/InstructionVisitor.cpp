@@ -482,7 +482,7 @@ void InstructionVisitor::visitAtomicRMWInst(AtomicRMWInst &AWI) {
     writeAtomicRMWOp(instrNum, AWI.getOperation());
     const char *ord = writeAtomicInfo(instrNum, AWI.getOrdering(), AWI.getSynchScope());
     if(strlen(ord)) {
-        csvGen->writePredicateToCsv(atomicRMWInsnOper, instrNum, ord);
+        csvGen->writePredicateToCsv(atomicRMWInsnOrd, instrNum, ord);
     }
 }
 

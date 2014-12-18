@@ -3,6 +3,9 @@
 //------------
 
 variable(Var), variable:id(Var:Ref) -> string(Ref).
+
+lang:physical:capacity[`variable] = 8388608.
+
 variable:type[Var] = Type -> variable(Var), type(Type).
 
 variable:label(Var) <-
@@ -23,6 +26,9 @@ variable:firstclass(Var) <-
 //--------------
 
 immediate(Imm), immediate:id(Imm:Ref) -> string(Ref).
+
+lang:physical:capacity[`immediate] = 8388608.
+
 immediate:type[Imm] = Type -> immediate(Imm), type(Type).
 immediate:value[Imm] = Val -> immediate(Imm), string(Val).
 
