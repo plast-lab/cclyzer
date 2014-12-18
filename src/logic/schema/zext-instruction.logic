@@ -28,26 +28,33 @@ zext_instruction:from_type[Insn] = Type <-
 // 3) The source type must be smaller than the destination type.
 //------------------------------------------------------------------------------
 
-zext_instruction(Insn) -> zext_instruction:from[Insn] = _.
-zext_instruction(Insn) -> zext_instruction:to_type[Insn] = _.
+schema:sanity()
+ , zext_instruction(Insn)
+ ->
+   zext_instruction:from[Insn] = _.
 
+schema:sanity()
+ , zext_instruction(Insn)
+ ->
+   zext_instruction:to_type[Insn] = _.
 
-zext_instruction:to_type[Insn] = Type
+schema:sanity()
+ , zext_instruction:to_type[Insn] = Type
  ->
    instruction:type[Insn] = Type.
 
-
-zext_instruction:from_type[_] = Type
+schema:sanity()
+ , zext_instruction:from_type[_] = Type
  ->
    integer_type(Type); vector_type:integer(Type).
 
-
-zext_instruction:to_type[_] = Type
+schema:sanity()
+ , zext_instruction:to_type[_] = Type
  ->
    integer_type(Type); vector_type:integer(Type).
 
-
-zext_instruction(Insn)
+schema:sanity()
+ , zext_instruction(Insn)
  , zext_instruction:from_type[Insn] = From
  , zext_instruction:to_type[Insn] = To
  ->

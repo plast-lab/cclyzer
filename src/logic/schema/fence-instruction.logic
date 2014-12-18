@@ -14,9 +14,13 @@ fence_instruction:ordering[Insn] = Ord ->
 // orderings.
 //-------------------------------------------------------------------
 
-fence_instruction(Insn) -> fence_instruction:ordering[Insn] = _.
+schema:sanity()
+ , fence_instruction(Insn)
+ ->
+   fence_instruction:ordering[Insn] = _.
 
-fence_instruction:ordering[_] = Ord
+schema:sanity()
+ , fence_instruction:ordering[_] = Ord
  ->
    ordering:acquire[] = Ord ; ordering:release[] = Ord ;
    ordering:acq_rel[] = Ord ; ordering:seq_cst[] = Ord.

@@ -47,20 +47,24 @@ load_instruction:ptr_type[Insn] = Type <-
 //  (ii) The release and acq_rel orderings are not valid on load instructions.
 //------------------------------------------------------------------------------
 
-load_instruction(Insn) -> load_instruction:address[Insn] = _.
+schema:sanity()
+ , load_instruction(Insn)
+ ->
+   load_instruction:address[Insn] = _.
 
-load_instruction:ptr_type[_] = Type
+schema:sanity()
+ , load_instruction:ptr_type[_] = Type
  ->
    pointer_type:firstclass(Type).
 
-
-load_instruction:ptr_type[Insn] = Type
+schema:sanity()
+ , load_instruction:ptr_type[Insn] = Type
  , pointer_type:component[Type]  = Comp
  ->
    instruction:type[Insn] = Comp.
 
-
-load_instruction:ordering[_] = Ord
+schema:sanity()
+ , load_instruction:ordering[_] = Ord
  ->
    !ordering:release[] = Ord,
    !ordering:acq_rel[] = Ord.

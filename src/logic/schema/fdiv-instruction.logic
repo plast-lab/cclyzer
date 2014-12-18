@@ -22,20 +22,30 @@ fdiv_instruction:second_operand[Insn] = Right ->
 // 3) The resulting value is the same type as its operands.
 //-------------------------------------------------------------------
 
-fdiv_instruction(Insn) -> fdiv_instruction:first_operand[Insn] = _.
-fdiv_instruction(Insn) -> fdiv_instruction:second_operand[Insn] = _.
+schema:sanity()
+ , fdiv_instruction(Insn)
+ ->
+   fdiv_instruction:first_operand[Insn] = _.
 
+schema:sanity()
+ , fdiv_instruction(Insn)
+ ->
+   fdiv_instruction:second_operand[Insn] = _.
 
-fdiv_instruction(Insn), instruction:type[Insn] = Type
+schema:sanity()
+ , fdiv_instruction(Insn)
+ , instruction:type[Insn] = Type
  ->
    fp_type(Type); vector_type:fp(Type).
 
-
-instruction:type[Insn] = Type, fdiv_instruction:first_operand[Insn] = Left
+schema:sanity()
+ , instruction:type[Insn] = Type
+ , fdiv_instruction:first_operand[Insn] = Left
  ->
    operand:type[Left] = Type.
 
-
-instruction:type[Insn] = Type, fdiv_instruction:second_operand[Insn] = Right
+schema:sanity()
+ , instruction:type[Insn] = Type
+ , fdiv_instruction:second_operand[Insn] = Right
  ->
    operand:type[Right] = Type.

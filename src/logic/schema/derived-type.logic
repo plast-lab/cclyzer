@@ -53,8 +53,15 @@ array_type:component[Type] = Comp ->
 array_type:size[Type] = Size ->
    array_type(Type), int[64](Size).
 
-array_type(Type) -> array_type:component[Type] = _.
-array_type(Type) -> array_type:size[Type] = _.
+schema:sanity()
+,array_type(Type)
+ ->
+   array_type:component[Type] = _.
+
+schema:sanity()
+ , array_type(Type)
+ ->
+   array_type:size[Type] = _.
 
 
 //----------------------
@@ -72,7 +79,8 @@ function_type:param[Type, Index] = Param ->
 function_type:nparams[Type] = Total ->
    function_type(Type), int[64](Total).
 
-function_type:return[_] = Ret
+schema:sanity()
+ , function_type:return[_] = Ret
  ->
    metadata_type[] != Ret,
    label_type[] != Ret.
@@ -112,9 +120,13 @@ pointer_type:array(Type) <-
    pointer_type:component[Type] = Comp,
    array_type(Comp).
 
-pointer_type(Type) -> pointer_type:component[Type] = _.
+schema:sanity()
+ , pointer_type(Type)
+ ->
+   pointer_type:component[Type] = _.
 
-pointer_type:component[_] = Comp
+schema:sanity()
+ , pointer_type:component[_] = Comp
  ->
    !void_type[] = Comp,
    !label_type[] = Comp.
@@ -162,12 +174,23 @@ vector_type:pointer(Type) <-
 //      or a pointer to these types.
 //------------------------------------------------------------------------------
 
-vector_type(Type) -> vector_type:component[Type] = _.
-vector_type(Type) -> vector_type:size[Type] = _.
-vector_type:size[_] = Size -> Size > 0.
+schema:sanity()
+ , vector_type(Type)
+ ->
+   vector_type:component[Type] = _.
 
+schema:sanity()
+ , vector_type(Type)
+ ->
+   vector_type:size[Type] = _.
 
-vector_type:component[_] = Comp
+schema:sanity()
+ , vector_type:size[_] = Size
+ ->
+   Size > 0.
+
+schema:sanity()
+ , vector_type:component[_] = Comp
  ->
    integer_type(Comp)
  ; fp_type(Comp)

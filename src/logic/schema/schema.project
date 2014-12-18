@@ -1,5 +1,6 @@
 llvm:schema, projectname
 
+sanity.logic, active
 flag.logic, active
 attribute.logic, active
 calling-convention.logic, active
@@ -70,3 +71,5 @@ unreachable-instruction.logic, active
 va-arg-instruction.logic, active
 
 auxiliary.logic, active
+
+activate-sanity.logic, inactive

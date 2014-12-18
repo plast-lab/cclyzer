@@ -73,31 +73,50 @@ insertvalue_instruction:base_type[Insn] = Type <-
 // operand type.
 //------------------------------------------------------------------------------
 
-insertvalue_instruction(Insn) -> insertvalue_instruction:base[Insn] = _.
-insertvalue_instruction(Insn) -> insertvalue_instruction:value[Insn] = _.
-insertvalue_instruction(Insn) -> insertvalue_instruction:nindices[Insn] = _.
-insertvalue_instruction(Insn) -> insertvalue_instruction:index[Insn, 0] = _.
+schema:sanity()
+ , insertvalue_instruction(Insn)
+ ->
+   insertvalue_instruction:base[Insn] = _.
 
-insertvalue_instruction:nindices[_] = Total -> Total > 0. // c5
+schema:sanity()
+ , insertvalue_instruction(Insn)
+ ->
+   insertvalue_instruction:value[Insn] = _.
 
+schema:sanity()
+ , insertvalue_instruction(Insn)
+ ->
+   insertvalue_instruction:nindices[Insn] = _.
 
-insertvalue_instruction:base_type[_] = Type
+schema:sanity()
+ , insertvalue_instruction(Insn)
+ ->
+   insertvalue_instruction:index[Insn, 0] = _.
+
+schema:sanity()
+ , insertvalue_instruction:nindices[_] = Total
+ ->
+   Total > 0. // c5
+
+schema:sanity()
+ , insertvalue_instruction:base_type[_] = Type
  ->
    aggregate_type(Type) ; 0 = 1. // c1 /TODO: remove dummy or in future versions
 
-
-insertvalue_instruction:value_type[_] = Type
+schema:sanity()
+ , insertvalue_instruction:value_type[_] = Type
  ->
    type:firstclass(Type). // c2
 
 
 // TODO: check if other integer types are allowed for non-structures
-insertvalue_instruction:index[_, _] = Index,
-   immediate:type[Index] = Type
+schema:sanity()
+ , insertvalue_instruction:index[_, _] = Index
+ , immediate:type[Index] = Type
  ->
    int32_type[] = Type. // c3
 
-
-insertvalue_instruction:base_type[Insn] = Type
+schema:sanity()
+ , insertvalue_instruction:base_type[Insn] = Type
  ->
    instruction:type[Insn] = Type. // creturn

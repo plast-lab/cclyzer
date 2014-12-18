@@ -34,30 +34,43 @@ select_instruction:second_operand[Insn] = Value ->
 // of individual elements.
 //------------------------------------------------------------------------------
 
-select_instruction(Insn) -> select_instruction:condition[Insn] = _.
-select_instruction(Insn) -> select_instruction:first_operand[Insn] = _.
-select_instruction(Insn) -> select_instruction:second_operand[Insn] = _.
+schema:sanity()
+ , select_instruction(Insn)
+ ->
+   select_instruction:condition[Insn] = _.
 
+schema:sanity()
+ , select_instruction(Insn)
+ ->
+   select_instruction:first_operand[Insn] = _.
 
-select_instruction:condition[_] = Cond, operand:type[Cond] = Type
+schema:sanity()
+ , select_instruction(Insn)
+ ->
+   select_instruction:second_operand[Insn] = _.
+
+schema:sanity()
+ , select_instruction:condition[_] = Cond
+ , operand:type[Cond] = Type
  ->
    boolean_type(Type) ; vector_type:boolean(Type).
 
 
 // The two operands must be of the same first-class type.
-
-select_instruction(Insn), instruction:type[Insn] = Type
+schema:sanity()
+ , select_instruction(Insn)
+ , instruction:type[Insn] = Type
  ->
    type:firstclass(Type).
 
-
-instruction:type[Insn] = Type
+schema:sanity()
+ , instruction:type[Insn] = Type
  , select_instruction:first_operand[Insn] = Left
  ->
    operand:type[Left] = Type.
 
-
-instruction:type[Insn] = Type
+schema:sanity()
+ , instruction:type[Insn] = Type
  , select_instruction:second_operand[Insn] = Right
  ->
    operand:type[Right] = Type.
@@ -66,7 +79,8 @@ instruction:type[Insn] = Type
 // If the condition is of type vector, then all operands
 // must have the same size.
 
-instruction:type[Insn] = Type
+schema:sanity()
+ , instruction:type[Insn] = Type
  , select_instruction:condition[Insn] = Cond
  , operand:type[Cond] = CType
  ->

@@ -72,24 +72,40 @@ extractvalue_instruction:base_type[Insn] = Type <-
 // by the index operands.
 //------------------------------------------------------------------------------
 
-extractvalue_instruction(Insn) -> extractvalue_instruction:base[Insn] = _.
-extractvalue_instruction(Insn) -> extractvalue_instruction:nindices[Insn] = _.
-extractvalue_instruction(Insn) -> extractvalue_instruction:index[Insn, 0] = _.
-extractvalue_instruction:nindices[_] = Total -> Total > 0. // c3
+schema:sanity()
+ , extractvalue_instruction(Insn)
+ ->
+   extractvalue_instruction:base[Insn] = _.
 
+schema:sanity()
+ , extractvalue_instruction(Insn)
+ ->
+   extractvalue_instruction:nindices[Insn] = _.
 
-extractvalue_instruction:base_type[_] = Type
+schema:sanity()
+ , extractvalue_instruction(Insn)
+ ->
+   extractvalue_instruction:index[Insn, 0] = _.
+
+schema:sanity()
+ , extractvalue_instruction:nindices[_] = Total
+ ->
+   Total > 0. // c3
+
+schema:sanity()
+ , extractvalue_instruction:base_type[_] = Type
  ->
    aggregate_type(Type) ; 0 = 1. // c1 /TODO: remove dummy or in future versions
 
 
-// TODO: check if other integer types are allowed for non-structures
-extractvalue_instruction:index[_, _] = Index
+// TODO: check if other integer types are allowed for non-structure
+schema:sanity()
+ , extractvalue_instruction:index[_, _] = Index
  , immediate:type[Index] = Type
  ->
    int32_type[] = Type. // c2
 
-
-extractvalue_instruction:value_type[Insn] = Type
+schema:sanity()
+ , extractvalue_instruction:value_type[Insn] = Type
  ->
    instruction:type[Insn] = Type. // creturn

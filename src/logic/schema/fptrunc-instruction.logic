@@ -24,20 +24,27 @@ fptrunc_instruction:from_type[Insn] = Type <-
 // 2) The source type must be larger than the destination type.
 //-------------------------------------------------------------------
 
-fptrunc_instruction(Insn) -> fptrunc_instruction:from[Insn] = _.
-fptrunc_instruction(Insn) -> fptrunc_instruction:to_type[Insn] = _.
+schema:sanity()
+ , fptrunc_instruction(Insn)
+ ->
+   fptrunc_instruction:from[Insn] = _.
 
+schema:sanity()
+ , fptrunc_instruction(Insn)
+ ->
+   fptrunc_instruction:to_type[Insn] = _.
 
-fptrunc_instruction:to_type[Insn] = Type
+schema:sanity()
+ , fptrunc_instruction:to_type[Insn] = Type
  ->
    instruction:type[Insn] = Type.
 
-
-fptrunc_instruction:from_type[_] = Type
+schema:sanity()
+ , fptrunc_instruction:from_type[_] = Type
  ->
    fp_type(Type) ; 0 = 1. // TODO: check if dummy or can be avoided in future versions
 
-
-fptrunc_instruction:to_type[_] = Type
+schema:sanity()
+ , fptrunc_instruction:to_type[_] = Type
  ->
    fp_type(Type).

@@ -51,7 +51,8 @@ operation:min[]  = Op <- operation:id(Op:"min").
 operation:umax[] = Op <- operation:id(Op:"umax").
 operation:umin[] = Op <- operation:id(Op:"umin").
 
-operation(Op)
+schema:sanity()
+ , operation(Op)
  ->
    operation:xchg[] = Op ; operation:add[]  = Op
  ; operation:sub[]  = Op ; operation:and[]  = Op
@@ -68,23 +69,40 @@ operation(Op)
 // (ii) The type of the ‘<pointer>‘ operand must be a pointer to that type.
 //------------------------------------------------------------------------------
 
-atomicrmw_instruction(Insn) -> atomicrmw_instruction:ordering[Insn] = _.
-atomicrmw_instruction(Insn) -> atomicrmw_instruction:operation[Insn] = _.
-atomicrmw_instruction(Insn) -> atomicrmw_instruction:address[Insn] = _.
-atomicrmw_instruction(Insn) -> atomicrmw_instruction:value[Insn] = _.
+schema:sanity()
+ , atomicrmw_instruction(Insn)
+ ->
+   atomicrmw_instruction:ordering[Insn] = _.
 
+schema:sanity()
+ , atomicrmw_instruction(Insn)
+ ->
+   atomicrmw_instruction:operation[Insn] = _.
 
-atomicrmw_instruction:value[_] = Value, operand:type[Value] = Type
+schema:sanity()
+ , atomicrmw_instruction(Insn)
+ ->
+   atomicrmw_instruction:address[Insn] = _.
+
+schema:sanity()
+ , atomicrmw_instruction(Insn)
+ ->
+   atomicrmw_instruction:value[Insn] = _.
+
+schema:sanity()
+ , atomicrmw_instruction:value[_] = Value
+ , operand:type[Value] = Type
  ->
    integer_type(Type).
 
-
-atomicrmw_instruction:address[_] = Ptr, operand:type[Ptr] = Type
+schema:sanity()
+ , atomicrmw_instruction:address[_] = Ptr
+ , operand:type[Ptr] = Type
  ->
    pointer_type(Type).
 
-
-atomicrmw_instruction(Insn)
+schema:sanity()
+ , atomicrmw_instruction(Insn)
  , atomicrmw_instruction:address[Insn] = Ptr
  , atomicrmw_instruction:value[Insn] = Value
  , operand:type[Ptr] = Type

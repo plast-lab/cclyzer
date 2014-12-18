@@ -45,27 +45,28 @@ shufflevector_instruction:mask_type[Insn] = Type <-
 //       two operands.
 //------------------------------------------------------------------------------
 
-shufflevector_instruction(Insn)
+schema:sanity()
+ , shufflevector_instruction(Insn)
  ->
    shufflevector_instruction:first_vector[Insn]  = _.
 
-
-shufflevector_instruction(Insn)
+schema:sanity()
+ , shufflevector_instruction(Insn)
  ->
    shufflevector_instruction:second_vector[Insn] = _.
 
-
-shufflevector_instruction(Insn)
+schema:sanity()
+ , shufflevector_instruction(Insn)
  ->
    shufflevector_instruction:mask[Insn] = _.
 
-
-shufflevector_instruction:input_type[_] = Input
+schema:sanity()
+ , shufflevector_instruction:input_type[_] = Input
  ->
    vector_type(Input) ; 0 = 1. // TODO: check if this dummy or can be avoided in future versions
 
-
-shufflevector_instruction:mask_type[_] = Mask
+schema:sanity()
+ , shufflevector_instruction:mask_type[_] = Mask
  ->
    vector_type:i32(Mask).
 
@@ -80,8 +81,8 @@ shufflevector_instruction:element_type[Insn] = Comp <-
    instruction:type[Insn] = Type,
    vector_type:component[Type] = Comp.
 
-
-instruction:type[Insn] = Result
+schema:sanity()
+ , instruction:type[Insn] = Result
  , shufflevector_instruction:mask_type[Insn] = Mask
  ->
    vector:compatible(Result, Mask).

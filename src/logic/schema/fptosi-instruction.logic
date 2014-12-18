@@ -28,26 +28,33 @@ fptosi_instruction:from_type[Insn] = Type <-
 //      (ii) with the same number of elements.
 //-------------------------------------------------------------------
 
-fptosi_instruction(Insn) -> fptosi_instruction:from[Insn] = _.
-fptosi_instruction(Insn) -> fptosi_instruction:to_type[Insn] = _.
+schema:sanity()
+ , fptosi_instruction(Insn)
+ ->
+   fptosi_instruction:from[Insn] = _.
 
+schema:sanity()
+ , fptosi_instruction(Insn)
+ ->
+   fptosi_instruction:to_type[Insn] = _.
 
-fptosi_instruction:to_type[Insn] = Type
+schema:sanity()
+ , fptosi_instruction:to_type[Insn] = Type
  ->
    instruction:type[Insn] = Type.
 
-
-fptosi_instruction:from_type[_] = Type
+schema:sanity()
+ , fptosi_instruction:from_type[_] = Type
  ->
    fp_type(Type); vector_type:fp(Type).
 
-
-fptosi_instruction:to_type[_] = Type
+schema:sanity()
+ , fptosi_instruction:to_type[_] = Type
  ->
    integer_type(Type); vector_type:integer(Type).
 
-
-fptosi_instruction(Insn)
+schema:sanity()
+ , fptosi_instruction(Insn)
  , fptosi_instruction:from_type[Insn] = From
  , fptosi_instruction:to_type[Insn] = To
  ->

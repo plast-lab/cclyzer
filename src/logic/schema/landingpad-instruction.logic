@@ -84,8 +84,8 @@ landingpad:start[BB] = Insn <-
 
 
 // Sanity Check: the two instructions must coincide.
-
-landingpad:start[BB] = Insn
+schema:sanity()
+ , landingpad:start[BB] = Insn
  ->
    landingpad:firstnonphi[BB] = Insn.
 
@@ -111,8 +111,8 @@ filter_clause(Clause) -> clause(Clause).
 
 
 // Enforce that clause is an abstract type
-
-clause(Clause)
+schema:sanity()
+ , clause(Clause)
  ->
    catch_clause(Clause) ; filter_clause(Clause).
 
@@ -169,18 +169,20 @@ lang:derivationType[`filter_clause:arg] = "DerivedAndStored".
 
 
 // Additional type constraints not mentioned above
-
-filter_clause:arg[_] = Arg, immediate:type[Arg] = Type
+schema:sanity()
+ , filter_clause:arg[_] = Arg
+ , immediate:type[Arg] = Type
  ->
    array_type(Type).
 
-
-landingpad_instruction:type[Insn] = Type
+schema:sanity()
+ , landingpad_instruction:type[Insn] = Type
  ->
    instruction:type[Insn] = Type.
 
-
-landingpad_instruction:pers_fn[_] = Func, immediate:type[Func] = Type
+schema:sanity()
+ , landingpad_instruction:pers_fn[_] = Func
+ , immediate:type[Func] = Type
  ->
    function_type(Type).
 
@@ -192,8 +194,8 @@ landingpad_instruction:pers_fn[_] = Func, immediate:type[Func] = Type
 
 // 2nd Constraint: first non-phi instruction must be a landing pad
 // instruction (i.e., its only landing pad instruction)
-
-landingpad:firstnonphi[BB] = Insn
+schema:sanity()
+ , landingpad:firstnonphi[BB] = Insn
  ->
    landingpad:start[BB] = Insn.
 
@@ -204,16 +206,16 @@ landingpad:firstnonphi[BB] = Insn
 
 // 4th Constraint: only landing pad blocks may contain landing pad
 // instructions
-
-landingpad_instruction(Insn), instruction:basicblock[Insn] = BB
+schema:sanity()
+ , landingpad_instruction(Insn), instruction:basicblock[Insn] = BB
  ->
    landingpad(BB).
 
 
 // 5th Constraint: all ‘landingpad‘ instructions in a function must
 // have the same personality function
-
-landingpad_instruction:pers_fn[Insn1] = Pers
+schema:sanity()
+ , landingpad_instruction:pers_fn[Insn1] = Pers
  , landingpad_instruction(Insn1)
  , landingpad_instruction(Insn2)
  , instruction:function[Insn1] = Func
@@ -224,8 +226,8 @@ landingpad_instruction:pers_fn[Insn1] = Pers
 
 // 6th Constraint: the ‘landingpad‘ instruction must contain at least
 // one clause or the cleanup flag
-
-landingpad_instruction(Insn)
+schema:sanity()
+ , landingpad_instruction(Insn)
  ->
    landingpad_instruction:cleanup(Insn) ;
    landingpad_instruction:clause[Insn, 0] = _.

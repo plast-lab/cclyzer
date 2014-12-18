@@ -26,26 +26,33 @@ uitofp_instruction:from_type[Insn] = Type <-
 //  (ii) with the same number of elements.
 //------------------------------------------------------------------------------
 
-uitofp_instruction(Insn) -> uitofp_instruction:from[Insn] = _.
-uitofp_instruction(Insn) -> uitofp_instruction:to_type[Insn] = _.
+schema:sanity()
+ , uitofp_instruction(Insn)
+ ->
+   uitofp_instruction:from[Insn] = _.
 
+schema:sanity()
+ , uitofp_instruction(Insn)
+ ->
+   uitofp_instruction:to_type[Insn] = _.
 
-uitofp_instruction:to_type[Insn] = Type
+schema:sanity()
+ , uitofp_instruction:to_type[Insn] = Type
  ->
    instruction:type[Insn] = Type.
 
-
-uitofp_instruction:from_type[_] = Type
+schema:sanity()
+ , uitofp_instruction:from_type[_] = Type
  ->
    integer_type(Type); vector_type:integer(Type).
 
-
-uitofp_instruction:to_type[_] = Type
+schema:sanity()
+ , uitofp_instruction:to_type[_] = Type
  ->
    fp_type(Type); vector_type:fp(Type).
 
-
-uitofp_instruction(Insn)
+schema:sanity()
+ , uitofp_instruction(Insn)
  , uitofp_instruction:from_type[Insn] = From
  , uitofp_instruction:to_type[Insn] = To
  ->

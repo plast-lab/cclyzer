@@ -22,23 +22,30 @@ udiv_instruction:second_operand[Insn] = Right ->
 // 3) The resulting value is the same type as its operands.
 //------------------------------------------------------------------------------
 
-udiv_instruction(Insn) -> udiv_instruction:first_operand[Insn] = _.
-udiv_instruction(Insn) -> udiv_instruction:second_operand[Insn] = _.
+schema:sanity()
+ , udiv_instruction(Insn)
+ ->
+   udiv_instruction:first_operand[Insn] = _.
 
+schema:sanity()
+ , udiv_instruction(Insn)
+ ->
+   udiv_instruction:second_operand[Insn] = _.
 
-udiv_instruction(Insn)
+schema:sanity()
+ , udiv_instruction(Insn)
  , instruction:type[Insn] = Type
  ->
    integer_type(Type); vector_type:integer(Type).
 
-
-instruction:type[Insn] = Type
+schema:sanity()
+ , instruction:type[Insn] = Type
  , udiv_instruction:first_operand[Insn] = Left
  ->
    operand:type[Left] = Type.
 
-
-instruction:type[Insn] = Type
+schema:sanity()
+ , instruction:type[Insn] = Type
  , udiv_instruction:second_operand[Insn] = Right
  ->
    operand:type[Right] = Type.

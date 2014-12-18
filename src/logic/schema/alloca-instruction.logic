@@ -19,9 +19,12 @@ alloca_instruction:type[Insn] = Type ->
 // The ‘alloca‘ instruction returns a pointer.
 //------------------------------------------------------------------------------
 
-alloca_instruction(Insn) -> alloca_instruction:type[Insn] = _.
+schema:sanity()
+ , alloca_instruction(Insn)
+ -> alloca_instruction:type[Insn] = _.
 
-
-alloca_instruction:type[Insn] = Type, instruction:type[Insn] = Pointer
+schema:sanity()
+ , alloca_instruction:type[Insn] = Type
+ , instruction:type[Insn] = Pointer
  ->
    pointer_type:component[Pointer] = Type.

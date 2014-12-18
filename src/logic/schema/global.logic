@@ -6,7 +6,9 @@ global_variable:type[Var] = Type ->
    global_variable(Var), type(Type).
 
 
-global_variable:type[Var] = Type, immediate:type[Var] = Ptr
+schema:sanity()
+ , global_variable:type[Var] = Type
+ , immediate:type[Var] = Ptr
  ->
    pointer_type:component[Ptr] = Type.
 
@@ -64,8 +66,13 @@ alias:linkage_type[Alias] = Link -> alias(Alias), linkage_type(Link).
 alias:visibility[Alias] = Vis -> alias(Alias), visibility(Vis).
 alias:aliasee[Alias] = Aliasee -> alias(Alias), string(Aliasee).
 
-alias(Var) -> alias:type[Var] = _.
-alias:linkage_type[_] = Link
+schema:sanity()
+ , alias(Var)
+ ->
+   alias:type[Var] = _.
+
+schema:sanity()
+ , alias:linkage_type[_] = Link
  ->
    linkage_type:private[] = Link
  ; linkage_type:linker_private[] = Link
@@ -134,5 +141,12 @@ threadlocal_mode:local_exec[] = Mode <-
 // [Constraints]
 //------------------------------------------------------------------------------
 
-global_variable(Var) -> global_variable:visibility[Var] = _.
-global_variable(Var) -> global_variable:linkage_type[Var] = _.
+schema:sanity()
+ , global_variable(Var)
+ ->
+   global_variable:visibility[Var] = _.
+
+schema:sanity()
+ , global_variable(Var)
+ ->
+   global_variable:linkage_type[Var] = _.

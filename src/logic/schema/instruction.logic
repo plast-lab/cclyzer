@@ -51,8 +51,15 @@ instruction:function[Insn] = Func ->
 instruction:basicblock[Insn] = BB ->
    instruction(Insn), basicblock(BB).
 
-instruction(Insn) -> instruction:function[Insn] = _.
-instruction(Insn) -> instruction:basicblock[Insn] = _.
+schema:sanity()
+ , instruction(Insn)
+ ->
+   instruction:function[Insn] = _.
+
+schema:sanity()
+ , instruction(Insn)
+ ->
+   instruction:basicblock[Insn] = _.
 
 
 //------------------------------------
@@ -112,8 +119,8 @@ lang:derivationType[`instruction:basicblock] = "DerivedAndStored".
 // instruction.
 //------------------------------------------------------------------------------
 
-
-instruction:next[Insn] = Next
+schema:sanity()
+ , instruction:next[Insn] = Next
  , instruction:basicblock[Insn] = BB1
  , instruction:basicblock[Next] = BB2
  ->

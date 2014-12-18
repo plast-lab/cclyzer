@@ -109,20 +109,32 @@ invoke_instruction:exception_label[Insn] = Exception ->
 //  (7) an 'exceptional label'.
 //------------------------------------------------------------------------------
 
-invoke_instruction(Insn) -> invoke_instruction:function[Insn] = _.
-invoke_instruction(Insn) -> invoke_instruction:normal_label[Insn] = _.
-invoke_instruction(Insn) -> invoke_instruction:exception_label[Insn] = _.
+schema:sanity()
+ , invoke_instruction(Insn)
+ ->
+   invoke_instruction:function[Insn] = _.
+
+schema:sanity()
+ , invoke_instruction(Insn)
+ ->
+   invoke_instruction:normal_label[Insn] = _.
+
+schema:sanity()
+ , invoke_instruction(Insn)
+ ->
+   invoke_instruction:exception_label[Insn] = _.
 
 
 // attribute compatibility
-invoke_instruction:return_attribute(_, Attr)
+schema:sanity()
+ , invoke_instruction:return_attribute(_, Attr)
  ->
    parameter_attribute:zeroext[] = Attr ;
    parameter_attribute:signext[] = Attr ;
    parameter_attribute:nreg[] = Attr.  // c1
 
-
-invoke_instruction:function_attribute(_, Attr)
+schema:sanity()
+ , invoke_instruction:function_attribute(_, Attr)
  ->
    function_attribute:noreturn[] = Attr ;
    function_attribute:nounwind[] = Attr ;
@@ -131,54 +143,60 @@ invoke_instruction:function_attribute(_, Attr)
 
 
 // cc compatibility
-instruction:function[Insn] = Func
+schema:sanity()
+ , instruction:function[Insn] = Func
  , invoke_instruction:calling_convention[Insn] = Conv
  ->
    function:calling_convention[Func] = Conv.
 
 
 // Signature conformance
-invoke_instruction:signature[Insn] = Signature
+schema:sanity()
+ , invoke_instruction:signature[Insn] = Signature
  , function_type:param[Signature, Index] = _
  ->
    invoke_instruction:arg[Insn, Index] = _.
 
-
-invoke_instruction:signature[Insn] = Signature
+schema:sanity()
+ , invoke_instruction:signature[Insn] = Signature
  , function_type:param[Signature, Index] = Type
  , invoke_instruction:arg[Insn, Index] = Arg
  ->
    operand:type[Arg] = Type. // c3
 
-
-invoke_instruction:signature[Insn] = Signature
+schema:sanity()
+ , invoke_instruction:signature[Insn] = Signature
  , invoke_instruction:arg[Insn, Index] = _
  ->
    function_type:param[Signature, Index] = _ ;
    function_type:varargs(Signature).
 
-
-invoke_instruction:return_type[Insn] = Type, void_type[] != Type
+schema:sanity()
+ , invoke_instruction:return_type[Insn] = Type
+ , void_type[] != Type
  ->
    instruction:type[Insn] = Type. // c2
 
-
-invoke_instruction:return_type[Insn] = Type, void_type[] = Type
+schema:sanity()
+ , invoke_instruction:return_type[Insn] = Type
+ , void_type[] = Type
  ->
    !instruction:type[Insn] = _. // c2 vice versa
 
 
 // only first class arguments allowed
-invoke_instruction:arg[_, _] = Arg, operand:type[Arg] = Type
+schema:sanity()
+ , invoke_instruction:arg[_, _] = Arg
+ , operand:type[Arg] = Type
  ->
    type:firstclass(Type). // c4
 
-
-invoke_instruction:normal_label[_] = Normal
+schema:sanity()
+ , invoke_instruction:normal_label[_] = Normal
  ->
    variable:label(Normal). // c6
 
-
-invoke_instruction:exception_label[_] = Exceptional
+schema:sanity()
+ , invoke_instruction:exception_label[_] = Exceptional
  ->
    variable:label(Exceptional). // c7

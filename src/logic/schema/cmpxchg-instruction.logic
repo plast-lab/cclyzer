@@ -46,10 +46,25 @@ cmpxchg_instruction:type[Insn] = Type ->
 //  (iv)  the original value at the location is returned.
 //------------------------------------------------------------------------------
 
-cmpxchg_instruction(Insn) -> cmpxchg_instruction:ordering[Insn] = _.
-cmpxchg_instruction(Insn) -> cmpxchg_instruction:address[Insn] = _.
-cmpxchg_instruction(Insn) -> cmpxchg_instruction:cmp[Insn] = _.
-cmpxchg_instruction(Insn) -> cmpxchg_instruction:new[Insn] = _.
+schema:sanity()
+ , cmpxchg_instruction(Insn)
+ ->
+   cmpxchg_instruction:ordering[Insn] = _.
+
+schema:sanity()
+ , cmpxchg_instruction(Insn)
+ ->
+   cmpxchg_instruction:address[Insn] = _.
+
+schema:sanity()
+ , cmpxchg_instruction(Insn)
+ ->
+   cmpxchg_instruction:cmp[Insn] = _.
+
+schema:sanity()
+ , cmpxchg_instruction(Insn)
+ ->
+   cmpxchg_instruction:new[Insn] = _.
 
 
 // !! We will encode the above constraints as
@@ -73,12 +88,12 @@ cmpxchg_instruction:type[Insn] = Type <-
    cmpxchg_instruction(Insn),
    instruction:type[Insn] = Type.
 
-
-cmpxchg_instruction:type[_] = Type
+schema:sanity()
+ , cmpxchg_instruction:type[_] = Type
  ->
    integer_type(Type) ; 0 = 1. // TODO: check if this dummy or can be avoided in future versions
 
-
-cmpxchg_instruction:address[_] = Ptr
+schema:sanity()
+ , cmpxchg_instruction:address[_] = Ptr
  ->
    operand:pointer(Ptr).

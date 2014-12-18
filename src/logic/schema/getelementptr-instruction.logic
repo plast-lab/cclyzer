@@ -125,38 +125,47 @@ getelementptr_instruction:value_type[Insn] = Type <-
 //------------------------------------------------------------------------------
 
 
-getelementptr_instruction(Insn) -> getelementptr_instruction:base[Insn] = _.
-getelementptr_instruction(Insn) -> getelementptr_instruction:nindices[Insn] = _.
+schema:sanity()
+ , getelementptr_instruction(Insn)
+ ->
+   getelementptr_instruction:base[Insn] = _.
 
-getelementptr_instruction(Insn)
+schema:sanity()
+ , getelementptr_instruction(Insn)
+ ->
+   getelementptr_instruction:nindices[Insn] = _.
+
+schema:sanity()
+ , getelementptr_instruction(Insn)
  ->
    getelementptr_instruction:value_type[Insn] = _. // c2
 
-
-getelementptr_instruction:base_type[_] = Type
+schema:sanity()
+ , getelementptr_instruction:base_type[_] = Type
  ->
    pointer_type(Type); vector_type:pointer(Type). // c1
 
-
-getelementptr_instruction:index_type(_, Type)
+schema:sanity()
+ , getelementptr_instruction:index_type(_, Type)
  ->
    integer_type(Type); vector_type:integer(Type). // c4
 
-
-getelementptr_instruction(Insn)
+schema:sanity()
+ , getelementptr_instruction(Insn)
  , getelementptr_instruction:base_type[Insn] = Base
  , getelementptr_instruction:index_type(Insn, Idx)
  ->
    vector:compatible(Base, Idx). // c5
 
-
-getelementptr_instruction:value_type[Insn] = Value, instruction:type[Insn] = Ptr
+schema:sanity()
+ , getelementptr_instruction:value_type[Insn] = Value
+ , instruction:type[Insn] = Ptr
  ->
    gep:vector_based(Insn) ;
    pointer_type:component[Ptr] = Value. // creturn
 
-
-gep:vector_based(Insn)
+schema:sanity()
+ , gep:vector_based(Insn)
  , getelementptr_instruction:value_type[Insn] = Value
  , instruction:type[Insn] = Vector
  , vector_type:component[Vector] = Ptr

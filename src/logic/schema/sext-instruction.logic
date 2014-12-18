@@ -28,26 +28,33 @@ sext_instruction:from_type[Insn] = Type <-
 // 3) The source type must be smaller than the destination type.
 //------------------------------------------------------------------------------
 
-sext_instruction(Insn) -> sext_instruction:from[Insn] = _.
-sext_instruction(Insn) -> sext_instruction:to_type[Insn] = _.
+schema:sanity()
+ , sext_instruction(Insn)
+ ->
+   sext_instruction:from[Insn] = _.
 
+schema:sanity()
+ , sext_instruction(Insn)
+ ->
+   sext_instruction:to_type[Insn] = _.
 
-sext_instruction:to_type[Insn] = Type
+schema:sanity()
+ , sext_instruction:to_type[Insn] = Type
  ->
    instruction:type[Insn] = Type.
 
-
-sext_instruction:from_type[_] = Type
+schema:sanity()
+ , sext_instruction:from_type[_] = Type
  ->
    integer_type(Type); vector_type:integer(Type).
 
-
-sext_instruction:to_type[_] = Type
+schema:sanity()
+ , sext_instruction:to_type[_] = Type
  ->
    integer_type(Type); vector_type:integer(Type).
 
-
-sext_instruction(Insn)
+schema:sanity()
+ , sext_instruction(Insn)
  , sext_instruction:from_type[Insn] = From
  , sext_instruction:to_type[Insn] = To
  ->

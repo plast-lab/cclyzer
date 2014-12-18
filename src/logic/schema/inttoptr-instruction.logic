@@ -27,26 +27,33 @@ inttoptr_instruction:from_type[Insn] = Type <-
 //  (ii) with the same number of elements.
 //------------------------------------------------------------------------------
 
-inttoptr_instruction(Insn) -> inttoptr_instruction:from[Insn] = _.
-inttoptr_instruction(Insn) -> inttoptr_instruction:to_type[Insn] = _.
+schema:sanity()
+ , inttoptr_instruction(Insn)
+ ->
+   inttoptr_instruction:from[Insn] = _.
 
+schema:sanity()
+ , inttoptr_instruction(Insn)
+ ->
+   inttoptr_instruction:to_type[Insn] = _.
 
-inttoptr_instruction:to_type[Insn] = Type
+schema:sanity()
+ , inttoptr_instruction:to_type[Insn] = Type
  ->
    instruction:type[Insn] = Type.
 
-
-inttoptr_instruction:from_type[_] = Type
+schema:sanity()
+ , inttoptr_instruction:from_type[_] = Type
  ->
    integer_type(Type); vector_type:integer(Type).
 
-
-inttoptr_instruction:to_type[_] = Type
+schema:sanity()
+ , inttoptr_instruction:to_type[_] = Type
  ->
    pointer_type(Type); vector_type:pointer(Type).
 
-
-inttoptr_instruction(Insn)
+schema:sanity()
+ , inttoptr_instruction(Insn)
  , inttoptr_instruction:from_type[Insn] = From
  , inttoptr_instruction:to_type[Insn] = To
  ->

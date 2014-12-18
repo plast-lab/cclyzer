@@ -22,23 +22,30 @@ lshr_instruction:second_operand[Insn] = Right ->
 // 3) The resulting value is the same type as its operands.
 //------------------------------------------------------------------------------
 
-lshr_instruction(Insn) -> lshr_instruction:first_operand[Insn] = _.
-lshr_instruction(Insn) -> lshr_instruction:second_operand[Insn] = _.
+schema:sanity()
+ , lshr_instruction(Insn)
+ ->
+   lshr_instruction:first_operand[Insn] = _.
 
+schema:sanity()
+ , lshr_instruction(Insn)
+ ->
+   lshr_instruction:second_operand[Insn] = _.
 
-lshr_instruction(Insn)
+schema:sanity()
+ , lshr_instruction(Insn)
  , instruction:type[Insn] = Type
  ->
    integer_type(Type); vector_type:integer(Type).
 
-
-instruction:type[Insn] = Type
+schema:sanity()
+ , instruction:type[Insn] = Type
  , lshr_instruction:first_operand[Insn] = Left
  ->
    operand:type[Left] = Type.
 
-
-instruction:type[Insn] = Type
+schema:sanity()
+ , instruction:type[Insn] = Type
  , lshr_instruction:second_operand[Insn] = Right
  ->
    operand:type[Right] = Type.

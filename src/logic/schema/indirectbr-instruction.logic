@@ -37,18 +37,29 @@ indirectbr_instruction:nlabels[Insn] = Total ->
 //------------------------------------------------------------------------------
 
 
-indirectbr_instruction(Insn) -> indirectbr_instruction:nlabels[Insn] = _.
-indirectbr_instruction(Insn) -> indirectbr_instruction:address[Insn] = _.
-indirectbr_instruction:label[_, _] = Var -> variable:label(Var).
+schema:sanity()
+ , indirectbr_instruction(Insn)
+ ->
+   indirectbr_instruction:nlabels[Insn] = _.
 
+schema:sanity()
+ , indirectbr_instruction(Insn)
+ ->
+   indirectbr_instruction:address[Insn] = _.
 
-indirectbr_instruction:label[Insn, Index] = _
+schema:sanity()
+ , indirectbr_instruction:label[_, _] = Var
+ ->
+   variable:label(Var).
+
+schema:sanity()
+ , indirectbr_instruction:label[Insn, Index] = _
  , indirectbr_instruction:nlabels[Insn] = Total
  ->
    0 <= Index, Index < Total.
 
-
-indirectbr_instruction:address[_] = Address
+schema:sanity()
+ , indirectbr_instruction:address[_] = Address
  , operand:type[Address] = Type
  ->
    int8_type[] = Type.

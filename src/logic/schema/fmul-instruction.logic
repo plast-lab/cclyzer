@@ -22,22 +22,30 @@ fmul_instruction:second_operand[Insn] = Right ->
 // 3) The resulting value is the same type as its operands.
 //-------------------------------------------------------------------
 
-fmul_instruction(Insn) -> fmul_instruction:first_operand[Insn] = _.
-fmul_instruction(Insn) -> fmul_instruction:second_operand[Insn] = _.
+schema:sanity()
+ , fmul_instruction(Insn)
+ ->
+   fmul_instruction:first_operand[Insn] = _.
 
+schema:sanity()
+ , fmul_instruction(Insn)
+ ->
+   fmul_instruction:second_operand[Insn] = _.
 
-fmul_instruction(Insn), instruction:type[Insn] = Type
+schema:sanity()
+ , fmul_instruction(Insn)
+ , instruction:type[Insn] = Type
  ->
    fp_type(Type); vector_type:fp(Type).
 
-
-instruction:type[Insn] = Type
+schema:sanity()
+ , instruction:type[Insn] = Type
  , fmul_instruction:first_operand[Insn] = Left
  ->
    operand:type[Left] = Type.
 
-
-instruction:type[Insn] = Type
+schema:sanity()
+ , instruction:type[Insn] = Type
  , fmul_instruction:second_operand[Insn] = Right
  ->
    operand:type[Right] = Type.

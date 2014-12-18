@@ -26,26 +26,33 @@ sitofp_instruction:from_type[Insn] = Type <-
 //  (ii) with the same number of elements.
 //------------------------------------------------------------------------------
 
-sitofp_instruction(Insn) -> sitofp_instruction:from[Insn] = _.
-sitofp_instruction(Insn) -> sitofp_instruction:to_type[Insn] = _.
+schema:sanity()
+ , sitofp_instruction(Insn)
+ ->
+   sitofp_instruction:from[Insn] = _.
 
+schema:sanity()
+ , sitofp_instruction(Insn)
+ ->
+   sitofp_instruction:to_type[Insn] = _.
 
-sitofp_instruction:to_type[Insn] = Type
+schema:sanity()
+ , sitofp_instruction:to_type[Insn] = Type
  ->
    instruction:type[Insn] = Type.
 
-
-sitofp_instruction:from_type[_] = Type
+schema:sanity()
+ , sitofp_instruction:from_type[_] = Type
  ->
    integer_type(Type); vector_type:integer(Type).
 
-
-sitofp_instruction:to_type[_] = Type
+schema:sanity()
+ , sitofp_instruction:to_type[_] = Type
  ->
    fp_type(Type); vector_type:fp(Type).
 
-
-sitofp_instruction(Insn)
+schema:sanity()
+ , sitofp_instruction(Insn)
  , sitofp_instruction:from_type[Insn] = From
  , sitofp_instruction:to_type[Insn] = To
  ->

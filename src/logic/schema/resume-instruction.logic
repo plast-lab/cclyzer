@@ -18,10 +18,13 @@ resume_instruction:operand[Insn] = Operand ->
 //    instruction in the same function.
 //------------------------------------------------------------------------------
 
-resume_instruction(Insn) -> resume_instruction:operand[Insn] = _.
+schema:sanity()
+ , resume_instruction(Insn)
+ ->
+   resume_instruction:operand[Insn] = _.
 
-
-resume_instruction:operand[Insn] = Operand
+schema:sanity()
+ , resume_instruction:operand[Insn] = Operand
  , landingpad_instruction(Insn2)
  , instruction:type[Insn2] = Type
  , instruction:function[Insn]  = Func

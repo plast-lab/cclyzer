@@ -57,23 +57,34 @@ store_instruction:val_type[Insn] = Type <-
 //       instructions.
 //------------------------------------------------------------------------------
 
-store_instruction(Insn) -> !instruction:to[Insn] = _.
-store_instruction(Insn) -> store_instruction:address[Insn] = _.
-store_instruction(Insn) -> store_instruction:value[Insn] = _.
+schema:sanity()
+ , store_instruction(Insn)
+ ->
+   !instruction:to[Insn] = _.
 
+schema:sanity()
+ , store_instruction(Insn)
+ ->
+   store_instruction:address[Insn] = _.
 
-store_instruction:ptr_type[_] = Type
+schema:sanity()
+ , store_instruction(Insn)
+ ->
+   store_instruction:value[Insn] = _.
+
+schema:sanity()
+ , store_instruction:ptr_type[_] = Type
  ->
    pointer_type:firstclass(Type).
 
-
-store_instruction:ptr_type[Insn] = Type
+schema:sanity()
+ , store_instruction:ptr_type[Insn] = Type
  , pointer_type:component[Type]  = Comp
  ->
    store_instruction:val_type[Insn] = Comp.
 
-
-store_instruction:ordering[_] = Ord
+schema:sanity()
+ , store_instruction:ordering[_] = Ord
  ->
    !ordering:acquire[] = Ord,
    !ordering:acq_rel[] = Ord.

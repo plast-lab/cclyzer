@@ -32,30 +32,41 @@ insertelement_instruction:type[Insn] = Comp <-
 // The result is a vector of the same type as the first operand.
 //------------------------------------------------------------------------------
 
-insertelement_instruction(Insn) -> insertelement_instruction:base[Insn] = _.
-insertelement_instruction(Insn) -> insertelement_instruction:index[Insn] = _.
-insertelement_instruction(Insn) -> insertelement_instruction:value[Insn] = _.
+schema:sanity()
+ , insertelement_instruction(Insn)
+ ->
+   insertelement_instruction:base[Insn] = _.
 
+schema:sanity()
+ , insertelement_instruction(Insn)
+ ->
+   insertelement_instruction:index[Insn] = _.
 
-insertelement_instruction:base[_] = Vector
+schema:sanity()
+ , insertelement_instruction(Insn)
+ ->
+   insertelement_instruction:value[Insn] = _.
+
+schema:sanity()
+ , insertelement_instruction:base[_] = Vector
  , operand:type[Vector] = Type
  ->
    vector_type(Type).
 
-
-insertelement_instruction:index[_] = Index
+schema:sanity()
+ , insertelement_instruction:index[_] = Index
  , operand:type[Index] = Type
  ->
    int32_type[] = Type.
 
-
-insertelement_instruction:value[Insn] = Value,
-   operand:type[Value] = Type
+schema:sanity()
+ , insertelement_instruction:value[Insn] = Value
+ ,  operand:type[Value] = Type
  ->
    insertelement_instruction:type[Insn] = Type.
 
-
-insertelement_instruction:base[Insn] = Vector
+schema:sanity()
+ , insertelement_instruction:base[Insn] = Vector
  , operand:type[Vector] = Type
  ->
    instruction:type[Insn] = Type.

@@ -28,22 +28,29 @@ extractelement_instruction:type[Insn] = Comp <-
 // of the vector value.
 //------------------------------------------------------------------------------
 
-extractelement_instruction(Insn) -> extractelement_instruction:base[Insn] = _.
-extractelement_instruction(Insn) -> extractelement_instruction:index[Insn] = _.
+schema:sanity()
+ , extractelement_instruction(Insn)
+ ->
+   extractelement_instruction:base[Insn] = _.
 
+schema:sanity()
+ , extractelement_instruction(Insn)
+ ->
+   extractelement_instruction:index[Insn] = _.
 
-extractelement_instruction:base[_] = Vector
+schema:sanity()
+ , extractelement_instruction:base[_] = Vector
  , operand:type[Vector] = Type
  ->
    vector_type(Type).
 
-
-extractelement_instruction:index[_] = Index
+schema:sanity()
+ , extractelement_instruction:index[_] = Index
  , operand:type[Index] = Type
  ->
    int32_type[] = Type.
 
-
-extractelement_instruction:type[Insn] = Type
+schema:sanity()
+ , extractelement_instruction:type[Insn] = Type
  ->
    instruction:type[Insn] = Type.

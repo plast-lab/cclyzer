@@ -14,7 +14,11 @@ ret_instruction:value[Insn] = Value ->
    ret_instruction(Insn), operand(Value).
 
 ret_instruction:void(Insn) -> ret_instruction(Insn).
-ret_instruction:void(Insn) -> !ret_instruction:value[Insn] = _.
+
+schema:sanity()
+ , ret_instruction:void(Insn)
+ ->
+   !ret_instruction:value[Insn] = _.
 
 
 //------------------------------------------------------------------------------
@@ -64,6 +68,7 @@ function:illformed(Func) <-
 //  (i) The type of the return value must be a ‘first class‘ type.
 //------------------------------------------------------------------------------
 
-ret_instruction:value[_] = Value
+schema:sanity()
+ , ret_instruction:value[_] = Value
  ->
    operand:firstclass(Value).

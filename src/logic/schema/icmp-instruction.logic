@@ -28,7 +28,8 @@ icmp_condition:ule[] = Cond <- icmp_condition:id(Cond:"ule").
 icmp_condition:uge[] = Cond <- icmp_condition:id(Cond:"uge").
 icmp_condition:ult[] = Cond <- icmp_condition:id(Cond:"ult").
 
-icmp_condition(Cond)
+schema:sanity()
+ , icmp_condition(Cond)
  ->
    icmp_condition:eq[]  = Cond; icmp_condition:ne[]  = Cond;
    icmp_condition:sgt[] = Cond; icmp_condition:sge[] = Cond;
@@ -66,22 +67,34 @@ icmp_instruction:to_type[Insn]  = Type <-
 //--------------------------------------------
 
 
-icmp_instruction(Insn) -> icmp_instruction:condition[Insn] = _.
-icmp_instruction(Insn) -> icmp_instruction:first_operand[Insn] = _.
-icmp_instruction(Insn) -> icmp_instruction:second_operand[Insn] = _.
+schema:sanity()
+ , icmp_instruction(Insn)
+ ->
+   icmp_instruction:condition[Insn] = _.
 
-icmp_instruction:to_type[_] = Type
+schema:sanity()
+ , icmp_instruction(Insn)
+ ->
+   icmp_instruction:first_operand[Insn] = _.
+
+schema:sanity()
+ , icmp_instruction(Insn)
+ ->
+   icmp_instruction:second_operand[Insn] = _.
+
+schema:sanity()
+ , icmp_instruction:to_type[_] = Type
  ->
    boolean_type(Type); vector_type:boolean(Type).
 
-
-icmp_instruction:from_type[_] = Type
+schema:sanity()
+ , icmp_instruction:from_type[_] = Type
  ->
    integer_type(Type) ; vector_type:integer(Type);
    pointer_type(Type) ; vector_type:pointer(Type).
 
-
-icmp_instruction(Insn)
+schema:sanity()
+ , icmp_instruction(Insn)
  , icmp_instruction:first_operand[Insn]  = Left
  , icmp_instruction:second_operand[Insn] = Right
  , operand:type[Left]  = Type1
@@ -89,8 +102,8 @@ icmp_instruction(Insn)
  ->
    Type1 = Type2.
 
-
-icmp_instruction(Insn)
+schema:sanity()
+ , icmp_instruction(Insn)
  , icmp_instruction:from_type[Insn] = From
  , icmp_instruction:to_type[Insn] = To
  ->

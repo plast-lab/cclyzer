@@ -103,18 +103,27 @@ call_instruction:return_type[Insn] = Type <-
 //      attributes are valid as function attributes.
 //------------------------------------------------------------------------------
 
-call_instruction(Insn) -> call_instruction:raw_function[Insn] = _.
-call_instruction(Insn) -> call_instruction:signature[Insn] = _.
+schema:sanity()
+ , call_instruction(Insn)
+ ->
+   call_instruction:raw_function[Insn] = _.
+
+schema:sanity()
+ , call_instruction(Insn)
+ ->
+   call_instruction:signature[Insn] = _.
 
 // attribute compatibility
-call_instruction:return_attribute(_, Attr)
+schema:sanity()
+ , call_instruction:return_attribute(_, Attr)
  ->
    parameter_attribute:zeroext[] = Attr ;
    parameter_attribute:signext[] = Attr ;
    parameter_attribute:nreg[] = Attr;
    parameter_attribute:noallias[] = Attr.   // c1
 
-call_instruction:function_attribute(_, Attr)
+schema:sanity()
+ , call_instruction:function_attribute(_, Attr)
  ->
    function_attribute:noreturn[] = Attr ;
    function_attribute:nounwind[] = Attr ;
@@ -137,37 +146,41 @@ call_instruction:function_attribute(_, Attr)
 
 
 // Signature conformance
-call_instruction:signature[Insn] = Signature
+schema:sanity()
+ , call_instruction:signature[Insn] = Signature
  , function_type:param[Signature, Index] = _
  ->
    call_instruction:arg[Insn, Index] = _.
 
-
-call_instruction:signature[Insn] = Signature
+schema:sanity()
+ , call_instruction:signature[Insn] = Signature
  , function_type:param[Signature, Index] = Type
  , call_instruction:arg[Insn, Index] = Arg
  ->
    operand:type[Arg] = Type. // c4
 
-
-call_instruction:signature[Insn] = Signature
+schema:sanity()
+ , call_instruction:signature[Insn] = Signature
  , call_instruction:arg[Insn, Index] = _
  ->
    function_type:param[Signature, Index] = _ ;
    function_type:varargs(Signature).
 
-
-call_instruction:return_type[Insn] = Type, void_type[] != Type
+schema:sanity()
+ , call_instruction:return_type[Insn] = Type
+ , void_type[] != Type
  ->
    instruction:type[Insn] = Type. // c3
 
-
-call_instruction:return_type[Insn] = Type, void_type[] = Type
+schema:sanity()
+ , call_instruction:return_type[Insn] = Type
+ , void_type[] = Type
  ->
    !instruction:type[Insn] = _. // c3 vice versa
 
 
 // only first class arguments allowed
-call_instruction:arg[_, _] = Arg
+schema:sanity()
+ , call_instruction:arg[_, _] = Arg
  ->
    operand:firstclass(Arg). // c5

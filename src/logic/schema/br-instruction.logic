@@ -45,26 +45,43 @@ br_uncond_instruction:dest[Insn] = Label ->
 //      (i)  a single ‘label‘ value as a target.
 //------------------------------------------------------------------------------
 
-br_cond_instruction(Insn) -> br_cond_instruction:condition[Insn] = _.
+schema:sanity()
+ , br_cond_instruction(Insn)
+ ->
+   br_cond_instruction:condition[Insn] = _.
 
-int1_type[]  = Type, br_cond_instruction:condition[_] = Cond
+schema:sanity()
+ , int1_type[]  = Type
+ , br_cond_instruction:condition[_] = Cond
  ->
    operand:type[Cond] = Type.
 
+schema:sanity()
+ , br_cond_instruction(Insn)
+ ->
+   br_cond_instruction:iftrue[Insn] = _.
 
-br_cond_instruction(Insn) -> br_cond_instruction:iftrue[Insn] = _.
-br_cond_instruction:iftrue[_] = Label
+schema:sanity()
+ , br_cond_instruction:iftrue[_] = Label
  ->
    variable:label(Label).
 
+schema:sanity()
+ , br_cond_instruction(Insn)
+ ->
+   br_cond_instruction:iffalse[Insn] = _.
 
-br_cond_instruction(Insn) -> br_cond_instruction:iffalse[Insn] = _.
-br_cond_instruction:iffalse[_] = Label
+schema:sanity()
+ , br_cond_instruction:iffalse[_] = Label
  ->
    variable:label(Label).
 
+schema:sanity()
+ , br_uncond_instruction(Insn)
+ ->
+   br_uncond_instruction:dest[Insn] = _.
 
-br_uncond_instruction(Insn) -> br_uncond_instruction:dest[Insn] = _.
-br_uncond_instruction:dest[_] = Label
+schema:sanity()
+ , br_uncond_instruction:dest[_] = Label
  ->
    variable:label(Label).

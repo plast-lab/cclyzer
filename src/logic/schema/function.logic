@@ -24,8 +24,15 @@ function:type[Func] = Type ->
 function:name[Func] = Name ->
    function_decl(Func), string(Name).
 
-function_decl(Func) -> function:type[Func] = _.
-function_decl(Func) -> function:name[Func] = _.
+schema:sanity()
+ , function_decl(Func)
+ ->
+   function:type[Func] = _.
+
+schema:sanity()
+ , function_decl(Func)
+ ->
+   function:name[Func] = _.
 
 
 //-----------------------------------------------------------------
@@ -113,20 +120,22 @@ function:param_attribute(Func, Index, Attr) ->
 // logic.
 //------------------------------------------------------------------------------
 
-
-function:type[Func] = Type,
-function_type:param[Type, Index] = ParamType,
-function:param[Func, Index] = Param
+schema:sanity()
+ , function:type[Func] = Type
+ , function_type:param[Type, Index] = ParamType
+ , function:param[Func, Index] = Param
  ->
    variable:type[Param] = ParamType.
 
-function(Func),
-function:type[Func] = Type,
-function_type:param[Type, Index] = _
+schema:sanity()
+ , function(Func)
+ , function:type[Func] = Type
+ , function_type:param[Type, Index] = _
  ->
    function:param[Func, Index] = _.
 
-function:type[Func] = Type,
-function:param[Func, Index] = _
+schema:sanity()
+ , function:type[Func] = Type
+ , function:param[Func, Index] = _
  ->
    function_type:param[Type, Index] = _.
