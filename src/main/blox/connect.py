@@ -125,3 +125,7 @@ class Connector(object):
             command_line += "print %s" % (printOpt,)
 
         return self._run_command(command_line)
+
+    def execute_block(self, blockName):
+        command_line = "bloxbatch -db %s -execute -name '%s' " % (self._workspace, blockName)
+        return self._run_command(command_line)

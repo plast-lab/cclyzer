@@ -12,6 +12,7 @@ class Analysis(object):
             CleaningStep(),
             FactGenerationStep(),
             DatabaseCreationStep(),
+            SanityCheckStep(projects.SCHEMA),
             LoadProjectStep(projects.SYMBOL_LOOKUP),
             LoadProjectStep(projects.CALLGRAPH),
             LoadProjectStep(projects.POINTS_TO),

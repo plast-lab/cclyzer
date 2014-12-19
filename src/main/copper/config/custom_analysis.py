@@ -13,7 +13,10 @@ class CustomAnalysis(Analysis):
 
         # Basic pipeline steps
         custom_pipeline = [
-            CleaningStep(),  FactGenerationStep(), DatabaseCreationStep()
+            CleaningStep(),
+            FactGenerationStep(),
+            DatabaseCreationStep(),
+            SanityCheckStep(projects.SCHEMA),
         ]
 
         # Add steps to custom pipeline based on config file

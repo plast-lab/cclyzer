@@ -1,3 +1,2 @@
-
+// Enable all sanity checks of this project
 +schema:sanity().
-

@@ -1,5 +1,5 @@
 import abc
-import blox
+import blox.connect
 import logging
 import os
 import shutil
@@ -121,3 +121,20 @@ class CleaningStep(AnalysisStep):
     @property
     def message(self):
         return 'cleaned previous contents'
+
+
+class SanityCheckStep(AnalysisStep):
+    def __init__(self, project):
+        AnalysisStep.__init__(self)
+        self._project = project
+
+    def apply(self, analysis):
+        # Create database connector
+        connector = blox.connect.Connector(analysis.database_directory)
+
+        # Execute relevant block
+        connector.execute_block('activate-sanity')
+
+    @property
+    def message(self):
+        return 'enable {} sanity checks'.format(self._project.name)

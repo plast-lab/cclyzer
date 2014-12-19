@@ -1,2 +1,2 @@
-
+// When true, this predicate enables all sanity checks of the project.
 schema:sanity() -> .
