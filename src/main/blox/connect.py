@@ -32,7 +32,7 @@ class Connector(object):
         )
 
         # Parse output and lazily return each line
-        for line in p.stdout.readlines():
+        for line in p.stdout:
             yield line.strip()
 
         # Wait for the process to exit and store the return code
