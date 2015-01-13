@@ -56,6 +56,11 @@ class BloxScript(object):
                     ['bloxbatch', '-script', path_to_script], stderr=errlog)
             except:
                 record = logger.error
+
+                # Print script contents
+                with open(path_to_script, 'r') as script:
+                    logger.error(script.read())
+
                 raise
             finally:  # Go to the beginning of the log and add new log record
                 errlog.seek(0)
