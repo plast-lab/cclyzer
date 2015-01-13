@@ -124,8 +124,8 @@ clean: dist.clean
 
 # System Installation
 
-install: $(artifact.exe)
-	$(INSTALL) -m 0755 $< $(INSTALL_BIN)
+install:
+	$(INSTALL) -m 0755 $(artifact.exe) $(INSTALL_BIN)
 
 uninstall:
 
@@ -145,7 +145,9 @@ uninstall:
 benchmarks := $(dir $(wildcard tests/*/*.bc))
 
 # Load LogicBlox functions
-include $(LEVEL)/src/logic/blox.mk
+ifneq "$(MAKECMDGOALS)" "install"
+  include $(LEVEL)/src/logic/blox.mk
+endif
 
 # Generate build directory for tests
 $(eval $(call create-destdir,tests,tests))
