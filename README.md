@@ -23,6 +23,9 @@ Pre-installation steps
 The LogicBlox engine needs to be installed. Download LogicBlox engine
 (version 3.*) from the [LogicBlox Download Page](https://download.logicblox.com/).
 
+To acquire an academic license, fill out
+[this form](http://www.logicblox.com/academic-request-form.html).
+
 You must also set the environment variable `$LOGICBLOX_HOME` and
 augment your `$PATH` accordingly. The following additions to either
 your `.bashrc` or `.bash_profile` should suffice, assuming that you
