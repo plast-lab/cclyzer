@@ -28,7 +28,7 @@ public:
     void visitAdd(llvm::BinaryOperator &);
     void visitFAdd(llvm::BinaryOperator &);
     void visitSub(llvm::BinaryOperator &);
-    void visitFsub(llvm::BinaryOperator &);
+    void visitFSub(llvm::BinaryOperator &);
     void visitMul(llvm::BinaryOperator &);
     void visitFMul(llvm::BinaryOperator &);
     void visitSDiv(llvm::BinaryOperator &);

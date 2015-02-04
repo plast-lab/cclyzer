@@ -90,7 +90,7 @@ void InstructionVisitor::visitSub(BinaryOperator &BI) {
     logBinaryOperator(BI, subInsn, subInsnFirstOp, subInsnSecondOp);
 }
 
-void InstructionVisitor::visitFsub(BinaryOperator &BI) {
+void InstructionVisitor::visitFSub(BinaryOperator &BI) {
     logBinaryOperator(BI, fsubInsn, fsubInsnFirstOp, fsubInsnSecondOp);
 }
 
