@@ -1,4 +1,4 @@
-//http://llvm.org/docs/LangRef.html#add-instruction
+// http://llvm.org/docs/LangRef.html#add-instruction
 // keywords: arithmetic; binary; instruction
 
 add_instruction(Insn) -> instruction(Insn).
