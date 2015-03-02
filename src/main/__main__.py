@@ -95,7 +95,8 @@ def setup_logging(lvl=logging.INFO):
 
     # Add rotating file handler
     file_log = os.path.join(env.user_cache_dir, "%s.log" % settings.APP_NAME)
-    file_formatter = logging.Formatter("%(asctime)s %(levelname)5.5s - [%(name)s] %(message)s")
+    file_formatter = logging.Formatter("[PID %(process)d - %(asctime)s %(levelname)5.5s] "
+                                       "%(pathname)s: Line %(lineno)d: %(message)s")
     file_handler = RotatingFileHandler(file_log, maxBytes=(2 ** 20), backupCount=7)
     file_handler.setFormatter(file_formatter)
     root_logger.addHandler(file_handler)
