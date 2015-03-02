@@ -6,6 +6,7 @@ from .analysis_stats import AnalysisStatisticsBuilder as StatBuilder
 
 class Analysis(object):
     def __init__(self, config, projects=ProjectManager()):
+        self.logger = logging.getLogger(__name__)
         self._config = config
         self._stats = None
         self._pipeline = [
