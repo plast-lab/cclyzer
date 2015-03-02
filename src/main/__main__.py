@@ -5,6 +5,8 @@ import contextlib
 import copper
 import logging
 import os
+import sys
+from logging import StreamHandler
 from logging.handlers import RotatingFileHandler, SysLogHandler
 from utils import contextlib2
 from utils.timer import Timer
@@ -106,6 +108,13 @@ def setup_logging(lvl=logging.INFO):
     syslog_handler = SysLogHandler(address='/dev/log')
     syslog_handler.setFormatter(syslog_formatter)
     root_logger.addHandler(syslog_handler)
+
+    # Add stderr handler
+    stderr_formatter = logging.Formatter("%(name)s: %(levelname)s: %(message)s")
+    stderr_handler = StreamHandler(stream=sys.stderr)
+    stderr_handler.setFormatter(stderr_formatter)
+    stderr_handler.setLevel(logging.WARNING)
+    root_logger.addHandler(stderr_handler)
 
     # Start executing task
     try:
