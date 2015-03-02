@@ -36,6 +36,9 @@ class Environment():
         self._config_dir = app_configdir
         self._runtime_dir = app_runtimedir
 
+        # LogicBlox Home
+        self._logicblox_home = os.getenv('LOGICBLOX_HOME')
+
     def mkdirs(prop):
         """Decorator that targets directory returning properties.
 
@@ -78,3 +81,7 @@ class Environment():
     @property
     def user_config_file(self):
         return os.path.join(self.user_config_dir, "config.yaml")
+
+    @property
+    def logicblox_home(self):
+        return self._logicblox_home
