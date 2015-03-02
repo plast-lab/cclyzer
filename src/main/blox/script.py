@@ -2,6 +2,7 @@ import abc
 import logging
 import string
 import subprocess
+from . import connect
 
 
 class BloxScript(object):
@@ -64,7 +65,10 @@ class BloxScript(object):
                 raise
             finally:  # Go to the beginning of the log and add new log record
                 errlog.seek(0)
-                record("\n%s", errlog.read())
+                errors = connect.filter_errors(errlog)
+
+                if errors.strip():
+                    record("\n%s", errors)
 
     # Alias call method with run
     __call__ = run
