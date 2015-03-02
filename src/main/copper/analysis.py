@@ -51,9 +51,14 @@ class Analysis(object):
         LoadProjectStep(project).apply(self)
 
     def run(self):
+        # Ensure that LOGICBLOX_HOME has been set
+        if not runtime.Environment().logicblox_home:
+            raise EnvironmentError("Environment variable LOGICBLOX_HOME is not set")
+
         # Run each step of pipeline
         for step in self.pipeline:
             step.apply(self)
+
         # Compute stats
         self.compute_stats()
 

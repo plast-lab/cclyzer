@@ -13,54 +13,78 @@ from utils.timer import Timer
 from utils.contextlib2 import stdout_redirected
 
 
+class CachelessFormatter(logging.Formatter):
+    def format(self, record):
+        # Disable the caching of the exception text.
+        backup = record.exc_text
+        try:
+            record.exc_text = None
+            return logging.Formatter.format(self, record)
+        finally:
+            record.exc_test = backup
+
+
+class ConsoleFormatter(CachelessFormatter):
+    def format(self, record):
+        msg = CachelessFormatter.format(self, record)
+        return msg.replace('\n', '')
+
+    def formatException(self, exc_info):
+        if not exc_info:
+            return ''
+        type, value, traceback = exc_info
+        return str(value)
+
+
 def main():
     """The main function that will be called by command-line execution
     of the tool.
 
     """
-    with setup_logging():
-        # Create CLI parser
-        parser = argparse.ArgumentParser(description='Analyze LLVM bitcode.')
-        parser.add_argument('-i', '--input-dir', metavar='DIRECTORY', required=True,
-                            help='directory containing LLVM bitcode files to be analyzed')
-        parser.add_argument('-o', '--output-dir', metavar='DIRECTORY', required=True,
-                            help='output directory')
-        parser.add_argument('-q', '--no-config-file', dest='read_config', action='store_false')
-        parser.set_defaults(read_config=True)
+    logger = logging.getLogger(__name__)
 
-        # Initialize analysis
-        opts = parser.parse_args()
-        config = copper.AnalysisConfig(opts)
-        analysis = copper.Analysis(config)
+    # Create CLI parser
+    parser = argparse.ArgumentParser(description='Analyze LLVM bitcode.')
+    parser.add_argument('-i', '--input-dir', metavar='DIRECTORY', required=True,
+                        help='directory containing LLVM bitcode files to be analyzed')
+    parser.add_argument('-o', '--output-dir', metavar='DIRECTORY', required=True,
+                        help='output directory')
+    parser.add_argument('-q', '--no-config-file', dest='read_config', action='store_false')
+    parser.set_defaults(read_config=True)
 
-        # Try loading yaml
-        try:
-            import yaml
-        except ImportError:
-            logging.getLogger().warning('Cannot load yaml')
-            opts.read_config = False
+    # Initialize analysis
+    opts = parser.parse_args()
+    config = copper.AnalysisConfig(opts)
+    analysis = copper.Analysis(config)
 
-        # Customized analysis
-        if opts.read_config:
-            from copper.config import CustomAnalysis
-            analysis = CustomAnalysis(config)
+    # Try loading yaml
+    try:
+        import yaml
+    except ImportError:
+        logging.getLogger().warning('Cannot load yaml')
+        opts.read_config = False
 
-        # Dynamically decorate each analysis step
-        for step in analysis.pipeline:
-            # Time step plus redirect stdout to /dev/null
-            step.apply = task_timing(step.message)(
-                stdout_redirected()(
-                    step.apply
-                )
+    # Customized analysis
+    if opts.read_config:
+        from copper.config import CustomAnalysis
+        analysis = CustomAnalysis(config)
+
+    # Dynamically decorate each analysis step
+    for step in analysis.pipeline:
+        # Time step plus redirect stdout to /dev/null
+        step.apply = task_timing(step.message)(
+            stdout_redirected()(
+                step.apply
             )
+        )
 
-        # Run analysis while timing each step, plus total time
-        with task_timing('total time'):
-            analysis.run()
+    # Run analysis while timing each step, plus total time
+    with task_timing('total time'):
+        analysis.run()
 
-        # Print statistics
-        print "\n\n[Statistics]\n"
-        print analysis.stats
+    # Print statistics
+    print "\n\n[Statistics]\n"
+    print analysis.stats
 
 
 @contextlib2.contextmanager
@@ -110,7 +134,7 @@ def setup_logging(lvl=logging.INFO):
     root_logger.addHandler(syslog_handler)
 
     # Add stderr handler
-    stderr_formatter = logging.Formatter("%(levelname)s (%(name)s): %(message)s")
+    stderr_formatter = ConsoleFormatter("%(levelname)s (%(name)s): %(message)s")
     stderr_handler = StreamHandler(stream=sys.stderr)
     stderr_handler.setFormatter(stderr_formatter)
     stderr_handler.setLevel(logging.WARNING)
@@ -119,10 +143,16 @@ def setup_logging(lvl=logging.INFO):
     # Start executing task
     try:
         root_logger.info('Started')
-        yield
+        yield root_logger
     finally:
         root_logger.info('Finished')
 
 
 if __name__ == '__main__':
-    main()
+    with setup_logging() as logger:
+        try:
+            main()
+        except Exception as e:
+            logger.exception('')
+            print >> sys.stderr, 'Exiting ...'
+            exit(1)
