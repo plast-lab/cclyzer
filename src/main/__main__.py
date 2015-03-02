@@ -110,7 +110,7 @@ def setup_logging(lvl=logging.INFO):
     root_logger.addHandler(syslog_handler)
 
     # Add stderr handler
-    stderr_formatter = logging.Formatter("%(name)s: %(levelname)s: %(message)s")
+    stderr_formatter = logging.Formatter("%(levelname)s (%(name)s): %(message)s")
     stderr_handler = StreamHandler(stream=sys.stderr)
     stderr_handler.setFormatter(stderr_formatter)
     stderr_handler.setLevel(logging.WARNING)
