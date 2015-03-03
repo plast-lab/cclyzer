@@ -4024,6 +4024,32 @@ lang:physical:filePath[`_trunc_instruction:to_type] = "facts/predicates/trunc_in
 
 
 
+_type:size(v0, v1) -> string(v0), int[64](v1).
+
+lang:physical:delimiter[`_type:size] = "\t".
+lang:physical:filePath[`_type:size] = "facts/predicates/type-size.dlm".
+
++type:id(e0:v0),
++type(e0),
++type:size[e0] = v1
+<-
+   _type:size(v0, v1).
+
+
+
+_type:unpadded_size(v0, v1) -> string(v0), int[64](v1).
+
+lang:physical:delimiter[`_type:unpadded_size] = "\t".
+lang:physical:filePath[`_type:unpadded_size] = "facts/predicates/type-unpadded_size.dlm".
+
++type:id(e0:v0),
++type(e0),
++type:unpadded_size[e0] = v1
+<-
+   _type:unpadded_size(v0, v1).
+
+
+
 _udiv_instruction:first_operand$by_immediate(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_udiv_instruction:first_operand$by_immediate] = "\t".

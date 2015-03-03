@@ -1,2 +1,11 @@
 // Types
 type(Type), type:id(Type:Ref) -> string(Ref).
+
+
+// Sizes of types
+
+type:size[Type] = Size ->
+   type(Type), int[64](Size).
+
+type:unpadded_size[Type] = Size ->
+   type(Type), int[64](Size).
