@@ -12,3 +12,4 @@ flag
 fcmp_condition
 calling_convention
 attribute
+schema:sanity
