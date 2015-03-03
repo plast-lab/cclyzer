@@ -76,3 +76,13 @@ Build LLVM-Datalog as follows:
     $ cd /path/to/llvm-datalog/
     $ make
     $ sudo make install
+
+
+
+Troubleshooting
+---------------
+
+The warnings and errors that may come up during execution are not very
+informative. Instead, the log file located at `$XDG_CACHE_HOME` (which
+at most systems defaults to `~/.cache/copper/copper.log`), or the
+*system log*, can be much more helpful.
