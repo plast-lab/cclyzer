@@ -146,7 +146,8 @@ int main(int argc, char *argv[]) {
 
     CsvGenerator *csvGen = CsvGenerator::getInstance();
 
-    for(int i = 0; i < IRFiles.size(); ++i) {
+    for(size_t i = 0; i < IRFiles.size(); ++i)
+    {
         Module *Mod = ParseIRFile(IRFiles[i], Err, Context);
         //TODO: check if parsing .ll file fails
         string realPath = string(realpath(IRFiles[i].c_str(), NULL));
