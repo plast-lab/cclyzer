@@ -83,6 +83,7 @@ Troubleshooting
 ---------------
 
 The warnings and errors that may come up during execution are not very
-informative. Instead, the log file located at `$XDG_CACHE_HOME` (which
-at most systems defaults to `~/.cache/copper/copper.log`), or the
-*system log*, can be much more helpful.
+informative. Instead, the log file located at
+`$XDG_CACHE_HOME/copper/copper.log` (which at most systems defaults to
+`~/.cache/copper/copper.log`), or the *system log*, can be much more
+helpful.
