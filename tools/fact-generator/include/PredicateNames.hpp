@@ -368,6 +368,9 @@ namespace predicate_names {
     extern const char * structTypeNFields;
     extern const char * opaqueStructType;
 
+    extern const char * typeAllocSize;
+    extern const char * typeStoreSize;
+
 // Variables and Immediates
 
     extern const char * immediate;

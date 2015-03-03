@@ -1,5 +1,7 @@
+#include <iostream>
 #include <string>
 
+#include "llvm/IR/DataLayout.h"
 #include "llvm/IR/Module.h"
 #include "llvm/IR/Operator.h"
 #include "llvm/Support/CFG.h"
@@ -77,6 +79,7 @@ const char * CsvGenerator::simplePredicates[] = {
     funcTypeReturn, funcTypeParam, funcTypeNParams,
     ptrType, ptrTypeComp, ptrTypeAddrSpace,
     vectorType, vectorTypeComp, vectorTypeSize,
+    typeAllocSize, typeStoreSize,
     arrayType, arrayTypeComp, arrayTypeSize,
     structType, structTypeField, structTypeNFields,
     opaqueStructType, ::immediate, immediateType,
@@ -158,7 +161,12 @@ void CsvGenerator::writeOperandPredicateToCsv(const char *predName, const string
         (*csvFile) << entityRefmode << delim << index << delim << operandRefmode << "\n";
 }
 
-void CsvGenerator::processModule(const Module * Mod, string& path){
+void CsvGenerator::processModule(const Module * Mod, string& path)
+{
+    // Get data layout of this module
+    std::string layoutRef = Mod->getDataLayout();
+    DataLayout *layout = new DataLayout(layoutRef);
+    layouts.insert(layout);
 
     // iterating over global variables in a module
     for (Module::const_global_iterator gi = Mod->global_begin(), E = Mod->global_end(); gi != E; ++gi) {
@@ -320,8 +328,30 @@ void CsvGenerator::writeVarsTypesAndImmediates(){
 
     //TODO: convert if-then-else to switch statement
     //TODO: eliminate common exps
-    for (unordered_set<const Type *>::iterator it = componentTypes.begin(); it != componentTypes.end(); ++it) {
+    for (unordered_set<const Type *>::iterator it = componentTypes.begin(); it != componentTypes.end(); ++it)
+    {
         const Type *type = *it;
+
+        // Record type sizes
+        if (type->isSized()) {  // skip types that do not have size (e.g., labels, functions)
+            for (unordered_set<const DataLayout *>::iterator it2 = layouts.begin();
+                 it2 != layouts.end(); ++it2)
+            {
+                // TODO: address the case when the data layout does
+                // not contain information about this type. This will
+                // happen when we analyze multiple compilation units
+                // (modules) at once.
+
+                const DataLayout *DL = *it2;
+                uint64_t allocSize = DL->getTypeAllocSize(const_cast<Type *>(type));
+                uint64_t storeSize = DL->getTypeStoreSize(const_cast<Type *>(type));
+
+                writePredicateToCsv(typeAllocSize, printType(type), allocSize);
+                writePredicateToCsv(typeStoreSize, printType(type), storeSize);
+                break;
+            }
+        }
+
         if (type->isIntegerTy()) {
             writeEntityToCsv(intType, printType(type));
         }

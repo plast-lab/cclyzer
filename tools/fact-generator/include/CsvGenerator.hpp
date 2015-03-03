@@ -9,6 +9,7 @@
 #include "llvm/IR/Type.h"
 #include "llvm/IR/Value.h"
 #include "llvm/Support/raw_ostream.h"
+#include "llvm/IR/DataLayout.h"
 #include "llvm/IR/GlobalValue.h"
 #include "llvm/IR/GlobalVariable.h"
 
@@ -138,6 +139,7 @@ private:
         return csvFiles[filename];
     }
 
+    boost::unordered_set<const llvm::DataLayout *> layouts;
     boost::unordered_set<const llvm::Type *> types;
     boost::unordered_set<const llvm::Type *> componentTypes;
     boost::unordered_map<std::string, const llvm::Type *> variable;

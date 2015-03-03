@@ -367,6 +367,9 @@ namespace predicate_names{
     const char * structTypeNFields = "struct_type:nfields";
     const char * opaqueStructType = "opaque_struct_type";
 
+    const char * typeAllocSize = "type:size";
+    const char * typeStoreSize = "type:unpadded_size";
+
 // Variables and Immediates
 
     const char * immediate = "immediate";
