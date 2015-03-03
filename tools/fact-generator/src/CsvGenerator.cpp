@@ -20,8 +20,6 @@ template<> CsvGenerator *Singleton<CsvGenerator>::INSTANCE = NULL;
 
 //aggregate array for all predicate names
 
-const int CsvGenerator::simplePredicatesNum = 191;
-
 const char * CsvGenerator::simplePredicates[] = {
     basicBlockPred, globalVar, globalVarType,
     globalVarInit, globalVarSect, globalVarAlign,
@@ -86,8 +84,6 @@ const char * CsvGenerator::simplePredicates[] = {
     landingpadInsnFilter, constExpr
 };
 
-const int CsvGenerator::operandPredicatesNum = 87;
-
 const char * CsvGenerator::operandPredicates[] = {
     addInsnFirstOp, addInsnSecondOp, faddInsnFirstOp,
     faddInsnSecondOp, subInsnFirstOp, subInsnSecondOp,
@@ -122,8 +118,10 @@ const char * CsvGenerator::operandPredicates[] = {
 
 
 CsvGenerator::CsvGenerator(){
+    size_t nOperandPredicates = sizeof(operandPredicates) / sizeof(operandPredicates[0]);
+
     //TODO: insert assertion that DirInfo has been initialized
-    for(int i = 0; i < operandPredicatesNum; ++i)
+    for(int i = 0; i < nOperandPredicates; ++i)
     {
         string csvFilenameImm = predNameWithOperandToFilename(operandPredicates[i], false),
             csvFilenameVar = predNameWithOperandToFilename(operandPredicates[i], true);
@@ -135,7 +133,9 @@ CsvGenerator::CsvGenerator(){
         csvFiles[csvFilenameVar] = csvFileVar;
     }
 
-    for(int i = 0; i < simplePredicatesNum; ++i)
+    size_t nSimplePredicates  = sizeof(simplePredicates) / sizeof(simplePredicates[0]);
+
+    for(int i = 0; i < nSimplePredicates; ++i)
     {
         string csvFilename = predNameToFilename(simplePredicates[i]);
         filesystem::ofstream *csvFile = new filesystem::ofstream(csvFilename.c_str(), ios_base::out);
