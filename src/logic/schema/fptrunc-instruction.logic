@@ -7,7 +7,7 @@ fptrunc_instruction:from[Insn] = Value ->
    fptrunc_instruction(Insn), operand(Value).
 
 fptrunc_instruction:to_type[Insn] = Type ->
-   fptrunc_instruction(Insn), type(Type).
+   fptrunc_instruction(Insn), fp_type(Type).
 
 fptrunc_instruction:from_type[Insn] = Type <-
    fptrunc_instruction:from[Insn] = Value,
@@ -41,10 +41,5 @@ schema:sanity()
 
 schema:sanity()
  , fptrunc_instruction:from_type[_] = Type
- ->
-   fp_type(Type) ; 0 = 1. // TODO: check if dummy or can be avoided in future versions
-
-schema:sanity()
- , fptrunc_instruction:to_type[_] = Type
  ->
    fp_type(Type).
