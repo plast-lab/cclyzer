@@ -63,7 +63,7 @@ schema:sanity()
 schema:sanity()
  , shufflevector_instruction:input_type[_] = Input
  ->
-   vector_type(Input) ; 0 = 1. // TODO: check if this dummy or can be avoided in future versions
+   vector_type(Input).
 
 schema:sanity()
  , shufflevector_instruction:mask_type[_] = Mask

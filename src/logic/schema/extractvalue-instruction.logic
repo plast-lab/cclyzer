@@ -95,7 +95,7 @@ schema:sanity()
 schema:sanity()
  , extractvalue_instruction:base_type[_] = Type
  ->
-   aggregate_type(Type) ; 0 = 1. // c1 /TODO: remove dummy or in future versions
+   aggregate_type(Type). // c1
 
 
 // TODO: check if other integer types are allowed for non-structure

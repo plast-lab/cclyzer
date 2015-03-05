@@ -91,7 +91,7 @@ cmpxchg_instruction:type[Insn] = Type <-
 schema:sanity()
  , cmpxchg_instruction:type[_] = Type
  ->
-   integer_type(Type) ; 0 = 1. // TODO: check if this dummy or can be avoided in future versions
+   integer_type(Type).
 
 schema:sanity()
  , cmpxchg_instruction:address[_] = Ptr

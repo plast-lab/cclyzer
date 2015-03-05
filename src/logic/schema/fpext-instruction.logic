@@ -42,7 +42,7 @@ schema:sanity()
 schema:sanity()
  , fpext_instruction:from_type[_] = Type
  ->
-   fp_type(Type) ; 0 = 1. // TODO: check if dummy or above can be avoided in future versions
+   fp_type(Type).
 
 schema:sanity()
  , fpext_instruction:to_type[_] = Type
