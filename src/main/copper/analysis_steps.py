@@ -15,7 +15,11 @@ class AnalysisStep(object):
 
     def __init__(self):
         self.manager = runtime.FileManager()
+        self.env = runtime.Environment()
         self.logger = logging.getLogger(__name__)
+
+    def check(self):
+        return self
 
     @abc.abstractmethod
     def apply(self, analysis):
@@ -72,6 +76,13 @@ class DatabaseCreationStep(AnalysisStep):
     @property
     def message(self):
         return 'imported facts to database'
+
+    def check(self):
+        # Ensure that LOGICBLOX_HOME has been set
+        if not self.env.logicblox_home:
+            raise EnvironmentError("Environment variable LOGICBLOX_HOME is not set")
+
+        return self
 
 
 class LoadProjectStep(AnalysisStep):
