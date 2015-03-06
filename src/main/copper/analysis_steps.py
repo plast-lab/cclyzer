@@ -85,7 +85,9 @@ class LoadProjectStep(AnalysisStep):
     def extract_then_apply(self, analysis, project=None, unpacked_deps=None, libpath=[]):
         # Handle optional arguments and apply default values if needed
         project = project or self._project
-        unpacked_deps = unpacked_deps or list(project.dependencies)
+
+        if unpacked_deps is None:
+            unpacked_deps = list(project.dependencies)
 
         if not unpacked_deps:   # All dependencies have been extracted
             with UnpackedProject(project) as project:
