@@ -78,7 +78,7 @@ Build LLVM-Datalog as follows:
     $ sudo make install    # optional
 
 
-The last line is optional; it performs system-wide installation,
+The last line is *optional*. It performs system-wide installation,
 placing the `llvm-datalog` binary to `/usr/local/bin`. You can skip
 this step and work with the binary inside `./build/dist/` entirely. In
 fact, this is what all the testing targets of the following section
