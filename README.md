@@ -96,6 +96,7 @@ interactive experience:
 
     $ make launch
     ...
+    >>>
     >>> from copper import *
     >>> config = AnalysisConfig('./tests/stty, './build/tests/stty')
     >>> analysis = Analysis(config)
@@ -105,8 +106,8 @@ interactive experience:
     # instructions        : 4157
     # reachable functions :   81
     # callgraph edges     :  144
-    # var-points-to       :   70
-    # ptr-points-to       :    0
+    ...
+    >>>
 
 
 Troubleshooting
