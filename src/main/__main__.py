@@ -54,7 +54,7 @@ def main():
 
     # Initialize analysis
     opts = parser.parse_args()
-    config = copper.AnalysisConfig(opts)
+    config = copper.AnalysisConfig.from_cli_options(opts)
     analysis = copper.Analysis(config)
 
     # Try loading yaml
