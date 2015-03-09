@@ -91,6 +91,23 @@ or a particular test, e.g., `stty`, with:
 
     $ make test-stty.run
 
+It is also possible to invoke a python interpreter for a more
+interactive experience:
+
+    $ make launch
+    ...
+    >>> from copper import *
+    >>> config = AnalysisConfig('./tests/stty, './build/tests/stty')
+    >>> analysis = Analysis(config)
+    >>> analysis.run()
+    ...
+    >>> print analysis.stats
+    # instructions        : 4157
+    # reachable functions :   81
+    # callgraph edges     :  144
+    # var-points-to       :   70
+    # ptr-points-to       :    0
+
 
 Troubleshooting
 ---------------
