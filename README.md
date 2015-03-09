@@ -109,7 +109,7 @@ interactive experience:
     ...
     >>>
 
-Or if you have ipython installed, you can try:
+Or if you have [ipython](http://ipython.org/) installed, you can try:
 
     $ make PYTHON=ipython launch
 
