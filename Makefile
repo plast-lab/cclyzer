@@ -1,5 +1,6 @@
 LEVEL := .
 COPPER_OPTS ?=
+PYTHON = python
 
 all:
 
@@ -115,7 +116,7 @@ $(artifact.exe): $(artifact.zip) dist.force
 
 
 launch: $(artifact.egg)
-	PYTHONPATH=$< python
+	PYTHONPATH=$< $(PYTHON)
 
 # Phony targets
 

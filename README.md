@@ -109,6 +109,11 @@ interactive experience:
     ...
     >>>
 
+Or if you have ipython installed, you can try:
+
+    $ make PYTHON=ipython launch
+
+
 
 Troubleshooting
 ---------------
