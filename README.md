@@ -98,7 +98,7 @@ interactive experience:
     ...
     >>>
     >>> from copper import *
-    >>> config = AnalysisConfig('./tests/stty, './build/tests/stty')
+    >>> config = AnalysisConfig('./tests/stty', './build/tests/stty')
     >>> analysis = Analysis(config)
     >>> analysis.run()
     ...
