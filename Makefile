@@ -90,6 +90,7 @@ $(eval $(call create-destdir,dist,dist))
 
 # Artifacts
 artifact.zip := $(dist.outdir)/llvm-datalog.zip
+artifact.egg := $(dist.outdir)/llvm-datalog.egg
 artifact.exe := $(dist.outdir)/llvm-datalog
 
 .INTERMEDIATE: $(artifact.zip)
@@ -102,16 +103,24 @@ $(artifact.zip): $(modules) resources | $(dist.outdir)
 	zip -r $@ $(resources:$(OUTDIR)/%=%) >/dev/null
 	$(QUIET) $(RM) resources
 
+
+$(artifact.egg): $(artifact.zip) dist.force
+	$(info Creating artifact $@ ...)
+	$(INSTALL) $< $@
+
 $(artifact.exe): $(artifact.zip) dist.force
 	$(info Creating artifact $@ ...)
 	$(QUIET) echo '#!/usr/bin/env python' | cat - $< > $@
 	chmod +x $@
 
 
+launch: $(artifact.egg)
+	PYTHONPATH=$< python
+
 # Phony targets
 
-.PHONY: dist dist.clean dist.force
-dist: $(artifact.zip) $(artifact.exe)
+.PHONY: dist dist.clean dist.force launch
+dist: $(artifact.zip) $(artifact.exe) $(artifact.egg)
 
 dist.clean:
 	$(RM) -r $(dist.outdir)
