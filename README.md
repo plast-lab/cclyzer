@@ -78,6 +78,17 @@ Build LLVM-Datalog as follows:
     $ sudo make install
 
 
+Testing
+-------
+
+The basic test suite comprises the [GNU Core Utilities](https://www.gnu.org/software/coreutils/).
+
+You may run all the tests with:
+    $ make tests.run
+
+or a particular test, e.g., `stty`, with:
+    $ make test-stty.run
+
 
 Troubleshooting
 ---------------
