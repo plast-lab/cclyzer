@@ -62,7 +62,8 @@ int main(int argc, char* argv[])
         string delim = opt.getPredDelimiter();
 
         set<string>::iterator ignoreEnd = predicatesToIgnore.end();
-        for(map<const string, Predicate*>::iterator it = allPredicates.begin(), end = allPredicates.end(); it != end; ++it)
+        for(map<const string, Predicate*>::iterator it = allPredicates.begin(),
+                end = allPredicates.end(); it != end; ++it)
         {
             Predicate *p = it->second;
 

@@ -128,8 +128,8 @@ private:
     const char *writeAtomicInfo(std::string instrId, llvm::AtomicOrdering order, llvm::SynchronizationScope synchScope);
     void writeAtomicRMWOp(std::string instrId, llvm::AtomicRMWInst::BinOp op);
 
-    void writeVolatileFlag(std::string instrId, bool volatileFlag) {
-
+    void writeVolatileFlag(std::string instrId, bool volatileFlag)
+    {
         if(volatileFlag) {
             csvGen->writePredicateToCsv(predicate_names::insnFlag, instrId, "volatile");
         }

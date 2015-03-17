@@ -1,6 +1,6 @@
 #include "PredicateNames.hpp"
 
-namespace predicate_names{
+namespace predicate_names {
 
 // Basic Blocks
 
@@ -385,5 +385,4 @@ namespace predicate_names{
 // Auxiliary predicates
 
     const char * constToInt = "constant:to_int";
-
 }
