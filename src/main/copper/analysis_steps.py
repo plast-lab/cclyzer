@@ -42,7 +42,7 @@ class FactGenerationStep(AnalysisStep):
 
         # Generate facts
         with unpacked_binary('fact-generator') as executable:
-            subprocess.check_call([executable, "-i", indir, "-o", outdir])
+            subprocess.check_call([executable, "-f", "-o", outdir, "-r", indir])
 
         self.logger.info("Stored facts into %s", outdir)
 

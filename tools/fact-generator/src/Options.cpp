@@ -32,7 +32,7 @@ Options* Options::init(int argc, char* argv[])
          "CSV file delimiter (default \\t)")
         ("out-dir,o", po::value<fs::path>(&outDirectory)->required(),
          "Output directory for generated facts")
-        (",r", "Recurse into input directories")
+        ("recursive,r", "Recurse into input directories")
         ("force,f", "Remove existing contents of output directory");
 
     // hidden options group - don't show in help
@@ -87,7 +87,7 @@ Options* Options::init(int argc, char* argv[])
     // Compute input files and create output directories
     std::vector<fs::path> paths = vm["input-files"].as<std::vector<fs::path> >();
     setOutputDirectory(outDirectory, vm.count("force"));
-    setInputFiles(paths, vm.count("r"));
+    setInputFiles(paths, vm.count("recursive"));
 
     return this;
 }

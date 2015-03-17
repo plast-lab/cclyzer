@@ -15,7 +15,7 @@
 
 #include "AuxiliaryMethods.hpp"
 #include "PredicateNames.hpp"
-#include "DirInfo.hpp"
+#include "Options.hpp"
 #include "Singleton.hpp"
 
 class CsvGenerator : public Singleton<CsvGenerator> {
@@ -84,58 +84,71 @@ private:
         return "<" + path + ">:" + auxiliary_methods::valueToString(Val, Mod);
     }
 
-    std::string predNameToFilename(const char * predName) {
+    std::string predNameToFilename(const char * predName)
+    {
+        namespace fs = boost::filesystem;
+
         boost::unordered_map<const char*, std::string>::iterator cachedValue = simplePredFilenames.find(predName);
-        if(cachedValue != simplePredFilenames.end()){
+
+        if (cachedValue != simplePredFilenames.end())
             return cachedValue->second;
+
+        Options *opt = Options::getInstance();
+        std::string filename = std::string(predName);
+
+        size_t pos = 0;
+        fs::path dir = opt->getEntityOutputDirectory();
+
+        while ((pos = filename.find(':', pos)) != std::string::npos)
+        {
+            filename[pos] = '-';
+            dir = opt->getPredicateOutputDirectory();
         }
 
-        DirInfo * info = DirInfo::getInstance();
-        std::string filename = std::string(predName);
-        std::string folder = info->getEntitiesDir();
-        size_t pos = 0;
-        while ((pos = filename.find(':', pos)) != std::string::npos) {
-            filename[pos] = '-';
-            folder = info->getPredicatesDir();
-        }
-        filename = folder + "/" + filename + ".dlm";
-        simplePredFilenames[predName] = filename;
-        return filename;
+        fs::path path = dir / filename;
+        path += ".dlm";
+
+        return simplePredFilenames[predName] = path.string();
     }
 
-    std::string predNameWithOperandToFilename(const char * predName, bool operand) {
+    std::string predNameWithOperandToFilename(const char * predName, bool operand)
+    {
+        namespace fs = boost::filesystem;
+
         //TODO: yikes make a typedef
         boost::unordered_map<const char*,
                              std::pair<std::string, std::string> >::iterator
             cachedValue = operandPredFilenames.find(predName);
 
-        if(cachedValue != operandPredFilenames.end()){
-            if(operand)
-                return cachedValue->second.first;
-            else
-                return cachedValue->second.second;
-        }
+        // Return cached value
+        if (cachedValue != operandPredFilenames.end())
+            return operand
+                ? cachedValue->second.first
+                : cachedValue->second.second;
 
         std::string filename = predName;
         size_t pos = 0;
-        while ((pos = filename.find(':', pos)) != std::string::npos) {
-            filename[pos] = '-';
-        }
-        // imm: operand = 0, var: operand = 1
-        filename = DirInfo::getInstance()->getPredicatesDir() + "/" + filename;
 
-        std::string varVersion = filename + "-by_variable.dlm", immVersion = filename + "-by_immediate.dlm";
-        operandPredFilenames[predName] = std::pair<std::string, std::string>(varVersion, immVersion);
-        if(operand)
-            return varVersion;
-        else
-            return immVersion;
+        while ((pos = filename.find(':', pos)) != std::string::npos)
+            filename[pos] = '-';
+
+        // imm: operand = 0, var: operand = 1
+        fs::path basename = Options::getInstance()->getPredicateOutputDirectory() / filename;
+        std::string varPath = basename.string() + "-by_variable.dlm";
+        std::string immPath = basename.string() + "-by_immediate.dlm";
+
+        operandPredFilenames[predName] = make_pair(varPath, immPath);
+
+        return operand ? varPath : immPath;
     }
 
-    boost::filesystem::ofstream* getCsvFile(std::string filename){
+    boost::filesystem::ofstream* getCsvFile(std::string filename)
+    {
         boost::filesystem::ofstream *rv;
+
         if(csvFiles.find(filename) == csvFiles.end())
             csvFiles[filename] = new boost::filesystem::ofstream(filename.c_str(), std::ios_base::out);
+
         return csvFiles[filename];
     }
 
