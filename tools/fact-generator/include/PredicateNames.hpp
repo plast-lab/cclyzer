@@ -1,5 +1,5 @@
-#ifndef __PREDICATE_NAMES_H__
-#define __PREDICATE_NAMES_H__
+#ifndef PREDICATE_NAMES_H__
+#define PREDICATE_NAMES_H__
 
 namespace predicate_names {
 
@@ -388,4 +388,5 @@ namespace predicate_names {
     extern const char * constToInt;
 
 }
+
 #endif

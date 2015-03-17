@@ -1,5 +1,5 @@
-#ifndef __CSV_GENERATOR_H__
-#define __CSV_GENERATOR_H__
+#ifndef CSV_GENERATOR_H__
+#define CSV_GENERATOR_H__
 
 #include <boost/unordered_set.hpp>
 #include <boost/unordered_map.hpp>

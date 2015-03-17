@@ -1,5 +1,5 @@
-#ifndef __SINGLETON_HPP__
-#define __SINGLETON_HPP__
+#ifndef SINGLETON_HPP__
+#define SINGLETON_HPP__
 
 template<typename T>
 class Singleton {

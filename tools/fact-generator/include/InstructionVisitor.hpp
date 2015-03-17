@@ -1,5 +1,5 @@
-#ifndef __INSTRUCTION_VISITOR_H__
-#define __INSTRUCTION_VISITOR_H__
+#ifndef INSTRUCTION_VISITOR_H__
+#define INSTRUCTION_VISITOR_H__
 
 #include <string>
 
