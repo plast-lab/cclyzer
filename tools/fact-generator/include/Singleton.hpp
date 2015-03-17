@@ -21,11 +21,11 @@ public:
 
     static void destroy() {
         delete INSTANCE;
-        INSTANCE = NULL;
+        INSTANCE = 0;
     }
 
     bool isInitialized(){
-        return INSTANCE != NULL;
+        return INSTANCE != 0;
     }
 };
 
