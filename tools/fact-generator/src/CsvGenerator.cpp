@@ -129,12 +129,14 @@ const char * CsvGenerator::operandPredicates[] = {
 CsvGenerator::CsvGenerator()
 {
     namingScheme = DefaultPredicateNaming::getInstance();
+    outDir = Options::getInstance()->getOutputDirectory();
     initStreams();
 }
 
 CsvGenerator::CsvGenerator(PredicateNamingScheme &scheme)
 {
     namingScheme = &scheme;
+    outDir = Options::getInstance()->getOutputDirectory();
     initStreams();
 }
 

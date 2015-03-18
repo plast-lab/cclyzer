@@ -18,14 +18,6 @@ public:
         return outDirectory;
     }
 
-    boost::filesystem::path getEntityOutputDirectory() {
-        return outDirectory / ENTITIES_SUBDIR;
-    }
-
-    boost::filesystem::path getPredicateOutputDirectory() {
-        return outDirectory / PREDICATES_SUBDIR;
-    }
-
     std::vector<boost::filesystem::path>& getInputFiles() {
         return inputFiles;
     }
@@ -47,10 +39,6 @@ protected:
     void setOutputDirectory(boost::filesystem::path path, bool shouldForce);
 
 private:
-    /* Output subdirectories */
-    static const char *ENTITIES_SUBDIR;
-    static const char *PREDICATES_SUBDIR;
-
     /* Parsing failure exit code */
     const static int ERROR_IN_COMMAND_LINE = 1;
 

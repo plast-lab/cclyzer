@@ -49,6 +49,9 @@ public:
     }
 
 protected:
+    typedef boost::filesystem::path path;
+    typedef boost::filesystem::ofstream ofstream;
+    typedef boost::unordered_map<path, ofstream*> stream_cache_t;
 
     friend class Singleton<CsvGenerator>;
 
@@ -59,18 +62,25 @@ protected:
 
     ~CsvGenerator();
 
-    boost::filesystem::path toPath(const char * predName) {
-        return namingScheme->toPath(predName);
+    path prepend_dir(path p)
+    {
+        using namespace boost::filesystem;
+
+        p = outDir / p;
+        create_directory(p.parent_path());
+        return p;
     }
 
-    boost::filesystem::path toPath(const char * predName, Operands::Type type) {
-        return namingScheme->toPath(predName, type);
+    path toPath(const char * predName) {
+        return prepend_dir(namingScheme->toPath(predName));
+    }
+
+    path toPath(const char * predName, Operands::Type type) {
+        return prepend_dir(namingScheme->toPath(predName, type));
     }
 
 private:
-    typedef boost::filesystem::path path;
-    typedef boost::filesystem::ofstream ofstream;
-    typedef boost::unordered_map<path, ofstream*> stream_cache_t;
+    path outDir;
 
     // Strategy pattern for transforming predicates to filesystem paths
     PredicateNamingScheme *namingScheme;

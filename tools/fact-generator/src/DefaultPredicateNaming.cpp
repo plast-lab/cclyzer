@@ -6,14 +6,12 @@
 #include "PredicateNamingScheme.hpp"
 #include "Options.hpp"
 
-namespace fs = boost::filesystem;
+// Initialize singleton instance
 template<> DefaultPredicateNaming *Singleton<DefaultPredicateNaming>::INSTANCE = NULL;
-typedef std::pair<PredicateNamingScheme *,const char *> cachekey_t;
 
-// Default extensions
-const std::string DefaultPredicateNaming::CSV_EXTENSION = ".dlm";
-const std::string DefaultPredicateNaming::BY_VARIABLE_SUFFIX = "-by_variable";
-const std::string DefaultPredicateNaming::BY_IMMEDIATE_SUFFIX = "-by_immediate";
+// Type and namespace definitions
+namespace fs = boost::filesystem;
+typedef std::pair<PredicateNamingScheme *,const char *> cachekey_t;
 
 
 fs::path DefaultPredicateNaming::toPath(const char *predName)
@@ -33,21 +31,20 @@ fs::path DefaultPredicateNaming::toPath(const char *predName)
     if (cachedValue != cache.end())
         return cachedValue->second;
 
-    Options *opt = Options::getInstance();
     string basename(predName);
 
     // Replace all ':' characters with '-'
     size_t pos = 0;
-    fs::path dir = opt->getEntityOutputDirectory();
+    fs::path dir = entitiesDir;
 
     while ((pos = basename.find(':', pos)) != string::npos) {
         basename[pos] = '-';
-        dir = opt->getPredicateOutputDirectory();
+        dir = predicatesDir;
     }
 
     // Add directory and extension
     fs::path path = dir / basename;
-    path += CSV_EXTENSION;
+    path += extension;
 
     return cache[key] = path;
 }
@@ -73,17 +70,16 @@ fs::path DefaultPredicateNaming::toPath(const char *predName, Operands::Type typ
             : cachedValue->second.second;
 
     string basename(predName);
-    fs::path dir = Options::getInstance()->getPredicateOutputDirectory();
 
     // Replace all ':' characters with '-'
     replace(basename.begin(), basename.end(), ':', '-');
 
     // Add directory and extension
-    fs::path vpath = dir / basename;
+    fs::path vpath = predicatesDir / basename;
     fs::path ipath = vpath;
 
-    vpath += BY_VARIABLE_SUFFIX + CSV_EXTENSION;
-    ipath += BY_IMMEDIATE_SUFFIX + CSV_EXTENSION;
+    vpath += varSuffix + extension;
+    ipath += immSuffix + extension;
 
     cache[key] = make_pair(vpath, ipath);
     return type == Operands::VARIABLE ? vpath : ipath;

@@ -9,22 +9,37 @@ class DefaultPredicateNaming : public PredicateNamingScheme,
                                public Singleton<DefaultPredicateNaming>
 {
 protected:
+    typedef boost::filesystem::path path;
     friend class Singleton<DefaultPredicateNaming>;
 
-    DefaultPredicateNaming() {}
+    DefaultPredicateNaming()
+        : extension(".dlm")
+        , entitiesDir("entities")
+        , predicatesDir("predicates")
+        , varSuffix("-by_variable")
+        , immSuffix("-by_immediate")
+    {}
+
     DefaultPredicateNaming(const DefaultPredicateNaming&);
     DefaultPredicateNaming& operator= (const DefaultPredicateNaming&);
 
 public:
     virtual ~DefaultPredicateNaming() {}
 
-    virtual boost::filesystem::path toPath(const char * predName);
-    virtual boost::filesystem::path toPath(const char * predName, Operands::Type type);
+    virtual path toPath(const char * predName);
+    virtual path toPath(const char * predName, Operands::Type type);
 
 private:
-    static const std::string CSV_EXTENSION;
-    static const std::string BY_VARIABLE_SUFFIX;
-    static const std::string BY_IMMEDIATE_SUFFIX;
+    /* CSV file extension */
+    const std::string extension;
+
+    /* Entities and predicates go to different directories */
+    const path entitiesDir;
+    const path predicatesDir;
+
+    /* Predicates with operands have two files associated with them */
+    const std::string varSuffix;
+    const std::string immSuffix;
 };
 
 

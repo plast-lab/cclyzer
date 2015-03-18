@@ -13,9 +13,6 @@
 
 #define foreach BOOST_FOREACH
 
-const char *Options::ENTITIES_SUBDIR = "entities";
-const char *Options::PREDICATES_SUBDIR = "predicates";
-
 namespace fs = boost::filesystem;
 namespace po = boost::program_options;
 template<> Options *Singleton<Options>::INSTANCE = NULL;
@@ -134,57 +131,27 @@ void Options::setInputFiles(std::vector<fs::path> &paths, bool shouldRecurse)
 
 void Options::setOutputDirectory(fs::path path, bool shouldForce)
 {
-    fs::path entitiesDir = path / ENTITIES_SUBDIR;
-    fs::path predicatesDir = path / PREDICATES_SUBDIR;
-
     // Create non-existing directory
-    if (fs::exists(path)) {
-        if (!fs::is_directory(path)) {
-            std::cerr << "Not a directory: " << path << std::endl;
-            exit(ERROR_IN_COMMAND_LINE);
-        }
-    } else {
+    if (!fs::exists(path))
         fs::create_directory(path);
+
+    if (!fs::is_directory(path)) {
+        std::cerr << "Not a directory: " << path << std::endl;
+        exit(ERROR_IN_COMMAND_LINE);
     }
 
     // Remove old contents
     if (shouldForce) {
-        fs::remove_all(entitiesDir);
-        fs::remove_all(predicatesDir);
-    } else {
-        fs::path dirs[] = {entitiesDir, predicatesDir};
-
-        // Check subdirectories
-        foreach(fs::path d, dirs)
-        {
-            if (!fs::exists(d))
-                continue;
-
-            if (!fs::is_directory(d)) {
-                std::cerr << "Not a directory: " << d << std::endl;
-                exit(ERROR_IN_COMMAND_LINE);
-            }
-
-            if (!fs::is_empty(d)) {
-                std::cerr << "Directory not empty: " << d << std::endl;
-                exit(ERROR_IN_COMMAND_LINE);
-            }
-        }
+        for (fs::directory_iterator end, it(path); it != end; ++it)
+            remove_all(it->path());
     }
 
-    // Check if output directory exists
-    if (!fs::is_directory(outDirectory))
-    {
-        std::cerr << "Output directory does not exist: "
-                  << outDirectory << std::endl;
-
+    // Ensure output directory is empty
+    if (!fs::is_empty(path)) {
+        std::cerr << "Directory not empty: " << path << std::endl;
         exit(ERROR_IN_COMMAND_LINE);
     }
 
     // Store output directory (CHECK: should we canonicalize path)
     outDirectory = path;
-
-    // Create subdirectories
-    fs::create_directory(entitiesDir);
-    fs::create_directory(predicatesDir);
 }
