@@ -18,6 +18,8 @@ const char *Options::PREDICATES_SUBDIR = "predicates";
 
 namespace fs = boost::filesystem;
 namespace po = boost::program_options;
+template<> Options *Singleton<Options>::INSTANCE = NULL;
+
 
 Options* Options::init(int argc, char* argv[])
 {

@@ -12,8 +12,6 @@
 
 #define foreach BOOST_FOREACH
 
-template<> Options *Singleton<Options>::INSTANCE = NULL;
-
 
 int main(int argc, char *argv[])
 {
