@@ -3,6 +3,7 @@
 
 #include <boost/unordered_set.hpp>
 #include <boost/unordered_map.hpp>
+#include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <string>
 
@@ -15,6 +16,7 @@
 
 #include "AuxiliaryMethods.hpp"
 #include "PredicateNames.hpp"
+#include "PredicateNamingScheme.hpp"
 #include "Options.hpp"
 #include "Singleton.hpp"
 
@@ -29,8 +31,9 @@ public:
 
     template<class ValType>
     void writePredicateToCsv(const char *predName, const std::string& entityRefmode, 
-                             const ValType& valueRefmode, int index = -1){
-        boost::filesystem::ofstream *csvFile = getCsvFile(predNameToFilename(predName));
+                             const ValType& valueRefmode, int index = -1)
+    {
+        boost::filesystem::ofstream *csvFile = getCsvFile(toPath(predName));
         if(index == -1)
             (*csvFile) << entityRefmode << delim << valueRefmode << "\n";
         else
@@ -50,20 +53,30 @@ protected:
     friend class Singleton<CsvGenerator>;
 
     CsvGenerator();
+    CsvGenerator(PredicateNamingScheme &scheme);
     CsvGenerator(const CsvGenerator&);
     CsvGenerator& operator= (const CsvGenerator&);
 
-    ~CsvGenerator(){
-        for(boost::unordered_map<std::string, boost::filesystem::ofstream*>::iterator it = csvFiles.begin(),
-                end = csvFiles.end(); it != end; it++){
-            boost::filesystem::ofstream *file = it->second;
-            file->flush();
-            file->close();
-            delete file;
-        }
+    ~CsvGenerator();
+
+    boost::filesystem::path toPath(const char * predName) {
+        return namingScheme->toPath(predName);
+    }
+
+    boost::filesystem::path toPath(const char * predName, Operands::Type type) {
+        return namingScheme->toPath(predName, type);
     }
 
 private:
+    typedef boost::filesystem::path path;
+    typedef boost::filesystem::ofstream ofstream;
+    typedef boost::unordered_map<path, ofstream*> stream_cache_t;
+
+    // Strategy pattern for transforming predicates to filesystem paths
+    PredicateNamingScheme *namingScheme;
+
+    void initStreams();
+
     //auxiliary methods
 
     void identifyType(const llvm::Type *elementType, boost::unordered_set<const llvm::Type *> &componentTypes);
@@ -84,70 +97,10 @@ private:
         return "<" + path + ">:" + auxiliary_methods::valueToString(Val, Mod);
     }
 
-    std::string predNameToFilename(const char * predName)
+    ofstream* getCsvFile(path filename)
     {
-        namespace fs = boost::filesystem;
-
-        boost::unordered_map<const char*, std::string>::iterator cachedValue = simplePredFilenames.find(predName);
-
-        if (cachedValue != simplePredFilenames.end())
-            return cachedValue->second;
-
-        Options *opt = Options::getInstance();
-        std::string filename = std::string(predName);
-
-        size_t pos = 0;
-        fs::path dir = opt->getEntityOutputDirectory();
-
-        while ((pos = filename.find(':', pos)) != std::string::npos)
-        {
-            filename[pos] = '-';
-            dir = opt->getPredicateOutputDirectory();
-        }
-
-        fs::path path = dir / filename;
-        path += ".dlm";
-
-        return simplePredFilenames[predName] = path.string();
-    }
-
-    std::string predNameWithOperandToFilename(const char * predName, bool operand)
-    {
-        namespace fs = boost::filesystem;
-
-        //TODO: yikes make a typedef
-        boost::unordered_map<const char*,
-                             std::pair<std::string, std::string> >::iterator
-            cachedValue = operandPredFilenames.find(predName);
-
-        // Return cached value
-        if (cachedValue != operandPredFilenames.end())
-            return operand
-                ? cachedValue->second.first
-                : cachedValue->second.second;
-
-        std::string filename = predName;
-        size_t pos = 0;
-
-        while ((pos = filename.find(':', pos)) != std::string::npos)
-            filename[pos] = '-';
-
-        // imm: operand = 0, var: operand = 1
-        fs::path basename = Options::getInstance()->getPredicateOutputDirectory() / filename;
-        std::string varPath = basename.string() + "-by_variable.dlm";
-        std::string immPath = basename.string() + "-by_immediate.dlm";
-
-        operandPredFilenames[predName] = make_pair(varPath, immPath);
-
-        return operand ? varPath : immPath;
-    }
-
-    boost::filesystem::ofstream* getCsvFile(std::string filename)
-    {
-        boost::filesystem::ofstream *rv;
-
-        if(csvFiles.find(filename) == csvFiles.end())
-            csvFiles[filename] = new boost::filesystem::ofstream(filename.c_str(), std::ios_base::out);
+        if (csvFiles.find(filename) == csvFiles.end())
+            csvFiles[filename] = new ofstream(filename.c_str(), std::ios_base::out);
 
         return csvFiles[filename];
     }
@@ -157,15 +110,11 @@ private:
     boost::unordered_set<const llvm::Type *> componentTypes;
     boost::unordered_map<std::string, const llvm::Type *> variable;
     boost::unordered_map<std::string, const llvm::Type *> immediate;
-    boost::unordered_map<std::string, boost::filesystem::ofstream*> csvFiles;
-    boost::unordered_map<const char*, std::string> simplePredFilenames;
-    boost::unordered_map<const char*, std::pair<std::string, std::string> > operandPredFilenames;
+    stream_cache_t csvFiles;
 
     static char delim;
     static CsvGenerator * INSTANCE;
-    static const int simplePredicatesNum;
     static const char * simplePredicates[];
-    static const int operandPredicatesNum;
     static const char * operandPredicates[];
 };
 

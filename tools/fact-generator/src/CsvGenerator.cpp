@@ -1,4 +1,6 @@
 #include <string>
+#include <boost/filesystem.hpp>
+#include <boost/foreach.hpp>
 
 #include "llvm/IR/DataLayout.h"
 #include "llvm/IR/Module.h"
@@ -8,6 +10,9 @@
 #include "AuxiliaryMethods.hpp"
 #include "CsvGenerator.hpp"
 #include "InstructionVisitor.hpp"
+#include "DefaultPredicateNaming.hpp"
+
+#define foreach BOOST_FOREACH
 
 using namespace llvm;
 using namespace std;
@@ -15,6 +20,8 @@ using namespace boost;
 
 using namespace auxiliary_methods;
 using namespace predicate_names;
+
+namespace fs = boost::filesystem;
 
 char CsvGenerator::delim = '\t';
 template<> CsvGenerator *Singleton<CsvGenerator>::INSTANCE = NULL;
@@ -119,41 +126,62 @@ const char * CsvGenerator::operandPredicates[] = {
 };
 
 
-CsvGenerator::CsvGenerator(){
-    size_t nOperandPredicates = sizeof(operandPredicates) / sizeof(operandPredicates[0]);
+CsvGenerator::CsvGenerator()
+{
+    namingScheme = DefaultPredicateNaming::getInstance();
+    initStreams();
+}
 
-    //TODO: insert assertion that DirInfo has been initialized
-    for(int i = 0; i < nOperandPredicates; ++i)
+CsvGenerator::CsvGenerator(PredicateNamingScheme &scheme)
+{
+    namingScheme = &scheme;
+    initStreams();
+}
+
+void CsvGenerator::initStreams()
+{
+    foreach (const char *pred, operandPredicates)
     {
-        string csvFilenameImm = predNameWithOperandToFilename(operandPredicates[i], false),
-            csvFilenameVar = predNameWithOperandToFilename(operandPredicates[i], true);
+        path ipath = toPath(pred, Operands::IMMEDIATE);
+        path vpath = toPath(pred, Operands::VARIABLE);
 
-        filesystem::ofstream *csvFileImm = new filesystem::ofstream(csvFilenameImm.c_str(), ios_base::out),
-            *csvFileVar = new filesystem::ofstream(csvFilenameVar.c_str(), ios_base::out);
-        //TODO: check if file open fails
-        csvFiles[csvFilenameImm] = csvFileImm;
-        csvFiles[csvFilenameVar] = csvFileVar;
+        // TODO: check if file open fails
+        csvFiles[ipath] = new ofstream(ipath.c_str(), ios_base::out);
+        csvFiles[vpath] = new ofstream(vpath.c_str(), ios_base::out);
     }
 
-    size_t nSimplePredicates  = sizeof(simplePredicates) / sizeof(simplePredicates[0]);
-
-    for(int i = 0; i < nSimplePredicates; ++i)
+    foreach (const char *pred, simplePredicates)
     {
-        string csvFilename = predNameToFilename(simplePredicates[i]);
-        filesystem::ofstream *csvFile = new filesystem::ofstream(csvFilename.c_str(), ios_base::out);
-
-        csvFiles[csvFilename] = csvFile;
+        path path = toPath(pred);
+        csvFiles[path] = new ofstream(path.c_str(), ios_base::out);
     }
 }
 
-void CsvGenerator::writeEntityToCsv(const char *predName, const string& entityRefmode){
-    filesystem::ofstream *csvFile = getCsvFile(predNameToFilename(predName));
+
+CsvGenerator::~CsvGenerator()
+{
+    for(stream_cache_t::iterator it = csvFiles.begin(), end = csvFiles.end();
+        it != end; it++)
+    {
+        ofstream *file = it->second;
+        file->flush();
+        file->close();
+
+        delete file;
+    }
+}
+
+void CsvGenerator::writeEntityToCsv(const char *predName, const string& entityRefmode) {
+    filesystem::ofstream *csvFile = getCsvFile(toPath(predName));
     (*csvFile) << entityRefmode << "\n";
 }
 
 void CsvGenerator::writeOperandPredicateToCsv(const char *predName, const string& entityRefmode, 
-                                              const string& operandRefmode, bool operandType, int index){
-    filesystem::ofstream *csvFile = getCsvFile(predNameWithOperandToFilename(predName, operandType));
+                                              const string& operandRefmode, bool operandType, int index)
+{
+    Operands::Type type = operandType ? Operands::VARIABLE: Operands::IMMEDIATE;
+
+    filesystem::ofstream *csvFile = getCsvFile(toPath(predName, type));
     if(index == -1)
         (*csvFile) << entityRefmode << delim << operandRefmode << "\n";
     else
@@ -462,8 +490,9 @@ void CsvGenerator::identifyFunctionType(const Type *funcType, unordered_set<cons
     }
 }
 
-const char* CsvGenerator::writeLinkage(GlobalValue::LinkageTypes LT) {
 
+const char* CsvGenerator::writeLinkage(GlobalValue::LinkageTypes LT)
+{
     const char *linkTy;
 
     switch (LT) {
@@ -489,15 +518,18 @@ const char* CsvGenerator::writeLinkage(GlobalValue::LinkageTypes LT) {
     return linkTy;
 }
 
-const char* CsvGenerator::writeVisibility(GlobalValue::VisibilityTypes Vis) {
 
+const char* CsvGenerator::writeVisibility(GlobalValue::VisibilityTypes Vis)
+{
     const char *visibility;
+
     switch (Vis) {
     case GlobalValue::DefaultVisibility:    visibility = "default";     break;
     case GlobalValue::HiddenVisibility:     visibility = "hidden";      break;
     case GlobalValue::ProtectedVisibility:  visibility = "protected";   break;
     default: visibility = "";   break;
     }
+
     return visibility;
 }
 
