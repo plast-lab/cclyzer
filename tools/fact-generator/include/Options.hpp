@@ -9,7 +9,7 @@
 class Options : public Singleton<Options>
 {
 
-public:
+  public:
     std::string& getDelimiter() {
         return delimiter;
     }
@@ -24,7 +24,7 @@ public:
 
     Options * init(int argc, char* argv[]);
 
-protected:
+  protected:
 
     friend class Singleton<Options>;
 
@@ -38,7 +38,7 @@ protected:
     /* Set output directory */
     void setOutputDirectory(boost::filesystem::path path, bool shouldForce);
 
-private:
+  private:
     /* Parsing failure exit code */
     const static int ERROR_IN_COMMAND_LINE = 1;
 

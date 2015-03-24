@@ -128,14 +128,14 @@ const char * CsvGenerator::operandPredicates[] = {
 
 CsvGenerator::CsvGenerator()
 {
-    namingScheme = DefaultPredicateNaming::getInstance();
+    fileMappingScheme = DefaultPredicateNaming::getInstance();
     outDir = Options::getInstance()->getOutputDirectory();
     initStreams();
 }
 
-CsvGenerator::CsvGenerator(PredicateNamingScheme &scheme)
+CsvGenerator::CsvGenerator(PredicateFileMapping &scheme)
 {
-    namingScheme = &scheme;
+    fileMappingScheme = &scheme;
     outDir = Options::getInstance()->getOutputDirectory();
     initStreams();
 }
@@ -144,8 +144,8 @@ void CsvGenerator::initStreams()
 {
     foreach (const char *pred, operandPredicates)
     {
-        path ipath = toPath(pred, Operands::IMMEDIATE);
-        path vpath = toPath(pred, Operands::VARIABLE);
+        path ipath = toPath(pred, Operand::IMMEDIATE);
+        path vpath = toPath(pred, Operand::VARIABLE);
 
         // TODO: check if file open fails
         csvFiles[ipath] = new ofstream(ipath.c_str(), ios_base::out);
@@ -181,7 +181,7 @@ void CsvGenerator::writeEntityToCsv(const char *predName, const string& entityRe
 void CsvGenerator::writeOperandPredicateToCsv(const char *predName, const string& entityRefmode, 
                                               const string& operandRefmode, bool operandType, int index)
 {
-    Operands::Type type = operandType ? Operands::VARIABLE: Operands::IMMEDIATE;
+    Operand::Type type = operandType ? Operand::VARIABLE: Operand::IMMEDIATE;
 
     filesystem::ofstream *csvFile = getCsvFile(toPath(predName, type));
     if(index == -1)

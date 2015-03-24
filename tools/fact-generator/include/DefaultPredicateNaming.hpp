@@ -2,10 +2,10 @@
 #define DEFAULT_PREDICATE_NAMING_HPP__
 
 #include "Singleton.hpp"
-#include "PredicateNamingScheme.hpp"
+#include "PredicateFileMapping.hpp"
 
 // A strategy to transform predicate names to filesystem paths
-class DefaultPredicateNaming : public PredicateNamingScheme,
+class DefaultPredicateNaming : public PredicateFileMapping,
                                public Singleton<DefaultPredicateNaming>
 {
 protected:
@@ -27,7 +27,7 @@ public:
     virtual ~DefaultPredicateNaming() {}
 
     virtual path toPath(const char * predName);
-    virtual path toPath(const char * predName, Operands::Type type);
+    virtual path toPath(const char * predName, Operand::Type type);
 
 private:
     /* CSV file extension */

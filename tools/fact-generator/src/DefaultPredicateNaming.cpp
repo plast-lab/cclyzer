@@ -3,7 +3,7 @@
 #include <boost/unordered_map.hpp>
 
 #include "DefaultPredicateNaming.hpp"
-#include "PredicateNamingScheme.hpp"
+#include "PredicateFileMapping.hpp"
 #include "Options.hpp"
 
 // Initialize singleton instance
@@ -11,7 +11,7 @@ template<> DefaultPredicateNaming *Singleton<DefaultPredicateNaming>::INSTANCE =
 
 // Type and namespace definitions
 namespace fs = boost::filesystem;
-typedef std::pair<PredicateNamingScheme *,const char *> cachekey_t;
+typedef std::pair<PredicateFileMapping *,const char *> cachekey_t;
 
 
 fs::path DefaultPredicateNaming::toPath(const char *predName)
@@ -50,7 +50,7 @@ fs::path DefaultPredicateNaming::toPath(const char *predName)
 }
 
 
-fs::path DefaultPredicateNaming::toPath(const char *predName, Operands::Type type)
+fs::path DefaultPredicateNaming::toPath(const char *predName, Operand::Type type)
 {
     using namespace std;
     typedef boost::unordered_map<cachekey_t, pair<fs::path, fs::path> > cache_t;
@@ -65,7 +65,7 @@ fs::path DefaultPredicateNaming::toPath(const char *predName, Operands::Type typ
     cache_t::iterator cachedValue = cache.find(key);
 
     if (cachedValue != cache.end())
-        return type == Operands::VARIABLE
+        return type == Operand::VARIABLE
             ? cachedValue->second.first
             : cachedValue->second.second;
 
@@ -82,5 +82,5 @@ fs::path DefaultPredicateNaming::toPath(const char *predName, Operands::Type typ
     ipath += immSuffix + extension;
 
     cache[key] = make_pair(vpath, ipath);
-    return type == Operands::VARIABLE ? vpath : ipath;
+    return type == Operand::VARIABLE ? vpath : ipath;
 }

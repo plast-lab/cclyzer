@@ -16,12 +16,12 @@
 
 #include "AuxiliaryMethods.hpp"
 #include "PredicateNames.hpp"
-#include "PredicateNamingScheme.hpp"
+#include "PredicateFileMapping.hpp"
 #include "Options.hpp"
 #include "Singleton.hpp"
 
 class CsvGenerator : public Singleton<CsvGenerator> {
-public:
+  public:
 
     void writeEntityToCsv(const char *filename, const std::string& entityRefmode);
 
@@ -48,7 +48,7 @@ public:
         delim = newDelim;
     }
 
-protected:
+  protected:
     typedef boost::filesystem::path path;
     typedef boost::filesystem::ofstream ofstream;
     typedef boost::unordered_map<path, ofstream*> stream_cache_t;
@@ -56,7 +56,7 @@ protected:
     friend class Singleton<CsvGenerator>;
 
     CsvGenerator();
-    CsvGenerator(PredicateNamingScheme &scheme);
+    CsvGenerator(PredicateFileMapping &scheme);
     CsvGenerator(const CsvGenerator&);
     CsvGenerator& operator= (const CsvGenerator&);
 
@@ -72,18 +72,18 @@ protected:
     }
 
     path toPath(const char * predName) {
-        return prepend_dir(namingScheme->toPath(predName));
+        return prepend_dir(fileMappingScheme->toPath(predName));
     }
 
-    path toPath(const char * predName, Operands::Type type) {
-        return prepend_dir(namingScheme->toPath(predName, type));
+    path toPath(const char * predName, Operand::Type type) {
+        return prepend_dir(fileMappingScheme->toPath(predName, type));
     }
 
-private:
+  private:
     path outDir;
 
-    // Strategy pattern for transforming predicates to filesystem paths
-    PredicateNamingScheme *namingScheme;
+    // Strategy pattern for mapping predicate names to filesystem paths
+    PredicateFileMapping *fileMappingScheme;
 
     void initStreams();
 

@@ -3,7 +3,7 @@
 
 template<typename T>
 class Singleton {
-protected:
+  protected:
 
     Singleton(){}
 
@@ -11,7 +11,7 @@ protected:
 
     virtual ~Singleton(){}
 
-public:
+  public:
 
     static T* getInstance(){
         if(!INSTANCE)
