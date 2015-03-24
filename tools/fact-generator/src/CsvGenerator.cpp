@@ -144,8 +144,8 @@ void CsvGenerator::initStreams()
 {
     foreach (const char *pred, operandPredicates)
     {
-        path ipath = toPath(pred, Operand::IMMEDIATE);
-        path vpath = toPath(pred, Operand::VARIABLE);
+        path ipath = toPath(pred, Operand::Type::IMMEDIATE);
+        path vpath = toPath(pred, Operand::Type::VARIABLE);
 
         // TODO: check if file open fails
         csvFiles[ipath] = new ofstream(ipath.c_str(), ios_base::out);
@@ -181,7 +181,9 @@ void CsvGenerator::writeEntityToCsv(const char *predName, const string& entityRe
 void CsvGenerator::writeOperandPredicateToCsv(const char *predName, const string& entityRefmode, 
                                               const string& operandRefmode, bool operandType, int index)
 {
-    Operand::Type type = operandType ? Operand::VARIABLE: Operand::IMMEDIATE;
+    Operand::Type type = operandType
+        ? Operand::Type::VARIABLE
+        : Operand::Type::IMMEDIATE;
 
     filesystem::ofstream *csvFile = getCsvFile(toPath(predName, type));
     if(index == -1)

@@ -5,7 +5,7 @@
 
 // There are two types of instruction operands
 namespace Operand {
-    enum Type { IMMEDIATE, VARIABLE };
+    enum class Type { IMMEDIATE, VARIABLE };
 }
 
 // A strategy to map predicate names to filesystem paths

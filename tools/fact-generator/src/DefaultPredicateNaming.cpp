@@ -65,7 +65,7 @@ fs::path DefaultPredicateNaming::toPath(const char *predName, Operand::Type type
     cache_t::iterator cachedValue = cache.find(key);
 
     if (cachedValue != cache.end())
-        return type == Operand::VARIABLE
+        return type == Operand::Type::VARIABLE
             ? cachedValue->second.first
             : cachedValue->second.second;
 
@@ -82,5 +82,5 @@ fs::path DefaultPredicateNaming::toPath(const char *predName, Operand::Type type
     ipath += immSuffix + extension;
 
     cache[key] = make_pair(vpath, ipath);
-    return type == Operand::VARIABLE ? vpath : ipath;
+    return type == Operand::Type::VARIABLE ? vpath : ipath;
 }
