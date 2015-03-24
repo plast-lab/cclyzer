@@ -35,7 +35,7 @@ vpath %.h $(include_dirs)
 #-----------------------------------
 
 CPPFLAGS += $(shell llvm-config --cppflags | sed 's/-fno-rtti//') 
-CXXFLAGS += $(shell llvm-config --cxxflags | sed 's/-fno-rtti//') -fexceptions -g
+CXXFLAGS += $(shell llvm-config --cxxflags | sed 's/-fno-rtti//') -fexceptions -g -std=c++11
 LDFLAGS  += $(shell llvm-config --libs)
 LDFLAGS  += $(filter-out -lz,$(shell llvm-config --ldflags))
 LDFLAGS  += -lpthread -lcurses -ldl -g
