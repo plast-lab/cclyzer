@@ -10,7 +10,7 @@
 #include "AuxiliaryMethods.hpp"
 #include "CsvGenerator.hpp"
 #include "InstructionVisitor.hpp"
-#include "DefaultPredicateNaming.hpp"
+#include "PredicateFileMapping.hpp"
 
 #define foreach BOOST_FOREACH
 
@@ -128,7 +128,7 @@ const char * CsvGenerator::operandPredicates[] = {
 
 CsvGenerator::CsvGenerator()
 {
-    fileMappingScheme = DefaultPredicateNaming::getInstance();
+    fileMappingScheme = &PredicateFileMapping::DEFAULT_SCHEME;
     outDir = Options::getInstance()->getOutputDirectory();
     initStreams();
 }

@@ -2,6 +2,7 @@
 #define PREDICATE_FILE_MAPPING_HPP__
 
 #include <boost/filesystem.hpp>
+#include "Singleton.hpp"
 
 // There are two types of instruction operands
 namespace Operand {
@@ -19,6 +20,47 @@ class PredicateFileMapping
 
     virtual path toPath(const char * predName) = 0;
     virtual path toPath(const char * predName, Operand::Type type) = 0;
+
+    static PredicateFileMapping &DEFAULT_SCHEME;
 };
+
+
+// Default implementation
+class PredicateFileMappingImpl : public PredicateFileMapping,
+                                 public Singleton<PredicateFileMappingImpl>
+{
+  protected:
+    friend class Singleton<PredicateFileMappingImpl>;
+
+    PredicateFileMappingImpl()
+        : extension(".dlm")
+        , entitiesDir("entities")
+        , predicatesDir("predicates")
+        , varSuffix("-by_variable")
+        , immSuffix("-by_immediate")
+    {}
+
+    PredicateFileMappingImpl(const PredicateFileMappingImpl&);
+    PredicateFileMappingImpl& operator= (const PredicateFileMappingImpl&);
+
+  public:
+    virtual ~PredicateFileMappingImpl() {}
+
+    virtual path toPath(const char * predName);
+    virtual path toPath(const char * predName, Operand::Type type);
+
+  private:
+    /* CSV file extension */
+    const std::string extension;
+
+    /* Entities and predicates go to different directories */
+    const path entitiesDir;
+    const path predicatesDir;
+
+    /* Predicates with operands have two files associated with them */
+    const std::string varSuffix;
+    const std::string immSuffix;
+};
+
 
 #endif /* PREDICATE_FILE_MAPPING_HPP__ */
