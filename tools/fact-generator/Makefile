@@ -65,8 +65,10 @@ clean:
 	$(RM) -r $(outdir)
 
 .PHONY: check-syntax
+check-syntax: CXXFLAGS += -Wall -Wextra -pedantic
+check-syntax: COMPILE.cpp := $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(TARGET_ARCH) # -fsyntax-only
 check-syntax:
-	$(COMPILE.cpp) -Wall -Wextra -pedantic -fsyntax-only $(sources)
+	$(COMPILE.cpp) -o /dev/null -S $(CHK_SOURCES)
 
 
 #-----------------------------------
