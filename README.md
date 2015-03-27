@@ -1,3 +1,5 @@
+[![License MIT][badge-license]](LICENSE.txt)
+
 LLVM to Datalog
 ===============
 
@@ -130,3 +132,6 @@ informative. Instead, the log file located at
 `$XDG_CACHE_HOME/copper/copper.log` (which at most systems defaults to
 `~/.cache/copper/copper.log`), or the *system log*, can be much more
 helpful.
+
+
+[badge-license]: https://img.shields.io/badge/license-MIT-green.svg
