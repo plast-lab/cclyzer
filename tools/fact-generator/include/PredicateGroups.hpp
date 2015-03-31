@@ -53,7 +53,26 @@ class InstrPredicateGroup : public PredicateGroup
 };
 
 
-namespace PredicateGroups {
+namespace PredicateGroups
+{
+    class UnaryInstr : public InstrPredicateGroup
+    {
+      public:
+        string getOperand() {
+            return getPredicate(SINGLE_OPERAND);
+        }
+
+      protected:
+        UnaryInstr(string name)
+            : InstrPredicateGroup(name)
+        {
+            addPredicate(SINGLE_OPERAND);
+        }
+
+      private:
+        static string SINGLE_OPERAND;
+    };
+
 
     class BinaryInstr : public InstrPredicateGroup
     {
@@ -415,6 +434,15 @@ namespace PredicateGroups {
         static string LABEL;
         static string NLABELS;
     };
+
+    class ResumeInstr : public UnaryInstr,
+                        public Singleton<ResumeInstr>
+    {
+      protected:
+        friend class Singleton<ResumeInstr>;
+        ResumeInstr() : UnaryInstr("resume_instruction") {}
+    };
+
 }
 
 #endif /* PREDICATE_GROUPS_HPP__ */
