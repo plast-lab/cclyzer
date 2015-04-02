@@ -375,6 +375,65 @@ namespace PredicateGroups
     };
 
 
+    /* Aggregate Operation Predicate Groups */
+
+    class AggregateOp : public InstrPredicateGroup
+    {
+      public:
+        string getBase() {
+            return getPredicate(BASE);
+        }
+
+        string getIndex() {
+            return getPredicate(INDEX);
+        }
+
+        string getNumberOfIndices() {
+            return getPredicate(NINDICES);
+        }
+
+      protected:
+        AggregateOp(string name)
+            : InstrPredicateGroup(name)
+        {
+            addPredicate(BASE);
+            addPredicate(INDEX);
+            addPredicate(NINDICES);
+        }
+
+      private:
+        static string BASE;
+        static string INDEX;
+        static string NINDICES;
+    };
+
+
+    class ExtractValueInstr : public AggregateOp,
+                              public Singleton<ExtractValueInstr>
+    {
+      protected:
+        friend class Singleton<ExtractValueInstr>;
+        ExtractValueInstr() : AggregateOp("extractvalue_instruction") {}
+    };
+
+
+    class InsertValueInstr : public AggregateOp,
+                             public Singleton<InsertValueInstr>
+    {
+      public:
+        string getValue() {
+            return getPredicate(VALUE);
+        }
+
+      protected:
+        friend class Singleton<InsertValueInstr>;
+        InsertValueInstr() : AggregateOp("insertvalue_instruction") {}
+
+      private:
+        static string VALUE;
+    };
+
+
     /* Terminator Instruction Predicate Groups */
 
     class RetInstr : public InstrPredicateGroup,
