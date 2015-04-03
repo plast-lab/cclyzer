@@ -375,9 +375,9 @@ namespace PredicateGroups
     };
 
 
-    /* Aggregate Operation Predicate Groups */
+    /* Index based instruction Predicate Groups */
 
-    class AggregateOp : public InstrPredicateGroup
+    class IndexBasedInstr : public InstrPredicateGroup
     {
       public:
         string getBase() {
@@ -393,7 +393,7 @@ namespace PredicateGroups
         }
 
       protected:
-        AggregateOp(string name)
+        IndexBasedInstr(string name)
             : InstrPredicateGroup(name)
         {
             addPredicate(BASE);
@@ -407,17 +407,16 @@ namespace PredicateGroups
         static string NINDICES;
     };
 
-
-    class ExtractValueInstr : public AggregateOp,
+    class ExtractValueInstr : public IndexBasedInstr,
                               public Singleton<ExtractValueInstr>
     {
       protected:
         friend class Singleton<ExtractValueInstr>;
-        ExtractValueInstr() : AggregateOp("extractvalue_instruction") {}
+        ExtractValueInstr() : IndexBasedInstr("extractvalue_instruction") {}
     };
 
 
-    class InsertValueInstr : public AggregateOp,
+    class InsertValueInstr : public IndexBasedInstr,
                              public Singleton<InsertValueInstr>
     {
       public:
@@ -427,7 +426,32 @@ namespace PredicateGroups
 
       protected:
         friend class Singleton<InsertValueInstr>;
-        InsertValueInstr() : AggregateOp("insertvalue_instruction") {}
+        InsertValueInstr() : IndexBasedInstr("insertvalue_instruction") {}
+
+      private:
+        static string VALUE;
+    };
+
+    class ExtractElementInstr : public IndexBasedInstr,
+                                public Singleton<ExtractElementInstr>
+    {
+      protected:
+        friend class Singleton<ExtractElementInstr>;
+        ExtractElementInstr() : IndexBasedInstr("extractelement_instruction") {}
+    };
+
+
+    class InsertElementInstr : public IndexBasedInstr,
+                               public Singleton<InsertElementInstr>
+    {
+      public:
+        string getValue() {
+            return getPredicate(VALUE);
+        }
+
+      protected:
+        friend class Singleton<InsertElementInstr>;
+        InsertElementInstr() : IndexBasedInstr("insertelement_instruction") {}
 
       private:
         static string VALUE;
