@@ -18,7 +18,6 @@ using namespace predicate_names;
 //      (see writeVolatileFlag and :volatile for some entities)
 
 //TODO: Remove these if(strlen(...)) checks
-//TODO: Move immediate and variable maps entirely to the CsvGenerator class
 
 void InstructionVisitor::logSimpleValue(const Value * Val, const char * predName, int index){
     const Type * ValType = Val->getType();
@@ -26,13 +25,13 @@ void InstructionVisitor::logSimpleValue(const Value * Val, const char * predName
     if(const Constant *c = dyn_cast<Constant>(Val)) {
         ostringstream immOffset;
         immOffset << immediateOffset;
-        varId = instrNum + ":" + immOffset.str() + ":" + valueToString(Val, Mod);
+        varId = instrNum + ":" + immOffset.str() + ":" + valueToString(c, Mod);
         immediateOffset++;
-        immediate[varId] = ValType;
+        csvGen->recordConstant(varId, ValType);
     }
     else {
         varId = instrId + valueToString(Val, Mod);
-        variable[varId] = ValType;
+        csvGen->recordVariable(varId, ValType);
     }
     csvGen->writePredicateToCsv(predName, instrNum, varId, index);
 }
@@ -45,14 +44,14 @@ void InstructionVisitor::logOperand(const Value * Operand, const char * predName
         operandType = 0;
         ostringstream immOffset;
         immOffset << immediateOffset;
-        varId = instrNum + ":" + immOffset.str() + ":" + valueToString(Operand, Mod);
+        varId = instrNum + ":" + immOffset.str() + ":" + valueToString(c, Mod);
         immediateOffset++;
-        immediate[varId] = OpType;
+        csvGen->recordConstant(varId, OpType);
     }
     else {
         operandType = 1;
         varId = instrId + valueToString(Operand, Mod);
-        variable[varId] = OpType;
+        csvGen->recordVariable(varId, OpType);
     }
     csvGen->writeOperandPredicateToCsv(predName, instrNum, varId, operandType, index);
 }

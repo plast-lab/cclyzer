@@ -14,14 +14,12 @@
 class InstructionVisitor : public llvm::InstVisitor<InstructionVisitor> {
 
 public:
-    InstructionVisitor(boost::unordered_map<std::string, const llvm::Type *> &var,
-                       boost::unordered_map<std::string, const llvm::Type *> &imm,
-                       CsvGenerator *generator, const llvm::Module *M)
-        : variable(var), immediate(imm), csvGen(generator), Mod(M) {}
+    InstructionVisitor(CsvGenerator *generator, const llvm::Module *M)
+        : csvGen(generator), Mod(M) {}
 
-    //////////////////////////
-    //     visit methods    //
-    /////////////////////////
+    /*******************************
+     * Instruction Visitor methods *
+     *******************************/
 
     // Binary Operations
 
@@ -107,7 +105,6 @@ public:
     void visitInstruction(llvm::Instruction &I);
 
     void setInstrNum(std::string instructionNum) {
-
         instrNum = instructionNum;
         immediateOffset = 0;
     }
@@ -140,8 +137,6 @@ private:
     int immediateOffset;
     std::string varId;
     CsvGenerator *csvGen;
-    boost::unordered_map<std::string, const llvm::Type *> &variable;
-    boost::unordered_map<std::string, const llvm::Type *> &immediate;
     const llvm::Module *Mod;
 };
 

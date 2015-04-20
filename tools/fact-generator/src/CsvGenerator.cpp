@@ -173,7 +173,7 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
         types.insert(ga->getType());
     }
 
-    InstructionVisitor IV(variable, immediate, this, Mod);
+    InstructionVisitor IV(this, Mod);
 
     // iterating over functions in a module
     for (Module::const_iterator fi = Mod->begin(), fi_end = Mod->end(); fi != fi_end; ++fi) {
@@ -223,7 +223,7 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
                 string varId;
                 varId = instrId + valueToString(arg, Mod);
                 writePredicateToCsv(FuncParam, funcId, varId, index);
-                variable[varId] = arg->getType();
+                recordVariable(varId, arg->getType());
                 index++;
             }
         }
@@ -258,7 +258,7 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
                 if(!i->getType()->isVoidTy()) {
                     varId = instrId + valueToString(i, Mod);
                     writePredicateToCsv(insnTo, instrNum, varId);
-                    variable[varId] = i->getType();
+                    recordVariable(varId, i->getType());
                 }
                 //TODO: remove this ugly trick
                 if(++i != i_end){
@@ -292,20 +292,20 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
 void CsvGenerator::writeVarsTypesAndImmediates(){
 
     // Immediate
-    for (unordered_map<string, const Type *>::iterator it = immediate.begin(); it != immediate.end(); ++it) {
-        string refmode = it->first;
-        const Type *type = it->second;
+    for (auto &kv : constantTypes) {
+        string refmode = kv.first;
+        const Type *type = kv.second;
         writeEntityToCsv(::immediate, refmode);
         writePredicateToCsv(immediateType, refmode, printType(type));
         types.insert(type);
     }
     // Variable
-    for (unordered_map<string, const Type *>::iterator it = variable.begin(); it != variable.end(); ++it) {
-        string refmode = it->first;
-        const Type *type = it->second;
+    for (auto &kv : variableTypes) {
+        string refmode = kv.first;
+        const Type *type = kv.second;
         writeEntityToCsv(::variable, refmode);
         writePredicateToCsv(variableType, refmode, printType(type));
-        types.insert(it->second);
+        types.insert(type);
     }
     // Types
     for (unordered_set<const Type *>::iterator it = types.begin(); it != types.end(); ++it) {

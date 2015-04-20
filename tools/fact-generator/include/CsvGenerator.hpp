@@ -23,10 +23,13 @@
 
 class CsvGenerator
 {
+    friend class InstructionVisitor;
+
   protected:
     typedef boost::filesystem::path path;
     typedef boost::filesystem::ofstream ofstream;
     typedef boost::unordered_map<path, ofstream*> stream_cache_t;
+    typedef boost::unordered_map<std::string, const llvm::Type *> type_cache_t;
 
     path prepend_dir(path p) {
         using namespace boost::filesystem;
@@ -44,6 +47,14 @@ class CsvGenerator
         return prepend_dir(fileMappingScheme->toPath(predName, type));
     }
 
+    void recordConstant(std::string id, const llvm::Type *type) {
+        constantTypes[id] = type;
+    }
+
+    void recordVariable(std::string id, const llvm::Type *type) {
+        variableTypes[id] = type;
+    }
+
   public:
     CsvGenerator(PredicateFileMapping &scheme, Options &options)
         : fileMappingScheme(&scheme)
@@ -58,10 +69,9 @@ class CsvGenerator
 
     ~CsvGenerator()
     {
-        for(stream_cache_t::iterator it = csvFiles.begin(), end = csvFiles.end();
-            it != end; it++)
+        for(auto &kv : csvFiles)
         {
-            ofstream *file = it->second;
+            ofstream *file = kv.second;
             file->flush();
             file->close();
 
@@ -106,6 +116,10 @@ class CsvGenerator
     /* Cache of file descriptors with path as a key */
     stream_cache_t csvFiles;
 
+    /* Caches for variable and constant types */
+    type_cache_t variableTypes;
+    type_cache_t constantTypes;
+
 
     /* Auxiliary methods */
 
@@ -138,8 +152,6 @@ class CsvGenerator
     boost::unordered_set<const llvm::DataLayout *> layouts;
     boost::unordered_set<const llvm::Type *> types;
     boost::unordered_set<const llvm::Type *> componentTypes;
-    boost::unordered_map<std::string, const llvm::Type *> variable;
-    boost::unordered_map<std::string, const llvm::Type *> immediate;
 
     static const char * simplePredicates[];
     static const char * operandPredicates[];
