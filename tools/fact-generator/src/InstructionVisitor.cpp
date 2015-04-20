@@ -72,12 +72,6 @@ void InstructionVisitor::logBinaryOperator(BinaryOperator &BI, const char * pred
     logOperand(BI.getOperand(1), predNameRightOp);
 }
 
-InstructionVisitor::InstructionVisitor(unordered_map<string, const Type *> &var,
-                                       unordered_map<string, const Type *> &imm, 
-                                       const Module *M): variable(var), immediate(imm), Mod(M) {
-    csvGen = CsvGenerator::getInstance();
-}
-
 void InstructionVisitor::visitAdd(BinaryOperator &BI) {
     logBinaryOperator(BI, addInsn, addInsnFirstOp, addInsnSecondOp);
 }

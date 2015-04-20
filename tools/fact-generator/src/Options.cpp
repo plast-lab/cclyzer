@@ -15,10 +15,9 @@
 
 namespace fs = boost::filesystem;
 namespace po = boost::program_options;
-template<> Options *Singleton<Options>::INSTANCE = NULL;
 
 
-Options* Options::init(int argc, char* argv[])
+Options::Options(int argc, char* argv[])
 {
     const std::string appName = fs::basename(argv[0]);
 
@@ -87,8 +86,6 @@ Options* Options::init(int argc, char* argv[])
     std::vector<fs::path> paths = vm["input-files"].as<std::vector<fs::path> >();
     setOutputDirectory(outDirectory, vm.count("force"));
     setInputFiles(paths, vm.count("recursive"));
-
-    return this;
 }
 
 

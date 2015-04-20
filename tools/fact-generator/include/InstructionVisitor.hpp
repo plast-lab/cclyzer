@@ -14,10 +14,10 @@
 class InstructionVisitor : public llvm::InstVisitor<InstructionVisitor> {
 
 public:
-
-    InstructionVisitor(boost::unordered_map<std::string, const llvm::Type *> &var, 
+    InstructionVisitor(boost::unordered_map<std::string, const llvm::Type *> &var,
                        boost::unordered_map<std::string, const llvm::Type *> &imm,
-                       const llvm::Module *M);
+                       CsvGenerator *generator, const llvm::Module *M)
+        : variable(var), immediate(imm), csvGen(generator), Mod(M) {}
 
     //////////////////////////
     //     visit methods    //

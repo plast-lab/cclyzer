@@ -4,12 +4,12 @@
 #include <boost/filesystem.hpp>
 #include <string>
 
-#include "Singleton.hpp"
-
-class Options : public Singleton<Options>
+class Options
 {
-
   public:
+    /* Constructor given command-line options */
+    Options(int argc, char* argv[]);
+
     std::string& getDelimiter() {
         return delimiter;
     }
@@ -22,16 +22,7 @@ class Options : public Singleton<Options>
         return inputFiles;
     }
 
-    Options * init(int argc, char* argv[]);
-
   protected:
-
-    friend class Singleton<Options>;
-
-    Options() {}
-    Options(const Options&);
-    Options& operator= (const Options&);
-
     /* Set input files */
     void setInputFiles(std::vector<boost::filesystem::path>& paths, bool shouldRecurse);
 

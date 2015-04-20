@@ -1,10 +1,10 @@
 #ifndef CSV_GENERATOR_H__
 #define CSV_GENERATOR_H__
 
-#include <boost/unordered_set.hpp>
-#include <boost/unordered_map.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
+#include <boost/unordered_set.hpp>
+#include <boost/unordered_map.hpp>
 #include <string>
 
 #include "llvm/IR/Type.h"
@@ -18,10 +18,56 @@
 #include "PredicateNames.hpp"
 #include "PredicateFileMapping.hpp"
 #include "Options.hpp"
-#include "Singleton.hpp"
 
-class CsvGenerator : public Singleton<CsvGenerator> {
+
+
+class CsvGenerator
+{
+  protected:
+    typedef boost::filesystem::path path;
+    typedef boost::filesystem::ofstream ofstream;
+    typedef boost::unordered_map<path, ofstream*> stream_cache_t;
+
+    path prepend_dir(path p) {
+        using namespace boost::filesystem;
+
+        p = outDir / p;
+        create_directory(p.parent_path());
+        return p;
+    }
+
+    path toPath(const char * predName) {
+        return prepend_dir(fileMappingScheme->toPath(predName));
+    }
+
+    path toPath(const char * predName, Operand::Type type) {
+        return prepend_dir(fileMappingScheme->toPath(predName, type));
+    }
+
   public:
+    CsvGenerator(PredicateFileMapping &scheme, Options &options)
+        : fileMappingScheme(&scheme)
+    {
+        // Set fields specified by command-line options
+        outDir = options.getOutputDirectory();
+        delim  = options.getDelimiter();
+
+        // Initialize output file streams
+        initStreams();
+    }
+
+    ~CsvGenerator()
+    {
+        for(stream_cache_t::iterator it = csvFiles.begin(), end = csvFiles.end();
+            it != end; it++)
+        {
+            ofstream *file = it->second;
+            file->flush();
+            file->close();
+
+            delete file;
+        }
+    }
 
     void writeEntityToCsv(const char *filename, const std::string& entityRefmode);
 
@@ -44,50 +90,24 @@ class CsvGenerator : public Singleton<CsvGenerator> {
 
     void writeVarsTypesAndImmediates();
 
-    static void setDelim(const char newDelim){
-        delim = newDelim;
-    }
-
-  protected:
-    typedef boost::filesystem::path path;
-    typedef boost::filesystem::ofstream ofstream;
-    typedef boost::unordered_map<path, ofstream*> stream_cache_t;
-
-    friend class Singleton<CsvGenerator>;
-
-    CsvGenerator();
-    CsvGenerator(PredicateFileMapping &scheme);
-    CsvGenerator(const CsvGenerator&);
-    CsvGenerator& operator= (const CsvGenerator&);
-
-    ~CsvGenerator();
-
-    path prepend_dir(path p)
-    {
-        using namespace boost::filesystem;
-
-        p = outDir / p;
-        create_directory(p.parent_path());
-        return p;
-    }
-
-    path toPath(const char * predName) {
-        return prepend_dir(fileMappingScheme->toPath(predName));
-    }
-
-    path toPath(const char * predName, Operand::Type type) {
-        return prepend_dir(fileMappingScheme->toPath(predName, type));
-    }
-
   private:
+    /* Output directory */
     path outDir;
 
-    // Strategy pattern for mapping predicate names to filesystem paths
+    /* Column Delimiter */
+    std::string delim;
+
+    /* Strategy pattern for mapping predicate names to filesystem paths */
     PredicateFileMapping *fileMappingScheme;
 
+    /* Initialize output file streams */
     void initStreams();
 
-    //auxiliary methods
+    /* Cache of file descriptors with path as a key */
+    stream_cache_t csvFiles;
+
+
+    /* Auxiliary methods */
 
     void identifyType(const llvm::Type *elementType, boost::unordered_set<const llvm::Type *> &componentTypes);
 
@@ -120,10 +140,7 @@ class CsvGenerator : public Singleton<CsvGenerator> {
     boost::unordered_set<const llvm::Type *> componentTypes;
     boost::unordered_map<std::string, const llvm::Type *> variable;
     boost::unordered_map<std::string, const llvm::Type *> immediate;
-    stream_cache_t csvFiles;
 
-    static char delim;
-    static CsvGenerator * INSTANCE;
     static const char * simplePredicates[];
     static const char * operandPredicates[];
 };

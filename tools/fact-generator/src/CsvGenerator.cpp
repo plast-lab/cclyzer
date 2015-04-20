@@ -1,18 +1,9 @@
-#include <string>
-#include <boost/filesystem.hpp>
-#include <boost/foreach.hpp>
-
-#include "llvm/IR/DataLayout.h"
 #include "llvm/IR/Module.h"
 #include "llvm/IR/Operator.h"
 #include "llvm/Support/CFG.h"
-
-#include "AuxiliaryMethods.hpp"
 #include "CsvGenerator.hpp"
 #include "InstructionVisitor.hpp"
-#include "PredicateFileMapping.hpp"
 
-#define foreach BOOST_FOREACH
 
 using namespace llvm;
 using namespace std;
@@ -23,10 +14,8 @@ using namespace predicate_names;
 
 namespace fs = boost::filesystem;
 
-char CsvGenerator::delim = '\t';
-template<> CsvGenerator *Singleton<CsvGenerator>::INSTANCE = NULL;
 
-//aggregate array for all predicate names
+// aggregate array for all predicate names
 
 const char * CsvGenerator::simplePredicates[] = {
     basicBlockPred, globalVar, globalVarType,
@@ -126,24 +115,9 @@ const char * CsvGenerator::operandPredicates[] = {
 };
 
 
-CsvGenerator::CsvGenerator()
-{
-    fileMappingScheme = &PredicateFileMapping::DEFAULT_SCHEME;
-    outDir = Options::getInstance()->getOutputDirectory();
-    initStreams();
-}
-
-CsvGenerator::CsvGenerator(PredicateFileMapping &scheme)
-{
-    fileMappingScheme = &scheme;
-    outDir = Options::getInstance()->getOutputDirectory();
-    initStreams();
-}
-
 void CsvGenerator::initStreams()
 {
-    foreach (const char *pred, operandPredicates)
-    {
+    for (const char *pred : operandPredicates) {
         path ipath = toPath(pred, Operand::Type::IMMEDIATE);
         path vpath = toPath(pred, Operand::Type::VARIABLE);
 
@@ -152,25 +126,13 @@ void CsvGenerator::initStreams()
         csvFiles[vpath] = new ofstream(vpath.c_str(), ios_base::out);
     }
 
-    foreach (const char *pred, simplePredicates)
-    {
+    for (const char *pred : simplePredicates) {
         path path = toPath(pred);
         csvFiles[path] = new ofstream(path.c_str(), ios_base::out);
     }
-}
 
-
-CsvGenerator::~CsvGenerator()
-{
-    for(stream_cache_t::iterator it = csvFiles.begin(), end = csvFiles.end();
-        it != end; it++)
-    {
-        ofstream *file = it->second;
-        file->flush();
-        file->close();
-
-        delete file;
-    }
+    // TODO: Consider closing streams and opening them lazily, so as
+    // not to exceed the number of maximum open file descriptors
 }
 
 void CsvGenerator::writeEntityToCsv(const char *predName, const string& entityRefmode) {
@@ -211,7 +173,7 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
         types.insert(ga->getType());
     }
 
-    InstructionVisitor IV(variable, immediate, Mod);
+    InstructionVisitor IV(variable, immediate, this, Mod);
 
     // iterating over functions in a module
     for (Module::const_iterator fi = Mod->begin(), fi_end = Mod->end(); fi != fi_end; ++fi) {
