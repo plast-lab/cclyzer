@@ -151,7 +151,6 @@ class CsvGenerator
 
     boost::unordered_set<const llvm::DataLayout *> layouts;
     boost::unordered_set<const llvm::Type *> types;
-    boost::unordered_set<const llvm::Type *> componentTypes;
 
     static const char * simplePredicates[];
     static const char * operandPredicates[];

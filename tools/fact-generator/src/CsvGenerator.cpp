@@ -289,8 +289,8 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
 }
 
 
-void CsvGenerator::writeVarsTypesAndImmediates(){
-
+void CsvGenerator::writeVarsTypesAndImmediates()
+{
     // Immediate
     for (auto &kv : constantTypes) {
         string refmode = kv.first;
@@ -307,6 +307,10 @@ void CsvGenerator::writeVarsTypesAndImmediates(){
         writePredicateToCsv(variableType, refmode, printType(type));
         types.insert(type);
     }
+
+    // Set of all encountered types
+    boost::unordered_set<const llvm::Type *> componentTypes;
+
     // Types
     for (unordered_set<const Type *>::iterator it = types.begin(); it != types.end(); ++it) {
         const Type *type = *it;
