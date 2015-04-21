@@ -132,7 +132,7 @@ void CsvGenerator::initStreams()
     }
 
     // TODO: Consider closing streams and opening them lazily, so as
-    // not to exceed the number of maximum open file descriptors
+    // not to exceed the maximum number of open file descriptors
 }
 
 void CsvGenerator::writeEntityToCsv(const char *predName, const string& entityRefmode) {
@@ -476,24 +476,20 @@ void CsvGenerator::writeGlobalVar(const GlobalVariable *gv, string globalName) {
     if (gv->isExternallyInitialized()) {
         writePredicateToCsv(globalVarFlag, globalName, "externally_initialized");
     }
-    const char * flag;
-    if(gv->isConstant()) {
-        flag = "constant";
-    }
-    else {
-        flag = "global";
-    }
+
+    const char * flag = gv->isConstant() ? "constant": "global";
+
     writePredicateToCsv(globalVarFlag, globalName, flag);
     writePredicateToCsv(globalVarType, globalName, printType(gv->getType()->getElementType()));
-    if(gv->hasInitializer()) {
+
+    if(gv->hasInitializer())
         writePredicateToCsv(globalVarInit, globalName, valueToString(gv->getInitializer(), gv->getParent()));
-    }
-    if (gv->hasSection()) {
+
+    if (gv->hasSection())
         writePredicateToCsv(globalVarSect, globalName, gv->getSection());
-    }
-    if(gv->getAlignment()) {
+
+    if(gv->getAlignment())
         writePredicateToCsv(globalVarAlign, globalName, gv->getAlignment());
-    }
 }
 
 void CsvGenerator::writeGlobalAlias(const GlobalAlias *ga, string globalAlias) {
