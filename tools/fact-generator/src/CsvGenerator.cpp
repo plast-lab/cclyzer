@@ -3,7 +3,7 @@
 #include "llvm/Support/CFG.h"
 #include "CsvGenerator.hpp"
 #include "InstructionVisitor.hpp"
-
+#include "TypeAccumulator.hpp"
 
 using namespace llvm;
 using namespace std;
@@ -291,7 +291,9 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
 
 void CsvGenerator::writeVarsTypesAndImmediates()
 {
-    // Immediate
+    using llvm_extra::TypeAccumulator;
+
+    // Constant
     for (auto &kv : constantTypes) {
         string refmode = kv.first;
         const Type *type = kv.second;
@@ -308,14 +310,11 @@ void CsvGenerator::writeVarsTypesAndImmediates()
         types.insert(type);
     }
 
-    // Set of all encountered types
-    boost::unordered_set<const llvm::Type *> componentTypes;
+    // Type accumulator that identifies simple types from complex ones
+    TypeAccumulator<boost::unordered_set<const llvm::Type *> > collector;
 
-    // Types
-    for (unordered_set<const Type *>::iterator it = types.begin(); it != types.end(); ++it) {
-        const Type *type = *it;
-        identifyType(type, componentTypes);
-    }
+    // Set of all encountered types
+    boost::unordered_set<const llvm::Type *> componentTypes = collector(types);
 
     //TODO: Do we need to write other primitives manually?
     writeEntityToCsv(primitiveType, "void");
@@ -411,55 +410,6 @@ void CsvGenerator::writeVarsTypesAndImmediates()
 }
 
 //auxiliary methods
-
-void CsvGenerator::identifyType(const Type *elementType, unordered_set<const Type *> &componentTypes) {
-
-    if(componentTypes.count(elementType) != 0) {
-        return;
-    }
-    componentTypes.insert(elementType);
-    if (isPrimitiveType(elementType) || elementType->isIntegerTy()) {
-        return;
-    }
-    if (elementType->isArrayTy()) {
-        identifyType(elementType->getArrayElementType(), componentTypes);
-    }
-    else if (elementType->isPointerTy()) {
-        identifyType(elementType->getPointerElementType(), componentTypes);
-    }
-    else if (elementType->isStructTy()) {
-        identifyStructType(elementType, componentTypes);
-    }
-    else if (elementType->isVectorTy()) {
-        identifyType(elementType->getVectorElementType(), componentTypes);
-    }
-    else if(elementType->isFunctionTy()) {
-        identifyFunctionType(elementType, componentTypes);
-    }
-    else {
-        errs() << "Unrecognized type: " << printType(elementType) << " .\n";
-    }
-}
-
-void CsvGenerator::identifyStructType(const Type *structType, unordered_set<const Type *> &componentTypes) {
-
-    const StructType *strTy = cast<StructType>(structType);
-    if(!strTy->isOpaque()) {
-        for (unsigned int i = 0; i < strTy->getStructNumElements(); ++i) {
-            identifyType(strTy->getStructElementType(i), componentTypes);
-        }
-    }
-}
-
-void CsvGenerator::identifyFunctionType(const Type *funcType, unordered_set<const Type *> &componentTypes) {
-
-    const FunctionType *funcTy = dyn_cast<FunctionType>(funcType);
-    identifyType(funcTy->getReturnType(), componentTypes);
-    for (unsigned int par = 0; par < funcType->getFunctionNumParams(); ++par) {
-        identifyType(funcTy->getFunctionParamType(par), componentTypes);
-    }
-}
-
 
 const char* CsvGenerator::writeLinkage(GlobalValue::LinkageTypes LT)
 {

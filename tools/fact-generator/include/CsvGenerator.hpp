@@ -123,12 +123,6 @@ class CsvGenerator
 
     /* Auxiliary methods */
 
-    void identifyType(const llvm::Type *elementType, boost::unordered_set<const llvm::Type *> &componentTypes);
-
-    void identifyStructType(const llvm::Type *structType, boost::unordered_set<const llvm::Type *> &componentTypes);
-
-    void identifyFunctionType(const llvm::Type *funcType, boost::unordered_set<const llvm::Type *> &componentTypes);
-
     const char *writeLinkage(llvm::GlobalValue::LinkageTypes LT);
 
     const char *writeVisibility(llvm::GlobalValue::VisibilityTypes Vis);
