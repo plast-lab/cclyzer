@@ -68,6 +68,7 @@ class CsvGenerator
     }
 
   public:
+    // Constructor must initialize output file streams
     CsvGenerator(PredicateFileMapping &scheme, Options &options)
         : fileMappingScheme(&scheme)
     {
@@ -79,6 +80,7 @@ class CsvGenerator
         initStreams();
     }
 
+    // Destructor must flush and close all output file streams
     ~CsvGenerator()
     {
         for(auto &kv : csvFiles)
@@ -91,15 +93,15 @@ class CsvGenerator
         }
     }
 
-    void writeEntityToCsv(const char *filename, const std::string& entityRefmode);
+    void writeEntity(const char *filename, const std::string& entityRefmode);
 
-    void writeOperandPredicateToCsv(const char *predName, const std::string& entityRefmode, 
-                                    const std::string& operandRefmode,
-                                    bool operandType, int index = -1);
+    void writeOperandFact(const char *predName, const std::string& entityRefmode,
+                          const std::string& operandRefmode,
+                          bool operandType, int index = -1);
 
     template<class ValType>
-    void writePredicateToCsv(const char *predName, const std::string& entityRefmode, 
-                             const ValType& valueRefmode, int index = -1)
+    void writeSimpleFact(const char *predName, const std::string& entityRefmode,
+                         const ValType& valueRefmode, int index = -1)
     {
         // Locate CSV file for the given predicate
         boost::filesystem::ofstream *csvFile = getCsvFile(predName);

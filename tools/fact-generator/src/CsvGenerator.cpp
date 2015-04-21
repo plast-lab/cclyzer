@@ -135,13 +135,13 @@ void CsvGenerator::initStreams()
     // not to exceed the maximum number of open file descriptors
 }
 
-void CsvGenerator::writeEntityToCsv(const char *predName, const string& entityRefmode) {
+void CsvGenerator::writeEntity(const char *predName, const string& entityRefmode) {
     filesystem::ofstream *csvFile = getCsvFile(toPath(predName));
     (*csvFile) << entityRefmode << "\n";
 }
 
-void CsvGenerator::writeOperandPredicateToCsv(const char *predName, const string& entityRefmode, 
-                                              const string& operandRefmode, bool operandType, int index)
+void CsvGenerator::writeOperandFact(const char *predName, const string& entityRefmode,
+                                    const string& operandRefmode, bool operandType, int index)
 {
     Operand::Type type = operandType
         ? Operand::Type::VARIABLE
@@ -181,54 +181,54 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
         string instrId = funcId + ":";
         IV.setInstrId(instrId);
 
-        writePredicateToCsv(FuncType, funcId, printType(fi->getFunctionType()));
+        writeSimpleFact(FuncType, funcId, printType(fi->getFunctionType()));
 
         types.insert(fi->getFunctionType());
         if(strlen(writeLinkage(fi->getLinkage()))) {
-            writePredicateToCsv(FuncLink, funcId, writeLinkage(fi->getLinkage()));
+            writeSimpleFact(FuncLink, funcId, writeLinkage(fi->getLinkage()));
         }
         if(strlen(writeVisibility(fi->getVisibility()))) {
-            writePredicateToCsv(FuncVis, funcId, writeVisibility(fi->getVisibility()));
+            writeSimpleFact(FuncVis, funcId, writeVisibility(fi->getVisibility()));
         }
         if(fi->getCallingConv() != CallingConv::C) {
-            writePredicateToCsv(FuncCallConv, funcId, writeCallingConv(fi->getCallingConv()));
+            writeSimpleFact(FuncCallConv, funcId, writeCallingConv(fi->getCallingConv()));
         }
         if(fi->getAlignment()) {
-            writePredicateToCsv(FuncAlign, funcId, fi->getAlignment());
+            writeSimpleFact(FuncAlign, funcId, fi->getAlignment());
         }
         if(fi->hasGC()) {
-            writePredicateToCsv(FuncGc, funcId, fi->getGC());
+            writeSimpleFact(FuncGc, funcId, fi->getGC());
         }
-        writePredicateToCsv(FuncName, funcId, "@" + fi->getName().str());
+        writeSimpleFact(FuncName, funcId, "@" + fi->getName().str());
 
         if(fi->hasUnnamedAddr()) {
-            writeEntityToCsv(FuncUnnamedAddr, funcId);
+            writeEntity(FuncUnnamedAddr, funcId);
         }
         const AttributeSet &Attrs = fi->getAttributes();
         if (Attrs.hasAttributes(AttributeSet::ReturnIndex)) {
-            writePredicateToCsv(FuncRetAttr, funcId, Attrs.getAsString(AttributeSet::ReturnIndex));
+            writeSimpleFact(FuncRetAttr, funcId, Attrs.getAsString(AttributeSet::ReturnIndex));
         }
         vector<string> FuncnAttr;
         writeFnAttributes(Attrs, FuncnAttr);
         for (int i = 0; i < FuncnAttr.size(); ++i) {
-            writePredicateToCsv(FuncAttr, funcId, FuncnAttr[i]);
+            writeSimpleFact(FuncAttr, funcId, FuncnAttr[i]);
         }
         if (!fi->isDeclaration()) {
-            writeEntityToCsv(Func, funcId);
+            writeEntity(Func, funcId);
             if(fi->hasSection()) {
-                writePredicateToCsv(FuncSect, funcId, fi->getSection());
+                writeSimpleFact(FuncSect, funcId, fi->getSection());
             }
             int index = 0;
             for (Function::const_arg_iterator arg = fi->arg_begin(), arg_end = fi->arg_end(); arg != arg_end; ++arg) {
                 string varId;
                 varId = instrId + valueToString(arg, Mod);
-                writePredicateToCsv(FuncParam, funcId, varId, index);
+                writeSimpleFact(FuncParam, funcId, varId, index);
                 recordVariable(varId, arg->getType());
                 index++;
             }
         }
         else{
-            writeEntityToCsv(FuncDecl, funcId);
+            writeEntity(FuncDecl, funcId);
             continue;
         }
 
@@ -239,13 +239,13 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
             string bbId = funcId + ":";
             string varId;
             varId = bbId + valueToString(bi, Mod);
-            writeEntityToCsv(::variable, varId);
-            writePredicateToCsv(variableType, varId, "label");
+            writeEntity(::variable, varId);
+            writeSimpleFact(variableType, varId, "label");
             //No const_pred_iterator, damn you llvm
             BasicBlock* tmpBB = const_cast<BasicBlock*>((const BasicBlock*)bi);
             for(pred_iterator pi = pred_begin(tmpBB), pi_end = pred_end(tmpBB); pi != pi_end; ++pi) {
                 string predBB = bbId + valueToString(*pi, Mod);
-                writePredicateToCsv(basicBlockPred, varId, predBB);
+                writeSimpleFact(basicBlockPred, varId, predBB);
             }
 
             //iterating over instructions in a basic block
@@ -257,7 +257,7 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
                 counter++;
                 if(!i->getType()->isVoidTy()) {
                     varId = instrId + valueToString(i, Mod);
-                    writePredicateToCsv(insnTo, instrNum, varId);
+                    writeSimpleFact(insnTo, instrNum, varId);
                     recordVariable(varId, i->getType());
                 }
                 //TODO: remove this ugly trick
@@ -267,16 +267,16 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
                         ostringstream nextCountStr;
                         nextCountStr << counter;
                         string instrNext = instrId + nextCountStr.str();
-                        writePredicateToCsv(insnNext, instrNum, instrNext);
+                        writeSimpleFact(insnNext, instrNum, instrNext);
                     }
                 }
                 else{
                     i--;
                 }
-                writePredicateToCsv(insnFunc, instrNum, funcId);
+                writeSimpleFact(insnFunc, instrNum, funcId);
 
                 varId = instrId + valueToString(i->getParent(), Mod);
-                writePredicateToCsv(insnBBEntry, instrNum, varId);
+                writeSimpleFact(insnBBEntry, instrNum, varId);
 
                 // Instruction Visitor
                 IV.setInstrNum(instrNum);
@@ -297,16 +297,16 @@ void CsvGenerator::writeVarsTypesAndImmediates()
     for (auto &kv : constantTypes) {
         string refmode = kv.first;
         const Type *type = kv.second;
-        writeEntityToCsv(::immediate, refmode);
-        writePredicateToCsv(immediateType, refmode, printType(type));
+        writeEntity(::immediate, refmode);
+        writeSimpleFact(immediateType, refmode, printType(type));
         types.insert(type);
     }
     // Variable
     for (auto &kv : variableTypes) {
         string refmode = kv.first;
         const Type *type = kv.second;
-        writeEntityToCsv(::variable, refmode);
-        writePredicateToCsv(variableType, refmode, printType(type));
+        writeEntity(::variable, refmode);
+        writeSimpleFact(variableType, refmode, printType(type));
         types.insert(type);
     }
 
@@ -317,10 +317,10 @@ void CsvGenerator::writeVarsTypesAndImmediates()
     boost::unordered_set<const llvm::Type *> componentTypes = collector(types);
 
     //TODO: Do we need to write other primitives manually?
-    writeEntityToCsv(primitiveType, "void");
-    writeEntityToCsv(primitiveType, "label");
-    writeEntityToCsv(primitiveType, "metadata");
-    writeEntityToCsv(primitiveType, "x86mmx");
+    writeEntity(primitiveType, "void");
+    writeEntity(primitiveType, "label");
+    writeEntity(primitiveType, "metadata");
+    writeEntity(primitiveType, "x86mmx");
 
     //TODO: convert if-then-else to switch statement
     //TODO: eliminate common exps
@@ -342,64 +342,64 @@ void CsvGenerator::writeVarsTypesAndImmediates()
                 uint64_t allocSize = DL->getTypeAllocSize(const_cast<Type *>(type));
                 uint64_t storeSize = DL->getTypeStoreSize(const_cast<Type *>(type));
 
-                writePredicateToCsv(typeAllocSize, printType(type), allocSize);
-                writePredicateToCsv(typeStoreSize, printType(type), storeSize);
+                writeSimpleFact(typeAllocSize, printType(type), allocSize);
+                writeSimpleFact(typeStoreSize, printType(type), storeSize);
                 break;
             }
         }
 
         if (type->isIntegerTy()) {
-            writeEntityToCsv(intType, printType(type));
+            writeEntity(intType, printType(type));
         }
         else if(type->isFloatingPointTy()) {
-            writeEntityToCsv(fpType, printType(type));
+            writeEntity(fpType, printType(type));
         }
         //TODO: check what other primitives neeed to go here
         else if(type->isVoidTy() || type->isLabelTy() || type->isMetadataTy()){
-            writeEntityToCsv(primitiveType, printType(type));
+            writeEntity(primitiveType, printType(type));
         }
         else if(type->isPointerTy()) {
-            writeEntityToCsv(ptrType, printType(type));
-            writePredicateToCsv(ptrTypeComp, printType(type), printType(type->getPointerElementType()));
+            writeEntity(ptrType, printType(type));
+            writeSimpleFact(ptrTypeComp, printType(type), printType(type->getPointerElementType()));
             if(unsigned AddressSpace = type->getPointerAddressSpace()) {
-                writePredicateToCsv(ptrTypeAddrSpace, printType(type), AddressSpace);
+                writeSimpleFact(ptrTypeAddrSpace, printType(type), AddressSpace);
             }
         }
         else if(type->isArrayTy()) {
-            writeEntityToCsv(arrayType, printType(type));
-            writePredicateToCsv(arrayTypeSize, printType(type), type->getArrayNumElements());
-            writePredicateToCsv(arrayTypeComp, printType(type), printType(type->getArrayElementType()));
+            writeEntity(arrayType, printType(type));
+            writeSimpleFact(arrayTypeSize, printType(type), type->getArrayNumElements());
+            writeSimpleFact(arrayTypeComp, printType(type), printType(type->getArrayElementType()));
         }
         else if(type->isStructTy()) {
             const StructType *strTy = cast<StructType>(type);
-            writeEntityToCsv(structType, printType(strTy));
+            writeEntity(structType, printType(strTy));
             if(strTy->isOpaque()) {
-                writeEntityToCsv(opaqueStructType, printType(strTy));
+                writeEntity(opaqueStructType, printType(strTy));
             }
             else {
                 for (unsigned int i = 0; i < strTy->getStructNumElements(); ++i) {
-                    writePredicateToCsv(structTypeField, printType(strTy), printType(strTy->getStructElementType(i)), i);
+                    writeSimpleFact(structTypeField, printType(strTy), printType(strTy->getStructElementType(i)), i);
                 }
-                writePredicateToCsv(structTypeNFields, printType(strTy), strTy->getStructNumElements());
+                writeSimpleFact(structTypeNFields, printType(strTy), strTy->getStructNumElements());
             }
         }
         else if(type->isVectorTy()) {
-            writeEntityToCsv(vectorType, printType(type));
-            writePredicateToCsv(vectorTypeComp, printType(type), printType(type->getVectorElementType()));
-            writePredicateToCsv(vectorTypeSize, printType(type), type->getVectorNumElements());
+            writeEntity(vectorType, printType(type));
+            writeSimpleFact(vectorTypeComp, printType(type), printType(type->getVectorElementType()));
+            writeSimpleFact(vectorTypeSize, printType(type), type->getVectorNumElements());
         }
         else if(type->isFunctionTy()) {
             const FunctionType *funType = cast<FunctionType>(type);
-            writeEntityToCsv(funcType, printType(funType));
+            writeEntity(funcType, printType(funType));
             //TODO: which predicate/entity do we need to update for varagrs?
             if(funType->isVarArg())
-                writeEntityToCsv(funcTypeVarArgs, printType(funType));
-            writePredicateToCsv(funcTypeReturn, printType(funType), printType(funType->getReturnType()));
+                writeEntity(funcTypeVarArgs, printType(funType));
+            writeSimpleFact(funcTypeReturn, printType(funType), printType(funType->getReturnType()));
 
             for (unsigned int par = 0; par < funType->getFunctionNumParams(); ++par) {
-                writePredicateToCsv(funcTypeParam, printType(funType), printType(funType->getFunctionParamType(par)), par);
+                writeSimpleFact(funcTypeParam, printType(funType), printType(funType->getFunctionParamType(par)), par);
             }
-            writePredicateToCsv(funcTypeNParams, printType(funType), funType->getFunctionNumParams());
+            writeSimpleFact(funcTypeNParams, printType(funType), funType->getFunctionNumParams());
         }
         else {
             type->dump();
@@ -459,37 +459,37 @@ void CsvGenerator::writeGlobalVar(const GlobalVariable *gv, string globalName) {
     raw_string_ostream rso(value_str);
 
     value_str.clear();
-    writeEntityToCsv(globalVar, globalName);
+    writeEntity(globalVar, globalName);
     if (!gv->hasInitializer() && gv->hasExternalLinkage()) {
-        writePredicateToCsv(globalVarLink, globalName, "external");
+        writeSimpleFact(globalVarLink, globalName, "external");
     }
     if(strlen(writeLinkage(gv->getLinkage()))) {
-        writePredicateToCsv(globalVarLink, globalName, writeLinkage(gv->getLinkage()));
+        writeSimpleFact(globalVarLink, globalName, writeLinkage(gv->getLinkage()));
     }
     if(strlen(writeVisibility(gv->getVisibility()))) {
-        writePredicateToCsv(globalVarVis, globalName, writeVisibility(gv->getVisibility()));
+        writeSimpleFact(globalVarVis, globalName, writeVisibility(gv->getVisibility()));
     }
     if(strlen(writeThreadLocalModel(gv->getThreadLocalMode()))) {
-        writePredicateToCsv(globalVarTlm, globalName, writeThreadLocalModel(gv->getThreadLocalMode()));
+        writeSimpleFact(globalVarTlm, globalName, writeThreadLocalModel(gv->getThreadLocalMode()));
     }
     //TODO: in lb schema - AddressSpace & hasUnnamedAddr properties
     if (gv->isExternallyInitialized()) {
-        writePredicateToCsv(globalVarFlag, globalName, "externally_initialized");
+        writeSimpleFact(globalVarFlag, globalName, "externally_initialized");
     }
 
     const char * flag = gv->isConstant() ? "constant": "global";
 
-    writePredicateToCsv(globalVarFlag, globalName, flag);
-    writePredicateToCsv(globalVarType, globalName, printType(gv->getType()->getElementType()));
+    writeSimpleFact(globalVarFlag, globalName, flag);
+    writeSimpleFact(globalVarType, globalName, printType(gv->getType()->getElementType()));
 
     if(gv->hasInitializer())
-        writePredicateToCsv(globalVarInit, globalName, valueToString(gv->getInitializer(), gv->getParent()));
+        writeSimpleFact(globalVarInit, globalName, valueToString(gv->getInitializer(), gv->getParent()));
 
     if (gv->hasSection())
-        writePredicateToCsv(globalVarSect, globalName, gv->getSection());
+        writeSimpleFact(globalVarSect, globalName, gv->getSection());
 
     if(gv->getAlignment())
-        writePredicateToCsv(globalVarAlign, globalName, gv->getAlignment());
+        writeSimpleFact(globalVarAlign, globalName, gv->getAlignment());
 }
 
 void CsvGenerator::writeGlobalAlias(const GlobalAlias *ga, string refmode)
@@ -511,7 +511,7 @@ void CsvGenerator::writeGlobalAlias(const GlobalAlias *ga, string refmode)
     const llvm::Constant *Aliasee = ga->getAliasee();
 
     // Record alias entity
-    writeEntityToCsv(pred::alias, refmode);
+    writeEntity(pred::alias, refmode);
 
     // Serialize alias properties
     const char * visibility = writeVisibility(ga->getVisibility());
@@ -520,18 +520,18 @@ void CsvGenerator::writeGlobalAlias(const GlobalAlias *ga, string refmode)
 
     // Record visibility
     if (strlen(visibility))
-        writePredicateToCsv(pred::aliasVis, refmode, visibility);
+        writeSimpleFact(pred::aliasVis, refmode, visibility);
 
     // Record linkage
     if (strlen(linkage))
-        writePredicateToCsv(pred::aliasLink, refmode, linkage);
+        writeSimpleFact(pred::aliasLink, refmode, linkage);
 
     // Record type
-    writePredicateToCsv(pred::aliasType, refmode, aliasType);
+    writeSimpleFact(pred::aliasType, refmode, aliasType);
 
     // Record aliasee
     if (Aliasee) {
         string aliasee = valueToString(Aliasee, ga->getParent());
-        writePredicateToCsv(pred::aliasAliasee, refmode, aliasee);
+        writeSimpleFact(pred::aliasAliasee, refmode, aliasee);
     }
 }
