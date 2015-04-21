@@ -492,24 +492,32 @@ void CsvGenerator::writeGlobalVar(const GlobalVariable *gv, string globalName) {
         writePredicateToCsv(globalVarAlign, globalName, gv->getAlignment());
 }
 
-void CsvGenerator::writeGlobalAlias(const GlobalAlias *ga, string globalAlias) {
-
+void CsvGenerator::writeGlobalAlias(const GlobalAlias *ga, string globalAlias)
+{
+    //------------------------------------------------------------------
+    // A global alias introduces a /second name/ for the aliasee value
+    // (which can be either function, global variable, another alias
+    // or bitcast of global value). It has the following form:
+    //
     // @<Name> = alias [Linkage] [Visibility] <AliaseeTy> @<Aliasee>
+    //------------------------------------------------------------------
+
     string value_str;
     raw_string_ostream rso(value_str);
 
     value_str.clear();
     writeEntityToCsv(alias, globalAlias);
-    if(strlen(writeVisibility(ga->getVisibility()))) {
+
+    if (strlen(writeVisibility(ga->getVisibility())))
         writePredicateToCsv(aliasVis, globalAlias, writeVisibility(ga->getVisibility()));
-    }
-    if(strlen(writeLinkage(ga->getLinkage()))) {
+
+    if (strlen(writeLinkage(ga->getLinkage())))
         writePredicateToCsv(aliasLink, globalAlias, writeLinkage(ga->getLinkage()));
-    }
+
     writePredicateToCsv(aliasType, globalAlias, printType(ga->getType()));
 
     const Constant *Aliasee = ga->getAliasee();
-    if(Aliasee != 0) {
+
+    if (Aliasee)
         writePredicateToCsv(aliasAliasee, globalAlias, valueToString(Aliasee, ga->getParent()));
-    }
 }

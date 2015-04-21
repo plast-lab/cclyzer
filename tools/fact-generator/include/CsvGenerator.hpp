@@ -89,7 +89,7 @@ class CsvGenerator
     void writePredicateToCsv(const char *predName, const std::string& entityRefmode, 
                              const ValType& valueRefmode, int index = -1)
     {
-        boost::filesystem::ofstream *csvFile = getCsvFile(toPath(predName));
+        boost::filesystem::ofstream *csvFile = getCsvFile(predName);
         if(index == -1)
             (*csvFile) << entityRefmode << delim << valueRefmode << "\n";
         else
@@ -141,6 +141,10 @@ class CsvGenerator
             csvFiles[filename] = new ofstream(filename.c_str(), std::ios_base::out);
 
         return csvFiles[filename];
+    }
+
+    ofstream* getCsvFile(const char *predname) {
+        return getCsvFile(toPath(predname));
     }
 
     boost::unordered_set<const llvm::DataLayout *> layouts;
