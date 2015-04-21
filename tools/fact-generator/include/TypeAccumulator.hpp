@@ -3,6 +3,9 @@
 
 #include <boost/unordered_set.hpp>
 #include <llvm/IR/Type.h>
+#include <llvm/Support/raw_ostream.h>
+
+#include "AuxiliaryMethods.hpp"
 
 namespace llvm_extra {
     using namespace llvm;

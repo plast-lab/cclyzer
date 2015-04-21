@@ -5,19 +5,17 @@
 #include <boost/filesystem/fstream.hpp>
 #include <boost/unordered_set.hpp>
 #include <boost/unordered_map.hpp>
+#include <llvm/IR/Type.h>
+#include <llvm/IR/DataLayout.h>
+#include <llvm/Support/raw_ostream.h>
+#include <llvm/IR/Value.h>
+#include <llvm/IR/GlobalValue.h>
+#include <llvm/IR/GlobalVariable.h>
 #include <string>
 
-#include "llvm/IR/Type.h"
-#include "llvm/IR/Value.h"
-#include "llvm/Support/raw_ostream.h"
-#include "llvm/IR/DataLayout.h"
-#include "llvm/IR/GlobalValue.h"
-#include "llvm/IR/GlobalVariable.h"
-
-#include "AuxiliaryMethods.hpp"
-#include "PredicateNames.hpp"
-#include "PredicateFileMapping.hpp"
+#include "AuxiliaryMethods.hpp" // TODO: remove
 #include "Options.hpp"
+#include "PredicateFileMapping.hpp"
 
 
 
@@ -26,12 +24,19 @@ class CsvGenerator
     friend class InstructionVisitor;
 
   protected:
+
+    /* Common type aliases */
+
     typedef boost::filesystem::path path;
     typedef boost::filesystem::ofstream ofstream;
     typedef boost::unordered_map<path, ofstream*> stream_cache_t;
     typedef boost::unordered_map<std::string, const llvm::Type *> type_cache_t;
 
-    path prepend_dir(path p) {
+
+    /* Filesystem path computation  */
+
+    path prepend_dir(path p)
+    {
         using namespace boost::filesystem;
 
         p = outDir / p;
@@ -47,14 +52,6 @@ class CsvGenerator
         return prepend_dir(fileMappingScheme->toPath(predName, type));
     }
 
-    void recordConstant(std::string id, const llvm::Type *type) {
-        constantTypes[id] = type;
-    }
-
-    void recordVariable(std::string id, const llvm::Type *type) {
-        variableTypes[id] = type;
-    }
-
     ofstream* getCsvFile(const char *predname) {
         return getCsvFile(toPath(predname));
     }
@@ -67,8 +64,30 @@ class CsvGenerator
         return csvFiles[filename];
     }
 
+
+    /* Recording constants and variables */
+
+    void recordConstant(std::string id, const llvm::Type *type) {
+        constantTypes[id] = type;
+    }
+
+    void recordVariable(std::string id, const llvm::Type *type) {
+        variableTypes[id] = type;
+    }
+
+
+    /* Serializing methods */
+
+    static std::string to_string(llvm::GlobalValue::LinkageTypes LT);
+    static std::string to_string(llvm::GlobalValue::VisibilityTypes Vis);
+    static std::string to_string(llvm::GlobalVariable::ThreadLocalMode TLM);
+
+    static std::string to_string(llvm::Type *type) {
+        return auxiliary_methods::printType(type);
+    }
+
   public:
-    // Constructor must initialize output file streams
+    /* Constructor must initialize output file streams */
     CsvGenerator(PredicateFileMapping &scheme, Options &options)
         : fileMappingScheme(&scheme)
     {
@@ -80,7 +99,7 @@ class CsvGenerator
         initStreams();
     }
 
-    // Destructor must flush and close all output file streams
+    /* Destructor must flush and close all output file streams */
     ~CsvGenerator()
     {
         for(auto &kv : csvFiles)
@@ -92,6 +111,9 @@ class CsvGenerator
             delete file;
         }
     }
+
+
+    /* Fact writing methods */
 
     void writeEntity(const char *filename, const std::string& entityRefmode);
 
@@ -141,10 +163,6 @@ class CsvGenerator
 
 
     /* Auxiliary methods */
-
-    const char *writeLinkage(llvm::GlobalValue::LinkageTypes LT);
-
-    const char *writeVisibility(llvm::GlobalValue::VisibilityTypes Vis);
 
     void writeGlobalVar(const llvm::GlobalVariable *gv, std::string globalName);
 

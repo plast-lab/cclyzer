@@ -64,32 +64,6 @@ namespace auxiliary_methods {
         return rso.str();
     }
 
-    //TODO: do we need this guy?
-    const char *writeThreadLocalModel(GlobalVariable::ThreadLocalMode TLM) {
-
-        const char *tlm;
-
-        switch (TLM) {
-        case GlobalVariable::NotThreadLocal:
-            tlm = "";
-            break;
-        case GlobalVariable::GeneralDynamicTLSModel:
-            tlm = "thread_local";
-            break;
-        case GlobalVariable::LocalDynamicTLSModel:
-            tlm = "thread_local(localdynamic)";
-            break;
-        case GlobalVariable::InitialExecTLSModel:
-            tlm = "thread_local(initialexec)";
-            break;
-        case GlobalVariable::LocalExecTLSModel:
-            tlm = "thread_local(localexec)";
-            break;
-        default: tlm = ""; break;
-        }
-        return tlm;
-    }
-
     void writeFnAttributes(const AttributeSet Attrs, vector<string> &FnAttr) {
 
         AttributeSet AS;

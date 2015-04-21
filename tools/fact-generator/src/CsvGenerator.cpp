@@ -184,21 +184,28 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
         writeSimpleFact(FuncType, funcId, printType(fi->getFunctionType()));
 
         types.insert(fi->getFunctionType());
-        if(strlen(writeLinkage(fi->getLinkage()))) {
-            writeSimpleFact(FuncLink, funcId, writeLinkage(fi->getLinkage()));
-        }
-        if(strlen(writeVisibility(fi->getVisibility()))) {
-            writeSimpleFact(FuncVis, funcId, writeVisibility(fi->getVisibility()));
-        }
-        if(fi->getCallingConv() != CallingConv::C) {
+
+        // Serialize function properties
+        string visibility = to_string(fi->getVisibility());
+        string linkage = to_string(fi->getLinkage());
+
+        // Record function linkage
+        if (!linkage.empty())
+            writeSimpleFact(pred::FuncLink, funcId, linkage);
+
+        // Record function visibility
+        if (!visibility.empty())
+            writeSimpleFact(pred::FuncVis, funcId, visibility);
+
+        if (fi->getCallingConv() != CallingConv::C)
             writeSimpleFact(FuncCallConv, funcId, writeCallingConv(fi->getCallingConv()));
-        }
-        if(fi->getAlignment()) {
+
+        if (fi->getAlignment())
             writeSimpleFact(FuncAlign, funcId, fi->getAlignment());
-        }
-        if(fi->hasGC()) {
+
+        if(fi->hasGC())
             writeSimpleFact(FuncGc, funcId, fi->getGC());
-        }
+
         writeSimpleFact(FuncName, funcId, "@" + fi->getName().str());
 
         if(fi->hasUnnamedAddr()) {
@@ -409,88 +416,58 @@ void CsvGenerator::writeVarsTypesAndImmediates()
 
 }
 
-//auxiliary methods
-
-const char* CsvGenerator::writeLinkage(GlobalValue::LinkageTypes LT)
+void CsvGenerator::writeGlobalVar(const GlobalVariable *gv, string refmode)
 {
-    const char *linkTy;
+    // Record global variable entity
+    writeEntity(pred::globalVar, refmode);
 
-    switch (LT) {
-    case GlobalValue::ExternalLinkage:      linkTy = "external";        break;
-    case GlobalValue::PrivateLinkage:       linkTy = "private";         break;
-    case GlobalValue::LinkerPrivateLinkage: linkTy = "linker_private";  break;
-    case GlobalValue::LinkerPrivateWeakLinkage:
-        linkTy = "linker_private_weak";
-        break;
-    case GlobalValue::InternalLinkage:      linkTy = "internal";        break;
-    case GlobalValue::LinkOnceAnyLinkage:   linkTy = "linkonce";        break;
-    case GlobalValue::LinkOnceODRLinkage:   linkTy = "linkonce_odr";    break;
-    case GlobalValue::WeakAnyLinkage:       linkTy = "weak";            break;
-    case GlobalValue::WeakODRLinkage:       linkTy = "weak_odr";        break;
-    case GlobalValue::CommonLinkage:        linkTy = "common";          break;
-    case GlobalValue::AppendingLinkage:     linkTy = "appending";       break;
-    case GlobalValue::ExternalWeakLinkage:  linkTy = "extern_weak";     break;
-    case GlobalValue::AvailableExternallyLinkage:
-        linkTy = "available_externally";
-        break;
-    default: linkTy = "";   break;
-    }
-    return linkTy;
-}
+    // Serialize global variable properties
+    string visibility = to_string(gv->getVisibility());
+    string linkage    = to_string(gv->getLinkage());
+    string varType    = to_string(gv->getType()->getElementType());
+    string thrLocMode = to_string(gv->getThreadLocalMode());
 
+    // Record external linkage
+    if (!gv->hasInitializer() && gv->hasExternalLinkage())
+        writeSimpleFact(pred::globalVarLink, refmode, "external");
 
-const char* CsvGenerator::writeVisibility(GlobalValue::VisibilityTypes Vis)
-{
-    const char *visibility;
+    // Record linkage
+    if (!linkage.empty())
+        writeSimpleFact(pred::globalVarLink, refmode, linkage);
 
-    switch (Vis) {
-    case GlobalValue::DefaultVisibility:    visibility = "default";     break;
-    case GlobalValue::HiddenVisibility:     visibility = "hidden";      break;
-    case GlobalValue::ProtectedVisibility:  visibility = "protected";   break;
-    default: visibility = "";   break;
-    }
+    // Record visibility
+    if (!visibility.empty())
+        writeSimpleFact(pred::globalVarVis, refmode, visibility);
 
-    return visibility;
-}
+    // Record thread local mode
+    if (!thrLocMode.empty())
+        writeSimpleFact(pred::globalVarTlm, refmode, thrLocMode);
 
-void CsvGenerator::writeGlobalVar(const GlobalVariable *gv, string globalName) {
+    // TODO: in lb schema - AddressSpace & hasUnnamedAddr properties
+    if (gv->isExternallyInitialized())
+        writeSimpleFact(pred::globalVarFlag, refmode, "externally_initialized");
 
-    string value_str;
-    raw_string_ostream rso(value_str);
-
-    value_str.clear();
-    writeEntity(globalVar, globalName);
-    if (!gv->hasInitializer() && gv->hasExternalLinkage()) {
-        writeSimpleFact(globalVarLink, globalName, "external");
-    }
-    if(strlen(writeLinkage(gv->getLinkage()))) {
-        writeSimpleFact(globalVarLink, globalName, writeLinkage(gv->getLinkage()));
-    }
-    if(strlen(writeVisibility(gv->getVisibility()))) {
-        writeSimpleFact(globalVarVis, globalName, writeVisibility(gv->getVisibility()));
-    }
-    if(strlen(writeThreadLocalModel(gv->getThreadLocalMode()))) {
-        writeSimpleFact(globalVarTlm, globalName, writeThreadLocalModel(gv->getThreadLocalMode()));
-    }
-    //TODO: in lb schema - AddressSpace & hasUnnamedAddr properties
-    if (gv->isExternallyInitialized()) {
-        writeSimpleFact(globalVarFlag, globalName, "externally_initialized");
-    }
-
+    // Record flags and type
     const char * flag = gv->isConstant() ? "constant": "global";
 
-    writeSimpleFact(globalVarFlag, globalName, flag);
-    writeSimpleFact(globalVarType, globalName, printType(gv->getType()->getElementType()));
+    writeSimpleFact(pred::globalVarFlag, refmode, flag);
+    writeSimpleFact(pred::globalVarType, refmode, varType);
 
-    if(gv->hasInitializer())
-        writeSimpleFact(globalVarInit, globalName, valueToString(gv->getInitializer(), gv->getParent()));
+    // Record initializer
+    if (gv->hasInitializer()) {
+        string val = valueToString(gv->getInitializer(), gv->getParent()); // CHECK
+        writeSimpleFact(pred::globalVarInit, refmode, val);
+    }
 
+    // Record section
     if (gv->hasSection())
-        writeSimpleFact(globalVarSect, globalName, gv->getSection());
+        writeSimpleFact(pred::globalVarSect, refmode, gv->getSection());
 
-    if(gv->getAlignment())
-        writeSimpleFact(globalVarAlign, globalName, gv->getAlignment());
+    // Record alignment
+    if (gv->getAlignment())
+        writeSimpleFact(pred::globalVarAlign, refmode, gv->getAlignment());
 }
+
 
 void CsvGenerator::writeGlobalAlias(const GlobalAlias *ga, string refmode)
 {
@@ -502,11 +479,6 @@ void CsvGenerator::writeGlobalAlias(const GlobalAlias *ga, string refmode)
     // @<Name> = alias [Linkage] [Visibility] <AliaseeTy> @<Aliasee>
     //------------------------------------------------------------------
 
-    string value_str;
-    raw_string_ostream rso(value_str);
-
-    value_str.clear();
-
     // Get aliasee value as llvm constant
     const llvm::Constant *Aliasee = ga->getAliasee();
 
@@ -514,16 +486,16 @@ void CsvGenerator::writeGlobalAlias(const GlobalAlias *ga, string refmode)
     writeEntity(pred::alias, refmode);
 
     // Serialize alias properties
-    const char * visibility = writeVisibility(ga->getVisibility());
-    const char * linkage    = writeLinkage(ga->getLinkage());
-    string aliasType = printType(ga->getType());
+    string visibility = to_string(ga->getVisibility());
+    string linkage    = to_string(ga->getLinkage());
+    string aliasType  = to_string(ga->getType());
 
     // Record visibility
-    if (strlen(visibility))
+    if (!visibility.empty())
         writeSimpleFact(pred::aliasVis, refmode, visibility);
 
     // Record linkage
-    if (strlen(linkage))
+    if (!linkage.empty())
         writeSimpleFact(pred::aliasLink, refmode, linkage);
 
     // Record type
@@ -531,7 +503,81 @@ void CsvGenerator::writeGlobalAlias(const GlobalAlias *ga, string refmode)
 
     // Record aliasee
     if (Aliasee) {
-        string aliasee = valueToString(Aliasee, ga->getParent());
+        string aliasee = valueToString(Aliasee, ga->getParent()); // CHECK
         writeSimpleFact(pred::aliasAliasee, refmode, aliasee);
     }
+}
+
+
+
+//-------------------------------------------------------------------
+// Static serializing methods for various LLVM enum-like types
+//-------------------------------------------------------------------
+
+string CsvGenerator::to_string(GlobalValue::LinkageTypes LT)
+{
+    const char *linkTy;
+
+    switch (LT) {
+      case GlobalValue::ExternalLinkage:      linkTy = "external";        break;
+      case GlobalValue::PrivateLinkage:       linkTy = "private";         break;
+      case GlobalValue::LinkerPrivateLinkage: linkTy = "linker_private";  break;
+      case GlobalValue::LinkerPrivateWeakLinkage:
+          linkTy = "linker_private_weak";
+          break;
+      case GlobalValue::InternalLinkage:      linkTy = "internal";        break;
+      case GlobalValue::LinkOnceAnyLinkage:   linkTy = "linkonce";        break;
+      case GlobalValue::LinkOnceODRLinkage:   linkTy = "linkonce_odr";    break;
+      case GlobalValue::WeakAnyLinkage:       linkTy = "weak";            break;
+      case GlobalValue::WeakODRLinkage:       linkTy = "weak_odr";        break;
+      case GlobalValue::CommonLinkage:        linkTy = "common";          break;
+      case GlobalValue::AppendingLinkage:     linkTy = "appending";       break;
+      case GlobalValue::ExternalWeakLinkage:  linkTy = "extern_weak";     break;
+      case GlobalValue::AvailableExternallyLinkage:
+          linkTy = "available_externally";
+          break;
+      default: linkTy = "";   break;
+    }
+    return linkTy;
+}
+
+
+string CsvGenerator::to_string(GlobalValue::VisibilityTypes Vis)
+{
+    const char *visibility;
+
+    switch (Vis) {
+      case GlobalValue::DefaultVisibility:    visibility = "default";     break;
+      case GlobalValue::HiddenVisibility:     visibility = "hidden";      break;
+      case GlobalValue::ProtectedVisibility:  visibility = "protected";   break;
+      default: visibility = "";   break;
+    }
+
+    return visibility;
+}
+
+
+string CsvGenerator::to_string(GlobalVariable::ThreadLocalMode TLM)
+{
+    const char *tlm;
+
+    switch (TLM) {
+      case GlobalVariable::NotThreadLocal:
+          tlm = "";
+          break;
+      case GlobalVariable::GeneralDynamicTLSModel:
+          tlm = "thread_local";
+          break;
+      case GlobalVariable::LocalDynamicTLSModel:
+          tlm = "thread_local(localdynamic)";
+          break;
+      case GlobalVariable::InitialExecTLSModel:
+          tlm = "thread_local(initialexec)";
+          break;
+      case GlobalVariable::LocalExecTLSModel:
+          tlm = "thread_local(localexec)";
+          break;
+      default: tlm = ""; break;
+    }
+    return tlm;
 }
