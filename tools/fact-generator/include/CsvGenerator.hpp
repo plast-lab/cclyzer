@@ -18,7 +18,6 @@
 #include "PredicateFileMapping.hpp"
 
 
-
 class CsvGenerator
 {
     friend class InstructionVisitor;
@@ -113,33 +112,71 @@ class CsvGenerator
     }
 
 
-    /* Fact writing methods */
 
-    void writeEntity(const char *filename, const std::string& entityRefmode);
+    /* Basic routines for appending new facts to CSV files */
 
-    void writeOperandFact(const char *predName, const std::string& entityRefmode,
-                          const std::string& operandRefmode,
-                          bool operandType, int index = -1);
+    void writeEntity(const char *entityName,
+                     const std::string& entityRefmode)
+    {
+        // Locate CSV file for the given predicate
+        ofstream *csvFile = getCsvFile(entityName);
+
+        // Append new fact
+        (*csvFile) << entityRefmode << "\n";
+    }
+
 
     template<class ValType>
-    void writeSimpleFact(const char *predName, const std::string& entityRefmode,
+    void writeSimpleFact(const char *predName,
+                         const std::string& entityRefmode,
                          const ValType& valueRefmode, int index = -1)
     {
         // Locate CSV file for the given predicate
-        boost::filesystem::ofstream *csvFile = getCsvFile(predName);
+        ofstream *csvFile = getCsvFile(predName);
 
         // Append fact while differentiating between ordinary and
         // indexed predicates
 
-        if(index == -1)
-            (*csvFile) << entityRefmode << delim << valueRefmode << "\n";
+        if (index == -1)
+            (*csvFile) << entityRefmode
+                       << delim << valueRefmode << "\n";
         else
-            (*csvFile) << entityRefmode << delim << index << delim << valueRefmode << "\n";
+            (*csvFile) << entityRefmode
+                       << delim << index
+                       << delim << valueRefmode << "\n";
     }
 
-    void processModule(const llvm::Module *Mod, std::string& path);
 
+    void writeOperandFact(const char *predName,
+                          const std::string& entityRefmode,
+                          const std::string& operandRefmode,
+                          Operand::Type operandType, int index = -1)
+    {
+        // Locate CSV file for the given predicate
+        ofstream *csvFile = getCsvFile(toPath(predName, operandType));
+
+        // Append fact while differentiating between ordinary and
+        // indexed predicates
+
+        if (index == -1)
+            (*csvFile) << entityRefmode
+                       << delim << operandRefmode << "\n";
+        else
+            (*csvFile) << entityRefmode
+                       << delim << index
+                       << delim << operandRefmode << "\n";
+    }
+
+
+    // TODO: consider moving all these complex methods that deal with
+    // predicate names to separate class
+    void processModule(const llvm::Module *Mod, std::string& path);
     void writeVarsTypesAndImmediates();
+
+    /* Complex fact writing methods */
+
+    void writeGlobalVar(const llvm::GlobalVariable *gv, std::string globalName);
+    void writeGlobalAlias(const llvm::GlobalAlias *ga, std::string globalAlias);
 
   private:
     /* Output directory */
@@ -163,10 +200,6 @@ class CsvGenerator
 
 
     /* Auxiliary methods */
-
-    void writeGlobalVar(const llvm::GlobalVariable *gv, std::string globalName);
-
-    void writeGlobalAlias(const llvm::GlobalAlias *ga, std::string globalAlias);
 
     std::string getRefmodeForValue(const llvm::Module * Mod, const llvm::Value * Val, std::string& path){
         return "<" + path + ">:" + auxiliary_methods::valueToString(Val, Mod);

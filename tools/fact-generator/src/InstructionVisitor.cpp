@@ -36,12 +36,13 @@ void InstructionVisitor::logSimpleValue(const Value * Val, const char * predName
     csvGen->writeSimpleFact(predName, instrNum, varId, index);
 }
 
-void InstructionVisitor::logOperand(const Value * Operand, const char * predName, int index){
-    int operandType; //whether we have a constant or variable operand
+void InstructionVisitor::logOperand(const Value * Operand, const char * predName, int index)
+{
+    Operand::Type operandType; //whether we have a constant or variable operand
     const Type * OpType = Operand->getType();
 
     if(const Constant *c = dyn_cast<Constant>(Operand)) {
-        operandType = 0;
+        operandType = Operand::Type::IMMEDIATE;
         ostringstream immOffset;
         immOffset << immediateOffset;
         varId = instrNum + ":" + immOffset.str() + ":" + valueToString(c, Mod);
@@ -49,10 +50,11 @@ void InstructionVisitor::logOperand(const Value * Operand, const char * predName
         csvGen->recordConstant(varId, OpType);
     }
     else {
-        operandType = 1;
+        operandType = Operand::Type::VARIABLE;
         varId = instrId + valueToString(Operand, Mod);
         csvGen->recordVariable(varId, OpType);
     }
+
     csvGen->writeOperandFact(predName, instrNum, varId, operandType, index);
 }
 

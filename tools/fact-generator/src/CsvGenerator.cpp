@@ -135,24 +135,7 @@ void CsvGenerator::initStreams()
     // not to exceed the maximum number of open file descriptors
 }
 
-void CsvGenerator::writeEntity(const char *predName, const string& entityRefmode) {
-    filesystem::ofstream *csvFile = getCsvFile(toPath(predName));
-    (*csvFile) << entityRefmode << "\n";
-}
 
-void CsvGenerator::writeOperandFact(const char *predName, const string& entityRefmode,
-                                    const string& operandRefmode, bool operandType, int index)
-{
-    Operand::Type type = operandType
-        ? Operand::Type::VARIABLE
-        : Operand::Type::IMMEDIATE;
-
-    filesystem::ofstream *csvFile = getCsvFile(toPath(predName, type));
-    if(index == -1)
-        (*csvFile) << entityRefmode << delim << operandRefmode << "\n";
-    else
-        (*csvFile) << entityRefmode << delim << index << delim << operandRefmode << "\n";
-}
 
 void CsvGenerator::processModule(const Module * Mod, string& path)
 {
