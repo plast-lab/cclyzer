@@ -55,6 +55,18 @@ class CsvGenerator
         variableTypes[id] = type;
     }
 
+    ofstream* getCsvFile(const char *predname) {
+        return getCsvFile(toPath(predname));
+    }
+
+    ofstream* getCsvFile(path filename)
+    {
+        if (csvFiles.find(filename) == csvFiles.end())
+            csvFiles[filename] = new ofstream(filename.c_str(), std::ios_base::out);
+
+        return csvFiles[filename];
+    }
+
   public:
     CsvGenerator(PredicateFileMapping &scheme, Options &options)
         : fileMappingScheme(&scheme)
@@ -89,7 +101,12 @@ class CsvGenerator
     void writePredicateToCsv(const char *predName, const std::string& entityRefmode, 
                              const ValType& valueRefmode, int index = -1)
     {
+        // Locate CSV file for the given predicate
         boost::filesystem::ofstream *csvFile = getCsvFile(predName);
+
+        // Append fact while differentiating between ordinary and
+        // indexed predicates
+
         if(index == -1)
             (*csvFile) << entityRefmode << delim << valueRefmode << "\n";
         else
@@ -133,18 +150,6 @@ class CsvGenerator
 
     std::string getRefmodeForValue(const llvm::Module * Mod, const llvm::Value * Val, std::string& path){
         return "<" + path + ">:" + auxiliary_methods::valueToString(Val, Mod);
-    }
-
-    ofstream* getCsvFile(path filename)
-    {
-        if (csvFiles.find(filename) == csvFiles.end())
-            csvFiles[filename] = new ofstream(filename.c_str(), std::ios_base::out);
-
-        return csvFiles[filename];
-    }
-
-    ofstream* getCsvFile(const char *predname) {
-        return getCsvFile(toPath(predname));
     }
 
     boost::unordered_set<const llvm::DataLayout *> layouts;

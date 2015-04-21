@@ -13,7 +13,7 @@ using namespace auxiliary_methods;
 using namespace predicate_names;
 
 namespace fs = boost::filesystem;
-
+namespace pred = predicate_names;
 
 // aggregate array for all predicate names
 
@@ -492,7 +492,7 @@ void CsvGenerator::writeGlobalVar(const GlobalVariable *gv, string globalName) {
         writePredicateToCsv(globalVarAlign, globalName, gv->getAlignment());
 }
 
-void CsvGenerator::writeGlobalAlias(const GlobalAlias *ga, string globalAlias)
+void CsvGenerator::writeGlobalAlias(const GlobalAlias *ga, string refmode)
 {
     //------------------------------------------------------------------
     // A global alias introduces a /second name/ for the aliasee value
@@ -506,18 +506,32 @@ void CsvGenerator::writeGlobalAlias(const GlobalAlias *ga, string globalAlias)
     raw_string_ostream rso(value_str);
 
     value_str.clear();
-    writeEntityToCsv(alias, globalAlias);
 
-    if (strlen(writeVisibility(ga->getVisibility())))
-        writePredicateToCsv(aliasVis, globalAlias, writeVisibility(ga->getVisibility()));
+    // Get aliasee value as llvm constant
+    const llvm::Constant *Aliasee = ga->getAliasee();
 
-    if (strlen(writeLinkage(ga->getLinkage())))
-        writePredicateToCsv(aliasLink, globalAlias, writeLinkage(ga->getLinkage()));
+    // Record alias entity
+    writeEntityToCsv(pred::alias, refmode);
 
-    writePredicateToCsv(aliasType, globalAlias, printType(ga->getType()));
+    // Serialize alias properties
+    const char * visibility = writeVisibility(ga->getVisibility());
+    const char * linkage    = writeLinkage(ga->getLinkage());
+    string aliasType = printType(ga->getType());
 
-    const Constant *Aliasee = ga->getAliasee();
+    // Record visibility
+    if (strlen(visibility))
+        writePredicateToCsv(pred::aliasVis, refmode, visibility);
 
-    if (Aliasee)
-        writePredicateToCsv(aliasAliasee, globalAlias, valueToString(Aliasee, ga->getParent()));
+    // Record linkage
+    if (strlen(linkage))
+        writePredicateToCsv(pred::aliasLink, refmode, linkage);
+
+    // Record type
+    writePredicateToCsv(pred::aliasType, refmode, aliasType);
+
+    // Record aliasee
+    if (Aliasee) {
+        string aliasee = valueToString(Aliasee, ga->getParent());
+        writePredicateToCsv(pred::aliasAliasee, refmode, aliasee);
+    }
 }
