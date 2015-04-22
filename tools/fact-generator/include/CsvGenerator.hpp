@@ -181,6 +181,7 @@ class CsvGenerator
     void writeVectorType(const llvm::VectorType *vectorType);
     void writeStructType(const llvm::StructType *structType);
     void writeArrayType(const llvm::ArrayType *arrayType);
+    void writePointerType(const llvm::PointerType *ptrType);
 
   private:
     /* Output directory */

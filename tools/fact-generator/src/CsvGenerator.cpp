@@ -339,21 +339,17 @@ void CsvGenerator::writeVarsTypesAndImmediates()
         }
 
         if (type->isIntegerTy()) {
-            writeEntity(pred::intType, printType(type));
+            writeEntity(pred::intType, to_string(type));
         }
         else if (type->isFloatingPointTy()) {
-            writeEntity(pred::fpType, printType(type));
+            writeEntity(pred::fpType, to_string(type));
         }
         //TODO: check what other primitives neeed to go here
         else if (type->isVoidTy() || type->isLabelTy() || type->isMetadataTy()) {
-            writeEntity(pred::primitiveType, printType(type));
+            writeEntity(pred::primitiveType, to_string(type));
         }
         else if (type->isPointerTy()) {
-            writeEntity(pred::ptrType, printType(type));
-            writeSimpleFact(pred::ptrTypeComp, printType(type), printType(type->getPointerElementType()));
-
-            if (unsigned AddressSpace = type->getPointerAddressSpace())
-                writeSimpleFact(pred::ptrTypeAddrSpace, printType(type), AddressSpace);
+            writePointerType(cast<PointerType>(type));
         }
         else if (type->isArrayTy()) {
             writeArrayType(cast<ArrayType>(type));
@@ -372,6 +368,23 @@ void CsvGenerator::writeVarsTypesAndImmediates()
             errs() << "-" << type->getTypeID() << ": invalid type in componentTypes set.\n";
         }
     }
+}
+
+
+void CsvGenerator::writePointerType(const PointerType *ptrType)
+{
+    string refmode = to_string(ptrType);
+    Type *elementType = ptrType->getPointerElementType();
+
+    // Record pointer type entity
+    writeEntity(pred::ptrType, refmode);
+
+    // Record pointer element type
+    writeSimpleFact(pred::ptrTypeComp, refmode, to_string(elementType));
+
+    // Record pointer address space
+    if (unsigned addressSpace = ptrType->getPointerAddressSpace())
+        writeSimpleFact(pred::ptrTypeAddrSpace, refmode, addressSpace);
 }
 
 
