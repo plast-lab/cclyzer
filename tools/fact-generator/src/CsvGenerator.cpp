@@ -145,6 +145,10 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
     // Get data layout of this module
     std::string layoutRef = Mod->getDataLayout();
     DataLayout *layout = new DataLayout(layoutRef);
+
+    // Cache the data layout so that it is available at the
+    // postprocessing step of recording the encountered types
+
     layouts.insert(layout);
 
     // iterating over global variables in a module
@@ -186,11 +190,13 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
         if (fi->getCallingConv() != CallingConv::C)
             writeSimpleFact(FuncCallConv, funcId, writeCallingConv(fi->getCallingConv()));
 
+        // Record alignment
         if (fi->getAlignment())
-            writeSimpleFact(FuncAlign, funcId, fi->getAlignment());
+            writeSimpleFact(pred::FuncAlign, funcId, fi->getAlignment());
 
-        if(fi->hasGC())
-            writeSimpleFact(FuncGc, funcId, fi->getGC());
+        // Record GC
+        if (fi->hasGC())
+            writeSimpleFact(pred::FuncGc, funcId, fi->getGC());
 
         writeSimpleFact(FuncName, funcId, "@" + fi->getName().str());
 
@@ -278,7 +284,6 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
             }
         }
     }
-
 }
 
 
