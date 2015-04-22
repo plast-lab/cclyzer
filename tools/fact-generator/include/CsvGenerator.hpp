@@ -180,6 +180,7 @@ class CsvGenerator
     void writeFunctionType(const llvm::FunctionType *functionType);
     void writeVectorType(const llvm::VectorType *vectorType);
     void writeStructType(const llvm::StructType *structType);
+    void writeArrayType(const llvm::ArrayType *arrayType);
 
   private:
     /* Output directory */

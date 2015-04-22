@@ -356,9 +356,7 @@ void CsvGenerator::writeVarsTypesAndImmediates()
                 writeSimpleFact(pred::ptrTypeAddrSpace, printType(type), AddressSpace);
         }
         else if (type->isArrayTy()) {
-            writeEntity(pred::arrayType, printType(type));
-            writeSimpleFact(pred::arrayTypeSize, printType(type), type->getArrayNumElements());
-            writeSimpleFact(pred::arrayTypeComp, printType(type), printType(type->getArrayElementType()));
+            writeArrayType(cast<ArrayType>(type));
         }
         else if (type->isStructTy()) {
             writeStructType(cast<StructType>(type));
@@ -374,7 +372,23 @@ void CsvGenerator::writeVarsTypesAndImmediates()
             errs() << "-" << type->getTypeID() << ": invalid type in componentTypes set.\n";
         }
     }
+}
 
+
+void CsvGenerator::writeArrayType(const ArrayType *arrayType)
+{
+    string refmode = to_string(arrayType);
+    size_t nElements = arrayType->getArrayNumElements();
+    Type *componentType = arrayType->getArrayElementType();
+
+    // Record array type entity
+    writeEntity(pred::arrayType, refmode);
+
+    // Record array component type
+    writeSimpleFact(pred::arrayTypeComp, refmode, to_string(componentType));
+
+    // Record array type size
+    writeSimpleFact(pred::arrayTypeSize, refmode, nElements);
 }
 
 
