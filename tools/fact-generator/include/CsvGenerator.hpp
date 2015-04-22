@@ -81,7 +81,7 @@ class CsvGenerator
     static std::string to_string(llvm::GlobalValue::VisibilityTypes Vis);
     static std::string to_string(llvm::GlobalVariable::ThreadLocalMode TLM);
 
-    static std::string to_string(llvm::Type *type) {
+    static std::string to_string(const llvm::Type *type) {
         return auxiliary_methods::printType(type);
     }
 
@@ -177,6 +177,9 @@ class CsvGenerator
 
     void writeGlobalVar(const llvm::GlobalVariable *gv, std::string globalName);
     void writeGlobalAlias(const llvm::GlobalAlias *ga, std::string globalAlias);
+    void writeFunctionType(const llvm::FunctionType *functionType);
+    void writeVectorType(const llvm::VectorType *vectorType);
+    void writeStructType(const llvm::StructType *structType);
 
   private:
     /* Output directory */

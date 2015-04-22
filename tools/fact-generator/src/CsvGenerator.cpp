@@ -339,57 +339,35 @@ void CsvGenerator::writeVarsTypesAndImmediates()
         }
 
         if (type->isIntegerTy()) {
-            writeEntity(intType, printType(type));
+            writeEntity(pred::intType, printType(type));
         }
-        else if(type->isFloatingPointTy()) {
-            writeEntity(fpType, printType(type));
+        else if (type->isFloatingPointTy()) {
+            writeEntity(pred::fpType, printType(type));
         }
         //TODO: check what other primitives neeed to go here
-        else if(type->isVoidTy() || type->isLabelTy() || type->isMetadataTy()){
-            writeEntity(primitiveType, printType(type));
+        else if (type->isVoidTy() || type->isLabelTy() || type->isMetadataTy()) {
+            writeEntity(pred::primitiveType, printType(type));
         }
-        else if(type->isPointerTy()) {
-            writeEntity(ptrType, printType(type));
-            writeSimpleFact(ptrTypeComp, printType(type), printType(type->getPointerElementType()));
-            if(unsigned AddressSpace = type->getPointerAddressSpace()) {
-                writeSimpleFact(ptrTypeAddrSpace, printType(type), AddressSpace);
-            }
-        }
-        else if(type->isArrayTy()) {
-            writeEntity(arrayType, printType(type));
-            writeSimpleFact(arrayTypeSize, printType(type), type->getArrayNumElements());
-            writeSimpleFact(arrayTypeComp, printType(type), printType(type->getArrayElementType()));
-        }
-        else if(type->isStructTy()) {
-            const StructType *strTy = cast<StructType>(type);
-            writeEntity(structType, printType(strTy));
-            if(strTy->isOpaque()) {
-                writeEntity(opaqueStructType, printType(strTy));
-            }
-            else {
-                for (unsigned int i = 0; i < strTy->getStructNumElements(); ++i) {
-                    writeSimpleFact(structTypeField, printType(strTy), printType(strTy->getStructElementType(i)), i);
-                }
-                writeSimpleFact(structTypeNFields, printType(strTy), strTy->getStructNumElements());
-            }
-        }
-        else if(type->isVectorTy()) {
-            writeEntity(vectorType, printType(type));
-            writeSimpleFact(vectorTypeComp, printType(type), printType(type->getVectorElementType()));
-            writeSimpleFact(vectorTypeSize, printType(type), type->getVectorNumElements());
-        }
-        else if(type->isFunctionTy()) {
-            const FunctionType *funType = cast<FunctionType>(type);
-            writeEntity(funcType, printType(funType));
-            //TODO: which predicate/entity do we need to update for varagrs?
-            if(funType->isVarArg())
-                writeEntity(funcTypeVarArgs, printType(funType));
-            writeSimpleFact(funcTypeReturn, printType(funType), printType(funType->getReturnType()));
+        else if (type->isPointerTy()) {
+            writeEntity(pred::ptrType, printType(type));
+            writeSimpleFact(pred::ptrTypeComp, printType(type), printType(type->getPointerElementType()));
 
-            for (unsigned int par = 0; par < funType->getFunctionNumParams(); ++par) {
-                writeSimpleFact(funcTypeParam, printType(funType), printType(funType->getFunctionParamType(par)), par);
-            }
-            writeSimpleFact(funcTypeNParams, printType(funType), funType->getFunctionNumParams());
+            if (unsigned AddressSpace = type->getPointerAddressSpace())
+                writeSimpleFact(pred::ptrTypeAddrSpace, printType(type), AddressSpace);
+        }
+        else if (type->isArrayTy()) {
+            writeEntity(pred::arrayType, printType(type));
+            writeSimpleFact(pred::arrayTypeSize, printType(type), type->getArrayNumElements());
+            writeSimpleFact(pred::arrayTypeComp, printType(type), printType(type->getArrayElementType()));
+        }
+        else if (type->isStructTy()) {
+            writeStructType(cast<StructType>(type));
+        }
+        else if (type->isVectorTy()) {
+            writeVectorType(cast<VectorType>(type));
+        }
+        else if (type->isFunctionTy()) {
+            writeFunctionType(cast<FunctionType>(type));
         }
         else {
             type->dump();
@@ -398,6 +376,79 @@ void CsvGenerator::writeVarsTypesAndImmediates()
     }
 
 }
+
+
+void CsvGenerator::writeStructType(const StructType *structType)
+{
+    string refmode = to_string(structType);
+    size_t nFields = structType->getStructNumElements();
+
+    // Record struct type entity
+    writeEntity(pred::structType, refmode);
+
+    if (structType->isOpaque()) {
+        // Opaque structs carry no info about their internal structure
+        writeEntity(pred::opaqueStructType, refmode);
+    } else {
+        // Record struct field types
+        for (size_t i = 0; i < nFields; i++)
+        {
+            Type *fieldType = structType->getStructElementType(i);
+
+            writeSimpleFact(pred::structTypeField, refmode, to_string(fieldType), i);
+        }
+
+        // Record number of fields
+        writeSimpleFact(pred::structTypeNFields, refmode, nFields);
+    }
+}
+
+
+void CsvGenerator::writeFunctionType(const FunctionType *functionType)
+{
+    string signature   = to_string(functionType);
+    size_t nParameters = functionType->getFunctionNumParams();
+    Type  *returnType  = functionType->getReturnType();
+
+    // Record function type entity
+    writeEntity(pred::funcType, signature);
+
+    // TODO: which predicate/entity do we need to update for varagrs?
+    if (functionType->isVarArg())
+        writeEntity(pred::funcTypeVarArgs, signature);
+
+    // Record return type
+    writeSimpleFact(pred::funcTypeReturn, signature, to_string(returnType));
+
+    // Record function formal parameters
+    for (size_t i = 0; i < nParameters; i++)
+    {
+        Type *paramType = functionType->getFunctionParamType(i);
+
+        writeSimpleFact(pred::funcTypeParam, signature, to_string(paramType), i);
+    }
+
+    // Record number of formal parameters
+    writeSimpleFact(pred::funcTypeNParams, signature, nParameters);
+}
+
+
+void CsvGenerator::writeVectorType(const VectorType *vectorType)
+{
+    string refmode = to_string(vectorType);
+    size_t nElements = vectorType->getVectorNumElements();
+    Type *componentType = vectorType->getVectorElementType();
+
+    // Record vector type entity
+    writeEntity(pred::vectorType, refmode);
+
+    // Record vector component type
+    writeSimpleFact(pred::vectorTypeComp, refmode, to_string(componentType));
+
+    // Record vector type size
+    writeSimpleFact(pred::vectorTypeSize, refmode, nElements);
+}
+
 
 void CsvGenerator::writeGlobalVar(const GlobalVariable *gv, string refmode)
 {
