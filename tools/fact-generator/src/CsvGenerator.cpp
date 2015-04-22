@@ -1,9 +1,12 @@
-#include "llvm/IR/Module.h"
-#include "llvm/IR/Operator.h"
-#include "llvm/Support/CFG.h"
+#include <boost/foreach.hpp>
+#include <llvm/IR/Module.h>
+#include <llvm/IR/Operator.h>
+#include <llvm/Support/CFG.h>
 #include "CsvGenerator.hpp"
 #include "InstructionVisitor.hpp"
 #include "TypeAccumulator.hpp"
+
+#define foreach BOOST_FOREACH
 
 using namespace llvm;
 using namespace std;
@@ -282,91 +285,120 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
 void CsvGenerator::writeVarsTypesAndImmediates()
 {
     using llvm_extra::TypeAccumulator;
+    using boost::unordered_set;
 
-    // Constant
-    for (auto &kv : constantTypes) {
+    // Record every constant encountered so far
+    foreach (type_cache_t::value_type kv, constantTypes) {
         string refmode = kv.first;
         const Type *type = kv.second;
-        writeEntity(::immediate, refmode);
-        writeSimpleFact(immediateType, refmode, printType(type));
+
+        // Record constant entity with its type
+        writeEntity(pred::immediate, refmode);
+        writeSimpleFact(pred::immediateType, refmode, to_string(type));
+
         types.insert(type);
     }
-    // Variable
-    for (auto &kv : variableTypes) {
+
+    // Record every variable encountered so far
+    foreach (type_cache_t::value_type kv, variableTypes) {
         string refmode = kv.first;
         const Type *type = kv.second;
-        writeEntity(::variable, refmode);
-        writeSimpleFact(variableType, refmode, printType(type));
+
+        // Record variable entity with its type
+        writeEntity(pred::variable, refmode);
+        writeSimpleFact(pred::variableType, refmode, to_string(type));
+
         types.insert(type);
     }
 
     // Type accumulator that identifies simple types from complex ones
-    TypeAccumulator<boost::unordered_set<const llvm::Type *> > collector;
+    TypeAccumulator<unordered_set<const llvm::Type *> > collector;
 
     // Set of all encountered types
-    boost::unordered_set<const llvm::Type *> componentTypes = collector(types);
+    unordered_set<const llvm::Type *> componentTypes = collector(types);
 
-    //TODO: Do we need to write other primitives manually?
-    writeEntity(primitiveType, "void");
-    writeEntity(primitiveType, "label");
-    writeEntity(primitiveType, "metadata");
-    writeEntity(primitiveType, "x86mmx");
+    // Add basic primitive types
+    writeEntity(pred::primitiveType, "void");
+    writeEntity(pred::primitiveType, "label");
+    writeEntity(pred::primitiveType, "metadata");
+    writeEntity(pred::primitiveType, "x86mmx");
 
-    //TODO: convert if-then-else to switch statement
-    //TODO: eliminate common exps
-    for (unordered_set<const Type *>::iterator it = componentTypes.begin(); it != componentTypes.end(); ++it)
-    {
-        const Type *type = *it;
+    // Record each type encountered
+    foreach (const Type *type, componentTypes)
+       writeType(type);
+}
 
-        // Record type sizes
-        if (type->isSized()) {  // skip types that do not have size (e.g., labels, functions)
-            for (unordered_set<const DataLayout *>::iterator it2 = layouts.begin();
-                 it2 != layouts.end(); ++it2)
-            {
-                // TODO: address the case when the data layout does
-                // not contain information about this type. This will
-                // happen when we analyze multiple compilation units
-                // (modules) at once.
 
-                const DataLayout *DL = *it2;
-                uint64_t allocSize = DL->getTypeAllocSize(const_cast<Type *>(type));
-                uint64_t storeSize = DL->getTypeStoreSize(const_cast<Type *>(type));
 
-                writeSimpleFact(typeAllocSize, printType(type), allocSize);
-                writeSimpleFact(typeStoreSize, printType(type), storeSize);
-                break;
-            }
-        }
+//-------------------------------------------------------------------
+// Methods for recording different kinds of LLVM types.
+//-------------------------------------------------------------------
 
-        if (type->isIntegerTy()) {
-            writeEntity(pred::intType, to_string(type));
+
+void CsvGenerator::writeType(const Type *type)
+{
+    // Record type sizes while skipping unsized types (e.g.,
+    // labels, functions)
+
+    if (type->isSized()) {
+        // Iterate over every cached data layout
+        foreach (const DataLayout *DL, layouts)
+        {
+            // TODO: address the case when the data layout does
+            // not contain information about this type. This will
+            // happen when we analyze multiple compilation units
+            // (modules) at once.
+
+            uint64_t allocSize = DL->getTypeAllocSize(const_cast<Type *>(type));
+            uint64_t storeSize = DL->getTypeStoreSize(const_cast<Type *>(type));
+
+            // Store size of type in bytes
+            writeSimpleFact(pred::typeAllocSize, to_string(type), allocSize);
+            writeSimpleFact(pred::typeStoreSize, to_string(type), storeSize);
+            break;
         }
-        else if (type->isFloatingPointTy()) {
-            writeEntity(pred::fpType, to_string(type));
-        }
-        //TODO: check what other primitives neeed to go here
-        else if (type->isVoidTy() || type->isLabelTy() || type->isMetadataTy()) {
-            writeEntity(pred::primitiveType, to_string(type));
-        }
-        else if (type->isPointerTy()) {
-            writePointerType(cast<PointerType>(type));
-        }
-        else if (type->isArrayTy()) {
-            writeArrayType(cast<ArrayType>(type));
-        }
-        else if (type->isStructTy()) {
-            writeStructType(cast<StructType>(type));
-        }
-        else if (type->isVectorTy()) {
-            writeVectorType(cast<VectorType>(type));
-        }
-        else if (type->isFunctionTy()) {
-            writeFunctionType(cast<FunctionType>(type));
-        }
-        else {
-            type->dump();
-            errs() << "-" << type->getTypeID() << ": invalid type in componentTypes set.\n";
-        }
+    }
+
+    // Record each different kind of type
+    switch (type->getTypeID()) { // Fallthrough is intended
+      case llvm::Type::VoidTyID:
+      case llvm::Type::LabelTyID:
+      case llvm::Type::MetadataTyID:
+          writeEntity(pred::primitiveType, to_string(type));
+          break;
+      case llvm::Type::HalfTyID: // Fallthrough to all 6 floating point types
+      case llvm::Type::FloatTyID:
+      case llvm::Type::DoubleTyID:
+      case llvm::Type::X86_FP80TyID:
+      case llvm::Type::FP128TyID:
+      case llvm::Type::PPC_FP128TyID:
+          assert(type->isFloatingPointTy());
+          writeEntity(pred::fpType, to_string(type));
+          break;
+      case llvm::Type::IntegerTyID:
+          writeEntity(pred::intType, to_string(type));
+          break;
+      case llvm::Type::FunctionTyID:
+          writeFunctionType(cast<FunctionType>(type));
+          break;
+      case llvm::Type::StructTyID:
+          writeStructType(cast<StructType>(type));
+          break;
+      case llvm::Type::ArrayTyID:
+          writeArrayType(cast<ArrayType>(type));
+          break;
+      case llvm::Type::PointerTyID:
+          writePointerType(cast<PointerType>(type));
+          break;
+      case llvm::Type::VectorTyID:
+          writeVectorType(cast<VectorType>(type));
+          break;
+      case llvm::Type::X86_MMXTyID: // TODO: handle this type
+          break;
+      default:
+          type->dump();
+          llvm::errs() << "-" << type->getTypeID()
+                       << ": invalid type encountered.\n";
     }
 }
 

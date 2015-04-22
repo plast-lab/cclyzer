@@ -182,6 +182,7 @@ class CsvGenerator
     void writeStructType(const llvm::StructType *structType);
     void writeArrayType(const llvm::ArrayType *arrayType);
     void writePointerType(const llvm::PointerType *ptrType);
+    void writeType(const llvm::Type *type);
 
   private:
     /* Output directory */
@@ -210,7 +211,21 @@ class CsvGenerator
         return "<" + path + ">:" + auxiliary_methods::valueToString(Val, Mod);
     }
 
+
+    /**
+     * After processing every module, we record information for all
+     * the encountered types. To compute the byte size of each type,
+     * we need a data layout object, which we can create given an LLVM
+     * module. However, since this step is performed at the end we
+     * have to keep a set of all data layouts (one per module).
+     *
+     * TODO: Consider moving the writing of types during module
+     * processing, to be able to eliminate this field and only pass
+     * the *current* data layout and module as function parameters to
+     * the fact writing methods.
+     */
     boost::unordered_set<const llvm::DataLayout *> layouts;
+
     boost::unordered_set<const llvm::Type *> types;
 
     static const char * simplePredicates[];
