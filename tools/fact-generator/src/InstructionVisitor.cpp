@@ -253,7 +253,7 @@ void InstructionVisitor::visitInvokeInst(InvokeInst &II) {
     }
     //TODO: Why not CallingConv::C
     if (II.getCallingConv() != CallingConv::C) {
-        csvGen->writeSimpleFact(invokeInsnCallConv, instrNum, writeCallingConv(II.getCallingConv()));
+        csvGen->writeSimpleFact(invokeInsnCallConv, instrNum, to_string(II.getCallingConv()));
     }
 }
 
@@ -606,7 +606,7 @@ void InstructionVisitor::visitCallInst(CallInst &CI) {
         csvGen->writeEntity(callInsnTail, instrNum);
     }
     if (CI.getCallingConv() != CallingConv::C) {
-        csvGen->writeSimpleFact(callCallConv, instrNum, writeCallingConv(CI.getCallingConv()));
+        csvGen->writeSimpleFact(callCallConv, instrNum, to_string(CI.getCallingConv()));
     }
     const AttributeSet &Attrs = CI.getAttributes();
     if (Attrs.hasAttributes(AttributeSet::ReturnIndex)) {

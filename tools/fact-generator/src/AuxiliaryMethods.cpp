@@ -17,31 +17,6 @@ namespace auxiliary_methods {
             Tp->isMetadataTy() || Tp->isX86_MMXTy();
     }
 
-    string writeCallingConv(unsigned cc){
-
-        string conv;
-
-        switch (cc) {
-            //TODO:CallingConv::C
-        case CallingConv::Fast:             conv =  "fastcc";           break;
-        case CallingConv::Cold:             conv =  "coldcc";           break;
-        case CallingConv::X86_FastCall:     conv =  "x86_fastcallcc";   break;
-        case CallingConv::X86_StdCall:      conv =  "x86_stdcallcc";    break;
-        case CallingConv::X86_ThisCall:     conv =  "x86_thiscallcc";   break;
-        case CallingConv::Intel_OCL_BI:     conv =  "intel_ocl_bicc";   break;
-        case CallingConv::ARM_AAPCS:        conv =  "arm_aapcscc";      break;
-        case CallingConv::ARM_AAPCS_VFP:    conv =  "arm_aapcs_vfpcc";  break;
-        case CallingConv::ARM_APCS:         conv =  "arm_apcscc";       break;
-        case CallingConv::MSP430_INTR:      conv =  "msp430_intrcc";    break;
-        case CallingConv::PTX_Device:       conv =  "tx_device";        break;
-        case CallingConv::PTX_Kernel:       conv =  "ptx_kernel";       break;
-        default:
-            conv = "cc" + static_cast<ostringstream*>(&(ostringstream()<< cc))->str();
-            break;
-        }
-        return conv;
-    }
-
     string printType(const Type *type){
 
         string type_str;

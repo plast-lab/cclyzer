@@ -14,8 +14,6 @@ namespace auxiliary_methods {
 
     bool isPrimitiveType(const llvm::Type * Tp);
 
-    std::string writeCallingConv(unsigned cc);
-
     std::string printType(const llvm::Type *type);
 
     //TODO: do we need this guy?

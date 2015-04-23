@@ -80,6 +80,7 @@ class CsvGenerator
     static std::string to_string(llvm::GlobalValue::LinkageTypes LT);
     static std::string to_string(llvm::GlobalValue::VisibilityTypes Vis);
     static std::string to_string(llvm::GlobalVariable::ThreadLocalMode TLM);
+    static std::string to_string(llvm::CallingConv::ID CC);
 
     static std::string to_string(const llvm::Type *type) {
         return auxiliary_methods::printType(type);

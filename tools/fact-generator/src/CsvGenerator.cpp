@@ -171,64 +171,79 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
         string instrId = funcId + ":";
         IV.setInstrId(instrId);
 
-        writeSimpleFact(FuncType, funcId, printType(fi->getFunctionType()));
-
+        // Record function type
         types.insert(fi->getFunctionType());
 
         // Serialize function properties
         string visibility = to_string(fi->getVisibility());
         string linkage = to_string(fi->getLinkage());
+        string typeSignature = to_string(fi->getFunctionType());
 
-        // Record function linkage
+        // Record function type signature
+        writeSimpleFact(pred::FuncType, funcId, typeSignature);
+
+        // Record function linkage, visibility, alignment, and GC
         if (!linkage.empty())
             writeSimpleFact(pred::FuncLink, funcId, linkage);
 
-        // Record function visibility
         if (!visibility.empty())
             writeSimpleFact(pred::FuncVis, funcId, visibility);
 
-        if (fi->getCallingConv() != CallingConv::C)
-            writeSimpleFact(FuncCallConv, funcId, writeCallingConv(fi->getCallingConv()));
-
-        // Record alignment
         if (fi->getAlignment())
             writeSimpleFact(pred::FuncAlign, funcId, fi->getAlignment());
 
-        // Record GC
         if (fi->hasGC())
             writeSimpleFact(pred::FuncGc, funcId, fi->getGC());
 
-        writeSimpleFact(FuncName, funcId, "@" + fi->getName().str());
+        // Record calling convection TODO
+        if (fi->getCallingConv() != CallingConv::C)
+            writeSimpleFact(FuncCallConv, funcId, to_string(fi->getCallingConv()));
 
-        if(fi->hasUnnamedAddr()) {
-            writeEntity(FuncUnnamedAddr, funcId);
-        }
+        // Record function name
+        writeSimpleFact(pred::FuncName, funcId, "@" + fi->getName().str());
+
+        // Address not significant
+        if (fi->hasUnnamedAddr())
+            writeEntity(pred::FuncUnnamedAddr, funcId);
+
+        // Record function attributes TODO
         const AttributeSet &Attrs = fi->getAttributes();
-        if (Attrs.hasAttributes(AttributeSet::ReturnIndex)) {
-            writeSimpleFact(FuncRetAttr, funcId, Attrs.getAsString(AttributeSet::ReturnIndex));
-        }
+
+        if (Attrs.hasAttributes(AttributeSet::ReturnIndex))
+            writeSimpleFact(pred::FuncRetAttr, funcId, Attrs.getAsString(AttributeSet::ReturnIndex));
+
         vector<string> FuncnAttr;
         writeFnAttributes(Attrs, FuncnAttr);
-        for (int i = 0; i < FuncnAttr.size(); ++i) {
-            writeSimpleFact(FuncAttr, funcId, FuncnAttr[i]);
-        }
-        if (!fi->isDeclaration()) {
-            writeEntity(Func, funcId);
-            if(fi->hasSection()) {
-                writeSimpleFact(FuncSect, funcId, fi->getSection());
-            }
-            int index = 0;
-            for (Function::const_arg_iterator arg = fi->arg_begin(), arg_end = fi->arg_end(); arg != arg_end; ++arg) {
-                string varId;
-                varId = instrId + valueToString(arg, Mod);
-                writeSimpleFact(FuncParam, funcId, varId, index);
-                recordVariable(varId, arg->getType());
-                index++;
-            }
-        }
-        else{
-            writeEntity(FuncDecl, funcId);
+
+        for (size_t i = 0; i < FuncnAttr.size(); i++)
+            writeSimpleFact(pred::FuncAttr, funcId, FuncnAttr[i]);
+
+        // Nothing more to do for function declarations
+        if (fi->isDeclaration()) {
+            writeEntity(pred::FuncDecl, funcId); // record function declaration
             continue;
+        }
+
+        // Record function definition entity
+        writeEntity(pred::Func, funcId);
+
+        // Record section
+        if(fi->hasSection())
+            writeSimpleFact(pred::FuncSect, funcId, fi->getSection());
+
+        // Record function parameters
+        {
+            int index = 0;
+
+            for (Function::const_arg_iterator
+                     arg = fi->arg_begin(), arg_end = fi->arg_end();
+                 arg != arg_end; arg++)
+            {
+                string varId = instrId + valueToString(arg, Mod);
+
+                writeSimpleFact(pred::FuncParam, funcId, varId, index++);
+                recordVariable(varId, arg->getType());
+            }
         }
 
         int counter = 0;
@@ -238,8 +253,8 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
             string bbId = funcId + ":";
             string varId;
             varId = bbId + valueToString(bi, Mod);
-            writeEntity(::variable, varId);
-            writeSimpleFact(variableType, varId, "label");
+            writeEntity(pred::variable, varId);
+            writeSimpleFact(pred::variableType, varId, "label");
             //No const_pred_iterator, damn you llvm
             BasicBlock* tmpBB = const_cast<BasicBlock*>((const BasicBlock*)bi);
             for(pred_iterator pi = pred_begin(tmpBB), pi_end = pred_end(tmpBB); pi != pi_end; ++pi) {
@@ -678,4 +693,30 @@ string CsvGenerator::to_string(GlobalVariable::ThreadLocalMode TLM)
       default: tlm = ""; break;
     }
     return tlm;
+}
+
+
+string CsvGenerator::to_string(CallingConv::ID cc)
+{
+    string conv;
+
+    switch (cc) {
+        //TODO:CallingConv::C
+      case CallingConv::Fast:             conv =  "fastcc";           break;
+      case CallingConv::Cold:             conv =  "coldcc";           break;
+      case CallingConv::X86_FastCall:     conv =  "x86_fastcallcc";   break;
+      case CallingConv::X86_StdCall:      conv =  "x86_stdcallcc";    break;
+      case CallingConv::X86_ThisCall:     conv =  "x86_thiscallcc";   break;
+      case CallingConv::Intel_OCL_BI:     conv =  "intel_ocl_bicc";   break;
+      case CallingConv::ARM_AAPCS:        conv =  "arm_aapcscc";      break;
+      case CallingConv::ARM_AAPCS_VFP:    conv =  "arm_aapcs_vfpcc";  break;
+      case CallingConv::ARM_APCS:         conv =  "arm_apcscc";       break;
+      case CallingConv::MSP430_INTR:      conv =  "msp430_intrcc";    break;
+      case CallingConv::PTX_Device:       conv =  "tx_device";        break;
+      case CallingConv::PTX_Kernel:       conv =  "ptx_kernel";       break;
+      default:
+          conv = "cc" + static_cast<ostringstream*>(&(ostringstream() << cc))->str();
+          break;
+    }
+    return conv;
 }
