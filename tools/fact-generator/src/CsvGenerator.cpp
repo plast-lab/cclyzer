@@ -167,8 +167,8 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
 
     // iterating over functions in a module
     for (Module::const_iterator fi = Mod->begin(), fi_end = Mod->end(); fi != fi_end; ++fi) {
-        string funcId = "<" + path + ">:" + string(fi->getName());
-        string instrId = funcId + ":";
+        string funcRef = "<" + path + ">:" + string(fi->getName());
+        string instrId = funcRef + ":";
         IV.setInstrId(instrId);
 
         // Record function type
@@ -180,56 +180,56 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
         string typeSignature = to_string(fi->getFunctionType());
 
         // Record function type signature
-        writeSimpleFact(pred::FuncType, funcId, typeSignature);
+        writeSimpleFact(pred::FuncType, funcRef, typeSignature);
 
         // Record function linkage, visibility, alignment, and GC
         if (!linkage.empty())
-            writeSimpleFact(pred::FuncLink, funcId, linkage);
+            writeSimpleFact(pred::FuncLink, funcRef, linkage);
 
         if (!visibility.empty())
-            writeSimpleFact(pred::FuncVis, funcId, visibility);
+            writeSimpleFact(pred::FuncVis, funcRef, visibility);
 
         if (fi->getAlignment())
-            writeSimpleFact(pred::FuncAlign, funcId, fi->getAlignment());
+            writeSimpleFact(pred::FuncAlign, funcRef, fi->getAlignment());
 
         if (fi->hasGC())
-            writeSimpleFact(pred::FuncGc, funcId, fi->getGC());
+            writeSimpleFact(pred::FuncGc, funcRef, fi->getGC());
 
-        // Record calling convection TODO
+        // Record calling convection if it not defaults to C
         if (fi->getCallingConv() != CallingConv::C)
-            writeSimpleFact(FuncCallConv, funcId, to_string(fi->getCallingConv()));
+            writeSimpleFact(pred::FuncCallConv, funcRef, to_string(fi->getCallingConv()));
 
         // Record function name
-        writeSimpleFact(pred::FuncName, funcId, "@" + fi->getName().str());
+        writeSimpleFact(pred::FuncName, funcRef, "@" + fi->getName().str());
 
         // Address not significant
         if (fi->hasUnnamedAddr())
-            writeEntity(pred::FuncUnnamedAddr, funcId);
+            writeEntity(pred::FuncUnnamedAddr, funcRef);
 
         // Record function attributes TODO
         const AttributeSet &Attrs = fi->getAttributes();
 
         if (Attrs.hasAttributes(AttributeSet::ReturnIndex))
-            writeSimpleFact(pred::FuncRetAttr, funcId, Attrs.getAsString(AttributeSet::ReturnIndex));
+            writeSimpleFact(pred::FuncRetAttr, funcRef, Attrs.getAsString(AttributeSet::ReturnIndex));
 
         vector<string> FuncnAttr;
         writeFnAttributes(Attrs, FuncnAttr);
 
         for (size_t i = 0; i < FuncnAttr.size(); i++)
-            writeSimpleFact(pred::FuncAttr, funcId, FuncnAttr[i]);
+            writeSimpleFact(pred::FuncAttr, funcRef, FuncnAttr[i]);
 
         // Nothing more to do for function declarations
         if (fi->isDeclaration()) {
-            writeEntity(pred::FuncDecl, funcId); // record function declaration
+            writeEntity(pred::FuncDecl, funcRef); // record function declaration
             continue;
         }
 
         // Record function definition entity
-        writeEntity(pred::Func, funcId);
+        writeEntity(pred::Func, funcRef);
 
         // Record section
         if(fi->hasSection())
-            writeSimpleFact(pred::FuncSect, funcId, fi->getSection());
+            writeSimpleFact(pred::FuncSect, funcRef, fi->getSection());
 
         // Record function parameters
         {
@@ -241,61 +241,72 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
             {
                 string varId = instrId + valueToString(arg, Mod);
 
-                writeSimpleFact(pred::FuncParam, funcId, varId, index++);
+                writeSimpleFact(pred::FuncParam, funcRef, varId, index++);
                 recordVariable(varId, arg->getType());
             }
         }
 
         int counter = 0;
-        //iterating over basic blocks in a function
+
+        // iterating over basic blocks in a function
         //REVIEW: There must be a way to move this whole logic inside InstructionVisitor, i.e., visit(Module M)
-        for (Function::const_iterator bi = fi->begin(), bi_end = fi->end(); bi != bi_end; ++bi) {
-            string bbId = funcId + ":";
-            string varId;
-            varId = bbId + valueToString(bi, Mod);
-            writeEntity(pred::variable, varId);
-            writeSimpleFact(pred::variableType, varId, "label");
-            //No const_pred_iterator, damn you llvm
-            BasicBlock* tmpBB = const_cast<BasicBlock*>((const BasicBlock*)bi);
-            for(pred_iterator pi = pred_begin(tmpBB), pi_end = pred_end(tmpBB); pi != pi_end; ++pi) {
-                string predBB = bbId + valueToString(*pi, Mod);
-                writeSimpleFact(basicBlockPred, varId, predBB);
+        foreach (const llvm::BasicBlock &bb, *fi)
+        {
+            string funcPrefix = funcRef + ":";
+            string bbRef = funcPrefix + valueToString(&bb, Mod);
+
+            // Record basic block entry as a label
+            writeEntity(pred::variable, bbRef);
+            writeSimpleFact(pred::variableType, bbRef, "label");
+
+            // Record basic block predecessors
+            BasicBlock *tmpBB = const_cast<BasicBlock *>(&bb);
+
+            for (pred_iterator pi = pred_begin(tmpBB), pi_end = pred_end(tmpBB);
+                 pi != pi_end; ++pi)
+            {
+                string predBB = funcPrefix + valueToString(*pi, Mod);
+                writeSimpleFact(pred::basicBlockPred, bbRef, predBB);
             }
 
-            //iterating over instructions in a basic block
-            for (BasicBlock::const_iterator i = bi->begin(), i_end = bi->end(); i != i_end; ++i) {
-                ostringstream countStr;
-                string varId; //TODO: clean up this mess. This variable shadows the outer one
-                countStr << counter;
-                string instrNum = instrId + countStr.str();
-                counter++;
-                if(!i->getType()->isVoidTy()) {
-                    varId = instrId + valueToString(i, Mod);
-                    writeSimpleFact(insnTo, instrNum, varId);
-                    recordVariable(varId, i->getType());
-                }
-                //TODO: remove this ugly trick
-                if(++i != i_end){
-                    i--;
-                    if(const Instruction* next = dyn_cast<Instruction>(i->getNextNode())) {
-                        ostringstream nextCountStr;
-                        nextCountStr << counter;
-                        string instrNext = instrId + nextCountStr.str();
-                        writeSimpleFact(insnNext, instrNum, instrNext);
-                    }
-                }
-                else{
-                    i--;
-                }
-                writeSimpleFact(insnFunc, instrNum, funcId);
+            // Store last instruction
+            const llvm::Instruction &lastInstr = bb.back();
 
-                varId = instrId + valueToString(i->getParent(), Mod);
-                writeSimpleFact(insnBBEntry, instrNum, varId);
+            // iterating over basic block instructions
+            foreach (const llvm::Instruction &instr, bb)
+            {
+                // Compute instruction refmode
+                string instrRef = instrId + std::to_string(counter++);
 
-                // Instruction Visitor
-                IV.setInstrNum(instrNum);
-                //Once again no const version in InstructionVisitor
-                IV.visit(*(const_cast<Instruction*>((const Instruction*)i)));
+                // Record instruction target variable if such exists
+                if (!instr.getType()->isVoidTy()) {
+                    string targetVar = instrId + valueToString(&instr, Mod);
+
+                    writeSimpleFact(pred::insnTo, instrRef, targetVar);
+                    recordVariable(targetVar, instr.getType());
+                }
+
+                // Record successor instruction
+                if (&instr != &lastInstr) {
+                    // Compute refmode of next instruction
+                    string nextInstrRef = instrId + std::to_string(counter);
+
+                    // Record the instruction succession
+                    writeSimpleFact(pred::insnNext, instrRef, nextInstrRef);
+                }
+
+                // Record instruction's container function
+                writeSimpleFact(pred::insnFunc, instrRef, funcRef);
+
+                // Record instruction's basic block entry (label)
+                string bbEntry = instrId + valueToString(instr.getParent(), Mod);
+                writeSimpleFact(pred::insnBBEntry, instrRef, bbEntry);
+
+                // Instruction Visitor TODO
+                IV.setInstrNum(instrRef);
+
+                // Visit instruction
+                IV.visit(const_cast<llvm::Instruction &>(instr));
             }
         }
     }
