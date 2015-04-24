@@ -346,7 +346,7 @@ void CsvGenerator::writeVarsTypesAndImmediates()
     TypeAccumulator<unordered_set<const llvm::Type *> > collector;
 
     // Set of all encountered types
-    unordered_set<const llvm::Type *> componentTypes = collector(types);
+    unordered_set<const llvm::Type *> collectedTypes = collector(types);
 
     // Add basic primitive types
     writeEntity(pred::primitiveType, "void");
@@ -355,7 +355,7 @@ void CsvGenerator::writeVarsTypesAndImmediates()
     writeEntity(pred::primitiveType, "x86mmx");
 
     // Record each type encountered
-    foreach (const Type *type, componentTypes)
+    foreach (const Type *type, collectedTypes)
        writeType(type);
 }
 
