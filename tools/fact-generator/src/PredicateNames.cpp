@@ -1,388 +1,384 @@
 #include "PredicateNames.hpp"
 
-namespace predicate_names {
-
-// Basic Blocks
-
-    const char * basicBlockPred = "basicblock:pred_aux";
-
-// Global
-
-    const char * globalVar = "global_variable";
-    const char * globalVarType = "global_variable:type";
-    const char * globalVarInit = "global_variable:initializer";
-    const char * globalVarSect = "global_variable:section";
-    const char * globalVarAlign = "global_variable:align";
-    const char * globalVarFlag = "global_variable:flag";
-    const char * globalVarLink = "global_variable:linkage_type";
-    const char * globalVarVis = "global_variable:visibility";
-    const char * globalVarTlm = "global_variable:threadlocal_mode";
-
-    const char * alias = "alias";
-    const char * aliasType = "alias:type";
-    const char * aliasLink = "alias:linkage_type";
-    const char * aliasVis = "alias:visibility";
-    const char * aliasAliasee = "alias:aliasee";
-
-// Function
-
-    const char * Func = "function";
-    const char * FuncDecl = "function_decl";
-    const char * FuncUnnamedAddr = "function:unnamed_addr";
-    const char * FuncLink = "function:linkage_type";
-    const char * FuncVis = "function:visibility";
-    const char * FuncCallConv = "function:calling_convention";
-    const char * FuncSect = "function:section";
-    const char * FuncAlign = "function:alignment";
-    const char * FuncAttr = "function:attributes";
-    const char * FuncGc = "function:gc";
-    const char * FuncName = "function:name";
-    const char * FuncType = "function:type";
-    const char * FuncParam = "function:param";
-    const char * FuncRetAttr = "function:return_attribute";
-    const char * FuncParamAttr = "function:param_attribute";
-
-// Instructions
-
-    const char * insnTo = "instruction:to";
-    const char * insnFlag = "instruction:flag";
-    const char * insnNext = "instruction:next";
-    const char * insnBBEntry = "instruction:bb_entry";
-    const char * insnFunc = "instruction:function";
-
-// Binary Instructions
-
-    const char * addInsn = "add_instruction";
-    const char * addInsnFirstOp = "add_instruction:first_operand";
-    const char * addInsnSecondOp = "add_instruction:second_operand";
-
-    const char * faddInsn = "fadd_instruction";
-    const char * faddInsnFirstOp = "fadd_instruction:first_operand";
-    const char * faddInsnSecondOp = "fadd_instruction:second_operand";
-
-    const char * subInsn = "sub_instruction";
-    const char * subInsnFirstOp = "sub_instruction:first_operand";
-    const char * subInsnSecondOp = "sub_instruction:second_operand";
-
-    const char * fsubInsn = "fsub_instruction";
-    const char * fsubInsnFirstOp = "fsub_instruction:first_operand";
-    const char * fsubInsnSecondOp = "fsub_instruction:second_operand";
-
-    const char * mulInsn = "mul_instruction";
-    const char * mulInsnFirstOp = "mul_instruction:first_operand";
-    const char * mulInsnSecondOp = "mul_instruction:second_operand";
-
-    const char * fmulInsn = "fmul_instruction";
-    const char * fmulInsnFirstOp = "fmul_instruction:first_operand";
-    const char * fmulInsnSecondOp = "fmul_instruction:second_operand";
-
-    const char * udivInsn = "udiv_instruction";
-    const char * udivInsnFirstOp = "udiv_instruction:first_operand";
-    const char * udivInsnSecondOp = "udiv_instruction:second_operand";
-
-    const char * fdivInsn = "fdiv_instruction";
-    const char * fdivInsnFirstOp = "fdiv_instruction:first_operand";
-    const char * fdivInsnSecondOp = "fdiv_instruction:second_operand";
-
-    const char * sdivInsn = "sdiv_instruction";
-    const char * sdivInsnFirstOp = "sdiv_instruction:first_operand";
-    const char * sdivInsnSecondOp = "sdiv_instruction:second_operand";
-
-    const char * uremInsn = "urem_instruction";
-    const char * uremInsnFirstOp = "urem_instruction:first_operand";
-    const char * uremInsnSecondOp = "urem_instruction:second_operand";
-
-    const char * sremInsn = "srem_instruction";
-    const char * sremInsnFirstOp = "srem_instruction:first_operand";
-    const char * sremInsnSecondOp = "srem_instruction:second_operand";
-
-    const char * fremInsn = "frem_instruction";
-    const char * fremInsnFirstOp = "frem_instruction:first_operand";
-    const char * fremInsnSecondOp = "frem_instruction:second_operand";
-
-// Bitwise Binary Instructions
-
-    const char * shlInsn = "shl_instruction";
-    const char * shlInsnFirstOp = "shl_instruction:first_operand";
-    const char * shlInsnSecondOp = "shl_instruction:second_operand";
-
-    const char * lshrInsn = "lshr_instruction";
-    const char * lshrInsnFirstOp = "lshr_instruction:first_operand";
-    const char * lshrInsnSecondOp = "lshr_instruction:second_operand";
-
-    const char * ashrInsn = "ashr_instruction";
-    const char * ashrInsnFirstOp = "ashr_instruction:first_operand";
-    const char * ashrInsnSecondOp = "ashr_instruction:second_operand";
-
-    const char * andInsn = "and_instruction";
-    const char * andInsnFirstOp = "and_instruction:first_operand";
-    const char * andInsnSecondOp = "and_instruction:second_operand";
-
-    const char * orInsn = "or_instruction";
-    const char * orInsnFirstOp = "or_instruction:first_operand";
-    const char * orInsnSecondOp = "or_instruction:second_operand";
-
-    const char * xorInsn = "xor_instruction";
-    const char * xorInsnFirstOp = "xor_instruction:first_operand";
-    const char * xorInsnSecondOp = "xor_instruction:second_operand";
-
-// Terminator Instructions
-
-    const char * retInsn = "ret_instruction";
-    const char * retInsnVoid = "ret_instruction:void";
-    const char * retInsnOp = "ret_instruction:value";
-
-    const char * brInsn = "br_instruction";
-    const char * brCondInsn = "br_cond_instruction";
-    const char * brCondInsnCondition = "br_cond_instruction:condition";
-    const char * brCondInsnIfTrue = "br_cond_instruction:iftrue";
-    const char * brCondInsnIfFalse = "br_cond_instruction:iffalse";
-    const char * brUncondInsn = "br_uncond_instruction";
-    const char * brUncondInsnDest = "br_uncond_instruction:dest";
-
-    const char * switchInsn = "switch_instruction";
-    const char * switchInsnOp = "switch_instruction:operand";
-    const char * switchInsnDefLabel = "switch_instruction:default_label";
-    const char * switchInsnCaseVal = "switch_instruction:case:value";
-    const char * switchInsnCaseLabel = "switch_instruction:case:label";
-    const char * switchInsnNCases = "switch_instruction:ncases";
-
-    const char * indirectbrInsn = "indirectbr_instruction";
-    const char * indirectbrInsnAddr = "indirectbr_instruction:address";
-    const char * indirectbrInsnLabel = "indirectbr_instruction:label";
-    const char * indirectbrInsnNLabels = "indirectbr_instruction:nlabels";
-
-    const char * resumeInsn = "resume_instruction";
-    const char * resumeInsnOp = "resume_instruction:operand";
-
-    const char * unreachableInsn = "unreachable_instruction";
-
-    const char * invokeInsn = "invoke_instruction";
-    const char * invokeInsnFunc = "invoke_instruction:function";
-    const char * directInvokeInsn = "direct_invoke_instruction";
-    const char * indirectInvokeInsn = "indirect_invoke_instruction";
-    const char * invokeInsnCallConv = "invoke_instruction:calling_convention";
-    const char * invokeInsnArg = "invoke_instruction:arg";
-    const char * invokeInsnRetAttr = "invoke_instruction:return_attribute";
-    const char * invokeInsnParamAttr = "invoke_instruction:param_attribute";
-    const char * invokeInsnFuncAttr = "invoke_instruction:function_attribute";
-    const char * invokeInsnNormalLabel = "invoke_instruction:normal_label";
-    const char * invokeInsnExceptLabel = "invoke_instruction:exception_label";
-
-// Vector Operations
-
-    const char * extractElemInsn = "extractelement_instruction";
-    const char * extractElemInsnBase = "extractelement_instruction:base";
-    const char * extractElemInsnIndex = "extractelement_instruction:index";
-
-    const char * insertElemInsn = "insertelement_instruction";
-    const char * insertElemInsnBase = "insertelement_instruction:base";
-    const char * insertElemInsnIndex = "insertelement_instruction:index";
-    const char * insertElemInsnValue = "insertelement_instruction:value";
-
-    const char * shuffleVectorInsn = "shufflevector_instruction";
-    const char * shuffleVectorInsnFirstVec = "shufflevector_instruction:first_vector";
-    const char * shuffleVectorInsnSecondVec = "shufflevector_instruction:second_vector";
-    const char * shuffleVectorInsnMask = "shufflevector_instruction:mask";
-
-// Aggregate Operations
-
-    const char * extractValueInsn = "extractvalue_instruction";
-    const char * extractValueInsnBase = "extractvalue_instruction:base";
-    const char * extractValueInsnIndex = "extractvalue_instruction:index";
-    const char * extractValueInsnNIndices = "extractvalue_instruction:nindices";
-
-    const char * insertValueInsn = "insertvalue_instruction";
-    const char * insertValueInsnBase = "insertvalue_instruction:base";
-    const char * insertValueInsnValue = "insertvalue_instruction:value";
-    const char * insertValueInsnIndex = "insertvalue_instruction:index";
-    const char * insertValueInsnNIndices = "insertvalue_instruction:nindices";
-
-// Memory Operations
-
-    const char * allocaInsn = "alloca_instruction";
-    const char * allocaInsnAlign = "alloca_instruction:alignment";
-    const char * allocaInsnSize = "alloca_instruction:size";
-    const char * allocaInsnType = "alloca_instruction:type";
-
-    const char * loadInsn = "load_instruction";
-    const char * loadInsnAlign = "load_instruction:alignment";
-    const char * loadInsnOrd = "load_instruction:ordering";
-    const char * loadInsnAddr = "load_instruction:address";
-    const char * loadInsnVolatile = "load_instruction:volatile";
-
-    const char * storeInsn = "store_instruction";
-    const char * storeInsnAlign = "store_instruction:alignment";
-    const char * storeInsnOrd = "store_instruction:ordering";
-    const char * storeInsnValue = "store_instruction:value";
-    const char * storeInsnAddr = "store_instruction:address";
-    const char * storeInsnVolatile = "store_instruction:volatile";
-
-    const char * fenceInsn = "fence_instruction";
-    const char * fenceInsnOrd = "fence_instruction:ordering";
-
-    const char * atomicRMWInsn = "atomicrmw_instruction";
-    const char * atomicRMWInsnOrd = "atomicrmw_instruction:ordering";
-    const char * atomicRMWInsnOper = "atomicrmw_instruction:operation";
-    const char * atomicRMWInsnAddr = "atomicrmw_instruction:address";
-    const char * atomicRMWInsnValue = "atomicrmw_instruction:value";
-    const char * atomicRMWInsnVolatile = "atomicrmw_instruction:volatile";
-
-    const char * cmpxchgInsn = "cmpxchg_instruction";
-    const char * cmpxchgInsnOrd = "cmpxchg_instruction:ordering";
-    const char * cmpxchgInsnAddr = "cmpxchg_instruction:address";
-    const char * cmpxchgInsnCmp = "cmpxchg_instruction:cmp";
-    const char * cmpxchgInsnNew = "cmpxchg_instruction:new";
-    const char * cmpxchgInsnType = "cmpxchg_instruction:type";
-    const char * cmpxchgInsnVolatile = "cmpxchg_instruction:volatile";
-
-    const char * gepInsn = "getelementptr_instruction";
-    const char * gepInsnBase = "getelementptr_instruction:base";
-    const char * gepInsnIndex = "getelementptr_instruction:index";
-    const char * gepInsnNIndices = "getelementptr_instruction:nindices";
-    const char * gepInsnInbounds = "getelementptr_instruction:inbounds";
-
-// Conversion Operations
-
-    const char * truncInsn = "trunc_instruction";
-    const char * truncInsnFrom = "trunc_instruction:from";
-    const char * truncInsnToType = "trunc_instruction:to_type";
-
-    const char * zextInsn = "zext_instruction";
-    const char * zextInsnFrom = "zext_instruction:from";
-    const char * zextInsnToType = "zext_instruction:to_type";
-
-    const char * sextInsn = "sext_instruction";
-    const char * sextInsnFrom = "sext_instruction:from";
-    const char * sextInsnToType = "sext_instruction:to_type";
-
-    const char * fptruncInsn = "fptrunc_instruction";
-    const char * fptruncInsnFrom = "fptrunc_instruction:from";
-    const char * fptruncInsnToType = "fptrunc_instruction:to_type";
-
-    const char * fpextInsn = "fpext_instruction";
-    const char * fpextInsnFrom = "fpext_instruction:from";
-    const char * fpextInsnToType = "fpext_instruction:to_type";
-
-    const char * fptouiInsn = "fptoui_instruction";
-    const char * fptouiInsnFrom = "fptoui_instruction:from";
-    const char * fptouiInsnToType = "fptoui_instruction:to_type";
-
-    const char * fptosiInsn = "fptosi_instruction";
-    const char * fptosiInsnFrom = "fptosi_instruction:from";
-    const char * fptosiInsnToType = "fptosi_instruction:to_type";
-
-    const char * uitofpInsn = "uitofp_instruction";
-    const char * uitofpInsnFrom = "uitofp_instruction:from";
-    const char * uitofpInsnToType = "uitofp_instruction:to_type";
-
-    const char * sitofpInsn = "sitofp_instruction";
-    const char * sitofpInsnFrom = "sitofp_instruction:from";
-    const char * sitofpInsnToType = "sitofp_instruction:to_type";
-
-    const char * ptrtointInsn = "ptrtoint_instruction";
-    const char * ptrtointInsnFrom = "ptrtoint_instruction:from";
-    const char * ptrtointInsnToType = "ptrtoint_instruction:to_type";
-
-    const char * inttoptrInsn = "inttoptr_instruction";
-    const char * inttoptrInsnFrom = "inttoptr_instruction:from";
-    const char * inttoptrInsnToType = "inttoptr_instruction:to_type";
-
-    const char * bitcastInsn = "bitcast_instruction";
-    const char * bitcastInsnFrom = "bitcast_instruction:from";
-    const char * bitcastInsnToType = "bitcast_instruction:to_type";
-
-// Other Operations
-
-    const char * icmpInsn = "icmp_instruction";
-    const char * icmpInsnCond = "icmp_instruction:condition";
-    const char * icmpInsnFirstOp = "icmp_instruction:first_operand";
-    const char * icmpInsnSecondOp = "icmp_instruction:second_operand";
-
-    const char * fcmpInsn = "fcmp_instruction";
-    const char * fcmpInsnCond = "fcmp_instruction:condition";
-    const char * fcmpInsnFirstOp = "fcmp_instruction:first_operand";
-    const char * fcmpInsnSecondOp = "fcmp_instruction:second_operand";
-
-    const char * phiInsn = "phi_instruction";
-    const char * phiInsnType = "phi_instruction:type";
-    const char * phiInsnPairValue = "phi_instruction:pair:value";
-    const char * phiInsnPairLabel = "phi_instruction:pair:label";
-    const char * phiInsnNPairs = "phi_instruction:npairs";
-
-    const char * selectInsn = "select_instruction";
-    const char * selectInsnCond = "select_instruction:condition";
-    const char * selectInsnFirstOp = "select_instruction:first_operand";
-    const char * selectInsnSecondOp = "select_instruction:second_operand";
-
-    const char * vaargInsn = "va_arg_instruction";
-    const char * vaargInsnList = "va_arg_instruction:va_list";
-    const char * vaargInsnType = "va_arg_instruction:type";
-
-    const char * callInsn = "call_instruction";
-    const char * callInsnFunction = "call_instruction:raw_function";
-    const char * directCallInsn = "direct_call_instruction";
-    const char * indirectCallInsn = "indirect_call_instruction";
-    const char * callCallConv = "call_instruction:calling_convention";
-    const char * callInsnArg = "call_instruction:arg";
-    const char * callInsnRetAttr = "call_instruction:return_attribute";
-    const char * callInsnParamAttr = "call_instruction:param_attribute";
-    const char * callInsnFuncAttr = "call_instruction:function_attribute";
-    const char * callInsnTail = "call_instruction:tail";
-
-    const char * landingpadInsn = "landingpad_instruction";
-    const char * landingpadInsnType = "landingpad_instruction:type";
-    const char * landingpadInsnFunc = "landingpad_instruction:pers_fn";
-    const char * landingpadInsnCatch = "landingpad_instruction:clause:catch_tmp";
-    const char * landingpadInsnFilter = "landingpad_instruction:clause:filter_tmp";
-    const char * landingpadInsnNClauses = "landingpad_instruction:nclauses";
-    const char * landingpadInsnCleanup = "landingpad_instruction:cleanup";
-
-// Types
-
-    const char * primitiveType = "primitive_type";
-    const char * intType = "integer_type";
-    const char * fpType = "fp_type";
-
-    const char * funcType = "function_type";
-    const char * funcTypeVarArgs = "function_type:varargs";
-    const char * funcTypeReturn = "function_type:return";
-    const char * funcTypeParam = "function_type:param";
-    const char * funcTypeNParams = "function_type:nparams";
-
-    const char * ptrType = "pointer_type";
-    const char * ptrTypeComp = "pointer_type:component";
-    const char * ptrTypeAddrSpace = "pointer_type:addr_space";
-
-    const char * vectorType = "vector_type";
-    const char * vectorTypeComp = "vector_type:component";
-    const char * vectorTypeSize = "vector_type:size";
-
-    const char * arrayType = "array_type";
-    const char * arrayTypeComp = "array_type:component";
-    const char * arrayTypeSize = "array_type:size";
-
-    const char * structType = "struct_type";
-    const char * structTypeField = "struct_type:field";
-    const char * structTypeNFields = "struct_type:nfields";
-    const char * opaqueStructType = "opaque_struct_type";
-
-    const char * typeAllocSize = "type:size";
-    const char * typeStoreSize = "type:unpadded_size";
-
-// Variables and Immediates
-
-    const char * immediate = "immediate";
-    const char * immediateType = "immediate:type";
-
-    const char * variable = "variable";
-    const char * variableType = "variable:type";
-
-// Constants
-
-    const char * constExpr = "constant_expression";
-
-// Auxiliary predicates
-
-    const char * constToInt = "constant:to_int";
+
+namespace predicate_names
+{
+    // Basic Blocks
+
+    pred_t basic_block::predecessor = "basicblock:pred_aux";
+
+    // Global
+
+    pred_t global_var::id = "global_variable";
+    pred_t global_var::type = "global_variable:type";
+    pred_t global_var::initializer = "global_variable:initializer";
+    pred_t global_var::section = "global_variable:section";
+    pred_t global_var::align = "global_variable:align";
+    pred_t global_var::flag = "global_variable:flag";
+    pred_t global_var::linkage = "global_variable:linkage_type";
+    pred_t global_var::visibility = "global_variable:visibility";
+    pred_t global_var::threadlocal_mode = "global_variable:threadlocal_mode";
+
+    pred_t alias::id = "alias";
+    pred_t alias::type = "alias:type";
+    pred_t alias::linkage = "alias:linkage_type";
+    pred_t alias::visibility = "alias:visibility";
+    pred_t alias::aliasee = "alias:aliasee";
+
+    // Function
+
+    pred_t function::id_defn = "function";
+    pred_t function::id_decl = "function_decl";
+    pred_t function::unnamed_addr = "function:unnamed_addr";
+    pred_t function::linkage = "function:linkage_type";
+    pred_t function::visibility = "function:visibility";
+    pred_t function::calling_conv = "function:calling_convention";
+    pred_t function::section = "function:section";
+    pred_t function::alignment = "function:alignment";
+    pred_t function::attr = "function:attributes";
+    pred_t function::gc = "function:gc";
+    pred_t function::name = "function:name";
+    pred_t function::type = "function:type";
+    pred_t function::param = "function:param";
+    pred_t function::ret_attr = "function:return_attribute";
+    pred_t function::param_attr = "function:param_attribute";
+
+    // Instructions
+
+    pred_t instruction::to = "instruction:to";
+    pred_t instruction::flag = "instruction:flag";
+    pred_t instruction::next = "instruction:next";
+    pred_t instruction::bb_entry = "instruction:bb_entry";
+    pred_t instruction::function = "instruction:function";
+
+    // Binary Instructions
+
+    pred_t add::instr = "add_instruction";
+    pred_t add::first_operand = "add_instruction:first_operand";
+    pred_t add::second_operand = "add_instruction:second_operand";
+
+    pred_t fadd::instr = "fadd_instruction";
+    pred_t fadd::first_operand = "fadd_instruction:first_operand";
+    pred_t fadd::second_operand = "fadd_instruction:second_operand";
+
+    pred_t sub::instr = "sub_instruction";
+    pred_t sub::first_operand = "sub_instruction:first_operand";
+    pred_t sub::second_operand = "sub_instruction:second_operand";
+
+    pred_t fsub::instr = "fsub_instruction";
+    pred_t fsub::first_operand = "fsub_instruction:first_operand";
+    pred_t fsub::second_operand = "fsub_instruction:second_operand";
+
+    pred_t mul::instr = "mul_instruction";
+    pred_t mul::first_operand = "mul_instruction:first_operand";
+    pred_t mul::second_operand = "mul_instruction:second_operand";
+
+    pred_t fmul::instr = "fmul_instruction";
+    pred_t fmul::first_operand = "fmul_instruction:first_operand";
+    pred_t fmul::second_operand = "fmul_instruction:second_operand";
+
+    pred_t udiv::instr = "udiv_instruction";
+    pred_t udiv::first_operand = "udiv_instruction:first_operand";
+    pred_t udiv::second_operand = "udiv_instruction:second_operand";
+
+    pred_t fdiv::instr = "fdiv_instruction";
+    pred_t fdiv::first_operand = "fdiv_instruction:first_operand";
+    pred_t fdiv::second_operand = "fdiv_instruction:second_operand";
+
+    pred_t sdiv::instr = "sdiv_instruction";
+    pred_t sdiv::first_operand = "sdiv_instruction:first_operand";
+    pred_t sdiv::second_operand = "sdiv_instruction:second_operand";
+
+    pred_t urem::instr = "urem_instruction";
+    pred_t urem::first_operand = "urem_instruction:first_operand";
+    pred_t urem::second_operand = "urem_instruction:second_operand";
+
+    pred_t srem::instr = "srem_instruction";
+    pred_t srem::first_operand = "srem_instruction:first_operand";
+    pred_t srem::second_operand = "srem_instruction:second_operand";
+
+    pred_t frem::instr = "frem_instruction";
+    pred_t frem::first_operand = "frem_instruction:first_operand";
+    pred_t frem::second_operand = "frem_instruction:second_operand";
+
+    // Bitwise Binary Instructions
+
+    pred_t shl::instr = "shl_instruction";
+    pred_t shl::first_operand = "shl_instruction:first_operand";
+    pred_t shl::second_operand = "shl_instruction:second_operand";
+
+    pred_t lshr::instr = "lshr_instruction";
+    pred_t lshr::first_operand = "lshr_instruction:first_operand";
+    pred_t lshr::second_operand = "lshr_instruction:second_operand";
+
+    pred_t ashr::instr = "ashr_instruction";
+    pred_t ashr::first_operand = "ashr_instruction:first_operand";
+    pred_t ashr::second_operand = "ashr_instruction:second_operand";
+
+    pred_t and_::instr = "and_instruction";
+    pred_t and_::first_operand = "and_instruction:first_operand";
+    pred_t and_::second_operand = "and_instruction:second_operand";
+
+    pred_t or_::instr = "or_instruction";
+    pred_t or_::first_operand = "or_instruction:first_operand";
+    pred_t or_::second_operand = "or_instruction:second_operand";
+
+    pred_t xor_::instr = "xor_instruction";
+    pred_t xor_::first_operand = "xor_instruction:first_operand";
+    pred_t xor_::second_operand = "xor_instruction:second_operand";
+
+    // Terminator Instructions
+
+    pred_t ret::instr = "ret_instruction";
+    pred_t ret::instr_void = "ret_instruction:void";
+    pred_t ret::operand = "ret_instruction:value";
+
+    pred_t br::instr = "br_instruction";
+    pred_t br::instr_cond = "br_cond_instruction";
+    pred_t br::condition = "br_cond_instruction:condition";
+    pred_t br::cond_iftrue = "br_cond_instruction:iftrue";
+    pred_t br::cond_iffalse = "br_cond_instruction:iffalse";
+    pred_t br::instr_uncond = "br_uncond_instruction";
+    pred_t br::uncond_dest = "br_uncond_instruction:dest";
+
+    pred_t switch_::instr = "switch_instruction";
+    pred_t switch_::operand = "switch_instruction:operand";
+    pred_t switch_::default_label = "switch_instruction:default_label";
+    pred_t switch_::case_value = "switch_instruction:case:value";
+    pred_t switch_::case_label = "switch_instruction:case:label";
+    pred_t switch_::ncases = "switch_instruction:ncases";
+
+    pred_t indirectbr::instr = "indirectbr_instruction";
+    pred_t indirectbr::address = "indirectbr_instruction:address";
+    pred_t indirectbr::label = "indirectbr_instruction:label";
+    pred_t indirectbr::nlabels = "indirectbr_instruction:nlabels";
+
+    pred_t resume::instr = "resume_instruction";
+    pred_t resume::operand = "resume_instruction:operand";
+
+    pred_t instruction::unreachable = "unreachable_instruction";
+
+    pred_t invoke::instr = "invoke_instruction";
+    pred_t invoke::function = "invoke_instruction:function";
+    pred_t invoke::instr_direct = "direct_invoke_instruction";
+    pred_t invoke::instr_indirect = "indirect_invoke_instruction";
+    pred_t invoke::calling_conv = "invoke_instruction:calling_convention";
+    pred_t invoke::arg = "invoke_instruction:arg";
+    pred_t invoke::ret_attr = "invoke_instruction:return_attribute";
+    pred_t invoke::param_attr = "invoke_instruction:param_attribute";
+    pred_t invoke::fn_attr = "invoke_instruction:function_attribute";
+    pred_t invoke::normal_label = "invoke_instruction:normal_label";
+    pred_t invoke::exc_label = "invoke_instruction:exception_label";
+
+    // Vector Operations
+
+    pred_t extract_element::instr = "extractelement_instruction";
+    pred_t extract_element::base = "extractelement_instruction:base";
+    pred_t extract_element::index = "extractelement_instruction:index";
+
+    pred_t insert_element::instr = "insertelement_instruction";
+    pred_t insert_element::base = "insertelement_instruction:base";
+    pred_t insert_element::index = "insertelement_instruction:index";
+    pred_t insert_element::value = "insertelement_instruction:value";
+
+    pred_t shuffle_vector::instr = "shufflevector_instruction";
+    pred_t shuffle_vector::first_vector = "shufflevector_instruction:first_vector";
+    pred_t shuffle_vector::second_vector = "shufflevector_instruction:second_vector";
+    pred_t shuffle_vector::mask = "shufflevector_instruction:mask";
+
+    // Aggregate Operations
+
+    pred_t extract_value::instr = "extractvalue_instruction";
+    pred_t extract_value::base = "extractvalue_instruction:base";
+    pred_t extract_value::index = "extractvalue_instruction:index";
+    pred_t extract_value::nindices = "extractvalue_instruction:nindices";
+
+    pred_t insert_value::instr = "insertvalue_instruction";
+    pred_t insert_value::base = "insertvalue_instruction:base";
+    pred_t insert_value::value = "insertvalue_instruction:value";
+    pred_t insert_value::index = "insertvalue_instruction:index";
+    pred_t insert_value::nindices = "insertvalue_instruction:nindices";
+
+    // Memory Operations
+
+    pred_t alloca::instr = "alloca_instruction";
+    pred_t alloca::alignment = "alloca_instruction:alignment";
+    pred_t alloca::size = "alloca_instruction:size";
+    pred_t alloca::type = "alloca_instruction:type";
+
+    pred_t load::instr = "load_instruction";
+    pred_t load::alignment = "load_instruction:alignment";
+    pred_t load::ordering = "load_instruction:ordering";
+    pred_t load::address = "load_instruction:address";
+    pred_t load::isvolatile = "load_instruction:volatile";
+
+    pred_t store::instr = "store_instruction";
+    pred_t store::alignment = "store_instruction:alignment";
+    pred_t store::ordering = "store_instruction:ordering";
+    pred_t store::value = "store_instruction:value";
+    pred_t store::address = "store_instruction:address";
+    pred_t store::isvolatile = "store_instruction:volatile";
+
+    pred_t fence::instr = "fence_instruction";
+    pred_t fence::ordering = "fence_instruction:ordering";
+
+    pred_t atomicrmw::instr = "atomicrmw_instruction";
+    pred_t atomicrmw::ordering = "atomicrmw_instruction:ordering";
+    pred_t atomicrmw::operation = "atomicrmw_instruction:operation";
+    pred_t atomicrmw::address = "atomicrmw_instruction:address";
+    pred_t atomicrmw::value = "atomicrmw_instruction:value";
+    pred_t atomicrmw::isvolatile = "atomicrmw_instruction:volatile";
+
+    pred_t cmpxchg::instr = "cmpxchg_instruction";
+    pred_t cmpxchg::ordering = "cmpxchg_instruction:ordering";
+    pred_t cmpxchg::address = "cmpxchg_instruction:address";
+    pred_t cmpxchg::cmp = "cmpxchg_instruction:cmp";
+    pred_t cmpxchg::new_ = "cmpxchg_instruction:new";
+    pred_t cmpxchg::type = "cmpxchg_instruction:type";
+    pred_t cmpxchg::isvolatile = "cmpxchg_instruction:volatile";
+
+    pred_t gep::instr = "getelementptr_instruction";
+    pred_t gep::base = "getelementptr_instruction:base";
+    pred_t gep::index = "getelementptr_instruction:index";
+    pred_t gep::nindices = "getelementptr_instruction:nindices";
+    pred_t gep::inbounds = "getelementptr_instruction:inbounds";
+
+    // Conversion Operations
+
+    pred_t trunc::instr = "trunc_instruction";
+    pred_t trunc::from_operand = "trunc_instruction:from";
+    pred_t trunc::to_type = "trunc_instruction:to_type";
+
+    pred_t zext::instr = "zext_instruction";
+    pred_t zext::from_operand = "zext_instruction:from";
+    pred_t zext::to_type = "zext_instruction:to_type";
+
+    pred_t sext::instr = "sext_instruction";
+    pred_t sext::from_operand = "sext_instruction:from";
+    pred_t sext::to_type = "sext_instruction:to_type";
+
+    pred_t fptrunc::instr = "fptrunc_instruction";
+    pred_t fptrunc::from_operand = "fptrunc_instruction:from";
+    pred_t fptrunc::to_type = "fptrunc_instruction:to_type";
+
+    pred_t fpext::instr = "fpext_instruction";
+    pred_t fpext::from_operand = "fpext_instruction:from";
+    pred_t fpext::to_type = "fpext_instruction:to_type";
+
+    pred_t fptoui::instr = "fptoui_instruction";
+    pred_t fptoui::from_operand = "fptoui_instruction:from";
+    pred_t fptoui::to_type = "fptoui_instruction:to_type";
+
+    pred_t fptosi::instr = "fptosi_instruction";
+    pred_t fptosi::from_operand = "fptosi_instruction:from";
+    pred_t fptosi::to_type = "fptosi_instruction:to_type";
+
+    pred_t uitofp::instr = "uitofp_instruction";
+    pred_t uitofp::from_operand = "uitofp_instruction:from";
+    pred_t uitofp::to_type = "uitofp_instruction:to_type";
+
+    pred_t sitofp::instr = "sitofp_instruction";
+    pred_t sitofp::from_operand = "sitofp_instruction:from";
+    pred_t sitofp::to_type = "sitofp_instruction:to_type";
+
+    pred_t ptrtoint::instr = "ptrtoint_instruction";
+    pred_t ptrtoint::from_operand = "ptrtoint_instruction:from";
+    pred_t ptrtoint::to_type = "ptrtoint_instruction:to_type";
+
+    pred_t inttoptr::instr = "inttoptr_instruction";
+    pred_t inttoptr::from_operand = "inttoptr_instruction:from";
+    pred_t inttoptr::to_type = "inttoptr_instruction:to_type";
+
+    pred_t bitcast::instr = "bitcast_instruction";
+    pred_t bitcast::from_operand = "bitcast_instruction:from";
+    pred_t bitcast::to_type = "bitcast_instruction:to_type";
+
+    // Other Operations
+
+    pred_t icmp::instr = "icmp_instruction";
+    pred_t icmp::condition = "icmp_instruction:condition";
+    pred_t icmp::first_operand = "icmp_instruction:first_operand";
+    pred_t icmp::second_operand = "icmp_instruction:second_operand";
+
+    pred_t fcmp::instr = "fcmp_instruction";
+    pred_t fcmp::condition = "fcmp_instruction:condition";
+    pred_t fcmp::first_operand = "fcmp_instruction:first_operand";
+    pred_t fcmp::second_operand = "fcmp_instruction:second_operand";
+
+    pred_t phi::instr = "phi_instruction";
+    pred_t phi::type = "phi_instruction:type";
+    pred_t phi::pair_value = "phi_instruction:pair:value";
+    pred_t phi::pair_label = "phi_instruction:pair:label";
+    pred_t phi::npairs = "phi_instruction:npairs";
+
+    pred_t select::instr = "select_instruction";
+    pred_t select::condition = "select_instruction:condition";
+    pred_t select::first_operand = "select_instruction:first_operand";
+    pred_t select::second_operand = "select_instruction:second_operand";
+
+    pred_t va_arg::instr = "va_arg_instruction";
+    pred_t va_arg::va_list = "va_arg_instruction:va_list";
+    pred_t va_arg::type = "va_arg_instruction:type";
+
+    pred_t call::instr = "call_instruction";
+    pred_t call::function = "call_instruction:raw_function";
+    pred_t call::instr_direct = "direct_call_instruction";
+    pred_t call::instr_indirect = "indirect_call_instruction";
+    pred_t call::calling_conv = "call_instruction:calling_convention";
+    pred_t call::arg = "call_instruction:arg";
+    pred_t call::ret_attr = "call_instruction:return_attribute";
+    pred_t call::param_attr = "call_instruction:param_attribute";
+    pred_t call::fn_attr = "call_instruction:function_attribute";
+    pred_t call::tail = "call_instruction:tail";
+
+    pred_t landingpad::instr = "landingpad_instruction";
+    pred_t landingpad::type = "landingpad_instruction:type";
+    pred_t landingpad::fn = "landingpad_instruction:pers_fn";
+    pred_t landingpad::catch_clause = "landingpad_instruction:clause:catch_tmp";
+    pred_t landingpad::filter_clause = "landingpad_instruction:clause:filter_tmp";
+    pred_t landingpad::nclauses = "landingpad_instruction:nclauses";
+    pred_t landingpad::cleanup = "landingpad_instruction:cleanup";
+
+    // Types
+
+    pred_t primitive_type::id = "primitive_type";
+    pred_t integer_type::id = "integer_type";
+    pred_t fp_type::id = "fp_type";
+
+    pred_t func_type::id = "function_type";
+    pred_t func_type::varargs = "function_type:varargs";
+    pred_t func_type::return_type = "function_type:return";
+    pred_t func_type::param_type = "function_type:param";
+    pred_t func_type::nparams = "function_type:nparams";
+
+    pred_t ptr_type::id = "pointer_type";
+    pred_t ptr_type::component_type = "pointer_type:component";
+    pred_t ptr_type::addr_space = "pointer_type:addr_space";
+
+    pred_t vector_type::id = "vector_type";
+    pred_t vector_type::component_type = "vector_type:component";
+    pred_t vector_type::size = "vector_type:size";
+
+    pred_t array_type::id = "array_type";
+    pred_t array_type::component_type = "array_type:component";
+    pred_t array_type::size = "array_type:size";
+
+    pred_t struct_type::id = "struct_type";
+    pred_t struct_type::field_type = "struct_type:field";
+    pred_t struct_type::nfields = "struct_type:nfields";
+    pred_t struct_type::opaque = "opaque_struct_type";
+
+    pred_t type::alloc_size = "type:size";
+    pred_t type::store_size = "type:unpadded_size";
+
+    // Variables and constants
+
+    pred_t variable::id = "variable";
+    pred_t variable::type = "variable:type";
+
+    pred_t constant::id = "immediate";
+    pred_t constant::type = "immediate:type";
+
+    pred_t constant::expr = "constant_expression";
+    pred_t constant::to_integer = "constant:to_int";
 }
