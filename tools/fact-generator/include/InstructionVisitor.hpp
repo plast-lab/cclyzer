@@ -11,9 +11,9 @@
 #include "PredicateNames.hpp"
 #include "CsvGenerator.hpp"
 
-class InstructionVisitor : public llvm::InstVisitor<InstructionVisitor> {
-
-public:
+class InstructionVisitor : public llvm::InstVisitor<InstructionVisitor>
+{
+  public:
     InstructionVisitor(CsvGenerator *generator, const llvm::Module *M)
         : csvGen(generator), Mod(M) {}
 
@@ -46,6 +46,35 @@ public:
     void visitXor(llvm::BinaryOperator &);
 
     // Conversion Operations
+
+    template<typename T>
+    void writeCastInst(llvm::CastInst &instr)
+    {
+        typedef T pred;
+        using namespace auxiliary_methods;
+
+        csvGen->writeEntity(pred::instr, instrNum);
+        logOperand(instr.getOperand(0), pred::from_operand);
+
+        csvGen->writeSimpleFact(pred::to_type, instrNum, printType(instr.getType()));
+    }
+
+    template<typename T>
+    void writeBinaryInst(llvm::BinaryOperator &instr)
+    {
+        typedef T pred;
+        using namespace auxiliary_methods;
+
+        writeOptimizationInfoToFile(&instr, instrNum);
+        csvGen->writeEntity(pred::instr, instrNum);
+
+        // Record left operand of binary operator
+        logOperand(instr.getOperand(0), pred::first_operand);
+
+        // Record right operand of binary operator
+        logOperand(instr.getOperand(1), pred::second_operand);
+    }
+
 
     void visitTruncInst(llvm::TruncInst &);
     void visitZExtInst(llvm::ZExtInst &);
@@ -127,7 +156,7 @@ private:
 
     void writeVolatileFlag(std::string instrId, bool volatileFlag) {
         if (volatileFlag)
-            csvGen->writeSimpleFact(predicate_names::insnFlag, instrId, "volatile");
+            csvGen->writeSimpleFact(predicate_names::instruction::flag, instrId, "volatile");
     }
 
     std::string instrNum;
