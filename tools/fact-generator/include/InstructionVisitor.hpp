@@ -54,7 +54,7 @@ class InstructionVisitor : public llvm::InstVisitor<InstructionVisitor>
         using namespace auxiliary_methods;
 
         csvGen->writeEntity(pred::instr, instrNum);
-        logOperand(instr.getOperand(0), pred::from_operand);
+        writeOperand(pred::from_operand, instr.getOperand(0));
 
         csvGen->writeSimpleFact(pred::to_type, instrNum, printType(instr.getType()));
     }
@@ -69,10 +69,10 @@ class InstructionVisitor : public llvm::InstVisitor<InstructionVisitor>
         csvGen->writeEntity(pred::instr, instrNum);
 
         // Record left operand of binary operator
-        logOperand(instr.getOperand(0), pred::first_operand);
+        writeOperand(pred::first_operand, instr.getOperand(0));
 
         // Record right operand of binary operator
-        logOperand(instr.getOperand(1), pred::second_operand);
+        writeOperand(pred::second_operand, instr.getOperand(1));
     }
 
 
@@ -143,11 +143,11 @@ class InstructionVisitor : public llvm::InstVisitor<InstructionVisitor>
     }
 
 private:
-    //auxiliary methods
-    void logSimpleValue(const llvm::Value * Value, const char * predNmae, int index = -1);
-    void logOperand(const llvm::Value * Operand, const char * predName, int index = -1);
-    void logBinaryOperator(llvm::BinaryOperator &BI, const char * predName,
-                           const char * predNameLeftOp, const char * predNameRightOp);
+    typedef predicate_names::pred_t pred_t;
+
+    // Auxiliary methods
+    void writeValue(pred_t predicate, const llvm::Value *Value, int index = -1);
+    void writeOperand(pred_t predicate, const llvm::Value *Operand, int index = -1);
 
     const char* writePredicate(unsigned predicate);
     void writeOptimizationInfoToFile(const llvm::User *u, std::string instrId);
@@ -162,7 +162,6 @@ private:
     std::string instrNum;
     std::string instrId;
     int immediateOffset;
-    std::string varId;
     CsvGenerator *csvGen;
     const llvm::Module *Mod;
 };

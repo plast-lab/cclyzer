@@ -22,43 +22,62 @@ namespace pred = predicate_names;
 
 //TODO: Remove these if(strlen(...)) checks
 
-void InstructionVisitor::logSimpleValue(const Value * Val, const char * predName, int index){
-    const Type * ValType = Val->getType();
+void InstructionVisitor::writeValue(pred_t predicate, const Value * Val, int index)
+{
+    // Value refmode and type
+    string refmode;
+    const Type * type = Val->getType();
 
-    if(const Constant *c = dyn_cast<Constant>(Val)) {
-        ostringstream immOffset;
-        immOffset << immediateOffset;
-        varId = instrNum + ":" + immOffset.str() + ":" + valueToString(c, Mod);
-        immediateOffset++;
-        csvGen->recordConstant(varId, ValType);
+    if (const Constant *c = dyn_cast<Constant>(Val)) {
+        // Compute refmode for constant value
+        refmode = instrNum + ":" + std::to_string(immediateOffset++)
+                           + ":" + valueToString(c, Mod);
+
+        // Record constant value
+        csvGen->recordConstant(refmode, type);
     }
     else {
-        varId = instrId + valueToString(Val, Mod);
-        csvGen->recordVariable(varId, ValType);
+        // Compute refmode for vairable value
+        refmode = instrId + valueToString(Val, Mod);
+
+        // Record variable value
+        csvGen->recordVariable(refmode, type);
     }
-    csvGen->writeSimpleFact(predName, instrNum, varId, index);
+
+    // Write value fact
+    csvGen->writeSimpleFact(predicate, instrNum, refmode, index);
 }
 
-void InstructionVisitor::logOperand(const Value * Operand, const char * predName, int index)
+void InstructionVisitor::writeOperand(pred_t predicate, const Value * Operand, int index)
 {
-    Operand::Type operandType; //whether we have a constant or variable operand
-    const Type * OpType = Operand->getType();
+    // Operand refmode and type
+    string refmode;
+    const Type * type = Operand->getType();
 
-    if(const Constant *c = dyn_cast<Constant>(Operand)) {
-        operandType = Operand::Type::IMMEDIATE;
-        ostringstream immOffset;
-        immOffset << immediateOffset;
-        varId = instrNum + ":" + immOffset.str() + ":" + valueToString(c, Mod);
-        immediateOffset++;
-        csvGen->recordConstant(varId, OpType);
+    // Operand category is either constant or variable
+    Operand::Type category;
+
+    if (const Constant *c = dyn_cast<Constant>(Operand)) {
+        // TODO use ostringstream
+
+        // Compute refmode for constant
+        refmode = instrNum + ":" + std::to_string(immediateOffset++)
+                           + ":" + valueToString(c, Mod);
+
+        // Record constant operand
+        category = Operand::Type::IMMEDIATE;
+        csvGen->recordConstant(refmode, type);
     }
     else {
-        operandType = Operand::Type::VARIABLE;
-        varId = instrId + valueToString(Operand, Mod);
-        csvGen->recordVariable(varId, OpType);
+        string refmode = instrId + valueToString(Operand, Mod);
+
+        // Record variable operand
+        category = Operand::Type::VARIABLE;
+        csvGen->recordVariable(refmode, type);
     }
 
-    csvGen->writeOperandFact(predName, instrNum, varId, operandType, index);
+    // Write operand fact
+    csvGen->writeOperandFact(predicate, instrNum, refmode, category, index);
 }
 
 void InstructionVisitor::visitTruncInst(llvm::TruncInst &I) {
@@ -186,7 +205,7 @@ void InstructionVisitor::visitReturnInst(ReturnInst &RI)
     csvGen->writeEntity(pred::ret::instr, instrNum);
 
     if(RI.getReturnValue()) {   // with returned value
-        logOperand(RI.getReturnValue(), pred::ret::operand);
+        writeOperand(pred::ret::operand, RI.getReturnValue());
     }
     else {                      // w/o returned value
         csvGen->writeEntity(pred::ret::instr_void, instrNum);
@@ -204,16 +223,16 @@ void InstructionVisitor::visitBranchInst(BranchInst &BI) {
         csvGen->writeEntity(pred::br::instr_cond, instrNum);
 
         // Condition Operand
-        logOperand(BI.getCondition(), pred::br::condition);
+        writeOperand(pred::br::condition, BI.getCondition());
 
         // 'iftrue' and 'iffalse' labels
-        logSimpleValue(BI.getOperand(1), pred::br::cond_iftrue);
-        logSimpleValue(BI.getOperand(2), pred::br::cond_iffalse);
+        writeValue(pred::br::cond_iftrue, BI.getOperand(1));
+        writeValue(pred::br::cond_iffalse, BI.getOperand(2));
     }
     else {                      // unconditional branch
         // br label <dest>
         csvGen->writeEntity(pred::br::instr_uncond, instrNum);
-        logSimpleValue(BI.getOperand(0), pred::br::uncond_dest);
+        writeValue(pred::br::uncond_dest, BI.getOperand(0));
     }
 }
 
@@ -223,10 +242,10 @@ void InstructionVisitor::visitSwitchInst(const SwitchInst &SI)
     csvGen->writeEntity(pred::switch_::instr, instrNum);
 
     // 'value' Operand
-    logOperand(SI.getOperand(0), pred::switch_::operand);
+    writeOperand(pred::switch_::operand, SI.getOperand(0));
 
     // 'defaultdest' label
-    logSimpleValue(SI.getOperand(1), pred::switch_::default_label);
+    writeValue(pred::switch_::default_label, SI.getOperand(1));
 
     // 'case list' [constant, label]
     int index = 0;
@@ -235,8 +254,8 @@ void InstructionVisitor::visitSwitchInst(const SwitchInst &SI)
             Case = SI.case_begin(), CasesEnd = SI.case_end();
         Case != CasesEnd; Case++)
     {
-        logSimpleValue(Case.getCaseValue(), pred::switch_::case_value, index);
-        logSimpleValue(Case.getCaseSuccessor(), pred::switch_::case_label, index++);
+        writeValue(pred::switch_::case_value, Case.getCaseValue(), index);
+        writeValue(pred::switch_::case_label, Case.getCaseSuccessor(), index++);
     }
     csvGen->writeSimpleFact(pred::switch_::ncases, instrNum, SI.getNumCases());
 }
@@ -247,11 +266,11 @@ void InstructionVisitor::visitIndirectBrInst(IndirectBrInst &IBR)
     csvGen->writeEntity(pred::indirectbr::instr, instrNum);
 
     // 'address' Operand
-    logOperand(IBR.getOperand(0), pred::indirectbr::address);
+    writeOperand(pred::indirectbr::address, IBR.getOperand(0));
 
     // 'label' list
     for(unsigned i = 1; i < IBR.getNumOperands(); ++i)
-        logSimpleValue(IBR.getOperand(i), pred::indirectbr::label, i-1);
+        writeValue(pred::indirectbr::label, IBR.getOperand(i), i-1);
 
     csvGen->writeSimpleFact(pred::indirectbr::nlabels, instrNum, IBR.getNumOperands() - 1);
 }
@@ -268,17 +287,17 @@ void InstructionVisitor::visitInvokeInst(InvokeInst &II)
     FunctionType *funcTy = cast<FunctionType>(ptrTy->getElementType());
 
     // invoke instruction function
-    logOperand(invokeOp, pred::invoke::function);
+    writeOperand(pred::invoke::function, invokeOp);
 
     // actual args
     for (unsigned op = 0; op < II.getNumArgOperands(); ++op)
-        logOperand(II.getArgOperand(op), pred::invoke::arg, op);
+        writeOperand(pred::invoke::arg, II.getArgOperand(op), op);
 
     // 'normal label'
-    logSimpleValue(II.getNormalDest(), pred::invoke::normal_label);
+    writeValue(pred::invoke::normal_label, II.getNormalDest());
 
     // 'exception label'
-    logSimpleValue(II.getUnwindDest(), pred::invoke::exc_label);
+    writeValue(pred::invoke::exc_label, II.getUnwindDest());
 
     // Function Attributes
     const AttributeSet &Attrs = II.getAttributes();
@@ -308,7 +327,7 @@ void InstructionVisitor::visitInvokeInst(InvokeInst &II)
 void InstructionVisitor::visitResumeInst(ResumeInst &RI)
 {
     csvGen->writeEntity(pred::resume::instr, instrNum);
-    logOperand(RI.getValue(), pred::resume::operand);
+    writeOperand(pred::resume::operand, RI.getValue());
 }
 
 void InstructionVisitor::visitUnreachableInst(UnreachableInst &I) {
@@ -321,7 +340,7 @@ void InstructionVisitor::visitAllocaInst(AllocaInst &AI)
     csvGen->writeSimpleFact(pred::alloca::type, instrNum, printType(AI.getAllocatedType()));
 
     if(AI.isArrayAllocation())
-        logOperand(AI.getArraySize(), pred::alloca::size);
+        writeOperand(pred::alloca::size, AI.getArraySize());
 
     if(AI.getAlignment())
         csvGen->writeSimpleFact(pred::alloca::alignment, instrNum, AI.getAlignment());
@@ -330,7 +349,7 @@ void InstructionVisitor::visitAllocaInst(AllocaInst &AI)
 void InstructionVisitor::visitLoadInst(LoadInst &LI) {
 
     csvGen->writeEntity(pred::load::instr, instrNum);
-    logOperand(LI.getPointerOperand(), pred::load::address);
+    writeOperand(pred::load::address, LI.getPointerOperand());
 
     if (LI.isAtomic()) {
         const char *ord = writeAtomicInfo(instrNum, LI.getOrdering(), LI.getSynchScope());
@@ -350,7 +369,7 @@ void InstructionVisitor::visitVAArgInst(VAArgInst &VI)
 {
     csvGen->writeEntity(pred::va_arg::instr, instrNum);
     csvGen->writeSimpleFact(pred::va_arg::type, instrNum, printType(VI.getType()));
-    logOperand(VI.getPointerOperand(), pred::va_arg::va_list);
+    writeOperand(pred::va_arg::va_list, VI.getPointerOperand());
 }
 
 void InstructionVisitor::visitExtractValueInst(ExtractValueInst &EVI)
@@ -358,7 +377,7 @@ void InstructionVisitor::visitExtractValueInst(ExtractValueInst &EVI)
     csvGen->writeEntity(pred::extract_value::instr, instrNum);
 
     // Aggregate Operand
-    logOperand(EVI.getOperand(0), pred::extract_value::base);
+    writeOperand(pred::extract_value::base, EVI.getOperand(0));
 
     // Constant Indices
     int index = 0;
@@ -374,8 +393,8 @@ void InstructionVisitor::visitExtractValueInst(ExtractValueInst &EVI)
 void InstructionVisitor::visitStoreInst(StoreInst &SI)
 {
     csvGen->writeEntity(pred::store::instr, instrNum);
-    logOperand(SI.getValueOperand(), pred::store::value);
-    logOperand(SI.getPointerOperand(), pred::store::address);
+    writeOperand(pred::store::value, SI.getValueOperand());
+    writeOperand(pred::store::address, SI.getPointerOperand());
 
     if(SI.isAtomic()) {
         const char *ord = writeAtomicInfo(instrNum, SI.getOrdering(), SI.getSynchScope());
@@ -396,13 +415,13 @@ void InstructionVisitor::visitAtomicCmpXchgInst(AtomicCmpXchgInst &AXI)
     csvGen->writeEntity(pred::cmpxchg::instr, instrNum);
 
     // ptrValue
-    logOperand(AXI.getPointerOperand(), pred::cmpxchg::address);
+    writeOperand(pred::cmpxchg::address, AXI.getPointerOperand());
 
     // cmpValue
-    logOperand(AXI.getCompareOperand(), pred::cmpxchg::cmp);
+    writeOperand(pred::cmpxchg::cmp, AXI.getCompareOperand());
 
     // newValue
-    logOperand(AXI.getNewValOperand(), pred::cmpxchg::new_);
+    writeOperand(pred::cmpxchg::new_, AXI.getNewValOperand());
 
     if (AXI.isVolatile())
         csvGen->writeEntity(pred::cmpxchg::isvolatile, instrNum);
@@ -420,10 +439,10 @@ void InstructionVisitor::visitAtomicRMWInst(AtomicRMWInst &AWI)
     csvGen->writeEntity(pred::atomicrmw::instr, instrNum);
 
     // ptrValue - LeftOperand
-    logOperand(AWI.getPointerOperand(), pred::atomicrmw::address);
+    writeOperand(pred::atomicrmw::address, AWI.getPointerOperand());
 
     // valOperand - Right Operand
-    logOperand(AWI.getValOperand(), pred::atomicrmw::value);
+    writeOperand(pred::atomicrmw::value, AWI.getValOperand());
 
     if (AWI.isVolatile())
         csvGen->writeEntity(pred::atomicrmw::isvolatile, instrNum);
@@ -450,21 +469,20 @@ void InstructionVisitor::visitFenceInst(FenceInst &FI)
 void InstructionVisitor::visitGetElementPtrInst(GetElementPtrInst &GEP)
 {
     csvGen->writeEntity(pred::gep::instr, instrNum);
-    logOperand(GEP.getPointerOperand(), pred::gep::base);
+    writeOperand(pred::gep::base, GEP.getPointerOperand());
 
     for (unsigned index = 1; index < GEP.getNumOperands(); ++index)
     {
         int immOffset = immediateOffset;
         const Value * GepOperand = GEP.getOperand(index);
 
-        logOperand(GepOperand, pred::gep::index, index - 1);
+        writeOperand(pred::gep::index, GepOperand, index - 1);
 
         if (const Constant *c = dyn_cast<Constant>(GepOperand)) {
-            stringstream immStr;
-            immStr << immOffset;
-            varId = instrNum + ":" + immStr.str() + ":" + valueToString(c, Mod);
+            string constant = instrNum + ":" + std::to_string(immOffset)
+                                       + ":" + valueToString(c, Mod);
 
-            csvGen->writeSimpleFact(pred::constant::to_integer, varId,
+            csvGen->writeSimpleFact(pred::constant::to_integer, constant,
                                     c->getUniqueInteger().toString(10, true));
         }
     }
@@ -485,8 +503,8 @@ void InstructionVisitor::visitPHINode(PHINode &PHI)
 
     for (unsigned op = 0; op < PHI.getNumIncomingValues(); ++op)
     {
-        logOperand(PHI.getIncomingValue(op), pred::phi::pair_value, op);
-        logSimpleValue(PHI.getIncomingBlock(op), pred::phi::pair_label, op);
+        writeOperand(pred::phi::pair_value, PHI.getIncomingValue(op), op);
+        writeValue(pred::phi::pair_label, PHI.getIncomingBlock(op), op);
     }
 
     csvGen->writeSimpleFact(pred::phi::npairs, instrNum, PHI.getNumIncomingValues());
@@ -497,13 +515,13 @@ void InstructionVisitor::visitSelectInst(SelectInst &SI)
     csvGen->writeEntity(pred::select::instr, instrNum);
 
     // Condition
-    logOperand(SI.getOperand(0), pred::select::condition);
+    writeOperand(pred::select::condition, SI.getOperand(0));
 
     // Left Operand (true value)
-    logOperand(SI.getOperand(1), pred::select::first_operand);
+    writeOperand(pred::select::first_operand, SI.getOperand(1));
 
     // Right Operand (false value)
-    logOperand(SI.getOperand(2), pred::select::second_operand);
+    writeOperand(pred::select::second_operand, SI.getOperand(2));
 }
 
 void InstructionVisitor::visitInsertValueInst(InsertValueInst &IVI)
@@ -511,10 +529,10 @@ void InstructionVisitor::visitInsertValueInst(InsertValueInst &IVI)
     csvGen->writeEntity(pred::insert_value::instr, instrNum);
 
     // Left Operand
-    logOperand(IVI.getOperand(0), pred::insert_value::base);
+    writeOperand(pred::insert_value::base, IVI.getOperand(0));
 
     // Right Operand
-    logOperand(IVI.getOperand(1), pred::insert_value::value);
+    writeOperand(pred::insert_value::value, IVI.getOperand(1));
 
     // Constant Indices
     int index = 0;
@@ -536,7 +554,7 @@ void InstructionVisitor::visitLandingPadInst(LandingPadInst &LI)
     csvGen->writeSimpleFact(pred::landingpad::type, instrNum, printType(LI.getType()));
 
     // function
-    logSimpleValue(LI.getPersonalityFn(), pred::landingpad::fn);
+    writeValue(pred::landingpad::fn, LI.getPersonalityFn());
 
     // cleanup
     if(LI.isCleanup())
@@ -567,10 +585,10 @@ void InstructionVisitor::visitCallInst(CallInst &CI)
     FunctionType *funcTy = cast<FunctionType>(ptrTy->getElementType());
     Type *RetTy = funcTy->getReturnType();
 
-    logOperand(callOp, pred::call::function);
+    writeOperand(pred::call::function, callOp);
 
     for (unsigned op = 0; op < CI.getNumArgOperands(); ++op)
-        logOperand(CI.getArgOperand(op), pred::call::arg, op);
+        writeOperand(pred::call::arg, CI.getArgOperand(op), op);
 
     if(CI.isTailCall())
         csvGen->writeEntity(pred::call::tail, instrNum);
@@ -607,10 +625,10 @@ void InstructionVisitor::visitICmpInst(ICmpInst &I)
                                 writePredicate(I.getPredicate()));
 
     // Left Operand
-    logOperand(I.getOperand(0), pred::icmp::first_operand);
+    writeOperand(pred::icmp::first_operand, I.getOperand(0));
 
     // Right Operand
-    logOperand(I.getOperand(1), pred::icmp::second_operand);
+    writeOperand(pred::icmp::second_operand, I.getOperand(1));
 
 }
 
@@ -624,10 +642,10 @@ void InstructionVisitor::visitFCmpInst(FCmpInst &I)
                                 writePredicate(I.getPredicate()));
 
     // Left Operand
-    logOperand(I.getOperand(0), pred::fcmp::first_operand);
+    writeOperand(pred::fcmp::first_operand, I.getOperand(0));
 
     // Right Operand
-    logOperand(I.getOperand(1), pred::fcmp::second_operand);
+    writeOperand(pred::fcmp::second_operand, I.getOperand(1));
 }
 
 void InstructionVisitor::visitExtractElementInst(ExtractElementInst &EEI)
@@ -635,10 +653,10 @@ void InstructionVisitor::visitExtractElementInst(ExtractElementInst &EEI)
     csvGen->writeEntity(pred::extract_element::instr, instrNum);
 
     // VectorOperand
-    logOperand(EEI.getVectorOperand(), pred::extract_element::base);
+    writeOperand(pred::extract_element::base, EEI.getVectorOperand());
 
     // indexValue
-    logOperand(EEI.getIndexOperand(), pred::extract_element::index);
+    writeOperand(pred::extract_element::index, EEI.getIndexOperand());
 
 }
 
@@ -647,13 +665,13 @@ void InstructionVisitor::visitInsertElementInst(InsertElementInst &IEI)
     csvGen->writeEntity(pred::insert_element::instr, instrNum);
 
     // vectorOperand
-    logOperand(IEI.getOperand(0), pred::insert_element::base);
+    writeOperand(pred::insert_element::base, IEI.getOperand(0));
 
     // Value Operand
-    logOperand(IEI.getOperand(1), pred::insert_element::value);
+    writeOperand(pred::insert_element::value, IEI.getOperand(1));
 
     // Index Operand
-    logOperand(IEI.getOperand(2), pred::insert_element::index);
+    writeOperand(pred::insert_element::index, IEI.getOperand(2));
 }
 
 void InstructionVisitor::visitShuffleVectorInst(ShuffleVectorInst &SVI)
@@ -661,18 +679,18 @@ void InstructionVisitor::visitShuffleVectorInst(ShuffleVectorInst &SVI)
     csvGen->writeEntity(pred::shuffle_vector::instr, instrNum);
 
     // firstVector
-    logOperand(SVI.getOperand(0), pred::shuffle_vector::first_vector);
+    writeOperand(pred::shuffle_vector::first_vector, SVI.getOperand(0));
 
     // secondVector
-    logOperand(SVI.getOperand(1), pred::shuffle_vector::second_vector);
+    writeOperand(pred::shuffle_vector::second_vector, SVI.getOperand(1));
 
     // Mask
-    logSimpleValue(SVI.getOperand(2), pred::shuffle_vector::mask);
+    writeValue(pred::shuffle_vector::mask, SVI.getOperand(2));
 
 }
 
-void  InstructionVisitor::visitInstruction(Instruction &I) {
-
+void  InstructionVisitor::visitInstruction(Instruction &I)
+{
     errs() << I.getOpcodeName() << ": Unhandled instruction\n";
 }
 
