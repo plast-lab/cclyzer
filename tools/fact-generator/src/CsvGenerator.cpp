@@ -180,56 +180,57 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
         string typeSignature = to_string(fi->getFunctionType());
 
         // Record function type signature
-        writeSimpleFact(pred::FuncType, funcRef, typeSignature);
+        writeSimpleFact(pred::function::type, funcRef, typeSignature);
 
         // Record function linkage, visibility, alignment, and GC
         if (!linkage.empty())
-            writeSimpleFact(pred::FuncLink, funcRef, linkage);
+            writeSimpleFact(pred::function::linkage, funcRef, linkage);
 
         if (!visibility.empty())
-            writeSimpleFact(pred::FuncVis, funcRef, visibility);
+            writeSimpleFact(pred::function::visibility, funcRef, visibility);
 
         if (fi->getAlignment())
-            writeSimpleFact(pred::FuncAlign, funcRef, fi->getAlignment());
+            writeSimpleFact(pred::function::alignment, funcRef, fi->getAlignment());
 
         if (fi->hasGC())
-            writeSimpleFact(pred::FuncGc, funcRef, fi->getGC());
+            writeSimpleFact(pred::function::gc, funcRef, fi->getGC());
 
         // Record calling convection if it not defaults to C
         if (fi->getCallingConv() != CallingConv::C)
-            writeSimpleFact(pred::FuncCallConv, funcRef, to_string(fi->getCallingConv()));
+            writeSimpleFact(pred::function::calling_conv, funcRef, to_string(fi->getCallingConv()));
 
         // Record function name
-        writeSimpleFact(pred::FuncName, funcRef, "@" + fi->getName().str());
+        writeSimpleFact(pred::function::name, funcRef, "@" + fi->getName().str());
 
         // Address not significant
         if (fi->hasUnnamedAddr())
-            writeEntity(pred::FuncUnnamedAddr, funcRef);
+            writeEntity(pred::function::unnamed_addr, funcRef);
 
         // Record function attributes TODO
         const AttributeSet &Attrs = fi->getAttributes();
 
         if (Attrs.hasAttributes(AttributeSet::ReturnIndex))
-            writeSimpleFact(pred::FuncRetAttr, funcRef, Attrs.getAsString(AttributeSet::ReturnIndex));
+            writeSimpleFact(pred::function::ret_attr, funcRef,
+                            Attrs.getAsString(AttributeSet::ReturnIndex));
 
         vector<string> FuncnAttr;
         writeFnAttributes(Attrs, FuncnAttr);
 
         for (size_t i = 0; i < FuncnAttr.size(); i++)
-            writeSimpleFact(pred::FuncAttr, funcRef, FuncnAttr[i]);
+            writeSimpleFact(pred::function::attr, funcRef, FuncnAttr[i]);
 
         // Nothing more to do for function declarations
         if (fi->isDeclaration()) {
-            writeEntity(pred::FuncDecl, funcRef); // record function declaration
+            writeEntity(pred::function::id_decl, funcRef); // record function declaration
             continue;
         }
 
         // Record function definition entity
-        writeEntity(pred::Func, funcRef);
+        writeEntity(pred::function::id_defn, funcRef);
 
         // Record section
         if(fi->hasSection())
-            writeSimpleFact(pred::FuncSect, funcRef, fi->getSection());
+            writeSimpleFact(pred::function::section, funcRef, fi->getSection());
 
         // Record function parameters
         {
@@ -241,7 +242,7 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
             {
                 string varId = instrId + valueToString(arg, Mod);
 
-                writeSimpleFact(pred::FuncParam, funcRef, varId, index++);
+                writeSimpleFact(pred::function::param, funcRef, varId, index++);
                 recordVariable(varId, arg->getType());
             }
         }
@@ -256,8 +257,8 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
             string bbRef = funcPrefix + valueToString(&bb, Mod);
 
             // Record basic block entry as a label
-            writeEntity(pred::variable, bbRef);
-            writeSimpleFact(pred::variableType, bbRef, "label");
+            writeEntity(pred::variable::id, bbRef);
+            writeSimpleFact(pred::variable::type, bbRef, "label");
 
             // Record basic block predecessors
             BasicBlock *tmpBB = const_cast<BasicBlock *>(&bb);
@@ -266,7 +267,7 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
                  pi != pi_end; ++pi)
             {
                 string predBB = funcPrefix + valueToString(*pi, Mod);
-                writeSimpleFact(pred::basicBlockPred, bbRef, predBB);
+                writeSimpleFact(pred::basic_block::predecessor, bbRef, predBB);
             }
 
             // Store last instruction
@@ -282,7 +283,7 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
                 if (!instr.getType()->isVoidTy()) {
                     string targetVar = instrId + valueToString(&instr, Mod);
 
-                    writeSimpleFact(pred::insnTo, instrRef, targetVar);
+                    writeSimpleFact(pred::instruction::to, instrRef, targetVar);
                     recordVariable(targetVar, instr.getType());
                 }
 
@@ -292,15 +293,15 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
                     string nextInstrRef = instrId + std::to_string(counter);
 
                     // Record the instruction succession
-                    writeSimpleFact(pred::insnNext, instrRef, nextInstrRef);
+                    writeSimpleFact(pred::instruction::next, instrRef, nextInstrRef);
                 }
 
                 // Record instruction's container function
-                writeSimpleFact(pred::insnFunc, instrRef, funcRef);
+                writeSimpleFact(pred::instruction::function, instrRef, funcRef);
 
                 // Record instruction's basic block entry (label)
                 string bbEntry = instrId + valueToString(instr.getParent(), Mod);
-                writeSimpleFact(pred::insnBBEntry, instrRef, bbEntry);
+                writeSimpleFact(pred::instruction::bb_entry, instrRef, bbEntry);
 
                 // Instruction Visitor TODO
                 IV.setInstrNum(instrRef);
@@ -324,8 +325,8 @@ void CsvGenerator::writeVarsTypesAndImmediates()
         const Type *type = kv.second;
 
         // Record constant entity with its type
-        writeEntity(pred::immediate, refmode);
-        writeSimpleFact(pred::immediateType, refmode, to_string(type));
+        writeEntity(pred::constant::id, refmode);
+        writeSimpleFact(pred::constant::type, refmode, to_string(type));
 
         types.insert(type);
     }
@@ -336,8 +337,8 @@ void CsvGenerator::writeVarsTypesAndImmediates()
         const Type *type = kv.second;
 
         // Record variable entity with its type
-        writeEntity(pred::variable, refmode);
-        writeSimpleFact(pred::variableType, refmode, to_string(type));
+        writeEntity(pred::variable::id, refmode);
+        writeSimpleFact(pred::variable::type, refmode, to_string(type));
 
         types.insert(type);
     }
@@ -349,10 +350,10 @@ void CsvGenerator::writeVarsTypesAndImmediates()
     unordered_set<const llvm::Type *> collectedTypes = collector(types);
 
     // Add basic primitive types
-    writeEntity(pred::primitiveType, "void");
-    writeEntity(pred::primitiveType, "label");
-    writeEntity(pred::primitiveType, "metadata");
-    writeEntity(pred::primitiveType, "x86mmx");
+    writeEntity(pred::primitive_type::id, "void");
+    writeEntity(pred::primitive_type::id, "label");
+    writeEntity(pred::primitive_type::id, "metadata");
+    writeEntity(pred::primitive_type::id, "x86mmx");
 
     // Record each type encountered
     foreach (const Type *type, collectedTypes)
@@ -384,8 +385,8 @@ void CsvGenerator::writeType(const Type *type)
             uint64_t storeSize = DL->getTypeStoreSize(const_cast<Type *>(type));
 
             // Store size of type in bytes
-            writeSimpleFact(pred::typeAllocSize, to_string(type), allocSize);
-            writeSimpleFact(pred::typeStoreSize, to_string(type), storeSize);
+            writeSimpleFact(pred::type::alloc_size, to_string(type), allocSize);
+            writeSimpleFact(pred::type::store_size, to_string(type), storeSize);
             break;
         }
     }
@@ -395,7 +396,7 @@ void CsvGenerator::writeType(const Type *type)
       case llvm::Type::VoidTyID:
       case llvm::Type::LabelTyID:
       case llvm::Type::MetadataTyID:
-          writeEntity(pred::primitiveType, to_string(type));
+          writeEntity(pred::primitive_type::id, to_string(type));
           break;
       case llvm::Type::HalfTyID: // Fallthrough to all 6 floating point types
       case llvm::Type::FloatTyID:
@@ -404,10 +405,10 @@ void CsvGenerator::writeType(const Type *type)
       case llvm::Type::FP128TyID:
       case llvm::Type::PPC_FP128TyID:
           assert(type->isFloatingPointTy());
-          writeEntity(pred::fpType, to_string(type));
+          writeEntity(pred::fp_type::id, to_string(type));
           break;
       case llvm::Type::IntegerTyID:
-          writeEntity(pred::intType, to_string(type));
+          writeEntity(pred::integer_type::id, to_string(type));
           break;
       case llvm::Type::FunctionTyID:
           writeFunctionType(cast<FunctionType>(type));
@@ -440,14 +441,14 @@ void CsvGenerator::writePointerType(const PointerType *ptrType)
     Type *elementType = ptrType->getPointerElementType();
 
     // Record pointer type entity
-    writeEntity(pred::ptrType, refmode);
+    writeEntity(pred::ptr_type::id, refmode);
 
     // Record pointer element type
-    writeSimpleFact(pred::ptrTypeComp, refmode, to_string(elementType));
+    writeSimpleFact(pred::ptr_type::component_type, refmode, to_string(elementType));
 
     // Record pointer address space
     if (unsigned addressSpace = ptrType->getPointerAddressSpace())
-        writeSimpleFact(pred::ptrTypeAddrSpace, refmode, addressSpace);
+        writeSimpleFact(pred::ptr_type::addr_space, refmode, addressSpace);
 }
 
 
@@ -458,13 +459,13 @@ void CsvGenerator::writeArrayType(const ArrayType *arrayType)
     Type *componentType = arrayType->getArrayElementType();
 
     // Record array type entity
-    writeEntity(pred::arrayType, refmode);
+    writeEntity(pred::array_type::id, refmode);
 
     // Record array component type
-    writeSimpleFact(pred::arrayTypeComp, refmode, to_string(componentType));
+    writeSimpleFact(pred::array_type::component_type, refmode, to_string(componentType));
 
     // Record array type size
-    writeSimpleFact(pred::arrayTypeSize, refmode, nElements);
+    writeSimpleFact(pred::array_type::size, refmode, nElements);
 }
 
 
@@ -474,22 +475,22 @@ void CsvGenerator::writeStructType(const StructType *structType)
     size_t nFields = structType->getStructNumElements();
 
     // Record struct type entity
-    writeEntity(pred::structType, refmode);
+    writeEntity(pred::struct_type::id, refmode);
 
     if (structType->isOpaque()) {
         // Opaque structs carry no info about their internal structure
-        writeEntity(pred::opaqueStructType, refmode);
+        writeEntity(pred::struct_type::opaque, refmode);
     } else {
         // Record struct field types
         for (size_t i = 0; i < nFields; i++)
         {
             Type *fieldType = structType->getStructElementType(i);
 
-            writeSimpleFact(pred::structTypeField, refmode, to_string(fieldType), i);
+            writeSimpleFact(pred::struct_type::field_type, refmode, to_string(fieldType), i);
         }
 
         // Record number of fields
-        writeSimpleFact(pred::structTypeNFields, refmode, nFields);
+        writeSimpleFact(pred::struct_type::nfields, refmode, nFields);
     }
 }
 
@@ -501,25 +502,25 @@ void CsvGenerator::writeFunctionType(const FunctionType *functionType)
     Type  *returnType  = functionType->getReturnType();
 
     // Record function type entity
-    writeEntity(pred::funcType, signature);
+    writeEntity(pred::func_type::id, signature);
 
     // TODO: which predicate/entity do we need to update for varagrs?
     if (functionType->isVarArg())
-        writeEntity(pred::funcTypeVarArgs, signature);
+        writeEntity(pred::func_type::varargs, signature);
 
     // Record return type
-    writeSimpleFact(pred::funcTypeReturn, signature, to_string(returnType));
+    writeSimpleFact(pred::func_type::return_type, signature, to_string(returnType));
 
     // Record function formal parameters
     for (size_t i = 0; i < nParameters; i++)
     {
         Type *paramType = functionType->getFunctionParamType(i);
 
-        writeSimpleFact(pred::funcTypeParam, signature, to_string(paramType), i);
+        writeSimpleFact(pred::func_type::param_type, signature, to_string(paramType), i);
     }
 
     // Record number of formal parameters
-    writeSimpleFact(pred::funcTypeNParams, signature, nParameters);
+    writeSimpleFact(pred::func_type::nparams, signature, nParameters);
 }
 
 
@@ -530,20 +531,20 @@ void CsvGenerator::writeVectorType(const VectorType *vectorType)
     Type *componentType = vectorType->getVectorElementType();
 
     // Record vector type entity
-    writeEntity(pred::vectorType, refmode);
+    writeEntity(pred::vector_type::id, refmode);
 
     // Record vector component type
-    writeSimpleFact(pred::vectorTypeComp, refmode, to_string(componentType));
+    writeSimpleFact(pred::vector_type::component_type, refmode, to_string(componentType));
 
     // Record vector type size
-    writeSimpleFact(pred::vectorTypeSize, refmode, nElements);
+    writeSimpleFact(pred::vector_type::size, refmode, nElements);
 }
 
 
 void CsvGenerator::writeGlobalVar(const GlobalVariable *gv, string refmode)
 {
     // Record global variable entity
-    writeEntity(pred::globalVar, refmode);
+    writeEntity(pred::global_var::id, refmode);
 
     // Serialize global variable properties
     string visibility = to_string(gv->getVisibility());
@@ -553,43 +554,43 @@ void CsvGenerator::writeGlobalVar(const GlobalVariable *gv, string refmode)
 
     // Record external linkage
     if (!gv->hasInitializer() && gv->hasExternalLinkage())
-        writeSimpleFact(pred::globalVarLink, refmode, "external");
+        writeSimpleFact(pred::global_var::linkage, refmode, "external");
 
     // Record linkage
     if (!linkage.empty())
-        writeSimpleFact(pred::globalVarLink, refmode, linkage);
+        writeSimpleFact(pred::global_var::linkage, refmode, linkage);
 
     // Record visibility
     if (!visibility.empty())
-        writeSimpleFact(pred::globalVarVis, refmode, visibility);
+        writeSimpleFact(pred::global_var::visibility, refmode, visibility);
 
     // Record thread local mode
     if (!thrLocMode.empty())
-        writeSimpleFact(pred::globalVarTlm, refmode, thrLocMode);
+        writeSimpleFact(pred::global_var::threadlocal_mode, refmode, thrLocMode);
 
     // TODO: in lb schema - AddressSpace & hasUnnamedAddr properties
     if (gv->isExternallyInitialized())
-        writeSimpleFact(pred::globalVarFlag, refmode, "externally_initialized");
+        writeSimpleFact(pred::global_var::flag, refmode, "externally_initialized");
 
     // Record flags and type
     const char * flag = gv->isConstant() ? "constant": "global";
 
-    writeSimpleFact(pred::globalVarFlag, refmode, flag);
-    writeSimpleFact(pred::globalVarType, refmode, varType);
+    writeSimpleFact(pred::global_var::flag, refmode, flag);
+    writeSimpleFact(pred::global_var::type, refmode, varType);
 
     // Record initializer
     if (gv->hasInitializer()) {
         string val = valueToString(gv->getInitializer(), gv->getParent()); // CHECK
-        writeSimpleFact(pred::globalVarInit, refmode, val);
+        writeSimpleFact(pred::global_var::initializer, refmode, val);
     }
 
     // Record section
     if (gv->hasSection())
-        writeSimpleFact(pred::globalVarSect, refmode, gv->getSection());
+        writeSimpleFact(pred::global_var::section, refmode, gv->getSection());
 
     // Record alignment
     if (gv->getAlignment())
-        writeSimpleFact(pred::globalVarAlign, refmode, gv->getAlignment());
+        writeSimpleFact(pred::global_var::align, refmode, gv->getAlignment());
 }
 
 
@@ -607,7 +608,7 @@ void CsvGenerator::writeGlobalAlias(const GlobalAlias *ga, string refmode)
     const llvm::Constant *Aliasee = ga->getAliasee();
 
     // Record alias entity
-    writeEntity(pred::alias, refmode);
+    writeEntity(pred::alias::id, refmode);
 
     // Serialize alias properties
     string visibility = to_string(ga->getVisibility());
@@ -616,19 +617,19 @@ void CsvGenerator::writeGlobalAlias(const GlobalAlias *ga, string refmode)
 
     // Record visibility
     if (!visibility.empty())
-        writeSimpleFact(pred::aliasVis, refmode, visibility);
+        writeSimpleFact(pred::alias::visibility, refmode, visibility);
 
     // Record linkage
     if (!linkage.empty())
-        writeSimpleFact(pred::aliasLink, refmode, linkage);
+        writeSimpleFact(pred::alias::linkage, refmode, linkage);
 
     // Record type
-    writeSimpleFact(pred::aliasType, refmode, aliasType);
+    writeSimpleFact(pred::alias::type, refmode, aliasType);
 
     // Record aliasee
     if (Aliasee) {
         string aliasee = valueToString(Aliasee, ga->getParent()); // CHECK
-        writeSimpleFact(pred::aliasAliasee, refmode, aliasee);
+        writeSimpleFact(pred::alias::aliasee, refmode, aliasee);
     }
 }
 
