@@ -25,59 +25,59 @@ namespace pred = predicate_names;
 void InstructionVisitor::writeValue(pred_t predicate, const Value * Val, int index)
 {
     // Value refmode and type
-    string refmode;
+    ostringstream refmode;
     const Type * type = Val->getType();
 
     if (const Constant *c = dyn_cast<Constant>(Val)) {
         // Compute refmode for constant value
-        refmode = instrNum + ":" + std::to_string(immediateOffset++)
-                           + ":" + valueToString(c, Mod);
+        refmode << instrNum
+                << ':' << immediateOffset++
+                << ':' << valueToString(c, Mod);
 
         // Record constant value
-        csvGen->recordConstant(refmode, type);
+        csvGen->recordConstant(refmode.str(), type);
     }
     else {
         // Compute refmode for vairable value
-        refmode = instrId + valueToString(Val, Mod);
+        refmode << instrId << valueToString(Val, Mod);
 
         // Record variable value
-        csvGen->recordVariable(refmode, type);
+        csvGen->recordVariable(refmode.str(), type);
     }
 
     // Write value fact
-    csvGen->writeSimpleFact(predicate, instrNum, refmode, index);
+    csvGen->writeSimpleFact(predicate, instrNum, refmode.str(), index);
 }
 
 void InstructionVisitor::writeOperand(pred_t predicate, const Value * Operand, int index)
 {
     // Operand refmode and type
-    string refmode;
+    ostringstream refmode;
     const Type * type = Operand->getType();
 
     // Operand category is either constant or variable
     Operand::Type category;
 
     if (const Constant *c = dyn_cast<Constant>(Operand)) {
-        // TODO use ostringstream
-
         // Compute refmode for constant
-        refmode = instrNum + ":" + std::to_string(immediateOffset++)
-                           + ":" + valueToString(c, Mod);
+        refmode << instrNum
+                << ':' << immediateOffset++
+                << ':' << valueToString(c, Mod);
 
         // Record constant operand
         category = Operand::Type::IMMEDIATE;
-        csvGen->recordConstant(refmode, type);
+        csvGen->recordConstant(refmode.str(), type);
     }
     else {
-        string refmode = instrId + valueToString(Operand, Mod);
+        refmode << instrId << valueToString(Operand, Mod);
 
         // Record variable operand
         category = Operand::Type::VARIABLE;
-        csvGen->recordVariable(refmode, type);
+        csvGen->recordVariable(refmode.str(), type);
     }
 
     // Write operand fact
-    csvGen->writeOperandFact(predicate, instrNum, refmode, category, index);
+    csvGen->writeOperandFact(predicate, instrNum, refmode.str(), category, index);
 }
 
 void InstructionVisitor::visitTruncInst(llvm::TruncInst &I) {
@@ -479,11 +479,18 @@ void InstructionVisitor::visitGetElementPtrInst(GetElementPtrInst &GEP)
         writeOperand(pred::gep::index, GepOperand, index - 1);
 
         if (const Constant *c = dyn_cast<Constant>(GepOperand)) {
-            string constant = instrNum + ":" + std::to_string(immOffset)
-                                       + ":" + valueToString(c, Mod);
+            ostringstream constant;
 
-            csvGen->writeSimpleFact(pred::constant::to_integer, constant,
-                                    c->getUniqueInteger().toString(10, true));
+            // Compute constant refmode
+            constant << instrNum
+                     << ':' << immOffset
+                     << ':' << valueToString(c, Mod);
+
+            // Compute integer string representation
+            string int_value = c->getUniqueInteger().toString(10, true);
+
+            // Write constant to integer fact
+            csvGen->writeSimpleFact(pred::constant::to_integer, constant.str(), int_value);
         }
     }
 
@@ -733,8 +740,8 @@ const char* InstructionVisitor::writePredicate(unsigned predicate) {
     return pred;
 }
 
-void InstructionVisitor::writeOptimizationInfoToFile(const User *u, string instrId) {
-
+void InstructionVisitor::writeOptimizationInfoToFile(const User *u, string instrId)
+{
     if (const FPMathOperator *fpo = dyn_cast<const FPMathOperator>(u)) {
         if(fpo->hasUnsafeAlgebra()) {
             csvGen->writeSimpleFact(pred::instruction::flag, instrId, "fast");
