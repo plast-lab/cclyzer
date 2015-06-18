@@ -11,7 +11,7 @@ template<> PredicateFileMappingImpl *Singleton<PredicateFileMappingImpl>::INSTAN
 
 // Type and namespace definitions
 namespace fs = boost::filesystem;
-typedef std::pair<PredicateFileMapping *,const char *> cachekey_t;
+typedef std::pair<const PredicateFileMapping *,const char *> cachekey_t;
 
 
 // Initialize default predicate file mapping scheme
@@ -19,7 +19,7 @@ PredicateFileMapping &PredicateFileMapping::DEFAULT_SCHEME =
     *PredicateFileMappingImpl::getInstance();
 
 
-fs::path PredicateFileMappingImpl::toPath(const char *predName)
+fs::path PredicateFileMappingImpl::toPath(const char *predName) const
 {
     using namespace std;
     typedef boost::unordered_map<cachekey_t, fs::path> cache_t;
@@ -55,7 +55,7 @@ fs::path PredicateFileMappingImpl::toPath(const char *predName)
 }
 
 
-fs::path PredicateFileMappingImpl::toPath(const char *predName, Operand::Type type)
+fs::path PredicateFileMappingImpl::toPath(const char *predName, Operand::Type type) const
 {
     using namespace std;
     typedef boost::unordered_map<cachekey_t, pair<fs::path, fs::path> > cache_t;

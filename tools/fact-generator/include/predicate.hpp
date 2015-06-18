@@ -13,7 +13,7 @@ class Registry
   public:
     Registry() {}
 
-    std::set<T*> items() {
+    const std::set<T*> items() const {
         return allInstances;
     }
 

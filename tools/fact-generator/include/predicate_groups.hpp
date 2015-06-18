@@ -18,9 +18,9 @@ namespace predicates
 
     // Functions that return the different sets of predicates
 
-    std::set<entity_pred_t*> entity_predicates();
-    std::set<operand_pred_t*> operand_predicates();
-    std::set<pred_t*> predicates();
+    const std::set<entity_pred_t*> entity_predicates();
+    const std::set<operand_pred_t*> operand_predicates();
+    const std::set<pred_t*> predicates();
 
 
 

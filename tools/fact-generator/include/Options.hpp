@@ -10,15 +10,15 @@ class Options
     /* Constructor given command-line options */
     Options(int argc, char* argv[]);
 
-    std::string& getDelimiter() {
+    const std::string& getDelimiter() const {
         return delimiter;
     }
 
-    boost::filesystem::path getOutputDirectory() {
+    boost::filesystem::path getOutputDirectory() const {
         return outDirectory;
     }
 
-    std::vector<boost::filesystem::path>& getInputFiles() {
+    const std::vector<boost::filesystem::path>& getInputFiles() const {
         return inputFiles;
     }
 

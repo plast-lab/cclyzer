@@ -382,15 +382,15 @@ namespace predicates
     pred_t constant::to_integer = "constant:to_int";
 
 
-    std::set<entity_pred_t*> entity_predicates() {
+    const std::set<entity_pred_t*> entity_predicates() {
         return EntityPredicateRegistry::getInstance()->items();
     }
 
-    std::set<operand_pred_t*> operand_predicates() {
+    const std::set<operand_pred_t*> operand_predicates() {
         return OperandPredicateRegistry::getInstance()->items();
     }
 
-    std::set<pred_t*> predicates() {
+    const std::set<pred_t*> predicates() {
         return PredicateRegistry::getInstance()->items();
     }
 }
