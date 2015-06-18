@@ -18,8 +18,8 @@ class PredicateFileMapping
   public:
     virtual ~PredicateFileMapping() {}
 
-    virtual path toPath(const char * predName) = 0;
-    virtual path toPath(const char * predName, Operand::Type type) = 0;
+    virtual path toPath(const char * predName) const = 0;
+    virtual path toPath(const char * predName, Operand::Type type) const = 0;
 
     static PredicateFileMapping &DEFAULT_SCHEME;
 };
@@ -46,8 +46,8 @@ class PredicateFileMappingImpl : public PredicateFileMapping,
   public:
     virtual ~PredicateFileMappingImpl() {}
 
-    virtual path toPath(const char * predName);
-    virtual path toPath(const char * predName, Operand::Type type);
+    virtual path toPath(const char * predName) const;
+    virtual path toPath(const char * predName, Operand::Type type) const;
 
   private:
     /* CSV file extension */
