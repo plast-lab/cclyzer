@@ -72,13 +72,22 @@ class Predicate
     }
 
     const char *c_str() const {
-        return name;
+        return name.c_str();
     }
 
-    virtual ~Predicate() {};
+    friend bool operator== (Predicate &p1, Predicate &p2);
+    friend bool operator!= (Predicate &p1, Predicate &p2);
+
+    friend bool operator> (Predicate &p1, Predicate &p2);
+    friend bool operator<= (Predicate &p1, Predicate &p2);
+
+    friend bool operator< (Predicate &p1, Predicate &p2);
+    friend bool operator>= (Predicate &p1, Predicate &p2);
+
+    virtual ~Predicate() {}
 
   private:
-    const char *name;
+    const std::string name;
 };
 
 
