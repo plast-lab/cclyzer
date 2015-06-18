@@ -3,7 +3,6 @@
 #include <boost/unordered_map.hpp>
 
 #include "PredicateFileMapping.hpp"
-#include "Options.hpp"
 
 
 // Initialize singleton instance
