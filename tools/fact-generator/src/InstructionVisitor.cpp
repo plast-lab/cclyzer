@@ -1,28 +1,29 @@
 #include <cassert>
 #include <string>
-
-#include "llvm/IR/Module.h"
-#include "llvm/IR/Operator.h"
+#include <boost/foreach.hpp>
+#include <llvm/IR/Module.h>
+#include <llvm/IR/Operator.h>
 
 #include "AuxiliaryMethods.hpp"
+#include "CsvGenerator.hpp"
 #include "InstructionVisitor.hpp"
-#include "PredicateNames.hpp"
+#include "predicate_groups.hpp"
+
+#define foreach BOOST_FOREACH
 
 using namespace llvm;
 using namespace std;
 using namespace boost;
-
 using namespace auxiliary_methods;
-using namespace predicate_names;
 
-namespace pred = predicate_names;
+namespace pred = predicates;
 
 //TODO: why do we store the volatile property with two different ways?
 //      (see writeVolatileFlag and :volatile for some entities)
 
 //TODO: Remove these if(strlen(...)) checks
 
-void InstructionVisitor::writeValue(pred_t predicate, const Value * Val, int index)
+void InstructionVisitor::writeInstrValue(pred_t predicate, const Value * Val, int index)
 {
     // Value refmode and type
     ostringstream refmode;
@@ -46,10 +47,10 @@ void InstructionVisitor::writeValue(pred_t predicate, const Value * Val, int ind
     }
 
     // Write value fact
-    csvGen->writeSimpleFact(predicate, instrNum, refmode.str(), index);
+    writeInstrProperty(predicate, refmode.str(), index);
 }
 
-void InstructionVisitor::writeOperand(pred_t predicate, const Value * Operand, int index)
+void InstructionVisitor::writeInstrOperand(operand_pred_t predicate, const Value * Operand, int index)
 {
     // Operand refmode and type
     ostringstream refmode;
@@ -77,7 +78,7 @@ void InstructionVisitor::writeOperand(pred_t predicate, const Value * Operand, i
     }
 
     // Write operand fact
-    csvGen->writeOperandFact(predicate, instrNum, refmode.str(), category, index);
+    csvGen->writeOperandFact(predicate.c_str(), instrNum, refmode.str(), category, index);
 }
 
 void InstructionVisitor::visitTruncInst(llvm::TruncInst &I) {
@@ -202,13 +203,13 @@ void InstructionVisitor::visitXor(BinaryOperator &BI) {
 
 void InstructionVisitor::visitReturnInst(ReturnInst &RI)
 {
-    csvGen->writeEntity(pred::ret::instr, instrNum);
+    recordInstruction(pred::ret::instr);
 
     if(RI.getReturnValue()) {   // with returned value
-        writeOperand(pred::ret::operand, RI.getReturnValue());
+        writeInstrOperand(pred::ret::operand, RI.getReturnValue());
     }
     else {                      // w/o returned value
-        csvGen->writeEntity(pred::ret::instr_void, instrNum);
+        writeInstrProperty(pred::ret::instr_void);
     }
 }
 
@@ -216,36 +217,36 @@ void InstructionVisitor::visitBranchInst(BranchInst &BI) {
 
     string error;
 
-    csvGen->writeEntity(pred::br::instr, instrNum);
+    recordInstruction(pred::br::instr);
 
     if(BI.isConditional()) {    // conditional branch
         // br i1 <cond>, label <iftrue>, label <iffalse>
-        csvGen->writeEntity(pred::br::instr_cond, instrNum);
+        recordInstruction(pred::br::instr_cond);
 
         // Condition Operand
-        writeOperand(pred::br::condition, BI.getCondition());
+        writeInstrOperand(pred::br::condition, BI.getCondition());
 
         // 'iftrue' and 'iffalse' labels
-        writeValue(pred::br::cond_iftrue, BI.getOperand(1));
-        writeValue(pred::br::cond_iffalse, BI.getOperand(2));
+        writeInstrValue(pred::br::cond_iftrue, BI.getOperand(1));
+        writeInstrValue(pred::br::cond_iffalse, BI.getOperand(2));
     }
     else {                      // unconditional branch
         // br label <dest>
-        csvGen->writeEntity(pred::br::instr_uncond, instrNum);
-        writeValue(pred::br::uncond_dest, BI.getOperand(0));
+        recordInstruction(pred::br::instr_uncond);
+        writeInstrValue(pred::br::uncond_dest, BI.getOperand(0));
     }
 }
 
 void InstructionVisitor::visitSwitchInst(const SwitchInst &SI)
 {
     // switch <intty> <value>, label <defaultdest> [ <intty> <val>, label <dest> ... ]
-    csvGen->writeEntity(pred::switch_::instr, instrNum);
+    recordInstruction(pred::switch_::instr);
 
     // 'value' Operand
-    writeOperand(pred::switch_::operand, SI.getOperand(0));
+    writeInstrOperand(pred::switch_::operand, SI.getOperand(0));
 
     // 'defaultdest' label
-    writeValue(pred::switch_::default_label, SI.getOperand(1));
+    writeInstrValue(pred::switch_::default_label, SI.getOperand(1));
 
     // 'case list' [constant, label]
     int index = 0;
@@ -254,50 +255,50 @@ void InstructionVisitor::visitSwitchInst(const SwitchInst &SI)
             Case = SI.case_begin(), CasesEnd = SI.case_end();
         Case != CasesEnd; Case++)
     {
-        writeValue(pred::switch_::case_value, Case.getCaseValue(), index);
-        writeValue(pred::switch_::case_label, Case.getCaseSuccessor(), index++);
+        writeInstrValue(pred::switch_::case_value, Case.getCaseValue(), index);
+        writeInstrValue(pred::switch_::case_label, Case.getCaseSuccessor(), index++);
     }
-    csvGen->writeSimpleFact(pred::switch_::ncases, instrNum, SI.getNumCases());
+    writeInstrProperty(pred::switch_::ncases, SI.getNumCases());
 }
 
 void InstructionVisitor::visitIndirectBrInst(IndirectBrInst &IBR)
 {
     // indirectbr <somety>* <address>, [ label <dest1>, label <dest2>, ... ]
-    csvGen->writeEntity(pred::indirectbr::instr, instrNum);
+    recordInstruction(pred::indirectbr::instr);
 
     // 'address' Operand
-    writeOperand(pred::indirectbr::address, IBR.getOperand(0));
+    writeInstrOperand(pred::indirectbr::address, IBR.getOperand(0));
 
     // 'label' list
     for(unsigned i = 1; i < IBR.getNumOperands(); ++i)
-        writeValue(pred::indirectbr::label, IBR.getOperand(i), i-1);
+        writeInstrValue(pred::indirectbr::label, IBR.getOperand(i), i-1);
 
-    csvGen->writeSimpleFact(pred::indirectbr::nlabels, instrNum, IBR.getNumOperands() - 1);
+    writeInstrProperty(pred::indirectbr::nlabels, IBR.getNumOperands() - 1);
 }
 
 void InstructionVisitor::visitInvokeInst(InvokeInst &II)
 {
-    csvGen->writeEntity(pred::invoke::instr, instrNum);
-    csvGen->writeEntity(II.getCalledFunction()
-                        ? pred::invoke::instr_direct
-                        : pred::invoke::instr_indirect, instrNum);
+    recordInstruction(pred::invoke::instr);
+    recordInstruction(II.getCalledFunction()
+                      ? pred::invoke::instr_direct
+                      : pred::invoke::instr_indirect);
 
     Value *invokeOp = II.getCalledValue();
     PointerType *ptrTy = cast<PointerType>(invokeOp->getType());
     FunctionType *funcTy = cast<FunctionType>(ptrTy->getElementType());
 
     // invoke instruction function
-    writeOperand(pred::invoke::function, invokeOp);
+    writeInstrOperand(pred::invoke::function, invokeOp);
 
     // actual args
     for (unsigned op = 0; op < II.getNumArgOperands(); ++op)
-        writeOperand(pred::invoke::arg, II.getArgOperand(op), op);
+        writeInstrOperand(pred::invoke::arg, II.getArgOperand(op), op);
 
     // 'normal label'
-    writeValue(pred::invoke::normal_label, II.getNormalDest());
+    writeInstrValue(pred::invoke::normal_label, II.getNormalDest());
 
     // 'exception label'
-    writeValue(pred::invoke::exc_label, II.getUnwindDest());
+    writeInstrValue(pred::invoke::exc_label, II.getUnwindDest());
 
     // Function Attributes
     const AttributeSet &Attrs = II.getAttributes();
@@ -305,20 +306,20 @@ void InstructionVisitor::visitInvokeInst(InvokeInst &II)
     if (Attrs.hasAttributes(AttributeSet::ReturnIndex))
     {
         string attrs = Attrs.getAsString(AttributeSet::ReturnIndex);
-        csvGen->writeSimpleFact(pred::invoke::ret_attr, instrNum, attrs);
+        writeInstrProperty(pred::invoke::ret_attr, attrs);
     }
 
     vector<string> FuncnAttr;
     writeFnAttributes(Attrs, FuncnAttr);
 
     for (unsigned i = 0; i < FuncnAttr.size(); ++i) {
-        csvGen->writeSimpleFact(pred::invoke::fn_attr, instrNum, FuncnAttr[i]);
+        writeInstrProperty(pred::invoke::fn_attr, FuncnAttr[i]);
     }
 
     // TODO: Why not CallingConv::C
     if (II.getCallingConv() != CallingConv::C) {
         string cconv = to_string(II.getCallingConv());
-        csvGen->writeSimpleFact(pred::invoke::calling_conv, instrNum, cconv);
+        writeInstrProperty(pred::invoke::calling_conv, cconv);
     }
 
     // TODO: param attributes?
@@ -326,157 +327,157 @@ void InstructionVisitor::visitInvokeInst(InvokeInst &II)
 
 void InstructionVisitor::visitResumeInst(ResumeInst &RI)
 {
-    csvGen->writeEntity(pred::resume::instr, instrNum);
-    writeOperand(pred::resume::operand, RI.getValue());
+    recordInstruction(pred::resume::instr);
+    writeInstrOperand(pred::resume::operand, RI.getValue());
 }
 
 void InstructionVisitor::visitUnreachableInst(UnreachableInst &I) {
-    csvGen->writeEntity(pred::instruction::unreachable, instrNum);
+    recordInstruction(pred::instruction::unreachable);
 }
 
 void InstructionVisitor::visitAllocaInst(AllocaInst &AI)
 {
-    csvGen->writeEntity(pred::alloca::instr, instrNum);
-    csvGen->writeSimpleFact(pred::alloca::type, instrNum, printType(AI.getAllocatedType()));
+    recordInstruction(pred::alloca::instr);
+    writeInstrProperty(pred::alloca::type, printType(AI.getAllocatedType()));
 
     if(AI.isArrayAllocation())
-        writeOperand(pred::alloca::size, AI.getArraySize());
+        writeInstrOperand(pred::alloca::size, AI.getArraySize());
 
     if(AI.getAlignment())
-        csvGen->writeSimpleFact(pred::alloca::alignment, instrNum, AI.getAlignment());
+        writeInstrProperty(pred::alloca::alignment, AI.getAlignment());
 }
 
 void InstructionVisitor::visitLoadInst(LoadInst &LI) {
 
-    csvGen->writeEntity(pred::load::instr, instrNum);
-    writeOperand(pred::load::address, LI.getPointerOperand());
+    recordInstruction(pred::load::instr);
+    writeInstrOperand(pred::load::address, LI.getPointerOperand());
 
     if (LI.isAtomic()) {
         const char *ord = writeAtomicInfo(instrNum, LI.getOrdering(), LI.getSynchScope());
 
-        if(strlen(ord))
-            csvGen->writeSimpleFact(pred::load::ordering, instrNum, ord);
+        if (strlen(ord))
+            writeInstrProperty(pred::load::ordering, ord);
     }
 
     if (LI.getAlignment())
-        csvGen->writeSimpleFact(pred::load::alignment, instrNum, LI.getAlignment());
+        writeInstrProperty(pred::load::alignment, LI.getAlignment());
 
     if (LI.isVolatile())
-        csvGen->writeEntity(pred::load::isvolatile, instrNum);
+        writeInstrProperty(pred::load::isvolatile);
 }
 
 void InstructionVisitor::visitVAArgInst(VAArgInst &VI)
 {
-    csvGen->writeEntity(pred::va_arg::instr, instrNum);
-    csvGen->writeSimpleFact(pred::va_arg::type, instrNum, printType(VI.getType()));
-    writeOperand(pred::va_arg::va_list, VI.getPointerOperand());
+    recordInstruction(pred::va_arg::instr);
+    writeInstrProperty(pred::va_arg::type, printType(VI.getType()));
+    writeInstrOperand(pred::va_arg::va_list, VI.getPointerOperand());
 }
 
 void InstructionVisitor::visitExtractValueInst(ExtractValueInst &EVI)
 {
-    csvGen->writeEntity(pred::extract_value::instr, instrNum);
+    recordInstruction(pred::extract_value::instr);
 
     // Aggregate Operand
-    writeOperand(pred::extract_value::base, EVI.getOperand(0));
+    writeInstrOperand(pred::extract_value::base, EVI.getOperand(0));
 
     // Constant Indices
     int index = 0;
 
     for (const unsigned *i = EVI.idx_begin(), *e = EVI.idx_end(); i != e; ++i) {
-        csvGen->writeSimpleFact(pred::extract_value::index, instrNum, *i, index);
+        writeInstrProperty(pred::extract_value::index, *i, index);
         index++;
     }
 
-    csvGen->writeSimpleFact(pred::extract_value::nindices, instrNum, EVI.getNumIndices());
+    writeInstrProperty(pred::extract_value::nindices, EVI.getNumIndices());
 }
 
 void InstructionVisitor::visitStoreInst(StoreInst &SI)
 {
-    csvGen->writeEntity(pred::store::instr, instrNum);
-    writeOperand(pred::store::value, SI.getValueOperand());
-    writeOperand(pred::store::address, SI.getPointerOperand());
+    recordInstruction(pred::store::instr);
+    writeInstrOperand(pred::store::value, SI.getValueOperand());
+    writeInstrOperand(pred::store::address, SI.getPointerOperand());
 
     if(SI.isAtomic()) {
         const char *ord = writeAtomicInfo(instrNum, SI.getOrdering(), SI.getSynchScope());
 
         if(strlen(ord))
-            csvGen->writeSimpleFact(pred::store::ordering, instrNum, ord);
+            writeInstrProperty(pred::store::ordering, ord);
     }
 
     if (SI.getAlignment())
-        csvGen->writeSimpleFact(pred::store::alignment, instrNum, SI.getAlignment());
+        writeInstrProperty(pred::store::alignment, SI.getAlignment());
 
     if (SI.isVolatile())
-        csvGen->writeEntity(pred::store::isvolatile, instrNum);
+        writeInstrProperty(pred::store::isvolatile);
 }
 
 void InstructionVisitor::visitAtomicCmpXchgInst(AtomicCmpXchgInst &AXI)
 {
-    csvGen->writeEntity(pred::cmpxchg::instr, instrNum);
+    recordInstruction(pred::cmpxchg::instr);
 
     // ptrValue
-    writeOperand(pred::cmpxchg::address, AXI.getPointerOperand());
+    writeInstrOperand(pred::cmpxchg::address, AXI.getPointerOperand());
 
     // cmpValue
-    writeOperand(pred::cmpxchg::cmp, AXI.getCompareOperand());
+    writeInstrOperand(pred::cmpxchg::cmp, AXI.getCompareOperand());
 
     // newValue
-    writeOperand(pred::cmpxchg::new_, AXI.getNewValOperand());
+    writeInstrOperand(pred::cmpxchg::new_, AXI.getNewValOperand());
 
     if (AXI.isVolatile())
-        csvGen->writeEntity(pred::cmpxchg::isvolatile, instrNum);
+        writeInstrProperty(pred::cmpxchg::isvolatile);
 
     const char *ord = writeAtomicInfo(instrNum, AXI.getOrdering(), AXI.getSynchScope());
 
     if (strlen(ord))
-        csvGen->writeSimpleFact(pred::cmpxchg::ordering, instrNum, ord);
+        writeInstrProperty(pred::cmpxchg::ordering, ord);
 
     // TODO: type?
 }
 
 void InstructionVisitor::visitAtomicRMWInst(AtomicRMWInst &AWI)
 {
-    csvGen->writeEntity(pred::atomicrmw::instr, instrNum);
+    recordInstruction(pred::atomicrmw::instr);
 
     // ptrValue - LeftOperand
-    writeOperand(pred::atomicrmw::address, AWI.getPointerOperand());
+    writeInstrOperand(pred::atomicrmw::address, AWI.getPointerOperand());
 
     // valOperand - Right Operand
-    writeOperand(pred::atomicrmw::value, AWI.getValOperand());
+    writeInstrOperand(pred::atomicrmw::value, AWI.getValOperand());
 
     if (AWI.isVolatile())
-        csvGen->writeEntity(pred::atomicrmw::isvolatile, instrNum);
+        writeInstrProperty(pred::atomicrmw::isvolatile);
 
     writeAtomicRMWOp(instrNum, AWI.getOperation());
 
     const char *ord = writeAtomicInfo(instrNum, AWI.getOrdering(), AWI.getSynchScope());
 
     if (strlen(ord))
-        csvGen->writeSimpleFact(pred::atomicrmw::ordering, instrNum, ord);
+        writeInstrProperty(pred::atomicrmw::ordering, ord);
 }
 
 void InstructionVisitor::visitFenceInst(FenceInst &FI)
 {
-    csvGen->writeEntity(pred::fence::instr, instrNum);
+    recordInstruction(pred::fence::instr);
 
     // fence [singleThread]  <ordering>
     const char *ord = writeAtomicInfo(instrNum, FI.getOrdering(), FI.getSynchScope());
 
     if(strlen(ord))
-        csvGen->writeSimpleFact(pred::fence::ordering, instrNum, ord);
+        writeInstrProperty(pred::fence::ordering, ord);
 }
 
 void InstructionVisitor::visitGetElementPtrInst(GetElementPtrInst &GEP)
 {
-    csvGen->writeEntity(pred::gep::instr, instrNum);
-    writeOperand(pred::gep::base, GEP.getPointerOperand());
+    recordInstruction(pred::gep::instr);
+    writeInstrOperand(pred::gep::base, GEP.getPointerOperand());
 
     for (unsigned index = 1; index < GEP.getNumOperands(); ++index)
     {
         int immOffset = immediateOffset;
         const Value * GepOperand = GEP.getOperand(index);
 
-        writeOperand(pred::gep::index, GepOperand, index - 1);
+        writeInstrOperand(pred::gep::index, GepOperand, index - 1);
 
         if (const Constant *c = dyn_cast<Constant>(GepOperand)) {
             ostringstream constant;
@@ -490,56 +491,56 @@ void InstructionVisitor::visitGetElementPtrInst(GetElementPtrInst &GEP)
             string int_value = c->getUniqueInteger().toString(10, true);
 
             // Write constant to integer fact
-            csvGen->writeSimpleFact(pred::constant::to_integer, constant.str(), int_value);
+            writeFact(pred::constant::to_integer, constant.str(), int_value);
         }
     }
 
-    csvGen->writeSimpleFact(pred::gep::nindices, instrNum, GEP.getNumIndices());
+    writeInstrProperty(pred::gep::nindices, GEP.getNumIndices());
 
     if (GEP.isInBounds())
-        csvGen->writeEntity(pred::gep::inbounds, instrNum);
+        writeInstrProperty(pred::gep::inbounds);
 }
 
 void InstructionVisitor::visitPHINode(PHINode &PHI)
 {
     // <result> = phi <ty> [ <val0>, <label0>], ...
-    csvGen->writeEntity(pred::phi::instr, instrNum);
+    recordInstruction(pred::phi::instr);
 
     // type
-    csvGen->writeSimpleFact(pred::phi::type, instrNum, printType(PHI.getType()));
+    writeInstrProperty(pred::phi::type, printType(PHI.getType()));
 
     for (unsigned op = 0; op < PHI.getNumIncomingValues(); ++op)
     {
-        writeOperand(pred::phi::pair_value, PHI.getIncomingValue(op), op);
-        writeValue(pred::phi::pair_label, PHI.getIncomingBlock(op), op);
+        writeInstrOperand(pred::phi::pair_value, PHI.getIncomingValue(op), op);
+        writeInstrValue(pred::phi::pair_label, PHI.getIncomingBlock(op), op);
     }
 
-    csvGen->writeSimpleFact(pred::phi::npairs, instrNum, PHI.getNumIncomingValues());
+    writeInstrProperty(pred::phi::npairs, PHI.getNumIncomingValues());
 }
 
 void InstructionVisitor::visitSelectInst(SelectInst &SI)
 {
-    csvGen->writeEntity(pred::select::instr, instrNum);
+    recordInstruction(pred::select::instr);
 
     // Condition
-    writeOperand(pred::select::condition, SI.getOperand(0));
+    writeInstrOperand(pred::select::condition, SI.getOperand(0));
 
     // Left Operand (true value)
-    writeOperand(pred::select::first_operand, SI.getOperand(1));
+    writeInstrOperand(pred::select::first_operand, SI.getOperand(1));
 
     // Right Operand (false value)
-    writeOperand(pred::select::second_operand, SI.getOperand(2));
+    writeInstrOperand(pred::select::second_operand, SI.getOperand(2));
 }
 
 void InstructionVisitor::visitInsertValueInst(InsertValueInst &IVI)
 {
-    csvGen->writeEntity(pred::insert_value::instr, instrNum);
+    recordInstruction(pred::insert_value::instr);
 
     // Left Operand
-    writeOperand(pred::insert_value::base, IVI.getOperand(0));
+    writeInstrOperand(pred::insert_value::base, IVI.getOperand(0));
 
     // Right Operand
-    writeOperand(pred::insert_value::value, IVI.getOperand(1));
+    writeInstrOperand(pred::insert_value::value, IVI.getOperand(1));
 
     // Constant Indices
     int index = 0;
@@ -547,25 +548,25 @@ void InstructionVisitor::visitInsertValueInst(InsertValueInst &IVI)
     for (const unsigned *i = IVI.idx_begin(), *e = IVI.idx_end();
          i != e; ++i,index++)
     {
-        csvGen->writeSimpleFact(pred::insert_value::index, instrNum, *i, index);
+        writeInstrProperty(pred::insert_value::index, *i, index);
     }
 
-    csvGen->writeSimpleFact(pred::insert_value::nindices, instrNum, IVI.getNumIndices());
+    writeInstrProperty(pred::insert_value::nindices, IVI.getNumIndices());
 }
 
 void InstructionVisitor::visitLandingPadInst(LandingPadInst &LI)
 {
-    csvGen->writeEntity(pred::landingpad::instr, instrNum);
+    recordInstruction(pred::landingpad::instr);
 
     // type
-    csvGen->writeSimpleFact(pred::landingpad::type, instrNum, printType(LI.getType()));
+    writeInstrProperty(pred::landingpad::type, printType(LI.getType()));
 
     // function
-    writeValue(pred::landingpad::fn, LI.getPersonalityFn());
+    writeInstrValue(pred::landingpad::fn, LI.getPersonalityFn());
 
     // cleanup
-    if(LI.isCleanup())
-        csvGen->writeEntity(pred::landingpad::cleanup, instrNum);
+    if (LI.isCleanup())
+        writeInstrProperty(pred::landingpad::cleanup);
 
     // #clauses
     for (unsigned i = 0; i < LI.getNumClauses(); ++i)
@@ -574,35 +575,35 @@ void InstructionVisitor::visitLandingPadInst(LandingPadInst &LI)
             ? pred::landingpad::catch_clause
             : pred::landingpad::filter_clause;
 
-        csvGen->writeSimpleFact(pred_clause, instrNum, LI.getClause(i), i);
+        writeInstrProperty(pred_clause, LI.getClause(i), i);
     }
 
-    csvGen->writeSimpleFact(pred::landingpad::nclauses, instrNum, LI.getNumClauses());
+    writeInstrProperty(pred::landingpad::nclauses, LI.getNumClauses());
 }
 
 void InstructionVisitor::visitCallInst(CallInst &CI)
 {
-    csvGen->writeEntity(pred::call::instr, instrNum);
-    csvGen->writeEntity(CI.getCalledFunction()
-                        ? pred::call::instr_direct
-                        : pred::call::instr_indirect, instrNum);
+    recordInstruction(pred::call::instr);
+    recordInstruction(CI.getCalledFunction()
+                      ? pred::call::instr_direct
+                      : pred::call::instr_indirect);
 
     Value *callOp = CI.getCalledValue();
     PointerType *ptrTy = cast<PointerType>(callOp->getType());
     FunctionType *funcTy = cast<FunctionType>(ptrTy->getElementType());
     Type *RetTy = funcTy->getReturnType();
 
-    writeOperand(pred::call::function, callOp);
+    writeInstrOperand(pred::call::function, callOp);
 
     for (unsigned op = 0; op < CI.getNumArgOperands(); ++op)
-        writeOperand(pred::call::arg, CI.getArgOperand(op), op);
+        writeInstrOperand(pred::call::arg, CI.getArgOperand(op), op);
 
     if(CI.isTailCall())
-        csvGen->writeEntity(pred::call::tail, instrNum);
+        writeInstrProperty(pred::call::tail);
 
     if (CI.getCallingConv() != CallingConv::C) {
         string cconv = to_string(CI.getCallingConv());
-        csvGen->writeSimpleFact(pred::call::calling_conv, instrNum, cconv);
+        writeInstrProperty(pred::call::calling_conv, cconv);
     }
 
     // Attributes
@@ -610,89 +611,87 @@ void InstructionVisitor::visitCallInst(CallInst &CI)
 
     if (Attrs.hasAttributes(AttributeSet::ReturnIndex)) {
         string attrs = Attrs.getAsString(AttributeSet::ReturnIndex);
-        csvGen->writeSimpleFact(pred::call::ret_attr, instrNum, attrs);
+        writeInstrProperty(pred::call::ret_attr, attrs);
     }
 
     vector<string> FuncnAttr;
     writeFnAttributes(Attrs, FuncnAttr);
 
     for (unsigned i = 0; i < FuncnAttr.size(); ++i)
-        csvGen->writeSimpleFact(pred::call::fn_attr, instrNum, FuncnAttr[i]);
+        writeInstrProperty(pred::call::fn_attr, FuncnAttr[i]);
 
     // TODO: parameter attributes?
 }
 
 void InstructionVisitor::visitICmpInst(ICmpInst &I)
 {
-    csvGen->writeEntity(pred::icmp::instr, instrNum);
+    recordInstruction(pred::icmp::instr);
 
     // Condition
     if (strlen(writePredicate(I.getPredicate())))
-        csvGen->writeSimpleFact(pred::icmp::condition, instrNum,
-                                writePredicate(I.getPredicate()));
+        writeInstrProperty(pred::icmp::condition, writePredicate(I.getPredicate()));
 
     // Left Operand
-    writeOperand(pred::icmp::first_operand, I.getOperand(0));
+    writeInstrOperand(pred::icmp::first_operand, I.getOperand(0));
 
     // Right Operand
-    writeOperand(pred::icmp::second_operand, I.getOperand(1));
+    writeInstrOperand(pred::icmp::second_operand, I.getOperand(1));
 
 }
 
 void InstructionVisitor::visitFCmpInst(FCmpInst &I)
 {
-    csvGen->writeEntity(pred::fcmp::instr, instrNum);
+    recordInstruction(pred::fcmp::instr);
 
     // Condition
     if (strlen(writePredicate(I.getPredicate())))
-        csvGen->writeSimpleFact(pred::fcmp::condition, instrNum,
-                                writePredicate(I.getPredicate()));
+        writeInstrProperty(pred::fcmp::condition, writePredicate(I.getPredicate()));
 
     // Left Operand
-    writeOperand(pred::fcmp::first_operand, I.getOperand(0));
+    writeInstrOperand(pred::fcmp::first_operand, I.getOperand(0));
 
     // Right Operand
-    writeOperand(pred::fcmp::second_operand, I.getOperand(1));
+    writeInstrOperand(pred::fcmp::second_operand, I.getOperand(1));
 }
 
 void InstructionVisitor::visitExtractElementInst(ExtractElementInst &EEI)
 {
-    csvGen->writeEntity(pred::extract_element::instr, instrNum);
+    recordInstruction(pred::extract_element::instr);
 
     // VectorOperand
-    writeOperand(pred::extract_element::base, EEI.getVectorOperand());
+    writeInstrOperand(pred::extract_element::base, EEI.getVectorOperand());
 
     // indexValue
-    writeOperand(pred::extract_element::index, EEI.getIndexOperand());
+    writeInstrOperand(pred::extract_element::index, EEI.getIndexOperand());
 
 }
 
 void InstructionVisitor::visitInsertElementInst(InsertElementInst &IEI)
 {
-    csvGen->writeEntity(pred::insert_element::instr, instrNum);
+    recordInstruction(pred::insert_element::instr);
 
     // vectorOperand
-    writeOperand(pred::insert_element::base, IEI.getOperand(0));
+    writeInstrOperand(pred::insert_element::base, IEI.getOperand(0));
 
     // Value Operand
-    writeOperand(pred::insert_element::value, IEI.getOperand(1));
+    writeInstrOperand(pred::insert_element::value, IEI.getOperand(1));
 
     // Index Operand
-    writeOperand(pred::insert_element::index, IEI.getOperand(2));
+    writeInstrOperand(pred::insert_element::index, IEI.getOperand(2));
 }
 
 void InstructionVisitor::visitShuffleVectorInst(ShuffleVectorInst &SVI)
 {
-    csvGen->writeEntity(pred::shuffle_vector::instr, instrNum);
+    recordInstruction(pred::shuffle_vector::instr);
 
     // firstVector
-    writeOperand(pred::shuffle_vector::first_vector, SVI.getOperand(0));
+    writeInstrOperand(pred::shuffle_vector::first_vector, SVI.getOperand(0));
 
     // secondVector
-    writeOperand(pred::shuffle_vector::second_vector, SVI.getOperand(1));
+    writeInstrOperand(pred::shuffle_vector::second_vector, SVI.getOperand(1));
 
     // Mask
-    writeValue(pred::shuffle_vector::mask, SVI.getOperand(2));
+    writeInstrValue(pred::shuffle_vector::mask, SVI.getOperand(2));
 
 }
 
@@ -744,34 +743,34 @@ void InstructionVisitor::writeOptimizationInfoToFile(const User *u, string instr
 {
     if (const FPMathOperator *fpo = dyn_cast<const FPMathOperator>(u)) {
         if(fpo->hasUnsafeAlgebra()) {
-            csvGen->writeSimpleFact(pred::instruction::flag, instrId, "fast");
+            writeFact(pred::instruction::flag, instrId, "fast");
         }
         else {
             if(fpo->hasNoNaNs()) {
-                csvGen->writeSimpleFact(pred::instruction::flag, instrId, "nnan");
+                writeFact(pred::instruction::flag, instrId, "nnan");
             }
             if(fpo->hasNoInfs()) {
-                csvGen->writeSimpleFact(pred::instruction::flag, instrId, "ninf");
+                writeFact(pred::instruction::flag, instrId, "ninf");
             }
             if(fpo->hasNoSignedZeros()) {
-                csvGen->writeSimpleFact(pred::instruction::flag, instrId, "nsz");
+                writeFact(pred::instruction::flag, instrId, "nsz");
             }
             if(fpo->hasAllowReciprocal()) {
-                csvGen->writeSimpleFact(pred::instruction::flag, instrId, "arcp");
+                writeFact(pred::instruction::flag, instrId, "arcp");
             }
         }
     }
     if (const OverflowingBinaryOperator *obo = dyn_cast<OverflowingBinaryOperator>(u)) {
         if(obo->hasNoUnsignedWrap()) {
-            csvGen->writeSimpleFact(pred::instruction::flag, instrId, "nuw");
+            writeFact(pred::instruction::flag, instrId, "nuw");
         }
         if(obo->hasNoSignedWrap()) {
-            csvGen->writeSimpleFact(pred::instruction::flag, instrId, "nsw");
+            writeFact(pred::instruction::flag, instrId, "nsw");
         }
     }
     else if (const PossiblyExactOperator *div = dyn_cast<PossiblyExactOperator>(u)) {
         if(div->isExact()) {
-            csvGen->writeSimpleFact(pred::instruction::flag, instrId, "exact");
+            writeFact(pred::instruction::flag, instrId, "exact");
         }
     }
 }
@@ -793,7 +792,7 @@ const char* InstructionVisitor::writeAtomicInfo(string instrId, AtomicOrdering o
 
     // default synchScope: crossthread
     if(synchScope == SingleThread)
-        csvGen->writeSimpleFact(pred::instruction::flag, instrId, "singlethread");
+        writeFact(pred::instruction::flag, instrId, "singlethread");
 
     return atomic;
 }
@@ -818,5 +817,310 @@ void InstructionVisitor::writeAtomicRMWOp(string instrId, AtomicRMWInst::BinOp o
     }
 
     if (strlen(oper))
-        csvGen->writeSimpleFact(pred::atomicrmw::operation, instrId, oper);
+        writeFact(pred::atomicrmw::operation, instrId, oper);
+}
+
+
+void InstructionVisitor::visitGlobalAlias(const GlobalAlias *ga, string &refmode)
+{
+    //------------------------------------------------------------------
+    // A global alias introduces a /second name/ for the aliasee value
+    // (which can be either function, global variable, another alias
+    // or bitcast of global value). It has the following form:
+    //
+    // @<Name> = alias [Linkage] [Visibility] <AliaseeTy> @<Aliasee>
+    //------------------------------------------------------------------
+
+    // Get aliasee value as llvm constant
+    const llvm::Constant *Aliasee = ga->getAliasee();
+
+    // Record alias entity
+    writeEntity(pred::alias::id, refmode);
+
+    // Serialize alias properties
+    string visibility = CsvGenerator::to_string(ga->getVisibility());
+    string linkage    = CsvGenerator::to_string(ga->getLinkage());
+    string aliasType  = CsvGenerator::to_string(ga->getType());
+
+    // Record visibility
+    if (!visibility.empty())
+        writeFact(pred::alias::visibility, refmode, visibility);
+
+    // Record linkage
+    if (!linkage.empty())
+        writeFact(pred::alias::linkage, refmode, linkage);
+
+    // Record type
+    writeFact(pred::alias::type, refmode, aliasType);
+
+    // Record aliasee
+    if (Aliasee) {
+        string aliasee = valueToString(Aliasee, ga->getParent()); // CHECK
+        writeFact(pred::alias::aliasee, refmode, aliasee);
+    }
+}
+
+
+void InstructionVisitor::visitGlobalVar(const GlobalVariable *gv, string &refmode)
+{
+    // Record global variable entity
+    writeEntity(pred::global_var::id, refmode);
+
+    // Serialize global variable properties
+    string visibility = CsvGenerator::to_string(gv->getVisibility());
+    string linkage    = CsvGenerator::to_string(gv->getLinkage());
+    string varType    = CsvGenerator::to_string(gv->getType()->getElementType());
+    string thrLocMode = CsvGenerator::to_string(gv->getThreadLocalMode());
+
+    // Record external linkage
+    if (!gv->hasInitializer() && gv->hasExternalLinkage())
+        writeFact(pred::global_var::linkage, refmode, "external");
+
+    // Record linkage
+    if (!linkage.empty())
+        writeFact(pred::global_var::linkage, refmode, linkage);
+
+    // Record visibility
+    if (!visibility.empty())
+        writeFact(pred::global_var::visibility, refmode, visibility);
+
+    // Record thread local mode
+    if (!thrLocMode.empty())
+        writeFact(pred::global_var::threadlocal_mode, refmode, thrLocMode);
+
+    // TODO: in lb schema - AddressSpace & hasUnnamedAddr properties
+    if (gv->isExternallyInitialized())
+        writeFact(pred::global_var::flag, refmode, "externally_initialized");
+
+    // Record flags and type
+    const char * flag = gv->isConstant() ? "constant": "global";
+
+    writeFact(pred::global_var::flag, refmode, flag);
+    writeFact(pred::global_var::type, refmode, varType);
+
+    // Record initializer
+    if (gv->hasInitializer()) {
+        string val = valueToString(gv->getInitializer(), gv->getParent()); // CHECK
+        writeFact(pred::global_var::initializer, refmode, val);
+    }
+
+    // Record section
+    if (gv->hasSection())
+        writeFact(pred::global_var::section, refmode, gv->getSection());
+
+    // Record alignment
+    if (gv->getAlignment())
+        writeFact(pred::global_var::align, refmode, gv->getAlignment());
+}
+
+
+
+//-------------------------------------------------------------------
+// Methods for recording different kinds of LLVM types.
+//-------------------------------------------------------------------
+
+
+void InstructionVisitor::visitType(const Type *type)
+{
+    // Record type sizes while skipping unsized types (e.g.,
+    // labels, functions)
+
+    if (type->isSized()) {
+        // Iterate over every cached data layout
+        foreach (const DataLayout *DL, csvGen->layouts)
+        {
+            // TODO: address the case when the data layout does
+            // not contain information about this type. This will
+            // happen when we analyze multiple compilation units
+            // (modules) at once.
+
+            uint64_t allocSize = DL->getTypeAllocSize(const_cast<Type *>(type));
+            uint64_t storeSize = DL->getTypeStoreSize(const_cast<Type *>(type));
+
+            // Store size of type in bytes
+            string typeRef = CsvGenerator::to_string(type);
+            writeFact(pred::type::alloc_size, typeRef, allocSize);
+            writeFact(pred::type::store_size, typeRef, storeSize);
+            break;
+        }
+    }
+
+    string type_signature = CsvGenerator::to_string(type);
+
+    // Record each different kind of type
+    switch (type->getTypeID()) { // Fallthrough is intended
+      case llvm::Type::VoidTyID:
+      case llvm::Type::LabelTyID:
+      case llvm::Type::MetadataTyID:
+          writeEntity(pred::primitive_type::id, type_signature);
+          break;
+      case llvm::Type::HalfTyID: // Fallthrough to all 6 floating point types
+      case llvm::Type::FloatTyID:
+      case llvm::Type::DoubleTyID:
+      case llvm::Type::X86_FP80TyID:
+      case llvm::Type::FP128TyID:
+      case llvm::Type::PPC_FP128TyID:
+          assert(type->isFloatingPointTy());
+          writeEntity(pred::fp_type::id, type_signature);
+          break;
+      case llvm::Type::IntegerTyID:
+          writeEntity(pred::integer_type::id, type_signature);
+          break;
+      case llvm::Type::FunctionTyID:
+          visitFunctionType(cast<FunctionType>(type));
+          break;
+      case llvm::Type::StructTyID:
+          visitStructType(cast<StructType>(type));
+          break;
+      case llvm::Type::ArrayTyID:
+          visitArrayType(cast<ArrayType>(type));
+          break;
+      case llvm::Type::PointerTyID:
+          visitPointerType(cast<PointerType>(type));
+          break;
+      case llvm::Type::VectorTyID:
+          visitVectorType(cast<VectorType>(type));
+          break;
+      case llvm::Type::X86_MMXTyID: // TODO: handle this type
+          break;
+      default:
+          type->dump();
+          llvm::errs() << "-" << type->getTypeID()
+                       << ": invalid type encountered.\n";
+    }
+}
+
+
+void InstructionVisitor::visitPointerType(const PointerType *ptrType)
+{
+    string refmode = CsvGenerator::to_string(ptrType);
+    string elementType = CsvGenerator::to_string(ptrType->getPointerElementType());
+
+    // Record pointer type entity
+    writeEntity(pred::ptr_type::id, refmode);
+
+    // Record pointer element type
+    writeFact(pred::ptr_type::component_type, refmode, elementType);
+
+    // Record pointer address space
+    if (unsigned addressSpace = ptrType->getPointerAddressSpace())
+        writeFact(pred::ptr_type::addr_space, refmode, addressSpace);
+}
+
+
+void InstructionVisitor::visitArrayType(const ArrayType *arrayType)
+{
+    string refmode = CsvGenerator::to_string(arrayType);
+    string componentType = CsvGenerator::to_string(arrayType->getArrayElementType());
+    size_t nElements = arrayType->getArrayNumElements();
+
+    // Record array type entity
+    writeEntity(pred::array_type::id, refmode);
+
+    // Record array component type
+    writeFact(pred::array_type::component_type, refmode, componentType);
+
+    // Record array type size
+    writeFact(pred::array_type::size, refmode, nElements);
+}
+
+
+void InstructionVisitor::visitStructType(const StructType *structType)
+{
+    string refmode = CsvGenerator::to_string(structType);
+    size_t nFields = structType->getStructNumElements();
+
+    // Record struct type entity
+    writeEntity(pred::struct_type::id, refmode);
+
+    if (structType->isOpaque()) {
+        // Opaque structs carry no info about their internal structure
+        writeProperty(pred::struct_type::opaque, refmode);
+    } else {
+        // Record struct field types
+        for (size_t i = 0; i < nFields; i++)
+        {
+            string fieldType = CsvGenerator::to_string(
+                structType->getStructElementType(i));
+
+            writeFact(pred::struct_type::field_type, refmode, fieldType, i);
+        }
+
+        // Record number of fields
+        writeFact(pred::struct_type::nfields, refmode, nFields);
+    }
+}
+
+
+void InstructionVisitor::visitFunctionType(const FunctionType *functionType)
+{
+    string signature   = CsvGenerator::to_string(functionType);
+    string returnType  = CsvGenerator::to_string(functionType->getReturnType());
+    size_t nParameters = functionType->getFunctionNumParams();
+
+    // Record function type entity
+    writeEntity(pred::func_type::id, signature);
+
+    // TODO: which predicate/entity do we need to update for varagrs?
+    if (functionType->isVarArg())
+        writeProperty(pred::func_type::varargs, signature);
+
+    // Record return type
+    writeFact(pred::func_type::return_type, signature, returnType);
+
+    // Record function formal parameters
+    for (size_t i = 0; i < nParameters; i++)
+    {
+        string paramType = CsvGenerator::to_string(functionType->getFunctionParamType(i));
+
+        writeFact(pred::func_type::param_type, signature, paramType, i);
+    }
+
+    // Record number of formal parameters
+    writeFact(pred::func_type::nparams, signature, nParameters);
+}
+
+
+void InstructionVisitor::visitVectorType(const VectorType *vectorType)
+{
+    string refmode = CsvGenerator::to_string(vectorType);
+    size_t nElements = vectorType->getVectorNumElements();
+    Type *componentType = vectorType->getVectorElementType();
+
+    // Record vector type entity
+    writeEntity(pred::vector_type::id, refmode);
+
+    // Record vector component type
+    string compTypeStr = CsvGenerator::to_string(componentType);
+    writeFact(pred::vector_type::component_type, refmode, compTypeStr);
+
+    // Record vector type size
+    writeFact(pred::vector_type::size, refmode, nElements);
+}
+
+
+void CsvGenerator::initStreams()
+{
+    using namespace predicates;
+
+    for (pred_t *pred : predicates::predicates())
+    {
+        operand_pred_t *operand_pred = dynamic_cast< operand_pred_t*>(pred);
+
+        if (operand_pred) {
+            path ipath = toPath(pred->c_str(), Operand::Type::IMMEDIATE);
+            path vpath = toPath(pred->c_str(), Operand::Type::VARIABLE);
+
+            // TODO: check if file open fails
+            csvFiles[ipath] = new ofstream(ipath.c_str(), ios_base::out);
+            csvFiles[vpath] = new ofstream(vpath.c_str(), ios_base::out);
+        }
+        else {
+            path path = toPath(pred->c_str());
+            csvFiles[path] = new ofstream(path.c_str(), ios_base::out);
+        }
+    }
+
+    // TODO: Consider closing streams and opening them lazily, so as
+    // not to exceed the maximum number of open file descriptors
 }

@@ -323,8 +323,8 @@ namespace predicates
     entity_pred_t call::instr_direct = "direct_call_instruction";
     entity_pred_t call::instr_indirect = "indirect_call_instruction";
     operand_pred_t call::function = "call_instruction:raw_function";
-    pred_t call::calling_conv = "call_instruction:calling_convention";
     operand_pred_t call::arg = "call_instruction:arg";
+    pred_t call::calling_conv = "call_instruction:calling_convention";
     pred_t call::ret_attr = "call_instruction:return_attribute";
     pred_t call::param_attr = "call_instruction:param_attribute";
     pred_t call::fn_attr = "call_instruction:function_attribute";
@@ -380,6 +380,7 @@ namespace predicates
 
     pred_t constant::expr = "constant_expression";
     pred_t constant::to_integer = "constant:to_int";
+
 
     std::set<entity_pred_t*> entity_predicates() {
         return EntityPredicateRegistry::getInstance()->items();
