@@ -35,3 +35,7 @@ bool operator> (Predicate &p1, Predicate &p2) {
 bool operator>= (Predicate &p1, Predicate &p2) {
     return p1.name >= p2.name;
 }
+
+std::ostream& operator<<(std::ostream& stream, const Predicate& pred) {
+    return stream << std::string(pred);
+}

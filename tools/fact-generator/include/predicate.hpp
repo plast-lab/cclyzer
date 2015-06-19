@@ -84,6 +84,8 @@ class Predicate
     friend bool operator< (Predicate &p1, Predicate &p2);
     friend bool operator>= (Predicate &p1, Predicate &p2);
 
+    friend std::ostream& operator<<(std::ostream& stream, const Predicate&p);
+
     virtual ~Predicate() {}
 
   private:
