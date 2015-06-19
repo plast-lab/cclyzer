@@ -5,6 +5,10 @@ template<> PredicateRegistry *Singleton<PredicateRegistry>::INSTANCE = NULL;
 template<> EntityPredicateRegistry *Singleton<EntityPredicateRegistry>::INSTANCE = NULL;
 template<> OperandPredicateRegistry *Singleton<OperandPredicateRegistry>::INSTANCE = NULL;
 
+// Two suffixes for the two variants of each operand predicate
+const char *OperandPredicate::CONSTANT_SUFFIX = "by_immediate";
+const char *OperandPredicate::VARIABLE_SUFFIX = "by_variable";
+
 
 // Comparing predicates
 

@@ -47,10 +47,6 @@ class CsvGenerator
         return prepend_dir(fileMappingScheme->toPath(predName));
     }
 
-    path toPath(const char * predName, Operand::Type type) const {
-        return prepend_dir(fileMappingScheme->toPath(predName, type));
-    }
-
     ofstream* getCsvFile(const char *predname) {
         return getCsvFile(toPath(predname));
     }
@@ -165,10 +161,10 @@ class CsvGenerator
     void writeOperandFact(const char *predName,
                           const std::string& entityRefmode,
                           const std::string& operandRefmode,
-                          Operand::Type operandType, int index = -1)
+                          int index = -1)
     {
         // Locate CSV file for the given predicate
-        ofstream *csvFile = getCsvFile(toPath(predName, operandType));
+        ofstream *csvFile = getCsvFile(toPath(predName));
 
         // Append fact while differentiating between ordinary and
         // indexed predicates

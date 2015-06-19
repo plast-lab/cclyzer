@@ -109,11 +109,31 @@ class EntityPredicate : public Predicate
 class OperandPredicate : public Predicate
 {
   public:
-    OperandPredicate(const char *name) : Predicate(name) {
+    OperandPredicate(const char *name)
+        : Predicate(name)
+        , constantOperand((std::string(name) + ":" + CONSTANT_SUFFIX).c_str())
+        , variableOperand((std::string(name) + ":" + VARIABLE_SUFFIX).c_str())
+    {
         OperandPredicateRegistry::getInstance()->allInstances.insert(this);
     }
 
-    virtual ~OperandPredicate() {};
+    virtual ~OperandPredicate() {}
+
+    // Transformation functions
+    const Predicate &asConstant() const {
+        return constantOperand;
+    }
+
+    const Predicate &asVariable() const {
+        return variableOperand;
+    }
+
+  private:
+    const Predicate constantOperand;
+    const Predicate variableOperand;
+
+    static const char *CONSTANT_SUFFIX;
+    static const char *VARIABLE_SUFFIX;
 };
 
 #endif

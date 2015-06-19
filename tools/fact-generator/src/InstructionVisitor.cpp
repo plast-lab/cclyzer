@@ -57,7 +57,7 @@ void InstructionVisitor::writeInstrOperand(const operand_pred_t &predicate, cons
     const Type * type = Operand->getType();
 
     // Operand category is either constant or variable
-    Operand::Type category;
+    const char *predname;
 
     if (const Constant *c = dyn_cast<Constant>(Operand)) {
         // Compute refmode for constant
@@ -66,19 +66,19 @@ void InstructionVisitor::writeInstrOperand(const operand_pred_t &predicate, cons
                 << ':' << valueToString(c, Mod);
 
         // Record constant operand
-        category = Operand::Type::IMMEDIATE;
+        predname = predicate.asConstant().c_str();
         csvGen->recordConstant(refmode.str(), type);
     }
     else {
         refmode << instrId << valueToString(Operand, Mod);
 
         // Record variable operand
-        category = Operand::Type::VARIABLE;
+        predname = predicate.asVariable().c_str();
         csvGen->recordVariable(refmode.str(), type);
     }
 
     // Write operand fact
-    csvGen->writeOperandFact(predicate.c_str(), instrNum, refmode.str(), category, index);
+    csvGen->writeOperandFact(predname, instrNum, refmode.str(), index);
 }
 
 void InstructionVisitor::visitTruncInst(llvm::TruncInst &I) {
@@ -1108,11 +1108,11 @@ void CsvGenerator::initStreams()
         operand_pred_t *operand_pred = dynamic_cast< operand_pred_t*>(pred);
 
         if (operand_pred) {
-            path ipath = toPath(pred->c_str(), Operand::Type::IMMEDIATE);
-            path vpath = toPath(pred->c_str(), Operand::Type::VARIABLE);
+            path cpath = toPath(operand_pred->asConstant().c_str());
+            path vpath = toPath(operand_pred->asVariable().c_str());
 
             // TODO: check if file open fails
-            csvFiles[ipath] = new ofstream(ipath.c_str(), ios_base::out);
+            csvFiles[cpath] = new ofstream(cpath.c_str(), ios_base::out);
             csvFiles[vpath] = new ofstream(vpath.c_str(), ios_base::out);
         }
         else {

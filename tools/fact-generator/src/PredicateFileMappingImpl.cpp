@@ -52,39 +52,3 @@ fs::path PredicateFileMappingImpl::toPath(const char *predName) const
 
     return cache[key] = path;
 }
-
-
-fs::path PredicateFileMappingImpl::toPath(const char *predName, Operand::Type type) const
-{
-    using namespace std;
-    typedef boost::unordered_map<cachekey_t, pair<fs::path, fs::path> > cache_t;
-
-    // Cache of previous results
-    static cache_t cache;
-
-    // Create cache key
-    cachekey_t key = make_pair(this, predName);
-
-    // Get any previously returned path
-    cache_t::iterator cachedValue = cache.find(key);
-
-    if (cachedValue != cache.end())
-        return type == Operand::Type::VARIABLE
-            ? cachedValue->second.first
-            : cachedValue->second.second;
-
-    string basename(predName);
-
-    // Replace all ':' characters with '-'
-    replace(basename.begin(), basename.end(), ':', '-');
-
-    // Add directory and extension
-    fs::path vpath = predicatesDir / basename;
-    fs::path ipath = vpath;
-
-    vpath += varSuffix + extension;
-    ipath += immSuffix + extension;
-
-    cache[key] = make_pair(vpath, ipath);
-    return type == Operand::Type::VARIABLE ? vpath : ipath;
-}

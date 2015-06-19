@@ -4,11 +4,6 @@
 #include <boost/filesystem.hpp>
 #include "Singleton.hpp"
 
-// There are two types of instruction operands
-namespace Operand {
-    enum class Type { IMMEDIATE, VARIABLE };
-}
-
 // A strategy to map predicate names to filesystem paths
 class PredicateFileMapping
 {
@@ -19,7 +14,6 @@ class PredicateFileMapping
     virtual ~PredicateFileMapping() {}
 
     virtual path toPath(const char * predName) const = 0;
-    virtual path toPath(const char * predName, Operand::Type type) const = 0;
 
     static PredicateFileMapping &DEFAULT_SCHEME;
 };
@@ -47,7 +41,6 @@ class PredicateFileMappingImpl : public PredicateFileMapping,
     virtual ~PredicateFileMappingImpl() {}
 
     virtual path toPath(const char * predName) const;
-    virtual path toPath(const char * predName, Operand::Type type) const;
 
   private:
     /* CSV file extension */
