@@ -20,7 +20,7 @@ class InstructionVisitor : public llvm::InstVisitor<InstructionVisitor>
     typedef predicates::operand_pred_t operand_pred_t;
 
     template<class ValType>
-    void writeFact(pred_t predicate,
+    void writeFact(const pred_t &predicate,
                    const std::string& entity,
                    const ValType& value, int index = -1)
     {
@@ -178,31 +178,31 @@ private:
 
     // Instruction-specific write functions
 
-    void recordInstruction(entity_pred_t instrType) {
+    void recordInstruction(const entity_pred_t &instrType) {
         csvGen->writeEntity(instrType.c_str(), instrNum);
     }
 
-    void writeInstrProperty(pred_t predicate) {
+    void writeInstrProperty(const pred_t &predicate) {
         csvGen->writeEntity(predicate.c_str(), instrNum);
     }
 
     template<class ValType>
-    void writeInstrProperty(pred_t predicate, const ValType& value, int index = -1)
+    void writeInstrProperty(const pred_t &predicate, const ValType& value, int index = -1)
     {
         csvGen->writeSimpleFact(predicate.c_str(), instrNum, value, index);
     }
 
-    void writeInstrOperand(operand_pred_t predicate, const llvm::Value *Operand, int index = -1);
-    void writeInstrValue(pred_t predicate, const llvm::Value *Value, int index = -1);
+    void writeInstrOperand(const operand_pred_t &predicate, const llvm::Value *Operand, int index = -1);
+    void writeInstrValue(const pred_t &predicate, const llvm::Value *Value, int index = -1);
 
 
     // Auxiliary methods
 
-    void writeProperty(pred_t predicate, const std::string& refmode) {
+    void writeProperty(const pred_t &predicate, const std::string& refmode) {
         csvGen->writeEntity(predicate.c_str(), refmode);
     }
 
-    void writeEntity(entity_pred_t predicate, const std::string& refmode) {
+    void writeEntity(const entity_pred_t &predicate, const std::string& refmode) {
         csvGen->writeEntity(predicate.c_str(), refmode);
     }
 

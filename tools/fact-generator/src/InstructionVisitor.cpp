@@ -23,7 +23,7 @@ namespace pred = predicates;
 
 //TODO: Remove these if(strlen(...)) checks
 
-void InstructionVisitor::writeInstrValue(pred_t predicate, const Value * Val, int index)
+void InstructionVisitor::writeInstrValue(const pred_t &predicate, const Value * Val, int index)
 {
     // Value refmode and type
     ostringstream refmode;
@@ -50,7 +50,7 @@ void InstructionVisitor::writeInstrValue(pred_t predicate, const Value * Val, in
     writeInstrProperty(predicate, refmode.str(), index);
 }
 
-void InstructionVisitor::writeInstrOperand(operand_pred_t predicate, const Value * Operand, int index)
+void InstructionVisitor::writeInstrOperand(const operand_pred_t &predicate, const Value * Operand, int index)
 {
     // Operand refmode and type
     ostringstream refmode;
@@ -571,7 +571,7 @@ void InstructionVisitor::visitLandingPadInst(LandingPadInst &LI)
     // #clauses
     for (unsigned i = 0; i < LI.getNumClauses(); ++i)
     {
-        pred_t pred_clause = LI.isCatch(i)
+        const pred_t &pred_clause = LI.isCatch(i)
             ? pred::landingpad::catch_clause
             : pred::landingpad::filter_clause;
 

@@ -63,7 +63,7 @@ class OperandPredicateRegistry : public Singleton<OperandPredicateRegistry>,
 class Predicate
 {
   public:
-    Predicate(const char *str) : name(str) {
+    Predicate(const char *name) : name(name) {
         PredicateRegistry::getInstance()->allInstances.insert(this);
     }
 
@@ -96,7 +96,7 @@ class Predicate
 class EntityPredicate : public Predicate
 {
   public:
-    EntityPredicate(const char *str) : Predicate(str) {
+    EntityPredicate(const char *name) : Predicate(name) {
         EntityPredicateRegistry::getInstance()->allInstances.insert(this);
     }
 
@@ -109,7 +109,7 @@ class EntityPredicate : public Predicate
 class OperandPredicate : public Predicate
 {
   public:
-    OperandPredicate(const char *str) : Predicate(str) {
+    OperandPredicate(const char *name) : Predicate(name) {
         OperandPredicateRegistry::getInstance()->allInstances.insert(this);
     }
 

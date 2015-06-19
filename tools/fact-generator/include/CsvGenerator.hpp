@@ -34,7 +34,7 @@ class CsvGenerator
 
     /* Filesystem path computation  */
 
-    path prepend_dir(path p)
+    path prepend_dir(path p) const
     {
         using namespace boost::filesystem;
 
@@ -43,11 +43,11 @@ class CsvGenerator
         return p;
     }
 
-    path toPath(const char * predName) {
+    path toPath(const char * predName) const {
         return prepend_dir(fileMappingScheme->toPath(predName));
     }
 
-    path toPath(const char * predName, Operand::Type type) {
+    path toPath(const char * predName, Operand::Type type) const {
         return prepend_dir(fileMappingScheme->toPath(predName, type));
     }
 
