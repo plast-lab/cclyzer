@@ -217,9 +217,6 @@ class CsvGenerator
 
 
     boost::unordered_set<const llvm::Type *> types;
-
-    static const char * simplePredicates[];
-    static const char * operandPredicates[];
 };
 
 #endif
