@@ -12,11 +12,10 @@
 #include <llvm/IR/GlobalValue.h>
 #include <llvm/IR/GlobalVariable.h>
 #include <string>
+#include <vector>
 
 #include "AuxiliaryMethods.hpp" // TODO: remove
-#include "Options.hpp"
-#include "PredicateFilePolicy.hpp"
-
+#include "FactWriter.hpp"
 
 class CsvGenerator
 {
@@ -26,38 +25,7 @@ class CsvGenerator
 
     /* Common type aliases */
 
-    typedef boost::filesystem::path path;
-    typedef boost::filesystem::ofstream ofstream;
-    typedef boost::unordered_map<path, ofstream*> stream_cache_t;
     typedef boost::unordered_map<std::string, const llvm::Type *> type_cache_t;
-
-
-    /* Filesystem path computation  */
-
-    path prepend_dir(path p) const
-    {
-        using namespace boost::filesystem;
-
-        p = outDir / p;
-        create_directory(p.parent_path());
-        return p;
-    }
-
-    path toPath(const char * predName) const {
-        return prepend_dir(fileMappingScheme->toPath(predName));
-    }
-
-    ofstream* getCsvFile(const char *predname) {
-        return getCsvFile(toPath(predname));
-    }
-
-    ofstream* getCsvFile(path filename)
-    {
-        if (csvFiles.find(filename) == csvFiles.end())
-            csvFiles[filename] = new ofstream(filename.c_str(), std::ios_base::out);
-
-        return csvFiles[filename];
-    }
 
 
     /* Recording constants and variables */
@@ -98,86 +66,11 @@ class CsvGenerator
 
   public:
     /* Constructor must initialize output file streams */
-    CsvGenerator(PredicateFilePolicy &scheme, Options &options)
-        : fileMappingScheme(&scheme)
+    CsvGenerator(FactWriter &writer) : writer(writer)
     {
-        // Set fields specified by command-line options
-        outDir = options.getOutputDirectory();
-        delim  = options.getDelimiter();
-
         // Initialize output file streams
         initStreams();
     }
-
-    /* Destructor must flush and close all output file streams */
-    ~CsvGenerator()
-    {
-        for(auto &kv : csvFiles)
-        {
-            ofstream *file = kv.second;
-            file->flush();
-            file->close();
-
-            delete file;
-        }
-    }
-
-
-
-    /* Basic routines for appending new facts to CSV files */
-
-    void writeEntity(const char *entityName,
-                     const std::string& entityRefmode)
-    {
-        // Locate CSV file for the given predicate
-        ofstream *csvFile = getCsvFile(entityName);
-
-        // Append new fact
-        (*csvFile) << entityRefmode << "\n";
-    }
-
-
-    template<class ValType>
-    void writeSimpleFact(const char *predName,
-                         const std::string& entityRefmode,
-                         const ValType& valueRefmode, int index = -1)
-    {
-        // Locate CSV file for the given predicate
-        ofstream *csvFile = getCsvFile(predName);
-
-        // Append fact while differentiating between ordinary and
-        // indexed predicates
-
-        if (index == -1)
-            (*csvFile) << entityRefmode
-                       << delim << valueRefmode << "\n";
-        else
-            (*csvFile) << entityRefmode
-                       << delim << index
-                       << delim << valueRefmode << "\n";
-    }
-
-
-    void writeOperandFact(const char *predName,
-                          const std::string& entityRefmode,
-                          const std::string& operandRefmode,
-                          int index = -1)
-    {
-        // Locate CSV file for the given predicate
-        ofstream *csvFile = getCsvFile(predName);
-
-        // Append fact while differentiating between ordinary and
-        // indexed predicates
-
-        if (index == -1)
-            (*csvFile) << entityRefmode
-                       << delim << operandRefmode << "\n";
-        else
-            (*csvFile) << entityRefmode
-                       << delim << index
-                       << delim << operandRefmode << "\n";
-    }
-
 
     // TODO: consider moving all these complex methods that deal with
     // predicate names to separate class
@@ -185,20 +78,11 @@ class CsvGenerator
     void writeVarsTypesAndImmediates();
 
   private:
-    /* Output directory */
-    path outDir;
-
-    /* Column Delimiter */
-    std::string delim;
-
-    /* Strategy pattern for mapping predicate names to filesystem paths */
-    PredicateFilePolicy *fileMappingScheme;
-
     /* Initialize output file streams */
     void initStreams();
 
-    /* Cache of file descriptors with path as a key */
-    stream_cache_t csvFiles;
+    /* Fact writer */
+    FactWriter &writer;
 
     /* Caches for variable and constant types */
     type_cache_t variableTypes;
@@ -210,7 +94,6 @@ class CsvGenerator
     std::string getRefmodeForValue(const llvm::Module * Mod, const llvm::Value * Val, std::string& path){
         return "<" + path + ">:" + auxiliary_methods::valueToString(Val, Mod);
     }
-
 
     boost::unordered_set<const llvm::Type *> types;
 };

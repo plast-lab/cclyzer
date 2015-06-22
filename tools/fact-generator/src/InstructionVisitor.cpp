@@ -17,6 +17,7 @@ using namespace boost;
 using namespace auxiliary_methods;
 
 namespace pred = predicates;
+namespace fs = boost::filesystem;
 
 //TODO: why do we store the volatile property with two different ways?
 //      (see writeVolatileFlag and :volatile for some entities)
@@ -78,7 +79,11 @@ void InstructionVisitor::writeInstrOperand(const operand_pred_t &predicate, cons
     }
 
     // Write operand fact
-    csvGen->writeOperandFact(predname, instrNum, refmode.str(), index);
+    if (index == -1) {
+        writer.writeFact(predname, instrNum, refmode.str());
+    } else {
+        writer.writeFact(predname, instrNum, refmode.str(), index);
+    }
 }
 
 void InstructionVisitor::visitTruncInst(llvm::TruncInst &I) {
@@ -1103,23 +1108,25 @@ void CsvGenerator::initStreams()
 {
     using namespace predicates;
 
+    std::vector<const char *> all_predicates;
+
     for (pred_t *pred : predicates::predicates())
     {
         operand_pred_t *operand_pred = dynamic_cast< operand_pred_t*>(pred);
 
         if (operand_pred) {
-            path cpath = toPath(operand_pred->asConstant().c_str());
-            path vpath = toPath(operand_pred->asVariable().c_str());
+            pred_t cpred = operand_pred->asConstant();
+            pred_t vpred = operand_pred->asVariable();
 
-            // TODO: check if file open fails
-            csvFiles[cpath] = new ofstream(cpath.c_str(), ios_base::out);
-            csvFiles[vpath] = new ofstream(vpath.c_str(), ios_base::out);
+            all_predicates.push_back(cpred.c_str());
+            all_predicates.push_back(vpred.c_str());
         }
         else {
-            path path = toPath(pred->c_str());
-            csvFiles[path] = new ofstream(path.c_str(), ios_base::out);
+            all_predicates.push_back(pred->c_str());
         }
     }
+
+    writer.init_streams(all_predicates);
 
     // TODO: Consider closing streams and opening them lazily, so as
     // not to exceed the maximum number of open file descriptors

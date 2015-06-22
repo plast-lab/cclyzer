@@ -24,7 +24,11 @@ class InstructionVisitor : public llvm::InstVisitor<InstructionVisitor>
                    const std::string& entity,
                    const ValType& value, int index = -1)
     {
-        csvGen->writeSimpleFact(predicate.c_str(), entity, value, index);
+        if (index == -1) {
+            writer.writeFact(predicate.c_str(), entity, value);
+        } else {
+            writer.writeFact(predicate.c_str(), entity, value, index);
+        }
     }
 
     template<typename T>
@@ -63,7 +67,7 @@ class InstructionVisitor : public llvm::InstVisitor<InstructionVisitor>
 
   public:
     InstructionVisitor(CsvGenerator *generator, const llvm::Module *M)
-        : csvGen(generator), Mod(M) {}
+        : csvGen(generator), Mod(M), writer(generator->writer) {}
 
     /* Complex fact writing methods */
 
@@ -176,20 +180,27 @@ class InstructionVisitor : public llvm::InstVisitor<InstructionVisitor>
 
 private:
 
+    /* Fact writer */
+    FactWriter &writer;
+
     // Instruction-specific write functions
 
     void recordInstruction(const entity_pred_t &instrType) {
-        csvGen->writeEntity(instrType.c_str(), instrNum);
+        writer.writeFact(instrType.c_str(), instrNum);
     }
 
     void writeInstrProperty(const pred_t &predicate) {
-        csvGen->writeEntity(predicate.c_str(), instrNum);
+        writer.writeFact(predicate.c_str(), instrNum);
     }
 
     template<class ValType>
     void writeInstrProperty(const pred_t &predicate, const ValType& value, int index = -1)
     {
-        csvGen->writeSimpleFact(predicate.c_str(), instrNum, value, index);
+        if (index == -1) {
+            writer.writeFact(predicate.c_str(), instrNum, value);
+        } else {
+            writer.writeFact(predicate.c_str(), instrNum, value, index);
+        }
     }
 
     void writeInstrOperand(const operand_pred_t &predicate, const llvm::Value *Operand, int index = -1);
@@ -199,11 +210,11 @@ private:
     // Auxiliary methods
 
     void writeProperty(const pred_t &predicate, const std::string& refmode) {
-        csvGen->writeEntity(predicate.c_str(), refmode);
+        writer.writeFact(predicate.c_str(), refmode);
     }
 
     void writeEntity(const entity_pred_t &predicate, const std::string& refmode) {
-        csvGen->writeEntity(predicate.c_str(), refmode);
+        writer.writeFact(predicate.c_str(), refmode);
     }
 
     const char* writePredicate(unsigned predicate);

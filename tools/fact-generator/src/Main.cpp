@@ -8,6 +8,7 @@
 #include "llvm/IRReader/IRReader.h"
 #include "llvm/Support/SourceMgr.h"
 #include "CsvGenerator.hpp"
+#include "FactWriter.hpp"
 #include "PredicateFilePolicy.hpp"
 #include "Options.hpp"
 
@@ -24,11 +25,11 @@ int main(int argc, char *argv[])
     // Parse command line
     Options options(argc, argv);
 
-    // Select predicate to file mapping strategy
-    PredicateFilePolicy mappingScheme = PredicateFilePolicy();
+    // Create fact writer
+    FactWriter writer(options);
 
     // Create CSV generator
-    CsvGenerator csvGen(mappingScheme, options);
+    CsvGenerator csvGen(writer);
 
     // Loop over each input file
     foreach(fs::path inputFile, options.getInputFiles())
