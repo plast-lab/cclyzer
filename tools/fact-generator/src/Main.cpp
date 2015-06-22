@@ -8,7 +8,7 @@
 #include "llvm/IRReader/IRReader.h"
 #include "llvm/Support/SourceMgr.h"
 #include "CsvGenerator.hpp"
-#include "PredicateFileMapping.hpp"
+#include "PredicateFilePolicy.hpp"
 #include "Options.hpp"
 
 #define foreach BOOST_FOREACH
@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
     Options options(argc, argv);
 
     // Select predicate to file mapping strategy
-    PredicateFileMapping &mappingScheme = PredicateFileMapping::DEFAULT_SCHEME;
+    PredicateFilePolicy mappingScheme = PredicateFilePolicy();
 
     // Create CSV generator
     CsvGenerator csvGen(mappingScheme, options);

@@ -15,7 +15,7 @@
 
 #include "AuxiliaryMethods.hpp" // TODO: remove
 #include "Options.hpp"
-#include "PredicateFileMapping.hpp"
+#include "PredicateFilePolicy.hpp"
 
 
 class CsvGenerator
@@ -98,7 +98,7 @@ class CsvGenerator
 
   public:
     /* Constructor must initialize output file streams */
-    CsvGenerator(PredicateFileMapping &scheme, Options &options)
+    CsvGenerator(PredicateFilePolicy &scheme, Options &options)
         : fileMappingScheme(&scheme)
     {
         // Set fields specified by command-line options
@@ -164,7 +164,7 @@ class CsvGenerator
                           int index = -1)
     {
         // Locate CSV file for the given predicate
-        ofstream *csvFile = getCsvFile(toPath(predName));
+        ofstream *csvFile = getCsvFile(predName);
 
         // Append fact while differentiating between ordinary and
         // indexed predicates
@@ -192,7 +192,7 @@ class CsvGenerator
     std::string delim;
 
     /* Strategy pattern for mapping predicate names to filesystem paths */
-    PredicateFileMapping *fileMappingScheme;
+    PredicateFilePolicy *fileMappingScheme;
 
     /* Initialize output file streams */
     void initStreams();
