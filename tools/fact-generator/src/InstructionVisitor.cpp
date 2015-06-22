@@ -318,7 +318,7 @@ void InstructionVisitor::visitInvokeInst(InvokeInst &II)
 
     // TODO: Why not CallingConv::C
     if (II.getCallingConv() != CallingConv::C) {
-        string cconv = to_string(II.getCallingConv());
+        string cconv = CsvGenerator::to_string(II.getCallingConv());
         writeInstrProperty(pred::invoke::calling_conv, cconv);
     }
 
@@ -602,7 +602,7 @@ void InstructionVisitor::visitCallInst(CallInst &CI)
         writeInstrProperty(pred::call::tail);
 
     if (CI.getCallingConv() != CallingConv::C) {
-        string cconv = to_string(CI.getCallingConv());
+        string cconv = CsvGenerator::to_string(CI.getCallingConv());
         writeInstrProperty(pred::call::calling_conv, cconv);
     }
 
