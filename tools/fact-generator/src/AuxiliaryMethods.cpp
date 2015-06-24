@@ -65,7 +65,7 @@ namespace auxiliary_methods {
         string rv;
         raw_string_ostream rso(rv);
         WriteAsOperand(rso, Val, false, Mod);
-        return rv;
+        return rso.str();
     }
 
 }
