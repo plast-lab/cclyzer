@@ -56,9 +56,9 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
         types.insert(fi->getFunctionType());
 
         // Serialize function properties
-        string visibility = to_string(fi->getVisibility());
-        string linkage = to_string(fi->getLinkage());
-        string typeSignature = to_string(fi->getFunctionType());
+        refmode_t visibility = refmodeOf(fi->getVisibility());
+        refmode_t linkage = refmodeOf(fi->getLinkage());
+        refmode_t typeSignature = refmodeOf(fi->getFunctionType());
 
         // Record function type signature
         IV.writeFact(pred::function::type, funcRef, typeSignature);
@@ -77,15 +77,17 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
             IV.writeFact(pred::function::gc, funcRef, fi->getGC());
 
         // Record calling convection if it not defaults to C
-        if (fi->getCallingConv() != CallingConv::C)
-            IV.writeFact(pred::function::calling_conv, funcRef, to_string(fi->getCallingConv()));
+        if (fi->getCallingConv() != CallingConv::C) {
+            refmode_t cconv = refmodeOf(fi->getCallingConv());
+            IV.writeFact(pred::function::calling_conv, funcRef, cconv);
+        }
 
         // Record function name
         IV.writeFact(pred::function::name, funcRef, "@" + fi->getName().str());
 
         // Address not significant
         if (fi->hasUnnamedAddr())
-            IV.writeProperty(pred::function::unnamed_addr, funcRef);
+            IV.writeFact(pred::function::unnamed_addr, funcRef);
 
         // Record function attributes TODO
         const AttributeSet &Attrs = fi->getAttributes();
@@ -102,12 +104,12 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
 
         // Nothing more to do for function declarations
         if (fi->isDeclaration()) {
-            IV.writeEntity(pred::function::id_decl, funcRef); // record function declaration
+            IV.writeFact(pred::function::id_decl, funcRef); // record function declaration
             continue;
         }
 
         // Record function definition entity
-        IV.writeEntity(pred::function::id_defn, funcRef);
+        IV.writeFact(pred::function::id_defn, funcRef);
 
         // Record section
         if(fi->hasSection())
@@ -138,7 +140,7 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
             string bbRef = funcPrefix + valueToString(&bb, Mod);
 
             // Record basic block entry as a label
-            IV.writeEntity(pred::variable::id, bbRef);
+            IV.writeFact(pred::variable::id, bbRef);
             IV.writeFact(pred::variable::type, bbRef, "label");
 
             // Record basic block predecessors
@@ -208,8 +210,8 @@ void CsvGenerator::writeVarsTypesAndImmediates()
         const Type *type = kv.second;
 
         // Record constant entity with its type
-        IV.writeEntity(pred::constant::id, refmode);
-        IV.writeFact(pred::constant::type, refmode, to_string(type));
+        IV.writeFact(pred::constant::id, refmode);
+        IV.writeFact(pred::constant::type, refmode, refmodeOf(type));
 
         types.insert(type);
     }
@@ -220,8 +222,8 @@ void CsvGenerator::writeVarsTypesAndImmediates()
         const Type *type = kv.second;
 
         // Record variable entity with its type
-        IV.writeEntity(pred::variable::id, refmode);
-        IV.writeFact(pred::variable::type, refmode, to_string(type));
+        IV.writeFact(pred::variable::id, refmode);
+        IV.writeFact(pred::variable::type, refmode, refmodeOf(type));
 
         types.insert(type);
     }
@@ -233,112 +235,12 @@ void CsvGenerator::writeVarsTypesAndImmediates()
     unordered_set<const llvm::Type *> collectedTypes = collector(types);
 
     // Add basic primitive types
-    IV.writeEntity(pred::primitive_type::id, "void");
-    IV.writeEntity(pred::primitive_type::id, "label");
-    IV.writeEntity(pred::primitive_type::id, "metadata");
-    IV.writeEntity(pred::primitive_type::id, "x86mmx");
+    IV.writeFact(pred::primitive_type::id, "void");
+    IV.writeFact(pred::primitive_type::id, "label");
+    IV.writeFact(pred::primitive_type::id, "metadata");
+    IV.writeFact(pred::primitive_type::id, "x86mmx");
 
     // Record each type encountered
     foreach (const Type *type, collectedTypes)
        IV.visitType(type);
-}
-
-
-
-//-------------------------------------------------------------------
-// Static serializing methods for various LLVM enum-like types
-//-------------------------------------------------------------------
-
-string CsvGenerator::to_string(GlobalValue::LinkageTypes LT)
-{
-    const char *linkTy;
-
-    switch (LT) {
-      case GlobalValue::ExternalLinkage:      linkTy = "external";        break;
-      case GlobalValue::PrivateLinkage:       linkTy = "private";         break;
-      case GlobalValue::LinkerPrivateLinkage: linkTy = "linker_private";  break;
-      case GlobalValue::LinkerPrivateWeakLinkage:
-          linkTy = "linker_private_weak";
-          break;
-      case GlobalValue::InternalLinkage:      linkTy = "internal";        break;
-      case GlobalValue::LinkOnceAnyLinkage:   linkTy = "linkonce";        break;
-      case GlobalValue::LinkOnceODRLinkage:   linkTy = "linkonce_odr";    break;
-      case GlobalValue::WeakAnyLinkage:       linkTy = "weak";            break;
-      case GlobalValue::WeakODRLinkage:       linkTy = "weak_odr";        break;
-      case GlobalValue::CommonLinkage:        linkTy = "common";          break;
-      case GlobalValue::AppendingLinkage:     linkTy = "appending";       break;
-      case GlobalValue::ExternalWeakLinkage:  linkTy = "extern_weak";     break;
-      case GlobalValue::AvailableExternallyLinkage:
-          linkTy = "available_externally";
-          break;
-      default: linkTy = "";   break;
-    }
-    return linkTy;
-}
-
-
-string CsvGenerator::to_string(GlobalValue::VisibilityTypes Vis)
-{
-    const char *visibility;
-
-    switch (Vis) {
-      case GlobalValue::DefaultVisibility:    visibility = "default";     break;
-      case GlobalValue::HiddenVisibility:     visibility = "hidden";      break;
-      case GlobalValue::ProtectedVisibility:  visibility = "protected";   break;
-      default: visibility = "";   break;
-    }
-
-    return visibility;
-}
-
-
-string CsvGenerator::to_string(GlobalVariable::ThreadLocalMode TLM)
-{
-    const char *tlm;
-
-    switch (TLM) {
-      case GlobalVariable::NotThreadLocal:
-          tlm = "";
-          break;
-      case GlobalVariable::GeneralDynamicTLSModel:
-          tlm = "thread_local";
-          break;
-      case GlobalVariable::LocalDynamicTLSModel:
-          tlm = "thread_local(localdynamic)";
-          break;
-      case GlobalVariable::InitialExecTLSModel:
-          tlm = "thread_local(initialexec)";
-          break;
-      case GlobalVariable::LocalExecTLSModel:
-          tlm = "thread_local(localexec)";
-          break;
-      default: tlm = ""; break;
-    }
-    return tlm;
-}
-
-
-string CsvGenerator::to_string(CallingConv::ID cc)
-{
-    string conv;
-
-    switch (cc) {
-        //TODO:CallingConv::C
-      case CallingConv::Fast:             conv =  "fastcc";           break;
-      case CallingConv::Cold:             conv =  "coldcc";           break;
-      case CallingConv::X86_FastCall:     conv =  "x86_fastcallcc";   break;
-      case CallingConv::X86_StdCall:      conv =  "x86_stdcallcc";    break;
-      case CallingConv::X86_ThisCall:     conv =  "x86_thiscallcc";   break;
-      case CallingConv::Intel_OCL_BI:     conv =  "intel_ocl_bicc";   break;
-      case CallingConv::ARM_AAPCS:        conv =  "arm_aapcscc";      break;
-      case CallingConv::ARM_AAPCS_VFP:    conv =  "arm_aapcs_vfpcc";  break;
-      case CallingConv::ARM_APCS:         conv =  "arm_apcscc";       break;
-      case CallingConv::MSP430_INTR:      conv =  "msp430_intrcc";    break;
-      case CallingConv::PTX_Device:       conv =  "tx_device";        break;
-      case CallingConv::PTX_Kernel:       conv =  "ptx_kernel";       break;
-      default:
-          conv = "cc" + static_cast<ostringstream*>(&(ostringstream() << cc))->str();
-          break;
-    }
-    return conv;
 }

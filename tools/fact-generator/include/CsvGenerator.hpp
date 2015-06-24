@@ -16,6 +16,7 @@
 
 #include "AuxiliaryMethods.hpp" // TODO: remove
 #include "FactWriter.hpp"
+#include "RefmodePolicy.hpp"
 
 class CsvGenerator
 {
@@ -26,7 +27,6 @@ class CsvGenerator
     /* Common type aliases */
 
     typedef boost::unordered_map<std::string, const llvm::Type *> type_cache_t;
-
 
     /* Recording constants and variables */
 
@@ -39,15 +39,24 @@ class CsvGenerator
     }
 
 
-    /* Serializing methods */
+    inline refmode_t refmodeOf(llvm::GlobalValue::LinkageTypes LT) {
+        return ref.refmodeOf(LT);
+    }
 
-    static std::string to_string(llvm::GlobalValue::LinkageTypes LT);
-    static std::string to_string(llvm::GlobalValue::VisibilityTypes Vis);
-    static std::string to_string(llvm::GlobalVariable::ThreadLocalMode TLM);
-    static std::string to_string(llvm::CallingConv::ID CC);
+    inline refmode_t refmodeOf(llvm::GlobalValue::VisibilityTypes Vis) {
+        return ref.refmodeOf(Vis);
+    }
 
-    static std::string to_string(const llvm::Type *type) {
-        return auxiliary_methods::printType(type);
+    inline refmode_t refmodeOf(llvm::GlobalVariable::ThreadLocalMode TLM) {
+        return ref.refmodeOf(TLM);
+    }
+
+    inline refmode_t refmodeOf(llvm::CallingConv::ID CC) {
+        return ref.refmodeOf(CC);
+    }
+
+    inline refmode_t refmodeOf(const llvm::Type *type) {
+        return ref.refmodeOf(type);
     }
 
     /**
@@ -83,6 +92,9 @@ class CsvGenerator
 
     /* Fact writer */
     FactWriter &writer;
+
+    /* Refmode Policy */
+    RefmodePolicy ref;
 
     /* Caches for variable and constant types */
     type_cache_t variableTypes;

@@ -1,5 +1,5 @@
-#ifndef INSTRUCTION_VISITOR_H__
-#define INSTRUCTION_VISITOR_H__
+#ifndef INSTR_VISITOR_H__
+#define INSTR_VISITOR_H__
 
 #include <string>
 #include <boost/unordered_map.hpp>
@@ -8,6 +8,9 @@
 
 #include "predicate_groups.hpp"
 #include "CsvGenerator.hpp"
+
+typedef std::string refmode_t;
+
 
 class InstructionVisitor : public llvm::InstVisitor<InstructionVisitor>
 {
@@ -19,50 +22,89 @@ class InstructionVisitor : public llvm::InstVisitor<InstructionVisitor>
     typedef predicates::entity_pred_t entity_pred_t;
     typedef predicates::operand_pred_t operand_pred_t;
 
+    // Fact writing methods
+
+    void writeFact(const pred_t &predicate,
+                   const refmode_t& entity)
+    {
+        writer.writeFact(predicate.c_str(), entity);
+    }
+
     template<class ValType>
     void writeFact(const pred_t &predicate,
-                   const std::string& entity,
-                   const ValType& value, int index = -1)
+                   const refmode_t& entity,
+                   const ValType& value)
     {
-        if (index == -1) {
-            writer.writeFact(predicate.c_str(), entity, value);
-        } else {
-            writer.writeFact(predicate.c_str(), entity, value, index);
-        }
+        writer.writeFact(predicate.c_str(), entity, value);
     }
 
+    template<class ValType>
+    void writeFact(const pred_t &predicate,
+                   const refmode_t& entity,
+                   const ValType& value, int index)
+    {
+        writer.writeFact(predicate.c_str(), entity, value, index);
+    }
+
+
     template<typename T>
-    void writeCastInst(llvm::CastInst &instr)
+    void _visitCastInst(llvm::CastInst &instr)
     {
         typedef T pred;
         using namespace auxiliary_methods;
 
         // Record instruction entity
-        recordInstruction(pred::instr);
+        refmode_t iref = recordInstruction(pred::instr);
 
         // Record right-hand-side operand
-        writeInstrOperand(pred::from_operand, instr.getOperand(0));
+        writeInstrOperand(pred::from_operand, iref, instr.getOperand(0));
 
         // Record type being casted to
-        writeFact(pred::to_type, instrNum, printType(instr.getType()));
+        writeFact(pred::to_type, iref, printType(instr.getType()));
     }
 
     template<typename T>
-    void writeBinaryInst(llvm::BinaryOperator &instr)
+    void _visitBinaryInst(llvm::BinaryOperator &instr)
     {
         typedef T pred;
         using namespace auxiliary_methods;
 
-        writeOptimizationInfoToFile(&instr, instrNum);
-
         // Record instruction entity
-        recordInstruction(pred::instr);
+        refmode_t iref = recordInstruction(pred::instr);
 
-        // Record left operand of binary operator
-        writeInstrOperand(pred::first_operand, instr.getOperand(0));
+        writeInstrOperand(pred::first_operand, iref, instr.getOperand(0));
+        writeInstrOperand(pred::second_operand, iref, instr.getOperand(1));
+        writeOptimizationInfoToFile(&instr, iref);
+    }
 
-        // Record right operand of binary operator
-        writeInstrOperand(pred::second_operand, instr.getOperand(1));
+    void setInstrNum(std::string instructionNum) {
+        instrNum = instructionNum;
+        immediateOffset = 0;
+    }
+
+    void setInstrId(std::string instructionId) {
+        instrId = instructionId;
+    }
+
+
+    inline refmode_t refmodeOf(llvm::GlobalValue::LinkageTypes LT) {
+        return csvGen->refmodeOf(LT);
+    }
+
+    inline refmode_t refmodeOf(llvm::GlobalValue::VisibilityTypes Vis) {
+        return csvGen->refmodeOf(Vis);
+    }
+
+    inline refmode_t refmodeOf(llvm::GlobalVariable::ThreadLocalMode TLM) {
+        return csvGen->refmodeOf(TLM);
+    }
+
+    inline refmode_t refmodeOf(llvm::CallingConv::ID CC) {
+        return csvGen->refmodeOf(CC);
+    }
+
+    inline refmode_t refmodeOf(const llvm::Type *type) {
+        return csvGen->refmodeOf(type);
     }
 
   public:
@@ -71,8 +113,13 @@ class InstructionVisitor : public llvm::InstVisitor<InstructionVisitor>
 
     /* Complex fact writing methods */
 
-    void visitGlobalAlias(const llvm::GlobalAlias *, std::string &);
-    void visitGlobalVar(const llvm::GlobalVariable *, std::string &);
+    void visitGlobalAlias(const llvm::GlobalAlias *, const refmode_t &);
+    void visitGlobalVar(const llvm::GlobalVariable *, const refmode_t &);
+
+
+    /************************
+     * Type Visitor methods *
+     ************************/
 
     void visitType(const llvm::Type *);
     void visitPointerType(const llvm::PointerType *);
@@ -169,53 +216,28 @@ class InstructionVisitor : public llvm::InstVisitor<InstructionVisitor>
     // 'default' case
     void visitInstruction(llvm::Instruction &I);
 
-    void setInstrNum(std::string instructionNum) {
-        instrNum = instructionNum;
-        immediateOffset = 0;
-    }
-    void setInstrId(std::string instructionId) {
-
-        instrId = instructionId;
-    }
-
-private:
+  private:
 
     /* Fact writer */
     FactWriter &writer;
 
     // Instruction-specific write functions
 
-    void recordInstruction(const entity_pred_t &instrType) {
+    refmode_t recordInstruction(const entity_pred_t &instrType) {
         writer.writeFact(instrType.c_str(), instrNum);
+        return instrNum;
     }
 
-    void writeInstrProperty(const pred_t &predicate) {
-        writer.writeFact(predicate.c_str(), instrNum);
-    }
+    void writeInstrOperand(const operand_pred_t &predicate,
+                           const refmode_t &instr,
+                           const llvm::Value *Operand, int index = -1);
 
-    template<class ValType>
-    void writeInstrProperty(const pred_t &predicate, const ValType& value, int index = -1)
-    {
-        if (index == -1) {
-            writer.writeFact(predicate.c_str(), instrNum, value);
-        } else {
-            writer.writeFact(predicate.c_str(), instrNum, value, index);
-        }
-    }
-
-    void writeInstrOperand(const operand_pred_t &predicate, const llvm::Value *Operand, int index = -1);
-    void writeInstrValue(const pred_t &predicate, const llvm::Value *Value, int index = -1);
+    void writeInstrOperand(const pred_t &predicate,
+                           const refmode_t &instr,
+                           const llvm::Value *Value, int index = -1);
 
 
     // Auxiliary methods
-
-    void writeProperty(const pred_t &predicate, const std::string& refmode) {
-        writer.writeFact(predicate.c_str(), refmode);
-    }
-
-    void writeEntity(const entity_pred_t &predicate, const std::string& refmode) {
-        writer.writeFact(predicate.c_str(), refmode);
-    }
 
     const char* writePredicate(unsigned predicate);
     void writeOptimizationInfoToFile(const llvm::User *u, std::string instrId);
