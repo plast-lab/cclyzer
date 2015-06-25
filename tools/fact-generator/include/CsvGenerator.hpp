@@ -1,8 +1,6 @@
 #ifndef CSV_GENERATOR_H__
 #define CSV_GENERATOR_H__
 
-#include <boost/filesystem.hpp>
-#include <boost/filesystem/fstream.hpp>
 #include <boost/unordered_set.hpp>
 #include <boost/unordered_map.hpp>
 #include <llvm/IR/Type.h>
@@ -12,7 +10,6 @@
 #include <llvm/IR/GlobalValue.h>
 #include <llvm/IR/GlobalVariable.h>
 #include <string>
-#include <vector>
 #include "predicate_groups.hpp"
 #include "FactWriter.hpp"
 #include "RefmodePolicy.hpp"
@@ -87,9 +84,7 @@ class CsvGenerator : private RefmodePolicy
 
   public:
     /* Constructor must initialize output file streams */
-    CsvGenerator(FactWriter &writer) : writer(writer)
-    {
-        // Initialize output file streams
+    CsvGenerator(FactWriter &writer) : writer(writer) {
         initStreams();
     }
 
