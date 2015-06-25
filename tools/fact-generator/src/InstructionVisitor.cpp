@@ -28,7 +28,7 @@ void InstructionVisitor::writeInstrOperand(
     if (const Constant *c = dyn_cast<Constant>(Val)) {
         // Compute refmode for constant value
         refmode << instr
-                << ':' << immediateOffset++
+                << ':' << currentConstantOffset++
                 << ':' << gen.refmodeOf(c, Mod);
 
         // Record constant value
@@ -64,7 +64,7 @@ void InstructionVisitor::writeInstrOperand(
     if (const Constant *c = dyn_cast<Constant>(Operand)) {
         // Compute refmode for constant
         refmode << instr
-                << ':' << immediateOffset++
+                << ':' << currentConstantOffset++
                 << ':' << gen.refmodeOf(c, Mod);
 
         // Record constant operand
@@ -448,7 +448,7 @@ void InstructionVisitor::visitGetElementPtrInst(GetElementPtrInst &GEP)
 
     for (unsigned index = 1; index < GEP.getNumOperands(); ++index)
     {
-        int immOffset = immediateOffset;
+        int immOffset = currentConstantOffset;
         const Value * GepOperand = GEP.getOperand(index);
 
         writeInstrOperand(pred::gep::index, iref, GepOperand, index - 1);

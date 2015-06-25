@@ -56,7 +56,7 @@ class InstructionVisitor : public llvm::InstVisitor<InstructionVisitor>
 
     void setInstrNum(std::string instructionNum) {
         instrNum = instructionNum;
-        immediateOffset = 0;
+        currentConstantOffset = 0;
     }
 
     void setInstrId(std::string instructionId) {
@@ -226,7 +226,9 @@ class InstructionVisitor : public llvm::InstVisitor<InstructionVisitor>
 
     std::string instrNum;
     std::string instrId;
-    int immediateOffset;
+
+    /* Auto-incrementing ID field used in constant refmodes */
+    int currentConstantOffset;
 
     /* Associated LLVM module */
     const llvm::Module *Mod;

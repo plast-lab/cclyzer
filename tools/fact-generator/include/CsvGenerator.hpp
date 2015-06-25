@@ -99,11 +99,10 @@ class CsvGenerator : private RefmodePolicy
     void visitGlobalVar(const llvm::GlobalVariable *, const refmode_t &);
 
 
-    // TODO: consider moving all these complex methods that deal with
-    // predicate names to separate class
     void processModule(const llvm::Module *Mod, std::string& path);
     void writeVarsTypesAndImmediates();
 
+    /* Visitor classes */
     class TypeVisitor;
     friend class TypeVisitor;
 
@@ -121,7 +120,7 @@ class CsvGenerator : private RefmodePolicy
 
     /* Auxiliary methods */
 
-    std::string getRefmodeForValue(const llvm::Module * Mod, const llvm::Value * Val, std::string& path){
+    inline std::string getRefmodeForValue(const llvm::Module * Mod, const llvm::Value * Val, std::string& path){
         return "<" + path + ">:" + refmodeOf(Val, Mod);
     }
 
