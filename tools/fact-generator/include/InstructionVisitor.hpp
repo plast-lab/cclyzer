@@ -9,8 +9,6 @@
 #include "predicate_groups.hpp"
 #include "CsvGenerator.hpp"
 
-typedef std::string refmode_t;
-
 
 class InstructionVisitor : public llvm::InstVisitor<InstructionVisitor>
 {
@@ -22,36 +20,13 @@ class InstructionVisitor : public llvm::InstVisitor<InstructionVisitor>
     typedef predicates::entity_pred_t entity_pred_t;
     typedef predicates::operand_pred_t operand_pred_t;
 
-    // Fact writing methods
 
-    void writeFact(const pred_t &predicate,
-                   const refmode_t& entity)
-    {
-        writer.writeFact(predicate.c_str(), entity);
-    }
-
-    template<class ValType>
-    void writeFact(const pred_t &predicate,
-                   const refmode_t& entity,
-                   const ValType& value)
-    {
-        writer.writeFact(predicate.c_str(), entity, value);
-    }
-
-    template<class ValType>
-    void writeFact(const pred_t &predicate,
-                   const refmode_t& entity,
-                   const ValType& value, int index)
-    {
-        writer.writeFact(predicate.c_str(), entity, value, index);
-    }
-
+    // Methods that handle many similar instructions
 
     template<typename T>
-    void _visitCastInst(llvm::CastInst &instr)
+    inline void _visitCastInst(llvm::CastInst &instr)
     {
         typedef T pred;
-        using namespace auxiliary_methods;
 
         // Record instruction entity
         refmode_t iref = recordInstruction(pred::instr);
@@ -60,14 +35,13 @@ class InstructionVisitor : public llvm::InstVisitor<InstructionVisitor>
         writeInstrOperand(pred::from_operand, iref, instr.getOperand(0));
 
         // Record type being casted to
-        writeFact(pred::to_type, iref, printType(instr.getType()));
+        gen.writeFact(pred::to_type, iref, gen.refmodeOf(instr.getType()));
     }
 
     template<typename T>
-    void _visitBinaryInst(llvm::BinaryOperator &instr)
+    inline void _visitBinaryInst(llvm::BinaryOperator &instr)
     {
         typedef T pred;
-        using namespace auxiliary_methods;
 
         // Record instruction entity
         refmode_t iref = recordInstruction(pred::instr);
@@ -76,6 +50,9 @@ class InstructionVisitor : public llvm::InstVisitor<InstructionVisitor>
         writeInstrOperand(pred::second_operand, iref, instr.getOperand(1));
         writeOptimizationInfoToFile(&instr, iref);
     }
+
+
+    // Instruction numbering
 
     void setInstrNum(std::string instructionNum) {
         instrNum = instructionNum;
@@ -86,48 +63,14 @@ class InstructionVisitor : public llvm::InstVisitor<InstructionVisitor>
         instrId = instructionId;
     }
 
-
-    inline refmode_t refmodeOf(llvm::GlobalValue::LinkageTypes LT) {
-        return csvGen->refmodeOf(LT);
-    }
-
-    inline refmode_t refmodeOf(llvm::GlobalValue::VisibilityTypes Vis) {
-        return csvGen->refmodeOf(Vis);
-    }
-
-    inline refmode_t refmodeOf(llvm::GlobalVariable::ThreadLocalMode TLM) {
-        return csvGen->refmodeOf(TLM);
-    }
-
-    inline refmode_t refmodeOf(llvm::CallingConv::ID CC) {
-        return csvGen->refmodeOf(CC);
-    }
-
-    inline refmode_t refmodeOf(const llvm::Type *type) {
-        return csvGen->refmodeOf(type);
-    }
-
   public:
-    InstructionVisitor(CsvGenerator *generator, const llvm::Module *M)
-        : csvGen(generator), Mod(M), writer(generator->writer) {}
+    InstructionVisitor(CsvGenerator &generator, const llvm::Module *M)
+        : gen(generator), Mod(M), writer(generator.writer) {}
 
     /* Complex fact writing methods */
 
     void visitGlobalAlias(const llvm::GlobalAlias *, const refmode_t &);
     void visitGlobalVar(const llvm::GlobalVariable *, const refmode_t &);
-
-
-    /************************
-     * Type Visitor methods *
-     ************************/
-
-    void visitType(const llvm::Type *);
-    void visitPointerType(const llvm::PointerType *);
-    void visitArrayType(const llvm::ArrayType *);
-    void visitStructType(const llvm::StructType *);
-    void visitFunctionType(const llvm::FunctionType *);
-    void visitVectorType(const llvm::VectorType *);
-
 
     /*******************************
      * Instruction Visitor methods *
@@ -246,14 +189,20 @@ class InstructionVisitor : public llvm::InstVisitor<InstructionVisitor>
 
     void writeVolatileFlag(std::string instrId, bool volatileFlag) {
         if (volatileFlag)
-            writeFact(predicates::instruction::flag, instrId, "volatile");
+            gen.writeFact(predicates::instruction::flag, instrId, "volatile");
     }
+
+    void writeFnAttributes(const pred_t &pred,
+                           const refmode_t &refmode,
+                           const llvm::AttributeSet Attrs);
 
     std::string instrNum;
     std::string instrId;
     int immediateOffset;
-    CsvGenerator *csvGen;
     const llvm::Module *Mod;
+
+    /* Instance of outer CSV generator */
+    CsvGenerator &gen;
 };
 
 #endif

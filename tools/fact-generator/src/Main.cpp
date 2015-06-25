@@ -2,11 +2,10 @@
 #include <string>
 #include <boost/filesystem.hpp>
 #include <boost/foreach.hpp>
-
-#include "llvm/IR/LLVMContext.h"
-#include "llvm/IR/Module.h"
-#include "llvm/IRReader/IRReader.h"
-#include "llvm/Support/SourceMgr.h"
+#include <llvm/IR/LLVMContext.h>
+#include <llvm/IR/Module.h>
+#include <llvm/IRReader/IRReader.h>
+#include <llvm/Support/SourceMgr.h>
 #include "CsvGenerator.hpp"
 #include "FactWriter.hpp"
 #include "PredicateFilePolicy.hpp"

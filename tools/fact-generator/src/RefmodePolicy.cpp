@@ -1,3 +1,5 @@
+#include <llvm/Assembly/Writer.h> // This is for version <= 3.4
+
 #include <llvm/Support/raw_ostream.h>
 #include "RefmodePolicy.hpp"
 #include "LLVMEnums.hpp"
@@ -6,11 +8,12 @@
 class RefmodePolicy::Impl : LLVMEnumSerializer {
   public:
     // Methods that compute refmodes for various LLVM types
-    std::string refmodeOf(llvm::GlobalValue::LinkageTypes LT) const;
-    std::string refmodeOf(llvm::GlobalValue::VisibilityTypes Vis) const;
-    std::string refmodeOf(llvm::GlobalVariable::ThreadLocalMode TLM) const;
-    std::string refmodeOf(llvm::CallingConv::ID CC) const;
-    std::string refmodeOf(const llvm::Type *type) const;
+    refmode_t refmodeOf(llvm::GlobalValue::LinkageTypes LT) const;
+    refmode_t refmodeOf(llvm::GlobalValue::VisibilityTypes Vis) const;
+    refmode_t refmodeOf(llvm::GlobalVariable::ThreadLocalMode TLM) const;
+    refmode_t refmodeOf(llvm::CallingConv::ID CC) const;
+    refmode_t refmodeOf(const llvm::Type *type) const;
+    refmode_t refmodeOf(const llvm::Value * Val, const llvm::Module *Mod = 0) const;
 
   protected:
     typedef LLVMEnumSerializer enums;
@@ -49,25 +52,6 @@ refmode_t RefmodePolicy::Impl::refmodeOf(const Type *type) const
 }
 
 
-// Refmodes for LLVM Enums
-
-refmode_t RefmodePolicy::Impl::refmodeOf(GlobalValue::LinkageTypes LT) const {
-    return enums::to_string(LT);
-}
-
-refmode_t RefmodePolicy::Impl::refmodeOf(GlobalValue::VisibilityTypes Vis) const {
-    return enums::to_string(Vis);
-}
-
-refmode_t RefmodePolicy::Impl::refmodeOf(GlobalVariable::ThreadLocalMode TLM) const {
-    return enums::to_string(TLM);
-}
-
-refmode_t RefmodePolicy::Impl::refmodeOf(CallingConv::ID CC) const {
-    return enums::to_string(CC);
-}
-
-
 // Opaque Pointer Idiom
 
 RefmodePolicy::RefmodePolicy() {
@@ -96,4 +80,37 @@ refmode_t RefmodePolicy::refmodeOf(CallingConv::ID CC) const {
 
 refmode_t RefmodePolicy::refmodeOf(const Type *type) const {
     return impl->refmodeOf(type);
+}
+
+refmode_t RefmodePolicy::refmodeOf(const llvm::Value * Val, const Module * Mod) const {
+    return impl->refmodeOf(Val, Mod);
+}
+
+
+// Refmodes for LLVM Enums
+
+refmode_t RefmodePolicy::Impl::refmodeOf(GlobalValue::LinkageTypes LT) const {
+    return enums::to_string(LT);
+}
+
+refmode_t RefmodePolicy::Impl::refmodeOf(GlobalValue::VisibilityTypes Vis) const {
+    return enums::to_string(Vis);
+}
+
+refmode_t RefmodePolicy::Impl::refmodeOf(GlobalVariable::ThreadLocalMode TLM) const {
+    return enums::to_string(TLM);
+}
+
+refmode_t RefmodePolicy::Impl::refmodeOf(CallingConv::ID CC) const {
+    return enums::to_string(CC);
+}
+
+// Refmode for LLVM Values
+
+refmode_t RefmodePolicy::Impl::refmodeOf(const llvm::Value * Val, const Module * Mod) const
+{
+    string rv;
+    raw_string_ostream rso(rv);
+    WriteAsOperand(rso, Val, false, Mod);
+    return rso.str();
 }

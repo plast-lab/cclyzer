@@ -13,20 +13,24 @@
 #include <llvm/IR/GlobalVariable.h>
 #include <string>
 #include <vector>
-
-#include "AuxiliaryMethods.hpp" // TODO: remove
+#include "predicate_groups.hpp"
 #include "FactWriter.hpp"
 #include "RefmodePolicy.hpp"
 
-class CsvGenerator
+class CsvGenerator : private RefmodePolicy
 {
     friend class InstructionVisitor;
+    using RefmodePolicy::refmodeOf;
 
   protected:
 
     /* Common type aliases */
 
     typedef boost::unordered_map<std::string, const llvm::Type *> type_cache_t;
+    typedef predicates::pred_t pred_t;
+    typedef predicates::entity_pred_t entity_pred_t;
+    typedef predicates::operand_pred_t operand_pred_t;
+
 
     /* Recording constants and variables */
 
@@ -39,25 +43,30 @@ class CsvGenerator
     }
 
 
-    inline refmode_t refmodeOf(llvm::GlobalValue::LinkageTypes LT) {
-        return ref.refmodeOf(LT);
+    /* Fact writing methods */
+
+    inline void writeFact(const pred_t &predicate,
+                          const refmode_t& entity)
+    {
+        writer.writeFact(predicate.c_str(), entity);
     }
 
-    inline refmode_t refmodeOf(llvm::GlobalValue::VisibilityTypes Vis) {
-        return ref.refmodeOf(Vis);
+    template<class ValType>
+    inline void writeFact(const pred_t &predicate,
+                          const refmode_t& entity,
+                          const ValType& value)
+    {
+        writer.writeFact(predicate.c_str(), entity, value);
     }
 
-    inline refmode_t refmodeOf(llvm::GlobalVariable::ThreadLocalMode TLM) {
-        return ref.refmodeOf(TLM);
+    template<class ValType>
+    inline void writeFact(const pred_t &predicate,
+                          const refmode_t& entity,
+                          const ValType& value, int index)
+    {
+        writer.writeFact(predicate.c_str(), entity, value, index);
     }
 
-    inline refmode_t refmodeOf(llvm::CallingConv::ID CC) {
-        return ref.refmodeOf(CC);
-    }
-
-    inline refmode_t refmodeOf(const llvm::Type *type) {
-        return ref.refmodeOf(type);
-    }
 
     /**
      * After processing every module, we record information for all
@@ -86,15 +95,15 @@ class CsvGenerator
     void processModule(const llvm::Module *Mod, std::string& path);
     void writeVarsTypesAndImmediates();
 
+    class TypeVisitor;
+    friend class TypeVisitor;
+
   private:
     /* Initialize output file streams */
     void initStreams();
 
     /* Fact writer */
     FactWriter &writer;
-
-    /* Refmode Policy */
-    RefmodePolicy ref;
 
     /* Caches for variable and constant types */
     type_cache_t variableTypes;
@@ -104,7 +113,7 @@ class CsvGenerator
     /* Auxiliary methods */
 
     std::string getRefmodeForValue(const llvm::Module * Mod, const llvm::Value * Val, std::string& path){
-        return "<" + path + ">:" + auxiliary_methods::valueToString(Val, Mod);
+        return "<" + path + ">:" + refmodeOf(Val, Mod);
     }
 
     boost::unordered_set<const llvm::Type *> types;

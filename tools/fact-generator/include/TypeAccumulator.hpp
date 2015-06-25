@@ -5,8 +5,6 @@
 #include <llvm/IR/Type.h>
 #include <llvm/Support/raw_ostream.h>
 
-#include "AuxiliaryMethods.hpp"
-
 namespace llvm_extra {
     using namespace llvm;
 
@@ -31,8 +29,6 @@ namespace llvm_extra {
 
         void visitType(const Type *elementType)
         {
-            using namespace auxiliary_methods;
-
             if (types.count(elementType) != 0)
                 return;
 
@@ -60,7 +56,9 @@ namespace llvm_extra {
                 visitFunctionType(elementType);
             }
             else {
-                errs() << "Unrecognized type: " << printType(elementType) << "\n";
+                errs() << "Unrecognized type: ";
+                elementType->print(errs());
+                errs() << "\n";
             }
         }
 
@@ -80,6 +78,16 @@ namespace llvm_extra {
 
             for (size_t i = 0; i < funcType->getFunctionNumParams(); i++)
                 visitType(funcTy->getFunctionParamType(i));
+        }
+
+      protected:
+
+        bool isPrimitiveType(const Type * type) {
+            return type->isVoidTy()   || type->isHalfTy()    ||
+                type->isFloatTy()     || type->isDoubleTy()  ||
+                type->isX86_FP80Ty()  || type->isFP128Ty()   ||
+                type->isPPC_FP128Ty() || type->isLabelTy()   ||
+                type->isMetadataTy()  || type->isX86_MMXTy();
         }
 
       private:

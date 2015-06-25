@@ -4,7 +4,6 @@
 #include <llvm/IR/Module.h>
 #include <llvm/IR/Operator.h>
 
-#include "AuxiliaryMethods.hpp"
 #include "CsvGenerator.hpp"
 #include "InstructionVisitor.hpp"
 #include "predicate_groups.hpp"
@@ -14,8 +13,6 @@
 using namespace llvm;
 using namespace std;
 using namespace boost;
-using namespace auxiliary_methods;
-
 namespace pred = predicates;
 namespace fs = boost::filesystem;
 
@@ -39,17 +36,17 @@ void InstructionVisitor::writeInstrOperand(
         // Compute refmode for constant value
         refmode << instr
                 << ':' << immediateOffset++
-                << ':' << valueToString(c, Mod);
+                << ':' << gen.refmodeOf(c, Mod);
 
         // Record constant value
-        csvGen->recordConstant(refmode.str(), type);
+        gen.recordConstant(refmode.str(), type);
     }
     else {
         // Compute refmode for variable value
-        refmode << instrId << valueToString(Val, Mod);
+        refmode << instrId << gen.refmodeOf(Val, Mod);
 
         // Record variable value
-        csvGen->recordVariable(refmode.str(), type);
+        gen.recordVariable(refmode.str(), type);
     }
 
     // Write value fact
@@ -75,18 +72,18 @@ void InstructionVisitor::writeInstrOperand(
         // Compute refmode for constant
         refmode << instr
                 << ':' << immediateOffset++
-                << ':' << valueToString(c, Mod);
+                << ':' << gen.refmodeOf(c, Mod);
 
         // Record constant operand
         predname = predicate.asConstant().c_str();
-        csvGen->recordConstant(refmode.str(), type);
+        gen.recordConstant(refmode.str(), type);
     }
     else {
-        refmode << instrId << valueToString(Operand, Mod);
+        refmode << instrId << gen.refmodeOf(Operand, Mod);
 
         // Record variable operand
         predname = predicate.asVariable().c_str();
-        csvGen->recordVariable(refmode.str(), type);
+        gen.recordVariable(refmode.str(), type);
     }
 
     // Write operand fact
@@ -225,7 +222,7 @@ void InstructionVisitor::visitReturnInst(ReturnInst &RI)
         writeInstrOperand(pred::ret::operand, iref, RI.getReturnValue());
     }
     else {                      // w/o returned value
-        writeFact(pred::ret::instr_void, iref);
+        gen.writeFact(pred::ret::instr_void, iref);
     }
 }
 
@@ -235,7 +232,7 @@ void InstructionVisitor::visitBranchInst(BranchInst &BI)
 
     if (BI.isConditional()) {    // conditional branch
         // br i1 <cond>, label <iftrue>, label <iffalse>
-        writeFact(pred::br::instr_cond, iref);
+        gen.writeFact(pred::br::instr_cond, iref);
 
         // Condition Operand
         writeInstrOperand(pred::br::condition, iref, BI.getCondition());
@@ -246,7 +243,7 @@ void InstructionVisitor::visitBranchInst(BranchInst &BI)
     }
     else {                      // unconditional branch
         // br label <dest>
-        writeFact(pred::br::instr_uncond, iref);
+        gen.writeFact(pred::br::instr_uncond, iref);
         writeInstrOperand(pred::br::uncond_dest, iref, BI.getOperand(0));
     }
 }
@@ -273,7 +270,7 @@ void InstructionVisitor::visitSwitchInst(const SwitchInst &SI)
                           iref, Case.getCaseSuccessor(), index++);
     }
 
-    writeFact(pred::switch_::ncases, iref, SI.getNumCases());
+    gen.writeFact(pred::switch_::ncases, iref, SI.getNumCases());
 }
 
 void InstructionVisitor::visitIndirectBrInst(IndirectBrInst &IBR)
@@ -285,7 +282,7 @@ void InstructionVisitor::visitIndirectBrInst(IndirectBrInst &IBR)
     for(unsigned i = 1; i < IBR.getNumOperands(); ++i)
         writeInstrOperand(pred::indirectbr::label, iref, IBR.getOperand(i), i-1);
 
-    writeFact(pred::indirectbr::nlabels, iref, IBR.getNumOperands() - 1);
+    gen.writeFact(pred::indirectbr::nlabels, iref, IBR.getNumOperands() - 1);
     writeInstrOperand(pred::indirectbr::address, iref, IBR.getOperand(0));
 }
 
@@ -293,9 +290,9 @@ void InstructionVisitor::visitInvokeInst(InvokeInst &II)
 {
     refmode_t iref = recordInstruction(pred::invoke::instr);
 
-    writeFact(II.getCalledFunction()
-              ? pred::invoke::instr_direct
-              : pred::invoke::instr_indirect, iref);
+    gen.writeFact(II.getCalledFunction()
+                  ? pred::invoke::instr_direct
+                  : pred::invoke::instr_indirect, iref);
 
     Value *invokeOp = II.getCalledValue();
     PointerType *ptrTy = cast<PointerType>(invokeOp->getType());
@@ -317,20 +314,15 @@ void InstructionVisitor::visitInvokeInst(InvokeInst &II)
     if (Attrs.hasAttributes(AttributeSet::ReturnIndex))
     {
         string attrs = Attrs.getAsString(AttributeSet::ReturnIndex);
-        writeFact(pred::invoke::ret_attr, iref, attrs);
+        gen.writeFact(pred::invoke::ret_attr, iref, attrs);
     }
 
-    vector<string> FuncnAttr;
-    writeFnAttributes(Attrs, FuncnAttr);
-
-    for (unsigned i = 0; i < FuncnAttr.size(); ++i) {
-        writeFact(pred::invoke::fn_attr, iref, FuncnAttr[i]);
-    }
+    writeFnAttributes(pred::invoke::fn_attr, iref, Attrs);
 
     // TODO: Why not CallingConv::C
     if (II.getCallingConv() != CallingConv::C) {
-        refmode_t cconv = refmodeOf(II.getCallingConv());
-        writeFact(pred::invoke::calling_conv, iref, cconv);
+        refmode_t cconv = gen.refmodeOf(II.getCallingConv());
+        gen.writeFact(pred::invoke::calling_conv, iref, cconv);
     }
 
     // TODO: param attributes?
@@ -350,17 +342,17 @@ void InstructionVisitor::visitAllocaInst(AllocaInst &AI)
 {
     refmode_t iref = recordInstruction(pred::alloca::instr);
 
-    writeFact(pred::alloca::type, iref, printType(AI.getAllocatedType()));
+    gen.writeFact(pred::alloca::type, iref, gen.refmodeOf(AI.getAllocatedType()));
 
     if(AI.isArrayAllocation())
         writeInstrOperand(pred::alloca::size, iref, AI.getArraySize());
 
     if(AI.getAlignment())
-        writeFact(pred::alloca::alignment, iref, AI.getAlignment());
+        gen.writeFact(pred::alloca::alignment, iref, AI.getAlignment());
 }
 
-void InstructionVisitor::visitLoadInst(LoadInst &LI) {
-
+void InstructionVisitor::visitLoadInst(LoadInst &LI)
+{
     refmode_t iref = recordInstruction(pred::load::instr);
 
     writeInstrOperand(pred::load::address, iref, LI.getPointerOperand());
@@ -369,21 +361,21 @@ void InstructionVisitor::visitLoadInst(LoadInst &LI) {
         const char *ord = writeAtomicInfo(iref, LI.getOrdering(), LI.getSynchScope());
 
         if (strlen(ord))
-            writeFact(pred::load::ordering, iref, ord);
+            gen.writeFact(pred::load::ordering, iref, ord);
     }
 
     if (LI.getAlignment())
-        writeFact(pred::load::alignment, iref, LI.getAlignment());
+        gen.writeFact(pred::load::alignment, iref, LI.getAlignment());
 
     if (LI.isVolatile())
-        writeFact(pred::load::isvolatile, iref);
+        gen.writeFact(pred::load::isvolatile, iref);
 }
 
 void InstructionVisitor::visitVAArgInst(VAArgInst &VI)
 {
     refmode_t iref = recordInstruction(pred::va_arg::instr);
 
-    writeFact(pred::va_arg::type, iref, printType(VI.getType()));
+    gen.writeFact(pred::va_arg::type, iref, gen.refmodeOf(VI.getType()));
     writeInstrOperand(pred::va_arg::va_list, iref, VI.getPointerOperand());
 }
 
@@ -398,11 +390,11 @@ void InstructionVisitor::visitExtractValueInst(ExtractValueInst &EVI)
     int index = 0;
 
     for (const unsigned *i = EVI.idx_begin(), *e = EVI.idx_end(); i != e; ++i) {
-        writeFact(pred::extract_value::index, iref, *i, index);
+        gen.writeFact(pred::extract_value::index, iref, *i, index);
         index++;
     }
 
-    writeFact(pred::extract_value::nindices, iref, EVI.getNumIndices());
+    gen.writeFact(pred::extract_value::nindices, iref, EVI.getNumIndices());
 }
 
 void InstructionVisitor::visitStoreInst(StoreInst &SI)
@@ -416,14 +408,14 @@ void InstructionVisitor::visitStoreInst(StoreInst &SI)
         const char *ord = writeAtomicInfo(iref, SI.getOrdering(), SI.getSynchScope());
 
         if(strlen(ord))
-            writeFact(pred::store::ordering, iref, ord);
+            gen.writeFact(pred::store::ordering, iref, ord);
     }
 
     if (SI.getAlignment())
-        writeFact(pred::store::alignment, iref, SI.getAlignment());
+        gen.writeFact(pred::store::alignment, iref, SI.getAlignment());
 
     if (SI.isVolatile())
-        writeFact(pred::store::isvolatile, iref);
+        gen.writeFact(pred::store::isvolatile, iref);
 }
 
 void InstructionVisitor::visitAtomicCmpXchgInst(AtomicCmpXchgInst &AXI)
@@ -435,12 +427,12 @@ void InstructionVisitor::visitAtomicCmpXchgInst(AtomicCmpXchgInst &AXI)
     writeInstrOperand(pred::cmpxchg::new_, iref, AXI.getNewValOperand());
 
     if (AXI.isVolatile())
-        writeFact(pred::cmpxchg::isvolatile, iref);
+        gen.writeFact(pred::cmpxchg::isvolatile, iref);
 
     const char *ord = writeAtomicInfo(iref, AXI.getOrdering(), AXI.getSynchScope());
 
     if (strlen(ord))
-        writeFact(pred::cmpxchg::ordering, iref, ord);
+        gen.writeFact(pred::cmpxchg::ordering, iref, ord);
 
     // TODO: type?
 }
@@ -453,14 +445,14 @@ void InstructionVisitor::visitAtomicRMWInst(AtomicRMWInst &AWI)
     writeInstrOperand(pred::atomicrmw::value, iref, AWI.getValOperand());
 
     if (AWI.isVolatile())
-        writeFact(pred::atomicrmw::isvolatile, iref);
+        gen.writeFact(pred::atomicrmw::isvolatile, iref);
 
     writeAtomicRMWOp(iref, AWI.getOperation());
 
     const char *ord = writeAtomicInfo(iref, AWI.getOrdering(), AWI.getSynchScope());
 
     if (strlen(ord))
-        writeFact(pred::atomicrmw::ordering, iref, ord);
+        gen.writeFact(pred::atomicrmw::ordering, iref, ord);
 }
 
 void InstructionVisitor::visitFenceInst(FenceInst &FI)
@@ -471,7 +463,7 @@ void InstructionVisitor::visitFenceInst(FenceInst &FI)
     const char *ord = writeAtomicInfo(iref, FI.getOrdering(), FI.getSynchScope());
 
     if (strlen(ord))
-        writeFact(pred::fence::ordering, iref, ord);
+        gen.writeFact(pred::fence::ordering, iref, ord);
 }
 
 void InstructionVisitor::visitGetElementPtrInst(GetElementPtrInst &GEP)
@@ -492,20 +484,20 @@ void InstructionVisitor::visitGetElementPtrInst(GetElementPtrInst &GEP)
             // Compute constant refmode
             constant << iref
                      << ':' << immOffset
-                     << ':' << valueToString(c, Mod);
+                     << ':' << gen.refmodeOf(c, Mod);
 
             // Compute integer string representation
             string int_value = c->getUniqueInteger().toString(10, true);
 
             // Write constant to integer fact
-            writeFact(pred::constant::to_integer, constant.str(), int_value);
+            gen.writeFact(pred::constant::to_integer, constant.str(), int_value);
         }
     }
 
-    writeFact(pred::gep::nindices, iref, GEP.getNumIndices());
+    gen.writeFact(pred::gep::nindices, iref, GEP.getNumIndices());
 
     if (GEP.isInBounds())
-        writeFact(pred::gep::inbounds, iref);
+        gen.writeFact(pred::gep::inbounds, iref);
 }
 
 void InstructionVisitor::visitPHINode(PHINode &PHI)
@@ -514,7 +506,7 @@ void InstructionVisitor::visitPHINode(PHINode &PHI)
     refmode_t iref = recordInstruction(pred::phi::instr);
 
     // type
-    writeFact(pred::phi::type, iref, printType(PHI.getType()));
+    gen.writeFact(pred::phi::type, iref, gen.refmodeOf(PHI.getType()));
 
     for (unsigned op = 0; op < PHI.getNumIncomingValues(); ++op)
     {
@@ -522,7 +514,7 @@ void InstructionVisitor::visitPHINode(PHINode &PHI)
         writeInstrOperand(pred::phi::pair_label, iref, PHI.getIncomingBlock(op), op);
     }
 
-    writeFact(pred::phi::npairs, iref, PHI.getNumIncomingValues());
+    gen.writeFact(pred::phi::npairs, iref, PHI.getNumIncomingValues());
 }
 
 void InstructionVisitor::visitSelectInst(SelectInst &SI)
@@ -548,22 +540,22 @@ void InstructionVisitor::visitInsertValueInst(InsertValueInst &IVI)
     for (const unsigned *i = IVI.idx_begin(), *e = IVI.idx_end();
          i != e; ++i,index++)
     {
-        writeFact(pred::insert_value::index, iref, *i, index);
+        gen.writeFact(pred::insert_value::index, iref, *i, index);
     }
 
-    writeFact(pred::insert_value::nindices, iref, IVI.getNumIndices());
+    gen.writeFact(pred::insert_value::nindices, iref, IVI.getNumIndices());
 }
 
 void InstructionVisitor::visitLandingPadInst(LandingPadInst &LI)
 {
     refmode_t iref = recordInstruction(pred::landingpad::instr);
 
-    writeFact(pred::landingpad::type, iref, printType(LI.getType()));
+    gen.writeFact(pred::landingpad::type, iref, gen.refmodeOf(LI.getType()));
     writeInstrOperand(pred::landingpad::fn, iref, LI.getPersonalityFn());
 
     // cleanup
     if (LI.isCleanup())
-        writeFact(pred::landingpad::cleanup, iref);
+        gen.writeFact(pred::landingpad::cleanup, iref);
 
     // #clauses
     for (unsigned i = 0; i < LI.getNumClauses(); ++i)
@@ -572,17 +564,17 @@ void InstructionVisitor::visitLandingPadInst(LandingPadInst &LI)
             ? pred::landingpad::catch_clause
             : pred::landingpad::filter_clause;
 
-        writeFact(pred_clause, iref, LI.getClause(i), i);
+        gen.writeFact(pred_clause, iref, LI.getClause(i), i);
     }
 
-    writeFact(pred::landingpad::nclauses, iref, LI.getNumClauses());
+    gen.writeFact(pred::landingpad::nclauses, iref, LI.getNumClauses());
 }
 
 void InstructionVisitor::visitCallInst(CallInst &CI)
 {
     refmode_t iref = recordInstruction(pred::call::instr);
 
-    writeFact(CI.getCalledFunction()
+    gen.writeFact(CI.getCalledFunction()
               ? pred::call::instr_direct
               : pred::call::instr_indirect, iref);
 
@@ -597,11 +589,11 @@ void InstructionVisitor::visitCallInst(CallInst &CI)
         writeInstrOperand(pred::call::arg, iref, CI.getArgOperand(op), op);
 
     if(CI.isTailCall())
-        writeFact(pred::call::tail, iref);
+        gen.writeFact(pred::call::tail, iref);
 
     if (CI.getCallingConv() != CallingConv::C) {
-        refmode_t cconv = refmodeOf(CI.getCallingConv());
-        writeFact(pred::call::calling_conv, iref, cconv);
+        refmode_t cconv = gen.refmodeOf(CI.getCallingConv());
+        gen.writeFact(pred::call::calling_conv, iref, cconv);
     }
 
     // Attributes
@@ -609,14 +601,10 @@ void InstructionVisitor::visitCallInst(CallInst &CI)
 
     if (Attrs.hasAttributes(AttributeSet::ReturnIndex)) {
         string attrs = Attrs.getAsString(AttributeSet::ReturnIndex);
-        writeFact(pred::call::ret_attr, iref, attrs);
+        gen.writeFact(pred::call::ret_attr, iref, attrs);
     }
 
-    vector<string> FuncnAttr;
-    writeFnAttributes(Attrs, FuncnAttr);
-
-    for (unsigned i = 0; i < FuncnAttr.size(); ++i)
-        writeFact(pred::call::fn_attr, iref, FuncnAttr[i]);
+    writeFnAttributes(pred::call::fn_attr, iref, Attrs);
 
     // TODO: parameter attributes?
 }
@@ -627,7 +615,7 @@ void InstructionVisitor::visitICmpInst(ICmpInst &I)
 
     // Condition
     if (strlen(writePredicate(I.getPredicate())))
-        writeFact(pred::icmp::condition, iref, writePredicate(I.getPredicate()));
+        gen.writeFact(pred::icmp::condition, iref, writePredicate(I.getPredicate()));
 
     // Operands
     writeInstrOperand(pred::icmp::first_operand, iref, I.getOperand(0));
@@ -640,7 +628,7 @@ void InstructionVisitor::visitFCmpInst(FCmpInst &I)
 
     // Condition
     if (strlen(writePredicate(I.getPredicate())))
-        writeFact(pred::fcmp::condition, iref, writePredicate(I.getPredicate()));
+        gen.writeFact(pred::fcmp::condition, iref, writePredicate(I.getPredicate()));
 
     // Operands
     writeInstrOperand(pred::fcmp::first_operand, iref, I.getOperand(0));
@@ -720,34 +708,34 @@ void InstructionVisitor::writeOptimizationInfoToFile(const User *u, string instr
 {
     if (const FPMathOperator *fpo = dyn_cast<const FPMathOperator>(u)) {
         if(fpo->hasUnsafeAlgebra()) {
-            writeFact(pred::instruction::flag, instrId, "fast");
+            gen.writeFact(pred::instruction::flag, instrId, "fast");
         }
         else {
             if(fpo->hasNoNaNs()) {
-                writeFact(pred::instruction::flag, instrId, "nnan");
+                gen.writeFact(pred::instruction::flag, instrId, "nnan");
             }
             if(fpo->hasNoInfs()) {
-                writeFact(pred::instruction::flag, instrId, "ninf");
+                gen.writeFact(pred::instruction::flag, instrId, "ninf");
             }
             if(fpo->hasNoSignedZeros()) {
-                writeFact(pred::instruction::flag, instrId, "nsz");
+                gen.writeFact(pred::instruction::flag, instrId, "nsz");
             }
             if(fpo->hasAllowReciprocal()) {
-                writeFact(pred::instruction::flag, instrId, "arcp");
+                gen.writeFact(pred::instruction::flag, instrId, "arcp");
             }
         }
     }
     if (const OverflowingBinaryOperator *obo = dyn_cast<OverflowingBinaryOperator>(u)) {
         if(obo->hasNoUnsignedWrap()) {
-            writeFact(pred::instruction::flag, instrId, "nuw");
+            gen.writeFact(pred::instruction::flag, instrId, "nuw");
         }
         if(obo->hasNoSignedWrap()) {
-            writeFact(pred::instruction::flag, instrId, "nsw");
+            gen.writeFact(pred::instruction::flag, instrId, "nsw");
         }
     }
     else if (const PossiblyExactOperator *div = dyn_cast<PossiblyExactOperator>(u)) {
         if(div->isExact()) {
-            writeFact(pred::instruction::flag, instrId, "exact");
+            gen.writeFact(pred::instruction::flag, instrId, "exact");
         }
     }
 }
@@ -769,7 +757,7 @@ const char* InstructionVisitor::writeAtomicInfo(string instrId, AtomicOrdering o
 
     // default synchScope: crossthread
     if(synchScope == SingleThread)
-        writeFact(pred::instruction::flag, instrId, "singlethread");
+        gen.writeFact(pred::instruction::flag, instrId, "singlethread");
 
     return atomic;
 }
@@ -794,7 +782,7 @@ void InstructionVisitor::writeAtomicRMWOp(string instrId, AtomicRMWInst::BinOp o
     }
 
     if (strlen(oper))
-        writeFact(pred::atomicrmw::operation, instrId, oper);
+        gen.writeFact(pred::atomicrmw::operation, instrId, oper);
 }
 
 
@@ -812,28 +800,28 @@ void InstructionVisitor::visitGlobalAlias(const GlobalAlias *ga, const refmode_t
     const llvm::Constant *Aliasee = ga->getAliasee();
 
     // Record alias entity
-    writeFact(pred::alias::id, refmode);
+    gen.writeFact(pred::alias::id, refmode);
 
     // Serialize alias properties
-    refmode_t visibility = refmodeOf(ga->getVisibility());
-    refmode_t linkage    = refmodeOf(ga->getLinkage());
-    refmode_t aliasType  = refmodeOf(ga->getType());
+    refmode_t visibility = gen.refmodeOf(ga->getVisibility());
+    refmode_t linkage    = gen.refmodeOf(ga->getLinkage());
+    refmode_t aliasType  = gen.refmodeOf(ga->getType());
 
     // Record visibility
     if (!visibility.empty())
-        writeFact(pred::alias::visibility, refmode, visibility);
+        gen.writeFact(pred::alias::visibility, refmode, visibility);
 
     // Record linkage
     if (!linkage.empty())
-        writeFact(pred::alias::linkage, refmode, linkage);
+        gen.writeFact(pred::alias::linkage, refmode, linkage);
 
     // Record type
-    writeFact(pred::alias::type, refmode, aliasType);
+    gen.writeFact(pred::alias::type, refmode, aliasType);
 
     // Record aliasee
     if (Aliasee) {
-        string aliasee = valueToString(Aliasee, ga->getParent()); // CHECK
-        writeFact(pred::alias::aliasee, refmode, aliasee);
+        refmode_t aliasee = gen.refmodeOf(Aliasee, ga->getParent());
+        gen.writeFact(pred::alias::aliasee, refmode, aliasee);
     }
 }
 
@@ -841,235 +829,55 @@ void InstructionVisitor::visitGlobalAlias(const GlobalAlias *ga, const refmode_t
 void InstructionVisitor::visitGlobalVar(const GlobalVariable *gv, const string &refmode)
 {
     // Record global variable entity
-    writeFact(pred::global_var::id, refmode);
+    gen.writeFact(pred::global_var::id, refmode);
 
     // Serialize global variable properties
-    refmode_t visibility = refmodeOf(gv->getVisibility());
-    refmode_t linkage    = refmodeOf(gv->getLinkage());
-    refmode_t varType    = refmodeOf(gv->getType()->getElementType());
-    refmode_t thrLocMode = refmodeOf(gv->getThreadLocalMode());
+    refmode_t visibility = gen.refmodeOf(gv->getVisibility());
+    refmode_t linkage    = gen.refmodeOf(gv->getLinkage());
+    refmode_t varType    = gen.refmodeOf(gv->getType()->getElementType());
+    refmode_t thrLocMode = gen.refmodeOf(gv->getThreadLocalMode());
 
     // Record external linkage
     if (!gv->hasInitializer() && gv->hasExternalLinkage())
-        writeFact(pred::global_var::linkage, refmode, "external");
+        gen.writeFact(pred::global_var::linkage, refmode, "external");
 
     // Record linkage
     if (!linkage.empty())
-        writeFact(pred::global_var::linkage, refmode, linkage);
+        gen.writeFact(pred::global_var::linkage, refmode, linkage);
 
     // Record visibility
     if (!visibility.empty())
-        writeFact(pred::global_var::visibility, refmode, visibility);
+        gen.writeFact(pred::global_var::visibility, refmode, visibility);
 
     // Record thread local mode
     if (!thrLocMode.empty())
-        writeFact(pred::global_var::threadlocal_mode, refmode, thrLocMode);
+        gen.writeFact(pred::global_var::threadlocal_mode, refmode, thrLocMode);
 
     // TODO: in lb schema - AddressSpace & hasUnnamedAddr properties
     if (gv->isExternallyInitialized())
-        writeFact(pred::global_var::flag, refmode, "externally_initialized");
+        gen.writeFact(pred::global_var::flag, refmode, "externally_initialized");
 
     // Record flags and type
     const char * flag = gv->isConstant() ? "constant": "global";
 
-    writeFact(pred::global_var::flag, refmode, flag);
-    writeFact(pred::global_var::type, refmode, varType);
+    gen.writeFact(pred::global_var::flag, refmode, flag);
+    gen.writeFact(pred::global_var::type, refmode, varType);
 
     // Record initializer
     if (gv->hasInitializer()) {
-        string val = valueToString(gv->getInitializer(), gv->getParent()); // CHECK
-        writeFact(pred::global_var::initializer, refmode, val);
+        refmode_t val = gen.refmodeOf(gv->getInitializer(), gv->getParent()); // CHECK
+        gen.writeFact(pred::global_var::initializer, refmode, val);
     }
 
     // Record section
     if (gv->hasSection())
-        writeFact(pred::global_var::section, refmode, gv->getSection());
+        gen.writeFact(pred::global_var::section, refmode, gv->getSection());
 
     // Record alignment
     if (gv->getAlignment())
-        writeFact(pred::global_var::align, refmode, gv->getAlignment());
+        gen.writeFact(pred::global_var::align, refmode, gv->getAlignment());
 }
 
-
-
-//-------------------------------------------------------------------
-// Methods for recording different kinds of LLVM types.
-//-------------------------------------------------------------------
-
-
-void InstructionVisitor::visitType(const Type *type)
-{
-    // Record type sizes while skipping unsized types (e.g.,
-    // labels, functions)
-
-    if (type->isSized()) {
-        // Iterate over every cached data layout
-        foreach (const DataLayout *DL, csvGen->layouts)
-        {
-            // TODO: address the case when the data layout does
-            // not contain information about this type. This will
-            // happen when we analyze multiple compilation units
-            // (modules) at once.
-
-            uint64_t allocSize = DL->getTypeAllocSize(const_cast<Type *>(type));
-            uint64_t storeSize = DL->getTypeStoreSize(const_cast<Type *>(type));
-
-            // Store size of type in bytes
-            refmode_t typeRef = refmodeOf(type);
-
-            writeFact(pred::type::alloc_size, typeRef, allocSize);
-            writeFact(pred::type::store_size, typeRef, storeSize);
-            break;
-        }
-    }
-
-    refmode_t tref = refmodeOf(type);
-
-    // Record each different kind of type
-    switch (type->getTypeID()) { // Fallthrough is intended
-      case llvm::Type::VoidTyID:
-      case llvm::Type::LabelTyID:
-      case llvm::Type::MetadataTyID:
-          writeFact(pred::primitive_type::id, tref);
-          break;
-      case llvm::Type::HalfTyID: // Fallthrough to all 6 floating point types
-      case llvm::Type::FloatTyID:
-      case llvm::Type::DoubleTyID:
-      case llvm::Type::X86_FP80TyID:
-      case llvm::Type::FP128TyID:
-      case llvm::Type::PPC_FP128TyID:
-          assert(type->isFloatingPointTy());
-          writeFact(pred::fp_type::id, tref);
-          break;
-      case llvm::Type::IntegerTyID:
-          writeFact(pred::integer_type::id, tref);
-          break;
-      case llvm::Type::FunctionTyID:
-          visitFunctionType(cast<FunctionType>(type));
-          break;
-      case llvm::Type::StructTyID:
-          visitStructType(cast<StructType>(type));
-          break;
-      case llvm::Type::ArrayTyID:
-          visitArrayType(cast<ArrayType>(type));
-          break;
-      case llvm::Type::PointerTyID:
-          visitPointerType(cast<PointerType>(type));
-          break;
-      case llvm::Type::VectorTyID:
-          visitVectorType(cast<VectorType>(type));
-          break;
-      case llvm::Type::X86_MMXTyID: // TODO: handle this type
-          break;
-      default:
-          type->dump();
-          llvm::errs() << "-" << type->getTypeID()
-                       << ": invalid type encountered.\n";
-    }
-}
-
-
-void InstructionVisitor::visitPointerType(const PointerType *ptrType)
-{
-    refmode_t tref = refmodeOf(ptrType);
-    refmode_t elementType = refmodeOf(ptrType->getPointerElementType());
-
-    // Record pointer type entity
-    writeFact(pred::ptr_type::id, tref);
-
-    // Record pointer element type
-    writeFact(pred::ptr_type::component_type, tref, elementType);
-
-    // Record pointer address space
-    if (unsigned addressSpace = ptrType->getPointerAddressSpace())
-        writeFact(pred::ptr_type::addr_space, tref, addressSpace);
-}
-
-
-void InstructionVisitor::visitArrayType(const ArrayType *arrayType)
-{
-    refmode_t tref = refmodeOf(arrayType);
-    refmode_t componentType = refmodeOf(arrayType->getArrayElementType());
-    size_t nElements = arrayType->getArrayNumElements();
-
-    writeFact(pred::array_type::id, tref);
-    writeFact(pred::array_type::component_type, tref, componentType);
-    writeFact(pred::array_type::size, tref, nElements);
-}
-
-
-void InstructionVisitor::visitStructType(const StructType *structType)
-{
-    refmode_t tref = refmodeOf(structType);
-    size_t nFields = structType->getStructNumElements();
-
-    // Record struct type entity
-    writeFact(pred::struct_type::id, tref);
-
-    if (structType->isOpaque()) {
-        // Opaque structs carry no info about their internal structure
-        writeFact(pred::struct_type::opaque, tref);
-    } else {
-        // Record struct field types
-        for (size_t i = 0; i < nFields; i++)
-        {
-            refmode_t fieldType = refmodeOf(
-                structType->getStructElementType(i));
-
-            writeFact(pred::struct_type::field_type, tref, fieldType, i);
-        }
-
-        // Record number of fields
-        writeFact(pred::struct_type::nfields, tref, nFields);
-    }
-}
-
-
-void InstructionVisitor::visitFunctionType(const FunctionType *functionType)
-{
-    refmode_t signature  = refmodeOf(functionType);
-    refmode_t returnType = refmodeOf(functionType->getReturnType());
-    size_t nParameters = functionType->getFunctionNumParams();
-
-    // Record function type entity
-    writeFact(pred::func_type::id, signature);
-
-    // TODO: which predicate/entity do we need to update for varagrs?
-    if (functionType->isVarArg())
-        writeFact(pred::func_type::varargs, signature);
-
-    // Record return type
-    writeFact(pred::func_type::return_type, signature, returnType);
-
-    // Record function formal parameters
-    for (size_t i = 0; i < nParameters; i++)
-    {
-        refmode_t paramType = refmodeOf(functionType->getFunctionParamType(i));
-
-        writeFact(pred::func_type::param_type, signature, paramType, i);
-    }
-
-    // Record number of formal parameters
-    writeFact(pred::func_type::nparams, signature, nParameters);
-}
-
-
-void InstructionVisitor::visitVectorType(const VectorType *vectorType)
-{
-    refmode_t tref = refmodeOf(vectorType);
-    size_t nElements = vectorType->getVectorNumElements();
-    Type *componentType = vectorType->getVectorElementType();
-
-    // Record vector type entity
-    writeFact(pred::vector_type::id, tref);
-
-    // Record vector component type
-    refmode_t compref = refmodeOf(componentType);
-    writeFact(pred::vector_type::component_type, tref, compref);
-
-    // Record vector type size
-    writeFact(pred::vector_type::size, tref, nElements);
-}
 
 
 void CsvGenerator::initStreams()
@@ -1098,4 +906,32 @@ void CsvGenerator::initStreams()
 
     // TODO: Consider closing streams and opening them lazily, so as
     // not to exceed the maximum number of open file descriptors
+}
+
+void InstructionVisitor::writeFnAttributes(
+    const pred_t &predicate,
+    const refmode_t &refmode,
+    const AttributeSet Attrs)
+{
+    AttributeSet AS;
+
+    if (Attrs.hasAttributes(AttributeSet::FunctionIndex))
+        AS = Attrs.getFnAttributes();
+
+    unsigned idx = 0;
+
+    for (unsigned e = AS.getNumSlots(); idx != e; ++idx) {
+        if (AS.getSlotIndex(idx) == AttributeSet::FunctionIndex)
+            break;
+    }
+
+    for (AttributeSet::iterator I = AS.begin(idx), E = AS.end(idx); I != E; ++I)
+    {
+        Attribute Attr = *I;
+
+        if (!Attr.isStringAttribute()) {
+            string AttrStr = Attr.getAsString();
+            gen.writeFact(predicate, refmode, Attr.getAsString());
+        }
+    }
 }

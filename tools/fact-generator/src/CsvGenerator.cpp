@@ -4,6 +4,7 @@
 #include <llvm/Support/CFG.h>
 #include "CsvGenerator.hpp"
 #include "InstructionVisitor.hpp"
+#include "TypeVisitor.hpp"
 #include "TypeAccumulator.hpp"
 
 #define foreach BOOST_FOREACH
@@ -12,9 +13,6 @@
 using namespace llvm;
 using namespace std;
 using namespace boost;
-
-using namespace auxiliary_methods;
-
 namespace fs = boost::filesystem;
 namespace pred = predicates;
 
@@ -30,7 +28,7 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
 
     layouts.insert(layout);
 
-    InstructionVisitor IV(this, Mod);
+    InstructionVisitor IV(*this, Mod);
 
     // iterating over global variables in a module
     for (Module::const_global_iterator gi = Mod->global_begin(), E = Mod->global_end(); gi != E; ++gi) {
@@ -61,59 +59,55 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
         refmode_t typeSignature = refmodeOf(fi->getFunctionType());
 
         // Record function type signature
-        IV.writeFact(pred::function::type, funcRef, typeSignature);
+        writeFact(pred::function::type, funcRef, typeSignature);
 
         // Record function linkage, visibility, alignment, and GC
         if (!linkage.empty())
-            IV.writeFact(pred::function::linkage, funcRef, linkage);
+            writeFact(pred::function::linkage, funcRef, linkage);
 
         if (!visibility.empty())
-            IV.writeFact(pred::function::visibility, funcRef, visibility);
+            writeFact(pred::function::visibility, funcRef, visibility);
 
         if (fi->getAlignment())
-            IV.writeFact(pred::function::alignment, funcRef, fi->getAlignment());
+            writeFact(pred::function::alignment, funcRef, fi->getAlignment());
 
         if (fi->hasGC())
-            IV.writeFact(pred::function::gc, funcRef, fi->getGC());
+            writeFact(pred::function::gc, funcRef, fi->getGC());
 
         // Record calling convection if it not defaults to C
         if (fi->getCallingConv() != CallingConv::C) {
             refmode_t cconv = refmodeOf(fi->getCallingConv());
-            IV.writeFact(pred::function::calling_conv, funcRef, cconv);
+            writeFact(pred::function::calling_conv, funcRef, cconv);
         }
 
         // Record function name
-        IV.writeFact(pred::function::name, funcRef, "@" + fi->getName().str());
+        writeFact(pred::function::name, funcRef, "@" + fi->getName().str());
 
         // Address not significant
         if (fi->hasUnnamedAddr())
-            IV.writeFact(pred::function::unnamed_addr, funcRef);
+            writeFact(pred::function::unnamed_addr, funcRef);
 
         // Record function attributes TODO
         const AttributeSet &Attrs = fi->getAttributes();
 
         if (Attrs.hasAttributes(AttributeSet::ReturnIndex))
-            IV.writeFact(pred::function::ret_attr, funcRef,
+            writeFact(pred::function::ret_attr, funcRef,
                          Attrs.getAsString(AttributeSet::ReturnIndex));
 
-        vector<string> FuncnAttr;
-        writeFnAttributes(Attrs, FuncnAttr);
-
-        for (size_t i = 0; i < FuncnAttr.size(); i++)
-            IV.writeFact(pred::function::attr, funcRef, FuncnAttr[i]);
+        IV.writeFnAttributes(pred::function::attr, funcRef, Attrs);
 
         // Nothing more to do for function declarations
         if (fi->isDeclaration()) {
-            IV.writeFact(pred::function::id_decl, funcRef); // record function declaration
+            writeFact(pred::function::id_decl, funcRef); // record function declaration
             continue;
         }
 
         // Record function definition entity
-        IV.writeFact(pred::function::id_defn, funcRef);
+        writeFact(pred::function::id_defn, funcRef);
 
         // Record section
         if(fi->hasSection())
-            IV.writeFact(pred::function::section, funcRef, fi->getSection());
+            writeFact(pred::function::section, funcRef, fi->getSection());
 
         // Record function parameters
         {
@@ -123,9 +117,9 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
                      arg = fi->arg_begin(), arg_end = fi->arg_end();
                  arg != arg_end; arg++)
             {
-                string varId = instrId + valueToString(arg, Mod);
+                string varId = instrId + refmodeOf(arg, Mod);
 
-                IV.writeFact(pred::function::param, funcRef, varId, index++);
+                writeFact(pred::function::param, funcRef, varId, index++);
                 recordVariable(varId, arg->getType());
             }
         }
@@ -137,11 +131,11 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
         foreach (const llvm::BasicBlock &bb, *fi)
         {
             string funcPrefix = funcRef + ":";
-            string bbRef = funcPrefix + valueToString(&bb, Mod);
+            string bbRef = funcPrefix + refmodeOf(&bb, Mod);
 
             // Record basic block entry as a label
-            IV.writeFact(pred::variable::id, bbRef);
-            IV.writeFact(pred::variable::type, bbRef, "label");
+            writeFact(pred::variable::id, bbRef);
+            writeFact(pred::variable::type, bbRef, "label");
 
             // Record basic block predecessors
             BasicBlock *tmpBB = const_cast<BasicBlock *>(&bb);
@@ -149,8 +143,8 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
             for (pred_iterator pi = pred_begin(tmpBB), pi_end = pred_end(tmpBB);
                  pi != pi_end; ++pi)
             {
-                string predBB = funcPrefix + valueToString(*pi, Mod);
-                IV.writeFact(pred::basic_block::predecessor, bbRef, predBB);
+                string predBB = funcPrefix + refmodeOf(*pi, Mod);
+                writeFact(pred::basic_block::predecessor, bbRef, predBB);
             }
 
             // Store last instruction
@@ -164,9 +158,9 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
 
                 // Record instruction target variable if such exists
                 if (!instr.getType()->isVoidTy()) {
-                    string targetVar = instrId + valueToString(&instr, Mod);
+                    string targetVar = instrId + refmodeOf(&instr, Mod);
 
-                    IV.writeFact(pred::instruction::to, instrRef, targetVar);
+                    writeFact(pred::instruction::to, instrRef, targetVar);
                     recordVariable(targetVar, instr.getType());
                 }
 
@@ -176,15 +170,15 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
                     string nextInstrRef = instrId + std::to_string(counter);
 
                     // Record the instruction succession
-                    IV.writeFact(pred::instruction::next, instrRef, nextInstrRef);
+                    writeFact(pred::instruction::next, instrRef, nextInstrRef);
                 }
 
                 // Record instruction's container function
-                IV.writeFact(pred::instruction::function, instrRef, funcRef);
+                writeFact(pred::instruction::function, instrRef, funcRef);
 
                 // Record instruction's basic block entry (label)
-                string bbEntry = instrId + valueToString(instr.getParent(), Mod);
-                IV.writeFact(pred::instruction::bb_entry, instrRef, bbEntry);
+                string bbEntry = instrId + refmodeOf(instr.getParent(), Mod);
+                writeFact(pred::instruction::bb_entry, instrRef, bbEntry);
 
                 // Instruction Visitor TODO
                 IV.setInstrNum(instrRef);
@@ -202,16 +196,14 @@ void CsvGenerator::writeVarsTypesAndImmediates()
     using llvm_extra::TypeAccumulator;
     using boost::unordered_set;
 
-    InstructionVisitor IV(this, (llvm::Module *) 0);
-
     // Record every constant encountered so far
     foreach (type_cache_t::value_type kv, constantTypes) {
         string refmode = kv.first;
         const Type *type = kv.second;
 
         // Record constant entity with its type
-        IV.writeFact(pred::constant::id, refmode);
-        IV.writeFact(pred::constant::type, refmode, refmodeOf(type));
+        writeFact(pred::constant::id, refmode);
+        writeFact(pred::constant::type, refmode, refmodeOf(type));
 
         types.insert(type);
     }
@@ -222,8 +214,8 @@ void CsvGenerator::writeVarsTypesAndImmediates()
         const Type *type = kv.second;
 
         // Record variable entity with its type
-        IV.writeFact(pred::variable::id, refmode);
-        IV.writeFact(pred::variable::type, refmode, refmodeOf(type));
+        writeFact(pred::variable::id, refmode);
+        writeFact(pred::variable::type, refmode, refmodeOf(type));
 
         types.insert(type);
     }
@@ -235,12 +227,15 @@ void CsvGenerator::writeVarsTypesAndImmediates()
     unordered_set<const llvm::Type *> collectedTypes = collector(types);
 
     // Add basic primitive types
-    IV.writeFact(pred::primitive_type::id, "void");
-    IV.writeFact(pred::primitive_type::id, "label");
-    IV.writeFact(pred::primitive_type::id, "metadata");
-    IV.writeFact(pred::primitive_type::id, "x86mmx");
+    writeFact(pred::primitive_type::id, "void");
+    writeFact(pred::primitive_type::id, "label");
+    writeFact(pred::primitive_type::id, "metadata");
+    writeFact(pred::primitive_type::id, "x86mmx");
+
+    // Create type visitor
+    TypeVisitor TV(*this);
 
     // Record each type encountered
     foreach (const Type *type, collectedTypes)
-       IV.visitType(type);
+       TV.visitType(type);
 }
