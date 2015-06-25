@@ -67,6 +67,9 @@ class CsvGenerator : private RefmodePolicy
         writer.writeFact(predicate.c_str(), entity, value, index);
     }
 
+    void writeFnAttributes(const pred_t &pred,
+                           const refmode_t &refmode,
+                           const llvm::AttributeSet Attrs);
 
     /**
      * After processing every module, we record information for all
@@ -89,6 +92,12 @@ class CsvGenerator : private RefmodePolicy
         // Initialize output file streams
         initStreams();
     }
+
+    /* Global fact writing methods */
+
+    void visitGlobalAlias(const llvm::GlobalAlias *, const refmode_t &);
+    void visitGlobalVar(const llvm::GlobalVariable *, const refmode_t &);
+
 
     // TODO: consider moving all these complex methods that deal with
     // predicate names to separate class

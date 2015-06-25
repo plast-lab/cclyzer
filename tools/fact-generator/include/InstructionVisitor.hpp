@@ -67,11 +67,6 @@ class InstructionVisitor : public llvm::InstVisitor<InstructionVisitor>
     InstructionVisitor(CsvGenerator &generator, const llvm::Module *M)
         : gen(generator), Mod(M), writer(generator.writer) {}
 
-    /* Complex fact writing methods */
-
-    void visitGlobalAlias(const llvm::GlobalAlias *, const refmode_t &);
-    void visitGlobalVar(const llvm::GlobalVariable *, const refmode_t &);
-
     /*******************************
      * Instruction Visitor methods *
      *******************************/
@@ -164,7 +159,8 @@ class InstructionVisitor : public llvm::InstVisitor<InstructionVisitor>
     /* Fact writer */
     FactWriter &writer;
 
-    // Instruction-specific write functions
+
+    /* Instruction-specific write functions */
 
     refmode_t recordInstruction(const entity_pred_t &instrType) {
         writer.writeFact(instrType.c_str(), instrNum);
@@ -180,25 +176,59 @@ class InstructionVisitor : public llvm::InstVisitor<InstructionVisitor>
                            const llvm::Value *Value, int index = -1);
 
 
-    // Auxiliary methods
+    /* Auxiliary methods */
 
-    const char* writePredicate(unsigned predicate);
-    void writeOptimizationInfoToFile(const llvm::User *u, std::string instrId);
-    const char *writeAtomicInfo(std::string instrId, llvm::AtomicOrdering order, llvm::SynchronizationScope synchScope);
-    void writeAtomicRMWOp(std::string instrId, llvm::AtomicRMWInst::BinOp op);
 
-    void writeVolatileFlag(std::string instrId, bool volatileFlag) {
+    // Transform a condition predicate code to string
+    static const char* pred_to_string(unsigned predicate);
+
+    // Record several facts regarding optimizations
+    void writeOptimizationInfoToFile(const llvm::User *, refmode_t);
+
+    // Record `atomicrmw` binary operator
+    void writeAtomicRMWOp(refmode_t, llvm::AtomicRMWInst::BinOp);
+
+    // Deprecated
+    void writeVolatileFlag(refmode_t iref, bool volatileFlag) {
         if (volatileFlag)
-            gen.writeFact(predicates::instruction::flag, instrId, "volatile");
+            gen.writeFact(predicates::instruction::flag, iref, "volatile");
     }
 
-    void writeFnAttributes(const pred_t &pred,
-                           const refmode_t &refmode,
-                           const llvm::AttributeSet Attrs);
+    // Record atomic instruction info
+    template<typename P, typename I>
+    void writeAtomicInfo(refmode_t iref, I &instr)
+    {
+        using namespace llvm;
+        const char *atomic = (char *) 0;
+
+        AtomicOrdering order = instr.getOrdering();
+        SynchronizationScope synchScope = instr.getSynchScope();
+
+        switch (order) {
+          case Unordered: atomic = "unordered";            break;
+          case Monotonic: atomic = "monotonic";            break;
+          case Acquire: atomic = "acquire";                break;
+          case Release: atomic = "release";                break;
+          case AcquireRelease: atomic = "acq_rel";         break;
+          case SequentiallyConsistent: atomic = "seq_cst"; break;
+              // TODO: NotAtomic?
+          default: break;
+        }
+
+        // default synchScope: crossthread
+        if (synchScope == SingleThread)
+            gen.writeFact(predicates::instruction::flag, iref, "singlethread");
+
+        if (atomic)
+            gen.writeFact(P::ordering, iref, atomic);
+    }
+
 
     std::string instrNum;
     std::string instrId;
     int immediateOffset;
+
+    /* Associated LLVM module */
     const llvm::Module *Mod;
 
     /* Instance of outer CSV generator */

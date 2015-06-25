@@ -2,6 +2,7 @@
 #include <llvm/IR/Module.h>
 #include <llvm/IR/Operator.h>
 #include <llvm/Support/CFG.h>
+#include "predicate_groups.hpp"
 #include "CsvGenerator.hpp"
 #include "InstructionVisitor.hpp"
 #include "TypeVisitor.hpp"
@@ -33,14 +34,14 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
     // iterating over global variables in a module
     for (Module::const_global_iterator gi = Mod->global_begin(), E = Mod->global_end(); gi != E; ++gi) {
         string refmode = getRefmodeForValue(Mod, gi, path);
-        IV.visitGlobalVar(gi, refmode);
+        visitGlobalVar(gi, refmode);
         types.insert(gi->getType());
     }
 
     // iterating over global alias in a module
     for (Module::const_alias_iterator ga = Mod->alias_begin(), E = Mod->alias_end(); ga != E; ++ga) {
         string refmode = getRefmodeForValue(Mod, ga, path);
-        IV.visitGlobalAlias(ga, refmode);
+        visitGlobalAlias(ga, refmode);
         types.insert(ga->getType());
     }
 
@@ -94,7 +95,7 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
             writeFact(pred::function::ret_attr, funcRef,
                          Attrs.getAsString(AttributeSet::ReturnIndex));
 
-        IV.writeFnAttributes(pred::function::attr, funcRef, Attrs);
+        writeFnAttributes(pred::function::attr, funcRef, Attrs);
 
         // Nothing more to do for function declarations
         if (fi->isDeclaration()) {
@@ -191,6 +192,128 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
 }
 
 
+void CsvGenerator::visitGlobalAlias(const GlobalAlias *ga, const refmode_t &refmode)
+{
+    //------------------------------------------------------------------
+    // A global alias introduces a /second name/ for the aliasee value
+    // (which can be either function, global variable, another alias
+    // or bitcast of global value). It has the following form:
+    //
+    // @<Name> = alias [Linkage] [Visibility] <AliaseeTy> @<Aliasee>
+    //------------------------------------------------------------------
+
+    // Get aliasee value as llvm constant
+    const llvm::Constant *Aliasee = ga->getAliasee();
+
+    // Record alias entity
+    writeFact(pred::alias::id, refmode);
+
+    // Serialize alias properties
+    refmode_t visibility = refmodeOf(ga->getVisibility());
+    refmode_t linkage    = refmodeOf(ga->getLinkage());
+    refmode_t aliasType  = refmodeOf(ga->getType());
+
+    // Record visibility
+    if (!visibility.empty())
+        writeFact(pred::alias::visibility, refmode, visibility);
+
+    // Record linkage
+    if (!linkage.empty())
+        writeFact(pred::alias::linkage, refmode, linkage);
+
+    // Record type
+    writeFact(pred::alias::type, refmode, aliasType);
+
+    // Record aliasee
+    if (Aliasee) {
+        refmode_t aliasee = refmodeOf(Aliasee, ga->getParent());
+        writeFact(pred::alias::aliasee, refmode, aliasee);
+    }
+}
+
+
+void CsvGenerator::visitGlobalVar(const GlobalVariable *gv, const string &refmode)
+{
+    // Record global variable entity
+    writeFact(pred::global_var::id, refmode);
+
+    // Serialize global variable properties
+    refmode_t visibility = refmodeOf(gv->getVisibility());
+    refmode_t linkage    = refmodeOf(gv->getLinkage());
+    refmode_t varType    = refmodeOf(gv->getType()->getElementType());
+    refmode_t thrLocMode = refmodeOf(gv->getThreadLocalMode());
+
+    // Record external linkage
+    if (!gv->hasInitializer() && gv->hasExternalLinkage())
+        writeFact(pred::global_var::linkage, refmode, "external");
+
+    // Record linkage
+    if (!linkage.empty())
+        writeFact(pred::global_var::linkage, refmode, linkage);
+
+    // Record visibility
+    if (!visibility.empty())
+        writeFact(pred::global_var::visibility, refmode, visibility);
+
+    // Record thread local mode
+    if (!thrLocMode.empty())
+        writeFact(pred::global_var::threadlocal_mode, refmode, thrLocMode);
+
+    // TODO: in lb schema - AddressSpace & hasUnnamedAddr properties
+    if (gv->isExternallyInitialized())
+        writeFact(pred::global_var::flag, refmode, "externally_initialized");
+
+    // Record flags and type
+    const char * flag = gv->isConstant() ? "constant": "global";
+
+    writeFact(pred::global_var::flag, refmode, flag);
+    writeFact(pred::global_var::type, refmode, varType);
+
+    // Record initializer
+    if (gv->hasInitializer()) {
+        refmode_t val = refmodeOf(gv->getInitializer(), gv->getParent()); // CHECK
+        writeFact(pred::global_var::initializer, refmode, val);
+    }
+
+    // Record section
+    if (gv->hasSection())
+        writeFact(pred::global_var::section, refmode, gv->getSection());
+
+    // Record alignment
+    if (gv->getAlignment())
+        writeFact(pred::global_var::align, refmode, gv->getAlignment());
+}
+
+
+void CsvGenerator::writeFnAttributes(
+    const pred_t &predicate,
+    const refmode_t &refmode,
+    const AttributeSet Attrs)
+{
+    AttributeSet AS;
+
+    if (Attrs.hasAttributes(AttributeSet::FunctionIndex))
+        AS = Attrs.getFnAttributes();
+
+    unsigned idx = 0;
+
+    for (unsigned e = AS.getNumSlots(); idx != e; ++idx) {
+        if (AS.getSlotIndex(idx) == AttributeSet::FunctionIndex)
+            break;
+    }
+
+    for (AttributeSet::iterator I = AS.begin(idx), E = AS.end(idx); I != E; ++I)
+    {
+        Attribute Attr = *I;
+
+        if (!Attr.isStringAttribute()) {
+            string AttrStr = Attr.getAsString();
+            writeFact(predicate, refmode, Attr.getAsString());
+        }
+    }
+}
+
+
 void CsvGenerator::writeVarsTypesAndImmediates()
 {
     using llvm_extra::TypeAccumulator;
@@ -238,4 +361,33 @@ void CsvGenerator::writeVarsTypesAndImmediates()
     // Record each type encountered
     foreach (const Type *type, collectedTypes)
        TV.visitType(type);
+}
+
+
+void CsvGenerator::initStreams()
+{
+    using namespace predicates;
+
+    std::vector<const char *> all_predicates;
+
+    for (pred_t *pred : predicates::predicates())
+    {
+        operand_pred_t *operand_pred = dynamic_cast< operand_pred_t*>(pred);
+
+        if (operand_pred) {
+            pred_t cpred = operand_pred->asConstant();
+            pred_t vpred = operand_pred->asVariable();
+
+            all_predicates.push_back(cpred.c_str());
+            all_predicates.push_back(vpred.c_str());
+        }
+        else {
+            all_predicates.push_back(pred->c_str());
+        }
+    }
+
+    writer.init_streams(all_predicates);
+
+    // TODO: Consider closing streams and opening them lazily, so as
+    // not to exceed the maximum number of open file descriptors
 }
