@@ -2,6 +2,7 @@
 #define REFMODE_POLICY_HPP__
 
 #include <string>
+#include <llvm/IR/Function.h>
 #include <llvm/IR/Type.h>
 #include <llvm/IR/CallingConv.h>
 #include <llvm/IR/GlobalValue.h>
@@ -22,7 +23,8 @@ class RefmodePolicy {
     refmode_t refmodeOf(llvm::GlobalVariable::ThreadLocalMode TLM) const;
     refmode_t refmodeOf(llvm::CallingConv::ID CC) const;
     refmode_t refmodeOf(const llvm::Type *type) const;
-    refmode_t refmodeOf(const llvm::Value * Val, const llvm::Module *Mod = 0) const;
+    refmode_t refmodeOf(const llvm::Value *Val, const llvm::Module *Mod = 0) const;
+    refmode_t refmodeOf(const llvm::Function *func, const std::string &path) const;
 
   private:
     /* Opaque Pointer Idiom */

@@ -46,9 +46,10 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
     }
 
     // iterating over functions in a module
-    for (Module::const_iterator fi = Mod->begin(), fi_end = Mod->end(); fi != fi_end; ++fi) {
-        string funcRef = "<" + path + ">:" + string(fi->getName());
-        string instrId = funcRef + ":";
+    for (Module::const_iterator fi = Mod->begin(), fi_end = Mod->end(); fi != fi_end; ++fi)
+    {
+        refmode_t funcref = refmodeOf(fi, path);
+        string instrId = funcref + ":";
         IV.setInstrId(instrId);
 
         // Record function type
@@ -60,55 +61,55 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
         refmode_t typeSignature = refmodeOf(fi->getFunctionType());
 
         // Record function type signature
-        writeFact(pred::function::type, funcRef, typeSignature);
+        writeFact(pred::function::type, funcref, typeSignature);
 
         // Record function linkage, visibility, alignment, and GC
         if (!linkage.empty())
-            writeFact(pred::function::linkage, funcRef, linkage);
+            writeFact(pred::function::linkage, funcref, linkage);
 
         if (!visibility.empty())
-            writeFact(pred::function::visibility, funcRef, visibility);
+            writeFact(pred::function::visibility, funcref, visibility);
 
         if (fi->getAlignment())
-            writeFact(pred::function::alignment, funcRef, fi->getAlignment());
+            writeFact(pred::function::alignment, funcref, fi->getAlignment());
 
         if (fi->hasGC())
-            writeFact(pred::function::gc, funcRef, fi->getGC());
+            writeFact(pred::function::gc, funcref, fi->getGC());
 
         // Record calling convection if it not defaults to C
         if (fi->getCallingConv() != CallingConv::C) {
             refmode_t cconv = refmodeOf(fi->getCallingConv());
-            writeFact(pred::function::calling_conv, funcRef, cconv);
+            writeFact(pred::function::calling_conv, funcref, cconv);
         }
 
         // Record function name
-        writeFact(pred::function::name, funcRef, "@" + fi->getName().str());
+        writeFact(pred::function::name, funcref, "@" + fi->getName().str());
 
         // Address not significant
         if (fi->hasUnnamedAddr())
-            writeFact(pred::function::unnamed_addr, funcRef);
+            writeFact(pred::function::unnamed_addr, funcref);
 
         // Record function attributes TODO
         const AttributeSet &Attrs = fi->getAttributes();
 
         if (Attrs.hasAttributes(AttributeSet::ReturnIndex))
-            writeFact(pred::function::ret_attr, funcRef,
+            writeFact(pred::function::ret_attr, funcref,
                          Attrs.getAsString(AttributeSet::ReturnIndex));
 
-        writeFnAttributes(pred::function::attr, funcRef, Attrs);
+        writeFnAttributes(pred::function::attr, funcref, Attrs);
 
         // Nothing more to do for function declarations
         if (fi->isDeclaration()) {
-            writeFact(pred::function::id_decl, funcRef); // record function declaration
+            writeFact(pred::function::id_decl, funcref); // record function declaration
             continue;
         }
 
         // Record function definition entity
-        writeFact(pred::function::id_defn, funcRef);
+        writeFact(pred::function::id_defn, funcref);
 
         // Record section
         if(fi->hasSection())
-            writeFact(pred::function::section, funcRef, fi->getSection());
+            writeFact(pred::function::section, funcref, fi->getSection());
 
         // Record function parameters
         {
@@ -120,7 +121,7 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
             {
                 string varId = instrId + refmodeOf(arg, Mod);
 
-                writeFact(pred::function::param, funcRef, varId, index++);
+                writeFact(pred::function::param, funcref, varId, index++);
                 recordVariable(varId, arg->getType());
             }
         }
@@ -131,7 +132,7 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
         //REVIEW: There must be a way to move this whole logic inside InstructionVisitor, i.e., visit(Module M)
         foreach (const llvm::BasicBlock &bb, *fi)
         {
-            string funcPrefix = funcRef + ":";
+            string funcPrefix = funcref + ":";
             string bbRef = funcPrefix + refmodeOf(&bb, Mod);
 
             // Record basic block entry as a label
@@ -175,7 +176,7 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
                 }
 
                 // Record instruction's container function
-                writeFact(pred::instruction::function, instrRef, funcRef);
+                writeFact(pred::instruction::function, instrRef, funcref);
 
                 // Record instruction's basic block entry (label)
                 string bbEntry = instrId + refmodeOf(instr.getParent(), Mod);

@@ -1,5 +1,5 @@
+#include <sstream>
 #include <llvm/Assembly/Writer.h> // This is for version <= 3.4
-
 #include <llvm/Support/raw_ostream.h>
 #include "RefmodePolicy.hpp"
 #include "LLVMEnums.hpp"
@@ -13,7 +13,8 @@ class RefmodePolicy::Impl : LLVMEnumSerializer {
     refmode_t refmodeOf(llvm::GlobalVariable::ThreadLocalMode TLM) const;
     refmode_t refmodeOf(llvm::CallingConv::ID CC) const;
     refmode_t refmodeOf(const llvm::Type *type) const;
-    refmode_t refmodeOf(const llvm::Value * Val, const llvm::Module *Mod = 0) const;
+    refmode_t refmodeOf(const llvm::Value *Val, const llvm::Module *Mod = 0) const;
+    refmode_t refmodeOf(const llvm::Function *func, const std::string &path) const;
 
   protected:
     typedef LLVMEnumSerializer enums;
@@ -86,6 +87,10 @@ refmode_t RefmodePolicy::refmodeOf(const llvm::Value * Val, const Module * Mod) 
     return impl->refmodeOf(Val, Mod);
 }
 
+refmode_t RefmodePolicy::refmodeOf(const llvm::Function * func, const std::string &path) const {
+    return impl->refmodeOf(func, path);
+}
+
 
 // Refmodes for LLVM Enums
 
@@ -113,4 +118,18 @@ refmode_t RefmodePolicy::Impl::refmodeOf(const llvm::Value * Val, const Module *
     raw_string_ostream rso(rv);
     WriteAsOperand(rso, Val, false, Mod);
     return rso.str();
+}
+
+
+// Refmode for LLVM Functions
+
+refmode_t RefmodePolicy::Impl::refmodeOf(
+    const llvm::Function * func, const std::string &path) const
+{
+    std::ostringstream refmode;
+
+    refmode << '<' << path <<  ">:"
+            << string(func->getName());
+
+    return refmode.str();
 }
