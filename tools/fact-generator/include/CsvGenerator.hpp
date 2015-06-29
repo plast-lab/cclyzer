@@ -120,6 +120,21 @@ class CsvGenerator : private RefmodePolicy
     }
 
     boost::unordered_set<const llvm::Type *> types;
+
+    /* A RAII object for recording the current context. */
+    struct Context {
+        Context(CsvGenerator &generator, const llvm::Value *v)
+            : gen(generator) {
+            gen.enterContext(v);
+        }
+
+        ~Context() {
+            gen.exitContext();
+        }
+
+      private:
+        CsvGenerator &gen;
+    };
 };
 
 #endif

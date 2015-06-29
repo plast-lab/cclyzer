@@ -26,6 +26,9 @@ class RefmodePolicy {
     refmode_t refmodeOf(const llvm::Value *Val, const llvm::Module *Mod = 0) const;
     refmode_t refmodeOf(const llvm::Function *func, const std::string &path) const;
 
+    void enterContext(const llvm::Value *val);
+    void exitContext();
+
   private:
     /* Opaque Pointer Idiom */
     class Impl;

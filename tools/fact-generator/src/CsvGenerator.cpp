@@ -48,6 +48,8 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
     // iterating over functions in a module
     for (Module::const_iterator fi = Mod->begin(), fi_end = Mod->end(); fi != fi_end; ++fi)
     {
+        Context C(*this, fi);
+
         refmode_t funcref = refmodeOf(fi, path);
         string instrId = funcref + ":";
         IV.setInstrId(instrId);
@@ -132,6 +134,8 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
         //REVIEW: There must be a way to move this whole logic inside InstructionVisitor, i.e., visit(Module M)
         foreach (const llvm::BasicBlock &bb, *fi)
         {
+            Context C(*this, &bb);
+
             string funcPrefix = funcref + ":";
             string bbRef = funcPrefix + refmodeOf(&bb, Mod);
 
@@ -155,6 +159,8 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
             // iterating over basic block instructions
             foreach (const llvm::Instruction &instr, bb)
             {
+                Context C(*this, &instr);
+
                 // Compute instruction refmode
                 string instrRef = instrId + std::to_string(counter++);
 
