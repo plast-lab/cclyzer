@@ -1,7 +1,7 @@
 #include <boost/foreach.hpp>
 #include <llvm/IR/Module.h>
 #include <llvm/IR/Operator.h>
-#include <llvm/Support/CFG.h>
+#include <llvm/IR/CFG.h>
 #include "predicate_groups.hpp"
 #include "CsvGenerator.hpp"
 #include "InstructionVisitor.hpp"

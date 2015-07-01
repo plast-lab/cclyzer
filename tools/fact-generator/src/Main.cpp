@@ -49,8 +49,7 @@ int main(int argc, char *argv[])
         csvGen.processModule(module, realPath);
 
         // Get data layout of this module
-        std::string layoutRef = module->getDataLayout();
-        llvm::DataLayout *layout = new llvm::DataLayout(layoutRef);
+        const llvm::DataLayout *layout = module->getDataLayout();
 
         // Write types
         csvGen.writeVarsTypesAndImmediates(*layout);

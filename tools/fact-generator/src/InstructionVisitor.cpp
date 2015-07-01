@@ -414,7 +414,22 @@ void InstructionVisitor::visitAtomicCmpXchgInst(AtomicCmpXchgInst &AXI)
     if (AXI.isVolatile())
         gen.writeFact(pred::cmpxchg::isvolatile, iref);
 
-    writeAtomicInfo<pred::cmpxchg>(iref, AXI);
+    AtomicOrdering successOrd = AXI.getSuccessOrdering();
+    AtomicOrdering failureOrd = AXI.getFailureOrdering();
+    SynchronizationScope synchScope = AXI.getSynchScope();
+
+    string successOrdStr = gen.refmodeOf(successOrd);
+    string failureOrdStr = gen.refmodeOf(failureOrd);
+
+    // default synchScope: crossthread
+    if (synchScope == SingleThread)
+        gen.writeFact(pred::instruction::flag, iref, "singlethread");
+
+    if (!successOrdStr.empty())
+        gen.writeFact(pred::cmpxchg::ordering, iref, successOrdStr);
+
+    if (!failureOrdStr.empty()) // change schema ordering preds
+        gen.writeFact(pred::cmpxchg::ordering, iref, failureOrdStr);
 
     // TODO: type?
 }

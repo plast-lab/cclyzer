@@ -40,7 +40,7 @@ lines appropriately:
 
 ### Install LLVM
 
-* Download LLVM 3.4.1 pre-built binary from the
+* Download LLVM 3.5.1 pre-built binary from the
   [LLVM Download Page](http://www.llvm.org/releases/download.html#3.4.1). 
 * Untar the downloaded file to a destination path of your choice
   (e.g., `/opt/llvm/`) and modify permissions accordingly. 

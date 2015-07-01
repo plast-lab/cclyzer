@@ -3,7 +3,7 @@
 
 #include <string>
 #include <boost/unordered_map.hpp>
-#include <llvm/InstVisitor.h>
+#include <llvm/IR/InstVisitor.h>
 #include <llvm/IR/Attributes.h>
 
 #include "predicate_groups.hpp"
@@ -199,27 +199,17 @@ class InstructionVisitor : public llvm::InstVisitor<InstructionVisitor>
     void writeAtomicInfo(refmode_t iref, I &instr)
     {
         using namespace llvm;
-        const char *atomic = (char *) 0;
 
         AtomicOrdering order = instr.getOrdering();
         SynchronizationScope synchScope = instr.getSynchScope();
 
-        switch (order) {
-          case Unordered: atomic = "unordered";            break;
-          case Monotonic: atomic = "monotonic";            break;
-          case Acquire: atomic = "acquire";                break;
-          case Release: atomic = "release";                break;
-          case AcquireRelease: atomic = "acq_rel";         break;
-          case SequentiallyConsistent: atomic = "seq_cst"; break;
-              // TODO: NotAtomic?
-          default: break;
-        }
+        std::string atomic = gen.refmodeOf(order);
 
         // default synchScope: crossthread
         if (synchScope == SingleThread)
             gen.writeFact(predicates::instruction::flag, iref, "singlethread");
 
-        if (atomic)
+        if (!atomic.empty())
             gen.writeFact(P::ordering, iref, atomic);
     }
 

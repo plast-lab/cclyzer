@@ -65,10 +65,6 @@ string LLVMEnumSerializer::to_string(GlobalValue::LinkageTypes LT)
     switch (LT) {
       case GlobalValue::ExternalLinkage:      linkTy = "external";        break;
       case GlobalValue::PrivateLinkage:       linkTy = "private";         break;
-      case GlobalValue::LinkerPrivateLinkage: linkTy = "linker_private";  break;
-      case GlobalValue::LinkerPrivateWeakLinkage:
-          linkTy = "linker_private_weak";
-          break;
       case GlobalValue::InternalLinkage:      linkTy = "internal";        break;
       case GlobalValue::LinkOnceAnyLinkage:   linkTy = "linkonce";        break;
       case GlobalValue::LinkOnceODRLinkage:   linkTy = "linkonce_odr";    break;
@@ -98,4 +94,22 @@ string LLVMEnumSerializer::to_string(GlobalValue::VisibilityTypes Vis)
     }
 
     return visibility;
+}
+
+
+string LLVMEnumSerializer::to_string(llvm::AtomicOrdering ordering)
+{
+    const char *atomic;
+
+    switch (ordering) {
+      case Unordered: atomic = "unordered";            break;
+      case Monotonic: atomic = "monotonic";            break;
+      case Acquire: atomic = "acquire";                break;
+      case Release: atomic = "release";                break;
+      case AcquireRelease: atomic = "acq_rel";         break;
+      case SequentiallyConsistent: atomic = "seq_cst"; break;
+          // TODO: NotAtomic?
+      default: atomic = ""; break;
+    }
+    return atomic;
 }

@@ -5,6 +5,7 @@
 #include <llvm/IR/CallingConv.h>
 #include <llvm/IR/GlobalValue.h>
 #include <llvm/IR/GlobalVariable.h>
+#include <llvm/IR/Instructions.h>
 
 
 class LLVMEnumSerializer {
@@ -13,6 +14,7 @@ class LLVMEnumSerializer {
     static std::string to_string(llvm::GlobalValue::VisibilityTypes Vis);
     static std::string to_string(llvm::GlobalVariable::ThreadLocalMode TLM);
     static std::string to_string(llvm::CallingConv::ID CC);
+    static std::string to_string(llvm::AtomicOrdering AO);
 };
 
 #endif /* LLVM_ENUMS_HPP__ */

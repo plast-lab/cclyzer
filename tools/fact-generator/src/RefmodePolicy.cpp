@@ -1,6 +1,5 @@
 #include <sstream>
 #include <map>
-#include <llvm/Assembly/Writer.h> // This is for version <= 3.4
 #include <llvm/Support/raw_ostream.h>
 #include "RefmodePolicy.hpp"
 #include "LLVMEnums.hpp"
@@ -13,6 +12,7 @@ class RefmodePolicy::Impl : LLVMEnumSerializer {
     refmode_t refmodeOf(llvm::GlobalValue::VisibilityTypes Vis) const;
     refmode_t refmodeOf(llvm::GlobalVariable::ThreadLocalMode TLM) const;
     refmode_t refmodeOf(llvm::CallingConv::ID CC) const;
+    refmode_t refmodeOf(llvm::AtomicOrdering AO) const;
     refmode_t refmodeOf(const llvm::Type *type) const;
     refmode_t refmodeOf(const llvm::Value *Val, const llvm::Module *Mod = 0) const;
     refmode_t refmodeOf(const llvm::Function *func, const std::string &path) const;
@@ -117,6 +117,10 @@ refmode_t RefmodePolicy::refmodeOf(CallingConv::ID CC) const {
     return impl->refmodeOf(CC);
 }
 
+refmode_t RefmodePolicy::refmodeOf(llvm::AtomicOrdering AO) const {
+    return impl->refmodeOf(AO);
+}
+
 refmode_t RefmodePolicy::refmodeOf(const Type *type) const {
     return impl->refmodeOf(type);
 }
@@ -156,6 +160,11 @@ refmode_t RefmodePolicy::Impl::refmodeOf(CallingConv::ID CC) const {
     return enums::to_string(CC);
 }
 
+refmode_t RefmodePolicy::Impl::refmodeOf(AtomicOrdering AO) const {
+    return enums::to_string(AO);
+}
+
+
 // Refmode for LLVM Values
 
 refmode_t RefmodePolicy::Impl::refmodeOf(const llvm::Value * Val, const Module * Mod) const
@@ -175,8 +184,13 @@ refmode_t RefmodePolicy::Impl::refmodeOf(const llvm::Value * Val, const Module *
             break;
         }
 
-        if (Val->getType()->isVoidTy() || Val->getType()->isMetadataTy()) {
-            WriteAsOperand(rso, Val, false, Mod);
+        if (Val->getType()->isVoidTy()) {
+            Val->printAsOperand(rso, false, Mod);
+            break;
+        }
+
+        if (Val->getType()->isMetadataTy()) {
+            Val->printAsOperand(rso, false, Mod);
             break;
         }
 
@@ -197,7 +211,7 @@ refmode_t RefmodePolicy::Impl::refmodeOf(const llvm::Value * Val, const Module *
         }
 
         // Expensive
-        WriteAsOperand(rso, Val, false, Mod);
+        Val->printAsOperand(rso, false, Mod);
     } while(0);
 
     return rso.str();
