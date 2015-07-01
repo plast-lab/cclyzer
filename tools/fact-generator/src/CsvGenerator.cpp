@@ -20,15 +20,6 @@ namespace pred = predicates;
 
 void CsvGenerator::processModule(const Module * Mod, string& path)
 {
-    // Get data layout of this module
-    std::string layoutRef = Mod->getDataLayout();
-    DataLayout *layout = new DataLayout(layoutRef);
-
-    // Cache the data layout so that it is available at the
-    // postprocessing step of recording the encountered types
-
-    layouts.insert(layout);
-
     InstructionVisitor IV(*this, Mod);
 
     // iterating over global variables in a module
@@ -321,7 +312,7 @@ void CsvGenerator::writeFnAttributes(
 }
 
 
-void CsvGenerator::writeVarsTypesAndImmediates()
+void CsvGenerator::writeVarsTypesAndImmediates(const llvm::DataLayout &layout)
 {
     using llvm_extra::TypeAccumulator;
     using boost::unordered_set;
@@ -363,7 +354,7 @@ void CsvGenerator::writeVarsTypesAndImmediates()
     writeFact(pred::primitive_type::id, "x86mmx");
 
     // Create type visitor
-    TypeVisitor TV(*this);
+    TypeVisitor TV(*this, layout);
 
     // Record each type encountered
     foreach (const Type *type, collectedTypes)

@@ -1,3 +1,4 @@
+#include <llvm/IR/DataLayout.h>
 #include <llvm/IR/Type.h>
 #include "CsvGenerator.hpp"
 
@@ -5,7 +6,8 @@ class CsvGenerator::TypeVisitor
 {
   public:
 
-    TypeVisitor(CsvGenerator &generator) : gen(generator) {}
+    TypeVisitor(CsvGenerator &generator, const llvm::DataLayout &DL)
+        : gen(generator), layout(DL) {}
 
     /* Type Visitor methods */
 
@@ -19,4 +21,11 @@ class CsvGenerator::TypeVisitor
   private:
     /* Instance of outer CSV generator */
     CsvGenerator &gen;
+
+    /**
+     * Data layout. To compute the byte size of each type, we need a
+     * data layout object, that is associated with the given LLVM
+     * module.
+     */
+    const llvm::DataLayout &layout;
 };

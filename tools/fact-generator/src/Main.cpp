@@ -48,10 +48,15 @@ int main(int argc, char *argv[])
         // Generate facts for this module
         csvGen.processModule(module, realPath);
 
+        // Get data layout of this module
+        std::string layoutRef = module->getDataLayout();
+        llvm::DataLayout *layout = new llvm::DataLayout(layoutRef);
+
+        // Write types
+        csvGen.writeVarsTypesAndImmediates(*layout);
+
         delete module;
     }
-
-    csvGen.writeVarsTypesAndImmediates();
 
     return EXIT_SUCCESS;
 }

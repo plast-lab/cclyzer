@@ -19,24 +19,14 @@ void CsvGenerator::TypeVisitor::visitType(const Type *type)
     // labels, functions)
 
     if (type->isSized()) {
-        // Iterate over every cached data layout
-        foreach (const DataLayout *DL, gen.layouts)
-        {
-            // TODO: address the case when the data layout does
-            // not contain information about this type. This will
-            // happen when we analyze multiple compilation units
-            // (modules) at once.
+        uint64_t allocSize = layout.getTypeAllocSize(const_cast<Type *>(type));
+        uint64_t storeSize = layout.getTypeStoreSize(const_cast<Type *>(type));
 
-            uint64_t allocSize = DL->getTypeAllocSize(const_cast<Type *>(type));
-            uint64_t storeSize = DL->getTypeStoreSize(const_cast<Type *>(type));
+        // Store size of type in bytes
+        refmode_t typeRef = gen.refmodeOf(type);
 
-            // Store size of type in bytes
-            refmode_t typeRef = gen.refmodeOf(type);
-
-            gen.writeFact(pred::type::alloc_size, typeRef, allocSize);
-            gen.writeFact(pred::type::store_size, typeRef, storeSize);
-            break;
-        }
+        gen.writeFact(pred::type::alloc_size, typeRef, allocSize);
+        gen.writeFact(pred::type::store_size, typeRef, storeSize);
     }
 
     refmode_t tref = gen.refmodeOf(type);
