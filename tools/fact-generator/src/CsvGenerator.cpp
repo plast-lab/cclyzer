@@ -21,17 +21,18 @@ namespace pred = predicates;
 void CsvGenerator::processModule(const Module * Mod, string& path)
 {
     InstructionVisitor IV(*this, Mod);
+    ModuleContext MC(*this, Mod);
 
     // iterating over global variables in a module
     for (Module::const_global_iterator gi = Mod->global_begin(), E = Mod->global_end(); gi != E; ++gi) {
-        string refmode = getRefmodeForValue(Mod, gi, path);
+        string refmode = getRefmodeForValue(gi, path);
         visitGlobalVar(gi, refmode);
         types.insert(gi->getType());
     }
 
     // iterating over global alias in a module
     for (Module::const_alias_iterator ga = Mod->alias_begin(), E = Mod->alias_end(); ga != E; ++ga) {
-        string refmode = getRefmodeForValue(Mod, ga, path);
+        string refmode = getRefmodeForValue(ga, path);
         visitGlobalAlias(ga, refmode);
         types.insert(ga->getType());
     }
@@ -112,7 +113,7 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
                      arg = fi->arg_begin(), arg_end = fi->arg_end();
                  arg != arg_end; arg++)
             {
-                string varId = instrId + refmodeOf(arg, Mod);
+                string varId = instrId + refmodeOf(arg);
 
                 writeFact(pred::function::param, funcref, varId, index++);
                 recordVariable(varId, arg->getType());
@@ -128,7 +129,7 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
             Context C(*this, &bb);
 
             string funcPrefix = funcref + ":";
-            string bbRef = funcPrefix + refmodeOf(&bb, Mod);
+            string bbRef = funcPrefix + refmodeOf(&bb);
 
             // Record basic block entry as a label
             writeFact(pred::variable::id, bbRef);
@@ -140,7 +141,7 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
             for (pred_iterator pi = pred_begin(tmpBB), pi_end = pred_end(tmpBB);
                  pi != pi_end; ++pi)
             {
-                string predBB = funcPrefix + refmodeOf(*pi, Mod);
+                string predBB = funcPrefix + refmodeOf(*pi);
                 writeFact(pred::basic_block::predecessor, bbRef, predBB);
             }
 
@@ -157,7 +158,7 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
 
                 // Record instruction target variable if such exists
                 if (!instr.getType()->isVoidTy()) {
-                    string targetVar = instrId + refmodeOf(&instr, Mod);
+                    string targetVar = instrId + refmodeOf(&instr);
 
                     writeFact(pred::instruction::to, instrRef, targetVar);
                     recordVariable(targetVar, instr.getType());
@@ -176,7 +177,7 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
                 writeFact(pred::instruction::function, instrRef, funcref);
 
                 // Record instruction's basic block entry (label)
-                string bbEntry = instrId + refmodeOf(instr.getParent(), Mod);
+                string bbEntry = instrId + refmodeOf(instr.getParent());
                 writeFact(pred::instruction::bb_entry, instrRef, bbEntry);
 
                 // Instruction Visitor TODO
@@ -224,7 +225,7 @@ void CsvGenerator::visitGlobalAlias(const GlobalAlias *ga, const refmode_t &refm
 
     // Record aliasee
     if (Aliasee) {
-        refmode_t aliasee = refmodeOf(Aliasee, ga->getParent());
+        refmode_t aliasee = refmodeOf(Aliasee);
         writeFact(pred::alias::aliasee, refmode, aliasee);
     }
 }
@@ -269,7 +270,7 @@ void CsvGenerator::visitGlobalVar(const GlobalVariable *gv, const string &refmod
 
     // Record initializer
     if (gv->hasInitializer()) {
-        refmode_t val = refmodeOf(gv->getInitializer(), gv->getParent()); // CHECK
+        refmode_t val = refmodeOf(gv->getInitializer());
         writeFact(pred::global_var::initializer, refmode, val);
     }
 

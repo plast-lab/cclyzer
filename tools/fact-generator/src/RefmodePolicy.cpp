@@ -1,5 +1,6 @@
 #include <sstream>
 #include <map>
+#include <boost/algorithm/string.hpp>
 #include <llvm/Support/raw_ostream.h>
 #include "RefmodePolicy.hpp"
 #include "LLVMEnums.hpp"
@@ -14,7 +15,7 @@ class RefmodePolicy::Impl : LLVMEnumSerializer {
     refmode_t refmodeOf(llvm::CallingConv::ID CC) const;
     refmode_t refmodeOf(llvm::AtomicOrdering AO) const;
     refmode_t refmodeOf(const llvm::Type *type) const;
-    refmode_t refmodeOf(const llvm::Value *Val, const llvm::Module *Mod = 0) const;
+    refmode_t refmodeOf(const llvm::Value *Val) const;
     refmode_t refmodeOf(const llvm::Function *func, const std::string &path) const;
 
     // The following are copied from LLVM Diff Consumer
@@ -30,6 +31,14 @@ class RefmodePolicy::Impl : LLVMEnumSerializer {
     /// Record that a local context has been exited.
     void exitContext() {
         contexts.pop_back();
+    }
+
+    void enterModule(const llvm::Module *module) {
+        Mod = module;
+    }
+
+    void exitModule() {
+        Mod = nullptr;
     }
 
   protected:
@@ -56,11 +65,14 @@ class RefmodePolicy::Impl : LLVMEnumSerializer {
 
     // Tracking local contexts
     std::vector<RefContext> contexts;
+
+    const llvm::Module *Mod;
 };
 
 
 using std::string;
 using namespace llvm;
+using namespace boost::algorithm;
 
 
 // Refmodes for LLVM TYpe
@@ -125,8 +137,8 @@ refmode_t RefmodePolicy::refmodeOf(const Type *type) const {
     return impl->refmodeOf(type);
 }
 
-refmode_t RefmodePolicy::refmodeOf(const llvm::Value * Val, const Module * Mod) const {
-    return impl->refmodeOf(Val, Mod);
+refmode_t RefmodePolicy::refmodeOf(const llvm::Value * Val) const {
+    return impl->refmodeOf(Val);
 }
 
 refmode_t RefmodePolicy::refmodeOf(const llvm::Function * func, const std::string &path) const {
@@ -139,6 +151,14 @@ void RefmodePolicy::enterContext(const llvm::Value *val) {
 
 void RefmodePolicy::exitContext() {
     impl->exitContext();
+}
+
+void RefmodePolicy::enterModule(const llvm::Module *module) {
+    impl->enterModule(module);
+}
+
+void RefmodePolicy::exitModule() {
+    impl->exitModule();
 }
 
 
@@ -167,7 +187,7 @@ refmode_t RefmodePolicy::Impl::refmodeOf(AtomicOrdering AO) const {
 
 // Refmode for LLVM Values
 
-refmode_t RefmodePolicy::Impl::refmodeOf(const llvm::Value * Val, const Module * Mod) const
+refmode_t RefmodePolicy::Impl::refmodeOf(const llvm::Value * Val) const
 {
     string rv;
     raw_string_ostream rso(rv);
@@ -179,8 +199,8 @@ refmode_t RefmodePolicy::Impl::refmodeOf(const llvm::Value * Val, const Module *
             break;
         }
 
-        if (isa<Constant>(Val)) { // this also prints type
-            rso << *Val;
+        if (isa<Constant>(Val)) {
+            Val->printAsOperand(rso, false);
             break;
         }
 
@@ -214,7 +234,11 @@ refmode_t RefmodePolicy::Impl::refmodeOf(const llvm::Value * Val, const Module *
         Val->printAsOperand(rso, false, Mod);
     } while(0);
 
-    return rso.str();
+    // Trim external whitespace
+    string ref = rso.str();
+    trim(ref);
+
+    return ref;
 }
 
 

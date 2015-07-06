@@ -29,14 +29,14 @@ void InstructionVisitor::writeInstrOperand(
         // Compute refmode for constant value
         refmode << instr
                 << ':' << currentConstantOffset++
-                << ':' << gen.refmodeOf(c, Mod);
+                << ':' << gen.refmodeOf(c);
 
         // Record constant value
         gen.recordConstant(refmode.str(), type);
     }
     else {
         // Compute refmode for variable value
-        refmode << instrId << gen.refmodeOf(Val, Mod);
+        refmode << instrId << gen.refmodeOf(Val);
 
         // Record variable value
         gen.recordVariable(refmode.str(), type);
@@ -65,14 +65,14 @@ void InstructionVisitor::writeInstrOperand(
         // Compute refmode for constant
         refmode << instr
                 << ':' << currentConstantOffset++
-                << ':' << gen.refmodeOf(c, Mod);
+                << ':' << gen.refmodeOf(c);
 
         // Record constant operand
         predname = predicate.asConstant().c_str();
         gen.recordConstant(refmode.str(), type);
     }
     else {
-        refmode << instrId << gen.refmodeOf(Operand, Mod);
+        refmode << instrId << gen.refmodeOf(Operand);
 
         // Record variable operand
         predname = predicate.asVariable().c_str();
@@ -474,7 +474,7 @@ void InstructionVisitor::visitGetElementPtrInst(GetElementPtrInst &GEP)
             // Compute constant refmode
             constant << iref
                      << ':' << immOffset
-                     << ':' << gen.refmodeOf(c, Mod);
+                     << ':' << gen.refmodeOf(c);
 
             // Compute integer string representation
             string int_value = c->getUniqueInteger().toString(10, true);

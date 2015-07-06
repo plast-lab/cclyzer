@@ -101,8 +101,8 @@ class CsvGenerator : private RefmodePolicy
 
     /* Auxiliary methods */
 
-    inline std::string getRefmodeForValue(const llvm::Module * Mod, const llvm::Value * Val, std::string& path){
-        return "<" + path + ">:" + refmodeOf(Val, Mod);
+    inline std::string getRefmodeForValue(const llvm::Value * Val, std::string& path){
+        return "<" + path + ">:" + refmodeOf(Val);
     }
 
     boost::unordered_set<const llvm::Type *> types;
@@ -116,6 +116,20 @@ class CsvGenerator : private RefmodePolicy
 
         ~Context() {
             gen.exitContext();
+        }
+
+      private:
+        CsvGenerator &gen;
+    };
+
+    struct ModuleContext {
+        ModuleContext(CsvGenerator &generator, const llvm::Module *m)
+            : gen(generator) {
+            gen.enterModule(m);
+        }
+
+        ~ModuleContext() {
+            gen.exitModule();
         }
 
       private:
