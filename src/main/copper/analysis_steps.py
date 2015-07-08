@@ -32,9 +32,10 @@ class AnalysisStep(object):
 
 class FactGenerationStep(AnalysisStep):
     def apply(self, analysis):
-        indir = analysis.input_directory
+        input_files = analysis.input_files
         outdir = analysis.facts_directory
 
+        self.logger.info("LLVM Bitcode Input: %s", ', '.join(input_files))
         self.logger.info("Exporting facts to %s ...", outdir)
 
         # Create empty directory
@@ -42,7 +43,7 @@ class FactGenerationStep(AnalysisStep):
 
         # Generate facts
         with unpacked_binary('fact-generator') as executable:
-            subprocess.check_call([executable, "-f", "-o", outdir, "-r", indir])
+            subprocess.check_call([executable, "-f", "-o", outdir] + input_files)
 
         self.logger.info("Stored facts into %s", outdir)
 

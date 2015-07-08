@@ -45,8 +45,8 @@ def main():
 
     # Create CLI parser
     parser = argparse.ArgumentParser(description='Analyze LLVM bitcode.')
-    parser.add_argument('-i', '--input-dir', metavar='DIRECTORY', required=True,
-                        help='directory containing LLVM bitcode files to be analyzed')
+    parser.add_argument('input_files', metavar='FILE', nargs='+',
+                        help='LLVM bitcode file to be analyzed')
     parser.add_argument('-o', '--output-dir', metavar='DIRECTORY', required=True,
                         help='output directory')
     parser.add_argument('-q', '--no-config-file', dest='read_config', action='store_false')

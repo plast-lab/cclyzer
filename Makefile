@@ -172,7 +172,7 @@ $(eval $(call create-destdir,tests,tests))
 
 define benchmark_template
 
-$1.dir    := tests/$1
+$1.files  := $(wildcard tests/$1/*)
 $1.outdir := $(tests.outdir)/$1
 
 
@@ -186,7 +186,7 @@ $$($1.outdir): | $(tests.outdir)
 
 test-$1.run: tests.setup
 	@echo Analyzing $1 ...
-	$(artifact.exe) -i $$($1.dir) -o $$($1.outdir) $(COPPER_OPTS)
+	$(artifact.exe) -o $$($1.outdir) $(COPPER_OPTS) $$($1.files)
 
 
 # Cleaning target

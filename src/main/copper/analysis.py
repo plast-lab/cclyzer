@@ -32,8 +32,8 @@ class Analysis(object):
         return self._stats
 
     @property
-    def input_directory(self):
-        return os.path.abspath(self._config.input_directory)
+    def input_files(self):
+        return [os.path.abspath(f) for f in self._config.input_files]
 
     @property
     def output_directory(self):
