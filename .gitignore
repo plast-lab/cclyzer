@@ -5,3 +5,4 @@
 /tools/import-generator/include/blox/compiler/BloxCompiler.pb.h
 /src/logic/*/deps.mk
 /examples/build/
+/examples/db/

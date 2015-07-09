@@ -28,7 +28,7 @@
 //     store x, p
 //
 //
-// Since an arbitrary number of heap allocations may happend at
+// Since an arbitrary number of heap allocations may happen at
 // runtime, we must choose an appropriate abstraction. The most common
 // choice for Andersen type analyses is abstracting an allocation by
 // the instruction that allocates it. This is what we will follow here

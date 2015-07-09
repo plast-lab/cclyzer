@@ -5,6 +5,7 @@
 instruction(Insn), instruction:id(Insn:Ref) -> string(Ref).
 
 lang:physical:capacity[`instruction] = 8388608.
+lang:physical:storageModel[`instruction] = "ScalableSparse".
 
 // Terminator Instruction Subset
 terminator_instruction(Insn) -> instruction(Insn).

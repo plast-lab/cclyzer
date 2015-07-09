@@ -1,6 +1,7 @@
 LD = /usr/bin/ld.gold
 CC = clang
 CCFLAGS = -flto
+COPPER = ../build/dist/llvm-datalog
 
 all:
 
@@ -8,17 +9,19 @@ all:
 # Clang Unit Tests
 #--------------------
 
-srcdir      := .
-outdir      := ./build
-examples.c  := $(wildcard $(srcdir)/*.c)
-examples.o  := $(examples.c:$(srcdir)/%.c=$(outdir)/%.o)
-examples.s  := $(examples.c:$(srcdir)/%.c=$(outdir)/%.s)
-examples.bc := $(examples.c:$(srcdir)/%.c=$(outdir)/%.bc)
+srcdir       := .
+outdir       := ./build
+dbdir        := ./db
+examples.c   := $(wildcard $(srcdir)/*.c)
+examples.cpp := $(wildcard $(srcdir)/*.cpp)
+examples.bc  := $(examples.c:$(srcdir)/%.c=$(outdir)/%.bc)
+examples.bc  += $(examples.cpp:$(srcdir)/%.cpp=$(outdir)/%.bc)
 
-targets     := $(examples.o) $(examples.s) # $(examples.bc)
+targets      := $(examples.bc)
 
-vpath %.c $(srcdir)
-vpath %.o $(outdir)
+vpath %.cpp $(srcdir)
+vpath %.c   $(srcdir)
+vpath %.bc  $(outdir)
 
 
 #-------------------
@@ -33,21 +36,49 @@ $(outdir):
 	mkdir $@
 
 # Target specific options
-$(outdir)/%.s  : CCFLAGS += -S -emit-llvm
-$(outdir)/%.bc : CCFLAGS += -Wl,-plugin-opt=also-emit-llvm
+$(outdir)/%.bc : CCFLAGS += -emit-llvm
+# $(outdir)/%.bc : CCFLAGS += -Wl,-plugin-opt=also-emit-llvm
 
 
 # Recipes
-$(outdir)/%.o  : %.c
-	$(CC) -c $(CCFLAGS) $< -o $@
+$(outdir)/%.bc : %.c
+	$(CC) $(CCFLAGS) -c $< -o $@
 
-$(outdir)/%.s  : %.c
-	$(CC) -c $(CCFLAGS) $< -o $@
+$(outdir)/%.bc : %.cpp
+	$(CC) $(CCFLAGS) -c $< -o $@
 
-$(outdir)/%.bc : %.o
-	$(CC) $(CCFLAGS) $^ -o $*
-
-.PHONY: all clean
+.PHONY: all clean run
 
 clean:
 	rm -rf $(outdir)
+
+
+#----------------------------
+# Example Template
+#----------------------------
+
+define example_template
+
+$1.db := $(dbdir)/$1
+
+example-$1: $1.bc
+	@echo ---------------------------------------
+	@echo "   >>> Running example $1 <<<   "
+	@echo ---------------------------------------
+	@echo
+	$(COPPER) -o $$($1.db) $(COPPER_OPTS) $$<
+	@echo
+	@echo
+
+.PHONY: example-$1.clean
+example-$1.clean:
+	$(RM) -r $$($1.db)/
+
+run: example-$1
+clean: example-$1.clean
+
+endef
+
+
+# !! Generate rules per example !!
+$(foreach example,$(examples.bc),$(eval $(call example_template,$(example:$(outdir)/%.bc=%))))
