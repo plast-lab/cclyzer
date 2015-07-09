@@ -103,11 +103,11 @@ or a particular test, e.g., `stty`, with:
 It is also possible to invoke a python interpreter for a more
 interactive experience:
 
-    $ make launch
+    $ make shell
     ...
     >>>
     >>> from copper import *
-    >>> config = AnalysisConfig('./tests/stty', './build/tests/stty')
+    >>> config = AnalysisConfig(['./tests/stty/stty.bc'], './build/tests/stty')
     >>> analysis = Analysis(config)
     >>> analysis.run()
     ...

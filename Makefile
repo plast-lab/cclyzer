@@ -115,12 +115,12 @@ $(artifact.exe): $(artifact.zip) dist.force
 	chmod +x $@
 
 
-launch: $(artifact.egg)
+shell: $(artifact.egg)
 	PYTHONPATH=$< $(PYTHON)
 
 # Phony targets
 
-.PHONY: dist dist.clean dist.force launch
+.PHONY: dist dist.clean dist.force shell
 dist: $(artifact.zip) $(artifact.exe) $(artifact.egg)
 
 dist.clean:
