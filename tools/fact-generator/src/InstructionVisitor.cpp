@@ -26,7 +26,13 @@ void InstructionVisitor::writeInstrOperand(
     const char *predname = predicate.c_str();
 
     if (const Constant *c = dyn_cast<Constant>(Val)) {
-        // Compute refmode for constant value
+        // Compute refmode for constant value.
+
+        // !! Note: We avoid sharing of different constants of the
+        // same value by prepending their refmodes with a unique
+        // identifier that consists of the instruction id together
+        // with an auto-incrementing counter (which is used
+        // exclusively for constants) !!
         refmode << instr
                 << ':' << currentConstantOffset++
                 << ':' << gen.refmodeOf(c);
@@ -471,7 +477,8 @@ void InstructionVisitor::visitGetElementPtrInst(GetElementPtrInst &GEP)
         if (const Constant *c = dyn_cast<Constant>(GepOperand)) {
             ostringstream constant;
 
-            // Compute constant refmode
+            // Recompute constant refmode
+            // TODO: make writeInstrOperand return it somehow
             constant << iref
                      << ':' << immOffset
                      << ':' << gen.refmodeOf(c);
