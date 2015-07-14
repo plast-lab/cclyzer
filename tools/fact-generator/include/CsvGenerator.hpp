@@ -123,9 +123,9 @@ class CsvGenerator : private RefmodePolicy
     };
 
     struct ModuleContext {
-        ModuleContext(CsvGenerator &generator, const llvm::Module *m)
+        ModuleContext(CsvGenerator &generator, const llvm::Module *m, const std::string &path)
             : gen(generator) {
-            gen.enterModule(m);
+            gen.enterModule(m, path);
         }
 
         ~ModuleContext() {

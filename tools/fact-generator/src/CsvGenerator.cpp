@@ -21,7 +21,7 @@ namespace pred = predicates;
 void CsvGenerator::processModule(const Module * Mod, string& path)
 {
     InstructionVisitor IV(*this, Mod);
-    ModuleContext MC(*this, Mod);
+    ModuleContext MC(*this, Mod, path);
 
     // iterating over global variables in a module
     for (Module::const_global_iterator gi = Mod->global_begin(), E = Mod->global_end(); gi != E; ++gi) {

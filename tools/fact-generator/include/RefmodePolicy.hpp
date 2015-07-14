@@ -25,13 +25,14 @@ class RefmodePolicy {
     refmode_t refmodeOf(llvm::CallingConv::ID CC) const;
     refmode_t refmodeOf(llvm::AtomicOrdering AO) const;
     refmode_t refmodeOf(const llvm::Type *type) const;
+
     refmode_t refmodeOf(const llvm::Value *Val) const;
     refmode_t refmodeOf(const llvm::Function *func, const std::string &path) const;
 
     void enterContext(const llvm::Value *val);
     void exitContext();
 
-    void enterModule(const llvm::Module *Mod);
+    void enterModule(const llvm::Module *Mod, const std::string &path);
     void exitModule();
 
   private:
