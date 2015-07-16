@@ -19,6 +19,7 @@ class RefmodePolicy {
     RefmodePolicy();
     ~RefmodePolicy();
 
+    // Simple value-based refmodes
     refmode_t refmodeOf(llvm::GlobalValue::LinkageTypes LT) const;
     refmode_t refmodeOf(llvm::GlobalValue::VisibilityTypes Vis) const;
     refmode_t refmodeOf(llvm::GlobalVariable::ThreadLocalMode TLM) const;
@@ -26,12 +27,19 @@ class RefmodePolicy {
     refmode_t refmodeOf(llvm::AtomicOrdering AO) const;
     refmode_t refmodeOf(const llvm::Type *type) const;
 
+    // 
     refmode_t refmodeOf(const llvm::Value *Val) const;
-    refmode_t refmodeOf(const llvm::Function *func, const std::string &path) const;
 
+    // Fully qualified refmodes that guarantee uniqueness
+    refmode_t refmodeOfFunction(const llvm::Function *) const;
+    refmode_t refmodeOfBasicBlock(const llvm::BasicBlock *) const;
+    refmode_t refmodeOfInstruction(const llvm::Instruction *, unsigned) const;
+    refmode_t refmodeOfLocalValue(const llvm::Value *) const;
+    refmode_t refmodeOfGlobalValue(const llvm::GlobalValue *) const;
+
+    // Context modifying methods
     void enterContext(const llvm::Value *val);
     void exitContext();
-
     void enterModule(const llvm::Module *Mod, const std::string &path);
     void exitModule();
 

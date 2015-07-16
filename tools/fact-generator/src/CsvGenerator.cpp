@@ -25,14 +25,14 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
 
     // iterating over global variables in a module
     for (Module::const_global_iterator gi = Mod->global_begin(), E = Mod->global_end(); gi != E; ++gi) {
-        string refmode = getRefmodeForValue(gi, path);
+        refmode_t refmode = refmodeOfGlobalValue(gi);
         visitGlobalVar(gi, refmode);
         types.insert(gi->getType());
     }
 
     // iterating over global alias in a module
     for (Module::const_alias_iterator ga = Mod->alias_begin(), E = Mod->alias_end(); ga != E; ++ga) {
-        string refmode = getRefmodeForValue(ga, path);
+        refmode_t refmode = refmodeOfGlobalValue(ga);
         visitGlobalAlias(ga, refmode);
         types.insert(ga->getType());
     }
@@ -41,10 +41,7 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
     for (Module::const_iterator fi = Mod->begin(), fi_end = Mod->end(); fi != fi_end; ++fi)
     {
         Context C(*this, fi);
-
-        refmode_t funcref = refmodeOf(fi, path);
-        string instrId = funcref + ":";
-        IV.setInstrId(instrId);
+        refmode_t funcref = refmodeOfFunction(fi);
 
         // Record function type
         types.insert(fi->getFunctionType());
@@ -88,7 +85,7 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
 
         if (Attrs.hasAttributes(AttributeSet::ReturnIndex))
             writeFact(pred::function::ret_attr, funcref,
-                         Attrs.getAsString(AttributeSet::ReturnIndex));
+                      Attrs.getAsString(AttributeSet::ReturnIndex));
 
         writeFnAttributes(pred::function::attr, funcref, Attrs);
 
@@ -113,7 +110,7 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
                      arg = fi->arg_begin(), arg_end = fi->arg_end();
                  arg != arg_end; arg++)
             {
-                string varId = instrId + refmodeOf(arg);
+                refmode_t varId = refmodeOfLocalValue(arg);
 
                 writeFact(pred::function::param, funcref, varId, index++);
                 recordVariable(varId, arg->getType());
@@ -123,13 +120,10 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
         int counter = 0;
 
         // iterating over basic blocks in a function
-        //REVIEW: There must be a way to move this whole logic inside InstructionVisitor, i.e., visit(Module M)
         foreach (const llvm::BasicBlock &bb, *fi)
         {
             Context C(*this, &bb);
-
-            string funcPrefix = funcref + ":";
-            string bbRef = funcPrefix + refmodeOf(&bb);
+            refmode_t bbRef = refmodeOfBasicBlock(&bb);
 
             // Record basic block entry as a label
             writeFact(pred::variable::id, bbRef);
@@ -141,7 +135,7 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
             for (pred_iterator pi = pred_begin(tmpBB), pi_end = pred_end(tmpBB);
                  pi != pi_end; ++pi)
             {
-                string predBB = funcPrefix + refmodeOf(*pi);
+                refmode_t predBB = refmodeOfBasicBlock(*pi);
                 writeFact(pred::basic_block::predecessor, bbRef, predBB);
             }
 
@@ -154,11 +148,11 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
                 Context C(*this, &instr);
 
                 // Compute instruction refmode
-                string instrRef = instrId + std::to_string(counter++);
+                refmode_t instrRef = refmodeOfInstruction(&instr, counter++);
 
                 // Record instruction target variable if such exists
                 if (!instr.getType()->isVoidTy()) {
-                    string targetVar = instrId + refmodeOf(&instr);
+                    refmode_t targetVar = refmodeOfLocalValue(&instr);
 
                     writeFact(pred::instruction::to, instrRef, targetVar);
                     recordVariable(targetVar, instr.getType());
@@ -167,7 +161,7 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
                 // Record successor instruction
                 if (&instr != &lastInstr) {
                     // Compute refmode of next instruction
-                    string nextInstrRef = instrId + std::to_string(counter);
+                    refmode_t nextInstrRef = refmodeOfInstruction(nullptr, counter);
 
                     // Record the instruction succession
                     writeFact(pred::instruction::next, instrRef, nextInstrRef);
@@ -177,11 +171,11 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
                 writeFact(pred::instruction::function, instrRef, funcref);
 
                 // Record instruction's basic block entry (label)
-                string bbEntry = instrId + refmodeOf(instr.getParent());
+                refmode_t bbEntry = refmodeOfBasicBlock(instr.getParent());
                 writeFact(pred::instruction::bb_entry, instrRef, bbEntry);
 
-                // Instruction Visitor TODO
-                IV.setInstrNum(instrRef);
+                // Instruction Visitor
+                IV.setInstrNum(instrRef); // TODO
 
                 // Visit instruction
                 IV.visit(const_cast<llvm::Instruction &>(instr));

@@ -105,17 +105,71 @@ print:
 
 // Refmode for LLVM Functions
 
-refmode_t RefmodePolicy::Impl::refmodeOf(
-    const Function * func, const std::string &path) const
+refmode_t RefmodePolicy::Impl::refmodeOfFunction(const Function * func, bool prefix) const
 {
+    string functionName = string(func->getName());
+
+    if (!prefix)
+        return functionName;
+
     std::ostringstream refmode;
 
-    refmode << '<' << path <<  ">:"
-            << string(func->getName());
-
+    withContext<Function>(refmode) << functionName;
     return refmode.str();
 }
 
+
+refmode_t RefmodePolicy::Impl::refmodeOfBasicBlock(const BasicBlock *bb, bool prefix) const
+{
+    string bbName = refmodeOf(bb);
+
+    if (!prefix)
+        return bbName;
+
+    std::ostringstream refmode;
+
+    withContext<BasicBlock>(refmode) << bbName;
+    return refmode.str();
+}
+
+refmode_t RefmodePolicy::Impl::refmodeOfInstruction(const Instruction *instr, unsigned index) const
+{
+    std::ostringstream refmode;
+
+    // BasicBlock context is intented so as not to qualify instruction
+    // id by its surrounding basic block's id
+
+    withContext<BasicBlock>(refmode) << std::to_string(index);
+    return refmode.str();
+}
+
+
+refmode_t RefmodePolicy::Impl::refmodeOfLocalValue(const llvm::Value *val, bool prefix) const
+{
+    refmode_t id = refmodeOf(val);
+
+    if (!prefix)
+        return id;
+
+    std::ostringstream refmode;
+
+    withContext<BasicBlock>(refmode) << id;
+    return refmode.str();
+}
+
+
+refmode_t RefmodePolicy::Impl::refmodeOfGlobalValue(const llvm::GlobalValue *val, bool prefix) const
+{
+    string id = refmodeOf(val);
+
+    if (!prefix)
+        return id;
+
+    std::ostringstream refmode;
+
+    withGlobalContext(refmode) << id;
+    return refmode.str();
+}
 
 
 void RefmodePolicy::Impl::computeNumbering(

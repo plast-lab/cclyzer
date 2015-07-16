@@ -42,7 +42,7 @@ void InstructionVisitor::writeInstrOperand(
     }
     else {
         // Compute refmode for variable value
-        refmode << instrId << gen.refmodeOf(Val);
+        refmode << gen.refmodeOfLocalValue(Val);
 
         // Record variable value
         gen.recordVariable(refmode.str(), type);
@@ -78,7 +78,7 @@ void InstructionVisitor::writeInstrOperand(
         gen.recordConstant(refmode.str(), type);
     }
     else {
-        refmode << instrId << gen.refmodeOf(Operand);
+        refmode << gen.refmodeOfLocalValue(Operand);
 
         // Record variable operand
         predname = predicate.asVariable().c_str();

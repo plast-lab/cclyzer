@@ -42,8 +42,24 @@ refmode_t RefmodePolicy::refmodeOf(const Value * Val) const {
     return impl->refmodeOf(Val);
 }
 
-refmode_t RefmodePolicy::refmodeOf(const Function * func, const std::string &path) const {
-    return impl->refmodeOf(func, path);
+refmode_t RefmodePolicy::refmodeOfFunction(const Function * func) const {
+    return impl->refmodeOfFunction(func);
+}
+
+refmode_t RefmodePolicy::refmodeOfBasicBlock(const llvm::BasicBlock *bb) const {
+    return impl->refmodeOfBasicBlock(bb);
+}
+
+refmode_t RefmodePolicy::refmodeOfInstruction(const llvm::Instruction *instr, unsigned index) const {
+    return impl->refmodeOfInstruction(instr, index);
+}
+
+refmode_t RefmodePolicy::refmodeOfLocalValue(const llvm::Value *val) const {
+    return impl->refmodeOfLocalValue(val);
+}
+
+refmode_t RefmodePolicy::refmodeOfGlobalValue(const llvm::GlobalValue *val) const {
+    return impl->refmodeOfGlobalValue(val);
 }
 
 void RefmodePolicy::enterContext(const Value *val) {

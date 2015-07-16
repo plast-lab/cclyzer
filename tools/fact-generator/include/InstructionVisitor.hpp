@@ -59,10 +59,6 @@ class InstructionVisitor : public llvm::InstVisitor<InstructionVisitor>
         currentConstantOffset = 0;
     }
 
-    void setInstrId(std::string instructionId) {
-        instrId = instructionId;
-    }
-
   public:
     InstructionVisitor(CsvGenerator &generator, const llvm::Module *M)
         : gen(generator), Mod(M), writer(generator.writer) {}
@@ -215,7 +211,6 @@ class InstructionVisitor : public llvm::InstVisitor<InstructionVisitor>
 
 
     std::string instrNum;
-    std::string instrId;
 
     /* Auto-incrementing ID field used in constant refmodes */
     int currentConstantOffset;

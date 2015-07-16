@@ -1,9 +1,11 @@
+#include <sstream>
 #include "RefmodePolicy.hpp"
 #include "LLVMEnums.hpp"
 
 // Refmode Policy implementation
 class RefmodePolicy::Impl : LLVMEnumSerializer {
   public:
+
     // Methods that compute refmodes for various LLVM types
     refmode_t refmodeOf(llvm::GlobalValue::LinkageTypes LT) const;
     refmode_t refmodeOf(llvm::GlobalValue::VisibilityTypes Vis) const;
@@ -12,7 +14,12 @@ class RefmodePolicy::Impl : LLVMEnumSerializer {
     refmode_t refmodeOf(llvm::AtomicOrdering AO) const;
     refmode_t refmodeOf(const llvm::Type *type) const;
     refmode_t refmodeOf(const llvm::Value *Val) const;
-    refmode_t refmodeOf(const llvm::Function *func, const std::string &path) const;
+
+    refmode_t refmodeOfFunction(const llvm::Function *func, bool prefix=true) const;
+    refmode_t refmodeOfBasicBlock(const llvm::BasicBlock *bb, bool prefix=true) const;
+    refmode_t refmodeOfInstruction(const llvm::Instruction *instr, unsigned index) const;
+    refmode_t refmodeOfLocalValue(const llvm::Value *, bool prefix=true) const;
+    refmode_t refmodeOfGlobalValue(const llvm::GlobalValue *val, bool prefix=true) const;
 
     // The following are copied from LLVM Diff Consumer
 
@@ -20,8 +27,24 @@ class RefmodePolicy::Impl : LLVMEnumSerializer {
     /// "container" of some sort which is being considered for
     /// structural equivalence: global variables, functions, blocks,
     /// instructions, etc.
-    void enterContext(const llvm::Value *ctx) {
-        contexts.push_back(RefContext(ctx));
+    void enterContext(const llvm::Value *ctx)
+    {
+        std::string prefix;
+
+        // Compute prefix for fully qualified value names under given
+        // context
+
+        if (llvm::isa<llvm::Function>(ctx)) {
+            prefix = refmodeOfFunction(llvm::cast<llvm::Function>(ctx), false);
+        }
+        else if (llvm::isa<llvm::BasicBlock>(ctx)) {
+            prefix = refmodeOfBasicBlock(llvm::cast<llvm::BasicBlock>(ctx), false);
+        }
+        else if (llvm::isa<llvm::Instruction>(ctx)) {
+            prefix = refmodeOfInstruction(llvm::cast<llvm::Instruction>(ctx), false);
+        }
+
+        contexts.push_back(RefContext(ctx, prefix));
     }
 
     /// Record that a local context has been exited.
@@ -29,20 +52,54 @@ class RefmodePolicy::Impl : LLVMEnumSerializer {
         contexts.pop_back();
     }
 
-    void enterModule(const llvm::Module *module, const std::string &p)
+    void enterModule(const llvm::Module *module, const std::string &path)
     {
         using namespace llvm;
 
         Mod = module;
-        path = p;
         mdnNext = 0;
 
+        // Compute global prefix for this module
+        std::stringstream prefix;
+        prefix << '<' << path <<  '>' << std::flush;
+
+        // Add context
+        contexts.push_back(RefContext(prefix.str()));
+
+        // Parse metadata
         parseMetadata(module);
     }
 
     void exitModule() {
         Mod = nullptr;
         mdnMap.clear();
+        contexts.pop_back();
+    }
+
+
+    template<typename T, typename S>
+    S &withContext(S &stream) const
+    {
+        for (std::vector<RefContext>::const_iterator
+                 it = contexts.begin(); it != contexts.end(); ++it)
+        {
+            const llvm::Value *anchor = it->anchor;
+
+            if (anchor && llvm::isa<T>(*anchor))
+                break;
+
+            stream << it->prefix << ':';
+        }
+        return stream;
+    }
+
+    template<typename S>
+    S &withGlobalContext(S &stream) const
+    {
+        assert(!contexts.empty());
+        assert(contexts[0].anchor == nullptr);
+        stream << contexts[0].prefix << ':';
+        return stream;
     }
 
   protected:
@@ -67,8 +124,13 @@ class RefmodePolicy::Impl : LLVMEnumSerializer {
   private:
 
     struct RefContext {
-        RefContext(const llvm::Value *v)
-            : anchor(v), isFunction(llvm::isa<llvm::Function>(v)) {}
+        RefContext(const llvm::Value *v, std::string prefix)
+            : anchor(v), prefix(prefix)
+            , isFunction(llvm::isa<llvm::Function>(v)) {}
+
+        RefContext(std::string prefix)
+            : anchor(nullptr), prefix(prefix)
+            , isFunction(false) {}
 
         // Container of local context. Can be global variable,
         // function, block, instruction, etc.
@@ -78,6 +140,8 @@ class RefmodePolicy::Impl : LLVMEnumSerializer {
         std::map<const llvm::Value*,unsigned> numbering;
 
         bool isFunction;
+
+        std::string prefix;
     };
 
     // Tracking local contexts
@@ -85,7 +149,6 @@ class RefmodePolicy::Impl : LLVMEnumSerializer {
 
     // Current module and path
     const llvm::Module *Mod;
-    std::string path;
 
     // Mapping numbers to metadata nodes, module-wise
     std::map<const llvm::MDNode*, unsigned> mdnMap;
