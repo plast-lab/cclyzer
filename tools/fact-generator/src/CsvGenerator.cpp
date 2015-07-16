@@ -225,7 +225,7 @@ void CsvGenerator::visitGlobalAlias(const GlobalAlias *ga, const refmode_t &refm
 }
 
 
-void CsvGenerator::visitGlobalVar(const GlobalVariable *gv, const string &refmode)
+void CsvGenerator::visitGlobalVar(const GlobalVariable *gv, const refmode_t &refmode)
 {
     // Record global variable entity
     writeFact(pred::global_var::id, refmode);
