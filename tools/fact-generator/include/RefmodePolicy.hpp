@@ -27,7 +27,7 @@ class RefmodePolicy {
     refmode_t refmodeOf(llvm::AtomicOrdering AO) const;
     refmode_t refmodeOf(const llvm::Type *type) const;
 
-    // 
+    // TODO: eventually this method should be removed
     refmode_t refmodeOf(const llvm::Value *Val) const;
 
     // Fully qualified refmodes that guarantee uniqueness
