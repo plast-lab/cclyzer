@@ -56,7 +56,6 @@ class InstructionVisitor : public llvm::InstVisitor<InstructionVisitor>
 
     void setInstrNum(std::string instructionNum) {
         instrNum = instructionNum;
-        currentConstantOffset = 0;
     }
 
   public:
@@ -163,13 +162,13 @@ class InstructionVisitor : public llvm::InstVisitor<InstructionVisitor>
         return instrNum;
     }
 
-    void writeInstrOperand(const operand_pred_t &predicate,
-                           const refmode_t &instr,
-                           const llvm::Value *Operand, int index = -1);
+    refmode_t writeInstrOperand(const operand_pred_t &predicate,
+                                const refmode_t &instr,
+                                const llvm::Value *Operand, int index = -1);
 
-    void writeInstrOperand(const pred_t &predicate,
-                           const refmode_t &instr,
-                           const llvm::Value *Value, int index = -1);
+    refmode_t writeInstrOperand(const pred_t &predicate,
+                                const refmode_t &instr,
+                                const llvm::Value *Value, int index = -1);
 
 
     /* Auxiliary methods */
@@ -211,9 +210,6 @@ class InstructionVisitor : public llvm::InstVisitor<InstructionVisitor>
 
 
     std::string instrNum;
-
-    /* Auto-incrementing ID field used in constant refmodes */
-    int currentConstantOffset;
 
     /* Associated LLVM module */
     const llvm::Module *Mod;

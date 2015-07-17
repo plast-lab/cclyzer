@@ -54,6 +54,10 @@ refmode_t RefmodePolicy::refmodeOfInstruction(const llvm::Instruction *instr, un
     return impl->refmodeOfInstruction(instr, index);
 }
 
+refmode_t RefmodePolicy::refmodeOfConstant(const llvm::Constant *c) const {
+    return impl->refmodeOfConstant(c);
+}
+
 refmode_t RefmodePolicy::refmodeOfLocalValue(const llvm::Value *val) const {
     return impl->refmodeOfLocalValue(val);
 }

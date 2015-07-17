@@ -18,6 +18,7 @@ class RefmodePolicy::Impl : LLVMEnumSerializer {
     refmode_t refmodeOfFunction(const llvm::Function *func, bool prefix=true) const;
     refmode_t refmodeOfBasicBlock(const llvm::BasicBlock *bb, bool prefix=true) const;
     refmode_t refmodeOfInstruction(const llvm::Instruction *instr, unsigned index) const;
+    refmode_t refmodeOfConstant(const llvm::Constant *);
     refmode_t refmodeOfLocalValue(const llvm::Value *, bool prefix=true) const;
     refmode_t refmodeOfGlobalValue(const llvm::GlobalValue *val, bool prefix=true) const;
 
@@ -36,12 +37,14 @@ class RefmodePolicy::Impl : LLVMEnumSerializer {
 
         if (llvm::isa<llvm::Function>(ctx)) {
             prefix = refmodeOfFunction(llvm::cast<llvm::Function>(ctx), false);
+            instrIndex = 0;
         }
         else if (llvm::isa<llvm::BasicBlock>(ctx)) {
             prefix = refmodeOfBasicBlock(llvm::cast<llvm::BasicBlock>(ctx), false);
         }
         else if (llvm::isa<llvm::Instruction>(ctx)) {
-            prefix = refmodeOfInstruction(llvm::cast<llvm::Instruction>(ctx), false);
+            prefix = std::to_string(instrIndex++);
+            constantIndex = 0;
         }
 
         contexts.push_back(RefContext(ctx, prefix));
@@ -85,10 +88,15 @@ class RefmodePolicy::Impl : LLVMEnumSerializer {
         {
             const llvm::Value *anchor = it->anchor;
 
-            if (anchor && llvm::isa<T>(*anchor))
-                break;
+            // Skip basic blocks
+            if (anchor && llvm::isa<llvm::BasicBlock>(*anchor)
+                       && !llvm::isa<T>(*anchor))
+                continue;
 
             stream << it->prefix << ':';
+
+            if (anchor && llvm::isa<T>(*anchor))
+                break;
         }
         return stream;
     }
@@ -153,4 +161,9 @@ class RefmodePolicy::Impl : LLVMEnumSerializer {
     // Mapping numbers to metadata nodes, module-wise
     std::map<const llvm::MDNode*, unsigned> mdnMap;
     unsigned mdnNext;
+
+
+    // Instruction and constant indices
+    unsigned instrIndex;
+    unsigned constantIndex;
 };

@@ -114,7 +114,7 @@ refmode_t RefmodePolicy::Impl::refmodeOfFunction(const Function * func, bool pre
 
     std::ostringstream refmode;
 
-    withContext<Function>(refmode) << functionName;
+    withGlobalContext(refmode) << functionName;
     return refmode.str();
 }
 
@@ -128,7 +128,7 @@ refmode_t RefmodePolicy::Impl::refmodeOfBasicBlock(const BasicBlock *bb, bool pr
 
     std::ostringstream refmode;
 
-    withContext<BasicBlock>(refmode) << bbName;
+    withContext<Function>(refmode) << bbName;
     return refmode.str();
 }
 
@@ -139,7 +139,18 @@ refmode_t RefmodePolicy::Impl::refmodeOfInstruction(const Instruction *instr, un
     // BasicBlock context is intented so as not to qualify instruction
     // id by its surrounding basic block's id
 
-    withContext<BasicBlock>(refmode) << std::to_string(index);
+    withContext<Function>(refmode) << std::to_string(index);
+    return refmode.str();
+}
+
+
+refmode_t RefmodePolicy::Impl::refmodeOfConstant(const llvm::Constant *c)
+{
+    std::ostringstream refmode;
+
+    withContext<Instruction>(refmode)
+        << constantIndex++ << ':' << refmodeOf(c);
+
     return refmode.str();
 }
 
@@ -153,7 +164,7 @@ refmode_t RefmodePolicy::Impl::refmodeOfLocalValue(const llvm::Value *val, bool 
 
     std::ostringstream refmode;
 
-    withContext<BasicBlock>(refmode) << id;
+    withContext<Function>(refmode) << id;
     return refmode.str();
 }
 

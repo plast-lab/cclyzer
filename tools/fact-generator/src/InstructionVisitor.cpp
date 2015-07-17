@@ -14,14 +14,14 @@ namespace pred = predicates;
 //       entities)
 
 
-void InstructionVisitor::writeInstrOperand(
+refmode_t InstructionVisitor::writeInstrOperand(
     const pred_t &predicate,    // the operand predicate
     const refmode_t &instr,     // the instruction refmode
     const Value * Val,          // the operand value
     int index)                  // an optional index
 {
     // Value refmode and type
-    ostringstream refmode;
+    string refmode;
     const Type * type = Val->getType();
     const char *predname = predicate.c_str();
 
@@ -33,64 +33,62 @@ void InstructionVisitor::writeInstrOperand(
         // identifier that consists of the instruction id together
         // with an auto-incrementing counter (which is used
         // exclusively for constants) !!
-        refmode << instr
-                << ':' << currentConstantOffset++
-                << ':' << gen.refmodeOf(c);
+        refmode = gen.refmodeOfConstant(c);
 
         // Record constant value
-        gen.recordConstant(refmode.str(), type);
+        gen.recordConstant(refmode, type);
     }
     else {
         // Compute refmode for variable value
-        refmode << gen.refmodeOfLocalValue(Val);
+        refmode = gen.refmodeOfLocalValue(Val);
 
         // Record variable value
-        gen.recordVariable(refmode.str(), type);
+        gen.recordVariable(refmode, type);
     }
 
     // Write value fact
     if (index == -1) {
-        writer.writeFact(predname, instr, refmode.str());
+        writer.writeFact(predname, instr, refmode);
     } else {
-        writer.writeFact(predname, instr, refmode.str(), index);
+        writer.writeFact(predname, instr, refmode, index);
     }
+    return refmode;
 }
 
-void InstructionVisitor::writeInstrOperand(
+refmode_t InstructionVisitor::writeInstrOperand(
     const operand_pred_t &predicate, // the operand predicate
     const refmode_t &instr,          // the instruction refmode
     const Value * Operand,           // the operand value
     int index)                       // an optional index
 {
     // Operand refmode and type
-    ostringstream refmode;
+    string refmode;
     const Type * type = Operand->getType();
     const char *predname;
 
     if (const Constant *c = dyn_cast<Constant>(Operand)) {
         // Compute refmode for constant
-        refmode << instr
-                << ':' << currentConstantOffset++
-                << ':' << gen.refmodeOf(c);
+        refmode = gen.refmodeOfConstant(c);
 
         // Record constant operand
         predname = predicate.asConstant().c_str();
-        gen.recordConstant(refmode.str(), type);
+        gen.recordConstant(refmode, type);
     }
     else {
-        refmode << gen.refmodeOfLocalValue(Operand);
+        refmode = gen.refmodeOfLocalValue(Operand);
 
         // Record variable operand
         predname = predicate.asVariable().c_str();
-        gen.recordVariable(refmode.str(), type);
+        gen.recordVariable(refmode, type);
     }
 
     // Write operand fact
     if (index == -1) {
-        writer.writeFact(predname, instr, refmode.str());
+        writer.writeFact(predname, instr, refmode);
     } else {
-        writer.writeFact(predname, instr, refmode.str(), index);
+        writer.writeFact(predname, instr, refmode, index);
     }
+    return refmode;
 }
 
 void InstructionVisitor::visitTruncInst(llvm::TruncInst &I) {
@@ -469,25 +467,16 @@ void InstructionVisitor::visitGetElementPtrInst(GetElementPtrInst &GEP)
 
     for (unsigned index = 1; index < GEP.getNumOperands(); ++index)
     {
-        int immOffset = currentConstantOffset;
         const Value * GepOperand = GEP.getOperand(index);
 
-        writeInstrOperand(pred::gep::index, iref, GepOperand, index - 1);
+        refmode_t opref = writeInstrOperand(pred::gep::index, iref, GepOperand, index - 1);
 
         if (const Constant *c = dyn_cast<Constant>(GepOperand)) {
-            ostringstream constant;
-
-            // Recompute constant refmode
-            // TODO: make writeInstrOperand return it somehow
-            constant << iref
-                     << ':' << immOffset
-                     << ':' << gen.refmodeOf(c);
-
             // Compute integer string representation
             string int_value = c->getUniqueInteger().toString(10, true);
 
             // Write constant to integer fact
-            gen.writeFact(pred::constant::to_integer, constant.str(), int_value);
+            gen.writeFact(pred::constant::to_integer, opref, int_value);
         }
     }
 
