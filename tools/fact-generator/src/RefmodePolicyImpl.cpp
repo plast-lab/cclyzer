@@ -53,21 +53,9 @@ refmode_t RefmodePolicy::Impl::refmodeOf(const Value * Val) const
             }
 
             rso << "}";
-
-            // errs() << "Should be: " << *N
-            //        << " vs "
-            //        << rso.str()
-            //        << '\n';
         } else {
             // unnamed metadata value
             rso << '!' << getMetadataSlot(N);
-
-            // Val->printAsOperand(rso, false, Mod);
-            // errs() << "Should be: " << rso.str()
-            //        << " vs "
-            //        << *N
-            //        << " !" << getMetadataSlot(N)
-            //        << '\n';
         }
         goto print;
     }
