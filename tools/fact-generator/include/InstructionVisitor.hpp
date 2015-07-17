@@ -51,13 +51,6 @@ class InstructionVisitor : public llvm::InstVisitor<InstructionVisitor>
         writeOptimizationInfoToFile(&instr, iref);
     }
 
-
-    // Instruction numbering
-
-    void setInstrNum(std::string instructionNum) {
-        instrNum = instructionNum;
-    }
-
   public:
     InstructionVisitor(CsvGenerator &generator, const llvm::Module *M)
         : gen(generator), Mod(M), writer(generator.writer) {}
@@ -158,8 +151,11 @@ class InstructionVisitor : public llvm::InstVisitor<InstructionVisitor>
     /* Instruction-specific write functions */
 
     refmode_t recordInstruction(const entity_pred_t &instrType) {
-        writer.writeFact(instrType.c_str(), instrNum);
-        return instrNum;
+        // Get refmode of enclosing instruction
+        refmode_t iref = gen.refmodeOfInstruction(nullptr);
+
+        writer.writeFact(instrType.c_str(), iref);
+        return iref;
     }
 
     refmode_t writeInstrOperand(const operand_pred_t &predicate,
@@ -207,9 +203,6 @@ class InstructionVisitor : public llvm::InstVisitor<InstructionVisitor>
         if (!atomic.empty())
             gen.writeFact(P::ordering, iref, atomic);
     }
-
-
-    std::string instrNum;
 
     /* Associated LLVM module */
     const llvm::Module *Mod;

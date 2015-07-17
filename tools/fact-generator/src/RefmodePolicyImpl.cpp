@@ -120,6 +120,7 @@ refmode_t RefmodePolicy::Impl::refmodeOfBasicBlock(const BasicBlock *bb, bool pr
     return refmode.str();
 }
 
+
 refmode_t RefmodePolicy::Impl::refmodeOfInstruction(const Instruction *instr, unsigned index) const
 {
     std::ostringstream refmode;

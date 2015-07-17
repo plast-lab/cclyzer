@@ -17,10 +17,14 @@ class RefmodePolicy::Impl : LLVMEnumSerializer {
 
     refmode_t refmodeOfFunction(const llvm::Function *func, bool prefix=true) const;
     refmode_t refmodeOfBasicBlock(const llvm::BasicBlock *bb, bool prefix=true) const;
-    refmode_t refmodeOfInstruction(const llvm::Instruction *instr, unsigned index) const;
     refmode_t refmodeOfConstant(const llvm::Constant *);
     refmode_t refmodeOfLocalValue(const llvm::Value *, bool prefix=true) const;
     refmode_t refmodeOfGlobalValue(const llvm::GlobalValue *val, bool prefix=true) const;
+    refmode_t refmodeOfInstruction(const llvm::Instruction *instr, unsigned index) const;
+
+    refmode_t refmodeOfInstruction(const llvm::Instruction *instr) const {
+        return refmodeOfInstruction(instr, instrIndex - 1);
+    }
 
     // The following are copied from LLVM Diff Consumer
 
@@ -79,6 +83,24 @@ class RefmodePolicy::Impl : LLVMEnumSerializer {
         contexts.pop_back();
     }
 
+  protected:
+    typedef LLVMEnumSerializer enums;
+
+    // Compute variable numberings
+    static void computeNumbering(const llvm::Function *, std::map<const llvm::Value*,unsigned> &);
+
+    // Add metadata node
+    void createMetadataSlot(const llvm::MDNode *N);
+
+    // Retrieve metadata slot
+    int getMetadataSlot(const llvm::MDNode *N) const {
+        // Find the MDNode in the module map
+        std::map<const llvm::MDNode*, unsigned>::const_iterator MI = mdnMap.find(N);
+        return MI == mdnMap.end() ? -1 : (int) MI->second;
+    }
+
+    // Compute all metadata slots
+    void parseMetadata(const llvm::Module *module);
 
     template<typename T, typename S>
     S &withContext(S &stream) const
@@ -109,25 +131,6 @@ class RefmodePolicy::Impl : LLVMEnumSerializer {
         stream << contexts[0].prefix << ':';
         return stream;
     }
-
-  protected:
-    typedef LLVMEnumSerializer enums;
-
-    // Compute variable numberings
-    static void computeNumbering(const llvm::Function *, std::map<const llvm::Value*,unsigned> &);
-
-    // Add metadata node
-    void createMetadataSlot(const llvm::MDNode *N);
-
-    // Retrieve metadata slot
-    int getMetadataSlot(const llvm::MDNode *N) const {
-        // Find the MDNode in the module map
-        std::map<const llvm::MDNode*, unsigned>::const_iterator MI = mdnMap.find(N);
-        return MI == mdnMap.end() ? -1 : (int) MI->second;
-    }
-
-    // Compute all metadata slots
-    void parseMetadata(const llvm::Module *module);
 
   private:
 

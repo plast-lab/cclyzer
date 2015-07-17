@@ -33,10 +33,11 @@ class RefmodePolicy {
     // Fully qualified refmodes that guarantee uniqueness
     refmode_t refmodeOfFunction(const llvm::Function *) const;
     refmode_t refmodeOfBasicBlock(const llvm::BasicBlock *) const;
-    refmode_t refmodeOfInstruction(const llvm::Instruction *, unsigned) const;
     refmode_t refmodeOfConstant(const llvm::Constant *) const;
     refmode_t refmodeOfLocalValue(const llvm::Value *) const;
     refmode_t refmodeOfGlobalValue(const llvm::GlobalValue *) const;
+    refmode_t refmodeOfInstruction(const llvm::Instruction *) const;
+    refmode_t refmodeOfInstruction(const llvm::Instruction *, unsigned) const;
 
     // Context modifying methods
     void enterContext(const llvm::Value *val);

@@ -101,10 +101,6 @@ class CsvGenerator : private RefmodePolicy
 
     /* Auxiliary methods */
 
-    inline std::string getRefmodeForValue(const llvm::Value * Val, std::string& path){
-        return "<" + path + ">:" + refmodeOf(Val);
-    }
-
     boost::unordered_set<const llvm::Type *> types;
 
     /* A RAII object for recording the current context. */

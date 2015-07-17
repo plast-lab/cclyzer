@@ -174,9 +174,6 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
                 refmode_t bbEntry = refmodeOfBasicBlock(instr.getParent());
                 writeFact(pred::instruction::bb_entry, instrRef, bbEntry);
 
-                // Instruction Visitor
-                IV.setInstrNum(instrRef); // TODO
-
                 // Visit instruction
                 IV.visit(const_cast<llvm::Instruction &>(instr));
             }
