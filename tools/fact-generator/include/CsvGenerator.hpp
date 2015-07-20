@@ -3,6 +3,7 @@
 
 #include <boost/unordered_set.hpp>
 #include <boost/unordered_map.hpp>
+#include <llvm/IR/Constants.h>
 #include <llvm/IR/Type.h>
 #include <llvm/IR/DataLayout.h>
 #include <llvm/Support/raw_ostream.h>
@@ -67,6 +68,10 @@ class CsvGenerator : private RefmodePolicy
     void writeFnAttributes(const pred_t &pred,
                            const refmode_t &refmode,
                            const llvm::AttributeSet Attrs);
+
+    void writeConstantArray(const llvm::ConstantArray&, const refmode_t &);
+    void writeConstantExpr(const llvm::ConstantExpr&, const refmode_t &);
+    refmode_t writeConstant(const llvm::Constant&);
 
   public:
     /* Constructor must initialize output file streams */

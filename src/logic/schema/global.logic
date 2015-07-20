@@ -14,7 +14,7 @@ schema:sanity()
 
 
 global_variable:initializer[Var] = Init ->
-   global_variable(Var), string(Init).
+   global_variable(Var), immediate(Init).
 
 global_variable:section[Var] = Sect ->
    global_variable(Var), string(Sect).

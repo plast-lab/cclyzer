@@ -550,6 +550,45 @@ namespace predicates
         static pred_t expr;
         static pred_t to_integer;
     };
+
+    // Constant hierarchy
+
+    struct integer_constant: predicate_group {
+        static entity_pred_t id;
+    };
+
+    struct fp_constant: predicate_group {
+        static entity_pred_t id;
+    };
+
+    struct nullptr_constant: predicate_group {
+        static entity_pred_t id;
+    };
+
+    struct function_constant: predicate_group {
+        static entity_pred_t id;
+        static pred_t name;
+    };
+
+    struct global_variable_constant: predicate_group {
+        static entity_pred_t id;
+        static pred_t name;
+    };
+
+    struct constant_array: predicate_group {
+        static entity_pred_t id;
+        static pred_t index;
+        static pred_t size;
+    };
+
+    struct constant_expr: predicate_group {
+        static entity_pred_t id;
+    };
+
+    struct bitcast_constant_expr: predicate_group {
+        static entity_pred_t id;
+        static pred_t from_constant;
+    };
 }
 
 #endif

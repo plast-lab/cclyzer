@@ -54,12 +54,6 @@ immediate:value[Imm] = Val <-
    string:substring[Ref, ColonPos + 1, Len - ColonPos - 1] = Val.
 
 
-// TODO: what do we need this predicate?
-constant_expression(Imm) -> immediate(Imm).
-
-lang:isEntity[`constant_expression] = true.
-
-
 // Auxiliary Predicates
 
 immediate:eq(Imm1, Imm2) <-

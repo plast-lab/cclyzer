@@ -1,0 +1,95 @@
+//--------------------------------------
+// Simple constant subtypes
+//--------------------------------------
+
+integer_constant(C) -> immediate(C).
+fp_constant(C) -> immediate(C).
+nullptr_constant(C) -> immediate(C).
+
+lang:isEntity[`integer_constant] = true.
+lang:isEntity[`fp_constant] = true.
+lang:isEntity[`nullptr_constant] = true.
+
+//--------------------------------------
+// Constant that references function
+//--------------------------------------
+
+function_constant(C) -> immediate(C).
+
+function_constant:function_name[C] = FName ->
+   function_constant(C), string(FName).
+
+
+schema:sanity()
+ , function_constant(C)
+ ->
+   function_constant:function_name[C] = _.
+
+//---------------------------------------------
+// Constant that references global variable
+//---------------------------------------------
+
+global_variable_constant(C) -> immediate(C).
+
+global_variable_constant:name[C] = Name ->
+   global_variable_constant(C), string(Name).
+
+
+schema:sanity()
+ , global_variable_constant(C)
+ ->
+   global_variable_constant:name[C] = _.
+
+//--------------------------------------
+// Array of constants
+//--------------------------------------
+
+constant_array(C) -> immediate(C).
+
+constant_array:index[CA, Index] = C ->
+   constant_array(CA), int[64](Index), immediate(C).
+
+constant_array:size[CA] = Size ->
+   constant_array(CA), int[64](Size).
+
+
+schema:sanity()
+ , constant_array(C)
+ ->
+   constant_array:size[C] = _.
+
+//--------------------------------------
+// [Constant Expressions Hierarchy]
+//--------------------------------------
+
+constant_expression(Imm) -> immediate(Imm).
+lang:isEntity[`constant_expression] = true.
+
+
+//--------------------------------------
+// Bitcast Constant Expression
+//--------------------------------------
+
+bitcast_constant_expression(C) -> constant_expression(C).
+
+bitcast_constant_expression:from[CExpr] = Value ->
+   bitcast_constant_expression(CExpr), immediate(Value).
+
+bitcast_constant_expression:to_type[CExpr] = Type ->
+   bitcast_constant_expression(CExpr), type(Type).
+
+bitcast_constant_expression:to_type[CExpr] = Type
+ <-
+   bitcast_constant_expression(CExpr),
+   immediate:type[CExpr] = Type.
+
+
+schema:sanity()
+ , bitcast_constant_expression(CExpr)
+ ->
+   bitcast_constant_expression:from[CExpr] = _.
+
+schema:sanity()
+ , bitcast_constant_expression(CExpr)
+ ->
+   bitcast_constant_expression:to_type[CExpr] = _.

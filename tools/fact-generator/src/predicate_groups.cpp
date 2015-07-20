@@ -382,6 +382,30 @@ namespace predicates
     pred_t constant::to_integer = "constant:to_int";
 
 
+    // Constant hierarchy
+
+    entity_pred_t integer_constant::id = "integer_constant";
+    entity_pred_t fp_constant::id = "fp_constant";
+    entity_pred_t nullptr_constant::id = "nullptr_constant";
+
+    entity_pred_t function_constant::id = "function_constant";
+    pred_t function_constant::name = "function_constant:function_name";
+
+    entity_pred_t global_variable_constant::id = "global_variable_constant";
+    pred_t global_variable_constant::name = "global_variable_constant:name";
+
+    entity_pred_t constant_array::id = "constant_array";
+    pred_t constant_array::index = "constant_array:index";
+    pred_t constant_array::size = "constant_array:size";
+
+    entity_pred_t constant_expr::id = "constant_expression";
+
+    entity_pred_t bitcast_constant_expr::id = "bitcast_constant_expression";
+    pred_t bitcast_constant_expr::from_constant = "bitcast_constant_expression:from";
+
+
+    // Auxiliary functions
+
     const std::set<entity_pred_t*> entity_predicates() {
         return EntityPredicateRegistry::getInstance()->items();
     }

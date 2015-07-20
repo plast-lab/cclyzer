@@ -33,10 +33,7 @@ refmode_t InstructionVisitor::writeInstrOperand(
         // identifier that consists of the instruction id together
         // with an auto-incrementing counter (which is used
         // exclusively for constants) !!
-        refmode = gen.refmodeOfConstant(c);
-
-        // Record constant value
-        gen.recordConstant(refmode, type);
+        refmode = gen.writeConstant(*c);
     }
     else {
         // Compute refmode for variable value
@@ -68,11 +65,10 @@ refmode_t InstructionVisitor::writeInstrOperand(
 
     if (const Constant *c = dyn_cast<Constant>(Operand)) {
         // Compute refmode for constant
-        refmode = gen.refmodeOfConstant(c);
+        refmode = gen.writeConstant(*c);
 
         // Record constant operand
         predname = predicate.asConstant().c_str();
-        gen.recordConstant(refmode, type);
     }
     else {
         refmode = gen.refmodeOfLocalValue(Operand);
@@ -477,6 +473,8 @@ void InstructionVisitor::visitGetElementPtrInst(GetElementPtrInst &GEP)
 
             // Write constant to integer fact
             gen.writeFact(pred::constant::to_integer, opref, int_value);
+
+            // TODO: maybe call writeConstant here
         }
     }
 

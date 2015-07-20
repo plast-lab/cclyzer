@@ -69,6 +69,7 @@ getelementptr-instruction.logic, active
 ret-instruction.logic, active
 unreachable-instruction.logic, active
 va-arg-instruction.logic, active
+constants.logic, active
 
 auxiliary.logic, active
 

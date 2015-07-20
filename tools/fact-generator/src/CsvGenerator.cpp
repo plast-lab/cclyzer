@@ -1,4 +1,5 @@
 #include <boost/foreach.hpp>
+#include <llvm/IR/Constants.h>
 #include <llvm/IR/Module.h>
 #include <llvm/IR/Operator.h>
 #include <llvm/IR/CFG.h>
@@ -261,8 +262,10 @@ void CsvGenerator::visitGlobalVar(const GlobalVariable *gv, const refmode_t &ref
 
     // Record initializer
     if (gv->hasInitializer()) {
-        refmode_t val = refmodeOf(gv->getInitializer());
-        writeFact(pred::global_var::initializer, refmode, val);
+        const Constant *initializer = gv->getInitializer();
+
+        refmode_t init_ref = writeConstant(*initializer);
+        writeFact(pred::global_var::initializer, refmode, init_ref);
     }
 
     // Record section
@@ -380,4 +383,79 @@ void CsvGenerator::initStreams()
 
     // TODO: Consider closing streams and opening them lazily, so as
     // not to exceed the maximum number of open file descriptors
+}
+
+
+void CsvGenerator::writeConstantArray(const ConstantArray &array, const refmode_t &refmode)
+{
+    unsigned nOperands = array.getNumOperands();
+
+    for (unsigned i = 0; i < nOperands; i++)
+    {
+        const Constant *c = array.getOperand(i);
+
+        refmode_t index_ref = writeConstant(*c);
+        writeFact(pred::constant_array::index, refmode, index_ref, i);
+    }
+
+    writeFact(pred::constant_array::size, refmode, nOperands);
+    writeFact(pred::constant_array::id, refmode);
+}
+
+void CsvGenerator::writeConstantExpr(const ConstantExpr &expr, const refmode_t &refmode)
+{
+    writeFact(pred::constant_expr::id, refmode);
+
+    if (expr.isCast()) {
+        switch (expr.getOpcode()) {
+          case Instruction::BitCast:
+              refmode_t opref = writeConstant(*expr.getOperand(0));
+
+              writeFact(pred::bitcast_constant_expr::id, refmode);
+              writeFact(pred::bitcast_constant_expr::from_constant, refmode, opref);
+              break;
+        }
+    } else {
+        // TODO
+    }
+}
+
+refmode_t CsvGenerator::writeConstant(const Constant &c)
+{
+    refmode_t refmode = refmodeOfConstant(&c);
+
+    // Record constant entity with its type
+    writeFact(pred::constant::id, refmode);
+    writeFact(pred::constant::type, refmode, refmodeOf(c.getType()));
+    types.insert(c.getType());
+
+    if (isa<ConstantPointerNull>(c)) {
+        writeFact(pred::nullptr_constant::id, refmode);
+    }
+    else if (isa<ConstantInt>(c)) {
+        writeFact(pred::integer_constant::id, refmode);
+    }
+    else if (isa<ConstantFP>(c)) {
+        writeFact(pred::fp_constant::id, refmode);
+    }
+    else if (isa<Function>(c)) {
+        const Function &func = cast<Function>(c);
+
+        writeFact(pred::function_constant::id, refmode);
+        writeFact(pred::function_constant::name, refmode, "@" + func.getName().str());
+    }
+    else if (isa<GlobalVariable>(c)) {
+        const GlobalVariable &global_var = cast<GlobalVariable>(c);
+
+        writeFact(pred::global_variable_constant::id, refmode);
+        writeFact(pred::global_variable_constant::name, refmode, refmodeOf(&global_var));
+    }
+    else if (isa<ConstantExpr>(c)) {
+        writeConstantExpr(cast<ConstantExpr>(c), refmode);
+    }
+    else if (isa<ConstantArray>(c)) {
+        writeConstantArray(cast<ConstantArray>(c), refmode);
+    }
+
+    return refmode;
 }
