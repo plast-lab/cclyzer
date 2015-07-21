@@ -402,6 +402,24 @@ void CsvGenerator::writeConstantArray(const ConstantArray &array, const refmode_
     writeFact(pred::constant_array::id, refmode);
 }
 
+
+void CsvGenerator::writeConstantStruct(const ConstantStruct &st, const refmode_t &refmode)
+{
+    unsigned nOperands = st.getNumOperands();
+
+    for (unsigned i = 0; i < nOperands; i++)
+    {
+        const Constant *c = st.getOperand(i);
+
+        refmode_t index_ref = writeConstant(*c);
+        writeFact(pred::constant_struct::index, refmode, index_ref, i);
+    }
+
+    writeFact(pred::constant_struct::size, refmode, nOperands);
+    writeFact(pred::constant_struct::id, refmode);
+}
+
+
 void CsvGenerator::writeConstantExpr(const ConstantExpr &expr, const refmode_t &refmode)
 {
     writeFact(pred::constant_expr::id, refmode);
@@ -455,6 +473,9 @@ refmode_t CsvGenerator::writeConstant(const Constant &c)
     }
     else if (isa<ConstantArray>(c)) {
         writeConstantArray(cast<ConstantArray>(c), refmode);
+    }
+    else if (isa<ConstantStruct>(c)) {
+        writeConstantStruct(cast<ConstantStruct>(c), refmode);
     }
 
     return refmode;

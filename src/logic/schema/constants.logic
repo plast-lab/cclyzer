@@ -59,6 +59,24 @@ schema:sanity()
    constant_array:size[C] = _.
 
 //--------------------------------------
+// Constant Struct
+//--------------------------------------
+
+constant_struct(C) -> immediate(C).
+
+constant_struct:index[CS, Index] = C ->
+   constant_struct(CS), int[64](Index), immediate(C).
+
+constant_struct:size[CS] = Size ->
+   constant_struct(CS), int[64](Size).
+
+
+schema:sanity()
+ , constant_struct(C)
+ ->
+   constant_struct:size[C] = _.
+
+//--------------------------------------
 // [Constant Expressions Hierarchy]
 //--------------------------------------
 

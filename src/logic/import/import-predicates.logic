@@ -901,6 +901,34 @@ lang:physical:filePath[`_constant_array:size] = "facts/predicates/constant_array
 
 
 
+_constant_struct:index(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
+
+lang:physical:delimiter[`_constant_struct:index] = "\t".
+lang:physical:filePath[`_constant_struct:index] = "facts/predicates/constant_struct-index.dlm".
+
++immediate:id(e0:v0),
++constant_struct(e0),
++immediate:id(e1:v2),
++immediate(e1),
++constant_struct:index[e0,v1] = e1
+<-
+   _constant_struct:index(v0, v1, v2).
+
+
+
+_constant_struct:size(v0, v1) -> string(v0), int[64](v1).
+
+lang:physical:delimiter[`_constant_struct:size] = "\t".
+lang:physical:filePath[`_constant_struct:size] = "facts/predicates/constant_struct-size.dlm".
+
++immediate:id(e0:v0),
++constant_struct(e0),
++constant_struct:size[e0] = v1
+<-
+   _constant_struct:size(v0, v1).
+
+
+
 _extractelement_instruction:base$by_immediate(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_extractelement_instruction:base$by_immediate] = "\t".

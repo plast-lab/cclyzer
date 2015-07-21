@@ -398,6 +398,10 @@ namespace predicates
     pred_t constant_array::index = "constant_array:index";
     pred_t constant_array::size = "constant_array:size";
 
+    entity_pred_t constant_struct::id = "constant_struct";
+    pred_t constant_struct::index = "constant_struct:index";
+    pred_t constant_struct::size = "constant_struct:size";
+
     entity_pred_t constant_expr::id = "constant_expression";
 
     entity_pred_t bitcast_constant_expr::id = "bitcast_constant_expression";
