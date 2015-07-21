@@ -75,6 +75,23 @@ class CsvGenerator : private RefmodePolicy
     void writeConstantExpr(const llvm::ConstantExpr&, const refmode_t &);
     refmode_t writeConstant(const llvm::Constant&);
 
+    template<typename PredGroup, class ConstantType>
+    void writeConstantWithOperands(const ConstantType &base, const refmode_t &refmode)
+    {
+        unsigned nOperands = base.getNumOperands();
+
+        for (unsigned i = 0; i < nOperands; i++)
+        {
+            const llvm::Constant *c = base.getOperand(i);
+
+            refmode_t index_ref = writeConstant(*c);
+            writeFact(PredGroup::index, refmode, index_ref, i);
+        }
+
+        writeFact(PredGroup::size, refmode, nOperands);
+        writeFact(PredGroup::id, refmode);
+    }
+
   public:
     /* Constructor must initialize output file streams */
     CsvGenerator(FactWriter &writer) : writer(writer) {

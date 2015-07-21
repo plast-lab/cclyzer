@@ -386,56 +386,17 @@ void CsvGenerator::initStreams()
 }
 
 
-void CsvGenerator::writeConstantArray(const ConstantArray &array, const refmode_t &refmode)
-{
-    unsigned nOperands = array.getNumOperands();
-
-    for (unsigned i = 0; i < nOperands; i++)
-    {
-        const Constant *c = array.getOperand(i);
-
-        refmode_t index_ref = writeConstant(*c);
-        writeFact(pred::constant_array::index, refmode, index_ref, i);
-    }
-
-    writeFact(pred::constant_array::size, refmode, nOperands);
-    writeFact(pred::constant_array::id, refmode);
+void CsvGenerator::writeConstantArray(const ConstantArray &array, const refmode_t &refmode) {
+    writeConstantWithOperands<pred::constant_array>(array, refmode);
 }
 
-
-void CsvGenerator::writeConstantStruct(const ConstantStruct &st, const refmode_t &refmode)
-{
-    unsigned nOperands = st.getNumOperands();
-
-    for (unsigned i = 0; i < nOperands; i++)
-    {
-        const Constant *c = st.getOperand(i);
-
-        refmode_t index_ref = writeConstant(*c);
-        writeFact(pred::constant_struct::index, refmode, index_ref, i);
-    }
-
-    writeFact(pred::constant_struct::size, refmode, nOperands);
-    writeFact(pred::constant_struct::id, refmode);
+void CsvGenerator::writeConstantStruct(const ConstantStruct &st, const refmode_t &refmode) {
+    writeConstantWithOperands<pred::constant_struct>(st, refmode);
 }
 
-
-void CsvGenerator::writeConstantVector(const ConstantVector &v, const refmode_t &refmode)
-{
-    unsigned nOperands = v.getNumOperands();
-
-    for (unsigned i = 0; i < nOperands; i++)
-    {
-        const Constant *c = v.getOperand(i);
-
-        refmode_t index_ref = writeConstant(*c);
-        writeFact(pred::constant_vector::index, refmode, index_ref, i);
-    }
-
-    writeFact(pred::constant_vector::size, refmode, nOperands);
-    writeFact(pred::constant_vector::id, refmode);
+void CsvGenerator::writeConstantVector(const ConstantVector &v, const refmode_t &refmode) {
+    writeConstantWithOperands<pred::constant_vector>(v, refmode);
 }
-
 
 void CsvGenerator::writeConstantExpr(const ConstantExpr &expr, const refmode_t &refmode)
 {
