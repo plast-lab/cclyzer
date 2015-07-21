@@ -601,6 +601,13 @@ namespace predicates
         static entity_pred_t id;
         static pred_t from_constant;
     };
+
+    struct gep_constant_expr: predicate_group {
+        static entity_pred_t id;
+        static pred_t base;
+        static pred_t index;
+        static pred_t nindices;
+    };
 }
 
 #endif

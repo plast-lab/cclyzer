@@ -129,3 +129,30 @@ schema:sanity()
  , bitcast_constant_expression(CExpr)
  ->
    bitcast_constant_expression:to_type[CExpr] = _.
+
+
+//--------------------------------------------
+// Get Element Pointer  Constant Expression
+//--------------------------------------------
+
+getelementptr_constant_expression(C) -> immediate(C).
+
+getelementptr_constant_expression:base[CExpr] = C ->
+   getelementptr_constant_expression(CExpr), immediate(C).
+
+getelementptr_constant_expression:index[CExpr, Index] = C ->
+   getelementptr_constant_expression(CExpr), int[64](Index), immediate(C).
+
+getelementptr_constant_expression:nindices[CExpr] = Size ->
+   getelementptr_constant_expression(CExpr), int[64](Size).
+
+
+schema:sanity()
+ , getelementptr_constant_expression(C)
+ ->
+   getelementptr_constant_expression:nindices[C] = _.
+
+schema:sanity()
+ , getelementptr_constant_expression(C)
+ ->
+   getelementptr_constant_expression:base[C] = _.

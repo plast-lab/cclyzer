@@ -411,6 +411,11 @@ namespace predicates
     entity_pred_t bitcast_constant_expr::id = "bitcast_constant_expression";
     pred_t bitcast_constant_expr::from_constant = "bitcast_constant_expression:from";
 
+    entity_pred_t gep_constant_expr::id = "getelementptr_constant_expression";
+    pred_t gep_constant_expr::base = "getelementptr_constant_expression:base";
+    pred_t gep_constant_expr::index = "getelementptr_constant_expression:index";
+    pred_t gep_constant_expr::nindices = "getelementptr_constant_expression:nindices";
+
 
     // Auxiliary functions
 

@@ -450,7 +450,26 @@ void CsvGenerator::writeConstantExpr(const ConstantExpr &expr, const refmode_t &
               writeFact(pred::bitcast_constant_expr::from_constant, refmode, opref);
               break;
         }
-    } else {
+    }
+    else if (expr.isGEPWithNoNotionalOverIndexing()) {
+        unsigned nOperands = expr.getNumOperands();
+
+        for (unsigned i = 0; i < nOperands; i++)
+        {
+            const Constant *c = cast<Constant>(expr.getOperand(i));
+
+            refmode_t index_ref = writeConstant(*c);
+
+            if (i > 0)
+                writeFact(pred::gep_constant_expr::index, refmode, index_ref, i - 1);
+            else
+                writeFact(pred::gep_constant_expr::base, refmode, index_ref);
+        }
+
+        writeFact(pred::gep_constant_expr::nindices, refmode, nOperands - 1);
+        writeFact(pred::gep_constant_expr::id, refmode);
+    }
+    else {
         // TODO
     }
 }
