@@ -587,6 +587,12 @@ namespace predicates
         static pred_t size;
     };
 
+    struct constant_vector: predicate_group {
+        static entity_pred_t id;
+        static pred_t index;
+        static pred_t size;
+    };
+
     struct constant_expr: predicate_group {
         static entity_pred_t id;
     };

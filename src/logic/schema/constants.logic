@@ -77,6 +77,24 @@ schema:sanity()
    constant_struct:size[C] = _.
 
 //--------------------------------------
+// Constant Vector
+//--------------------------------------
+
+constant_vector(C) -> immediate(C).
+
+constant_vector:index[CV, Index] = C ->
+   constant_vector(CV), int[64](Index), immediate(C).
+
+constant_vector:size[CV] = Size ->
+   constant_vector(CV), int[64](Size).
+
+
+schema:sanity()
+ , constant_vector(C)
+ ->
+   constant_vector:size[C] = _.
+
+//--------------------------------------
 // [Constant Expressions Hierarchy]
 //--------------------------------------
 

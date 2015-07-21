@@ -202,6 +202,18 @@ lang:physical:filePath[`_constant_struct] = "facts/entities/constant_struct.dlm"
 
 
 
+_constant_vector(v0) -> string(v0).
+
+lang:physical:delimiter[`_constant_vector] = "\t".
+lang:physical:filePath[`_constant_vector] = "facts/entities/constant_vector.dlm".
+
++immediate:id(e0:v0),
++constant_vector(e0)
+<-
+   _constant_vector(v0).
+
+
+
 _extractelement_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_extractelement_instruction] = "\t".

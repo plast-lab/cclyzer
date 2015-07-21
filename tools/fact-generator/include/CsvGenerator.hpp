@@ -71,6 +71,7 @@ class CsvGenerator : private RefmodePolicy
 
     void writeConstantArray(const llvm::ConstantArray&, const refmode_t &);
     void writeConstantStruct(const llvm::ConstantStruct&, const refmode_t &);
+    void writeConstantVector(const llvm::ConstantVector&, const refmode_t &);
     void writeConstantExpr(const llvm::ConstantExpr&, const refmode_t &);
     refmode_t writeConstant(const llvm::Constant&);
 
