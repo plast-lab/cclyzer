@@ -1,0 +1,89 @@
+//--------------------------------------------------------------------
+// [Virtual Table of Type Info Objects]
+//
+// We assume that the compiled program adheres to the
+// industry-standard Itanium C++ ABI.
+//
+// In order to identify vtables, we track the existence of <typeinfo>
+// objects inside global variable arrays. To identify type info
+// objects, we must first track their vpointers to their own virtual
+// tables.
+//
+// https://mentorembedded.github.io/cxx-abi/abi.html#rtti-layout
+//--------------------------------------------------------------------
+
+vtable(VT, Name) ->
+   global_variable(VT), string(Name).
+
+vtable:typeinfo[VT] = TypeInfo ->
+   global_variable(VT), global_variable(TypeInfo).
+
+vtable(VT, Name) <-
+   typeinfo_vtable(VT, Name).
+
+typeinfo_vtable(VT, Name) <-
+   linkage_type:external[] = ExternalLinkage,
+   global_variable:linkage_type[VT] = ExternalLinkage,
+   immediate:value[VT] = Name,
+   string:like(Name, "%class_type_info%"),
+   string:like(Name, "%cxxabi%").
+
+typeinfo_vtable:baseclass(VT, Name) <-
+   typeinfo_vtable(VT, Name),
+   string:like(Name, "%__class_type_info%").
+
+typeinfo_vtable:single_inheritance(VT, Name) <-
+   typeinfo_vtable(VT, Name),
+   string:like(Name, "%__si_class_type_info%").
+
+typeinfo_vtable:multiple_inheritance(VT, Name) <-
+   typeinfo_vtable(VT, Name),
+   string:like(Name, "%__vmi_class_type_info%").
+
+
+// Track flow of vpointers to constants
+
+_constant_contains_vptr(VT, Constant) ->
+   immediate(Constant), global_variable(VT).
+
+_constant_contains_vptr(VTable, Constant) <-
+   global_variable_constant:name[Constant] = Name,
+   vtable(VTable, Name).
+
+_constant_contains_vptr(VTable, Outer) <-
+   getelementptr_constant_expression:base[Outer] = Inner,
+   _constant_contains_vptr(VTable, Inner).
+
+_constant_contains_vptr(VTable, Outer) <-
+   bitcast_constant_expression:from[Outer] = Inner,
+   _constant_contains_vptr(VTable, Inner).
+
+_constant_contains_vptr(VTable, Outer) <-
+   constant_struct:index[Outer, 0] = Inner,
+   _constant_contains_vptr(VTable, Inner).
+
+
+// Identify the actual type info objects throught their vpointers
+
+typeinfo(TypeInfo) <-
+   _constant_contains_vptr(VTable, Initializer),
+   typeinfo_vtable(VTable, _),
+   global_variable:initializer[TypeInfo] = Initializer.
+
+
+// Now identify vtables
+
+_constant_contains_typeinfo(TypeInfo, Constant) <-
+   global_variable_constant:name[Constant] = Name,
+   typeinfo(TypeInfo),
+   immediate:value[TypeInfo] = Name.
+
+_constant_contains_typeinfo(TypeInfo, Outer) <-
+   bitcast_constant_expression:from[Outer] = Inner,
+   _constant_contains_typeinfo(TypeInfo, Inner).
+
+vtable(VT, Name), vtable:typeinfo[VT] = TypeInfo <-
+   immediate:value[VT] = Name,
+   global_variable:initializer[VT] = Initializer, // get array constant of vtable
+   constant_array:index[Initializer, 1] = TIC,    // type info is at index 1
+   _constant_contains_typeinfo(TypeInfo, TIC).
