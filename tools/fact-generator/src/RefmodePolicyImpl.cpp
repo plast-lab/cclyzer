@@ -116,7 +116,7 @@ refmode_t RefmodePolicy::Impl::refmodeOfBasicBlock(const BasicBlock *bb, bool pr
 
     std::ostringstream refmode;
 
-    withContext<Function>(refmode) << bbName;
+    withContext<Function>(refmode) << "[basicblock]" << bbName;
     return refmode.str();
 }
 
