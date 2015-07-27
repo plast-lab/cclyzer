@@ -6,3 +6,6 @@
 /src/logic/*/deps.mk
 /examples/build/
 /examples/db/
+/tools/fact-generator/GPATH
+/tools/fact-generator/GRTAGS
+/tools/fact-generator/GTAGS
