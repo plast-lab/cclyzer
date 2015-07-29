@@ -72,6 +72,7 @@ namespace predicates
         static pred_t gc;
         static pred_t name;
         static pred_t type;
+        static pred_t signature;
         static pred_t param;
         static pred_t ret_attr;
         static pred_t param_attr;

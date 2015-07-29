@@ -38,6 +38,7 @@ namespace predicates
     pred_t function::gc = "function:gc";
     pred_t function::name = "function:name";
     pred_t function::type = "function:type";
+    pred_t function::signature = "function:signature";
     pred_t function::param = "function:param";
     pred_t function::ret_attr = "function:return_attribute";
     pred_t function::param_attr = "function:param_attribute";

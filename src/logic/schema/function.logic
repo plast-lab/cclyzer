@@ -24,6 +24,10 @@ function:type[Func] = Type ->
 function:name[Func] = Name ->
    function_decl(Func), string(Name).
 
+// Unmangled name with type signature
+function:signature[Func] = Signature ->
+   function_decl(Func), string(Signature).
+
 schema:sanity()
  , function_decl(Func)
  ->

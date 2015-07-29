@@ -1,3 +1,4 @@
+#include <cxxabi.h>
 #include <boost/foreach.hpp>
 #include <llvm/IR/Constants.h>
 #include <llvm/IR/Module.h>
@@ -17,6 +18,15 @@ using namespace std;
 using namespace boost;
 namespace fs = boost::filesystem;
 namespace pred = predicates;
+
+
+inline std::string demangle(const char* name)
+{
+    int status = -1;
+
+    std::unique_ptr<char, void(*)(void*)> res { abi::__cxa_demangle(name, NULL, NULL, &status), std::free };
+    return (status == 0) ? res.get() : std::string(name);
+}
 
 
 void CsvGenerator::processModule(const Module * Mod, string& path)
@@ -54,6 +64,10 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
 
         // Record function type signature
         writeFact(pred::function::type, funcref, typeSignature);
+
+        // Record function signature (name plus type signature) after
+        // unmangling
+        writeFact(pred::function::signature, funcref, demangle(fi->getName().data()));
 
         // Record function linkage, visibility, alignment, and GC
         if (!linkage.empty())

@@ -1825,6 +1825,19 @@ lang:physical:filePath[`_function:section] = "facts/predicates/function-section.
 
 
 
+_function:signature(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_function:signature] = "\t".
+lang:physical:filePath[`_function:signature] = "facts/predicates/function-signature.dlm".
+
++function_decl:id(e0:v0),
++function_decl(e0),
++function:signature[e0] = v1
+<-
+   _function:signature(v0, v1).
+
+
+
 _function:type(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_function:type] = "\t".
