@@ -30,6 +30,9 @@ $(modules):
 $(modules.clean): %.clean:
 	$(MAKE) --directory=$($*_PATH) clean
 
+export PATH := $(abspath $(OUTDIR)/import-generator):$(PATH)
+schema-import: $(module.logic) $(module.imports)
+	$(MAKE) --directory=$($<_PATH) import.src
 
 # Phony targets
 
