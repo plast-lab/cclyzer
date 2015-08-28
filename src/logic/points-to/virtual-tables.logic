@@ -87,12 +87,3 @@ vtable(VT, Name), vtable:typeinfo[VT] = TypeInfo <-
    global_variable:initializer[VT] = Initializer, // get array constant of vtable
    constant_array:index[Initializer, 1] = TIC,    // type info is at index 1
    _constant_contains_typeinfo(TypeInfo, TIC).
-
-
-// Class Types
-
-class_type(Type, Name) <-
-   struct_type(Type),
-   string:like(Type, "%%class.%"),
-   string:length[Type] = N,
-   string:substring[Type, 7, N - 7] = Name. // 7 is the length of the prefix "%class."

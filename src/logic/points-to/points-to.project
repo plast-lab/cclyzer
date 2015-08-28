@@ -5,4 +5,5 @@ llvm:callgraph, library
 
 abstractions.logic, active
 core.logic, active
-virtual_tables.logic, active
+virtual-tables.logic, active
+class-type.logic, active

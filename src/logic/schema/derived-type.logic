@@ -54,7 +54,7 @@ array_type:size[Type] = Size ->
    array_type(Type), int[64](Size).
 
 schema:sanity()
-,array_type(Type)
+ , array_type(Type)
  ->
    array_type:component[Type] = _.
 
