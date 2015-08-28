@@ -12,7 +12,6 @@ class_type(Type) -> struct_type(Type).
 class_type:name[Type] = Name ->
    class_type(Type), string(Name).
 
-
 // We follow a heuristic approach to identify class types, by
 // searching for struct types with a specific prefix (namely,
 // `%class.`).
@@ -24,6 +23,22 @@ class_type(Type), class_type:name[Type] = Name
    string:like(FQName, "%%class.%"),
    string:length[FQName] = N,
    string:substring[FQName, 7, N - 7] = Name. // 7 is the length of the prefix "%class."
+
+
+// Constructors for objects of this class type
+
+class_type:constructor(Ctor, Type) ->
+   class_type(Type), function(Ctor).
+
+
+// To identify constructors we rely on the presence of unmangled
+// function names, which should be computed during fact generation.
+
+class_type:constructor(Ctor, Type)
+ <-
+   class_type:name[Type] = ClassName,
+   function(Ctor), function:signature[Ctor] = Signature,
+   string:like(Signature, ClassName + "::" + ClassName + "(%)").
 
 
 // Mandatory properties of class types
