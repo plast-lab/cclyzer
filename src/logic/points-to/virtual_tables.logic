@@ -5,9 +5,9 @@
 // industry-standard Itanium C++ ABI.
 //
 // In order to identify vtables, we track the existence of <typeinfo>
-// objects inside global variable arrays. To identify type info
-// objects, we must first track their vpointers to their own virtual
-// tables.
+// objects inside global variable arrays, which we then label as
+// vtables. To identify type info objects, we must first track their
+// vpointers to their own virtual tables.
 //
 // https://mentorembedded.github.io/cxx-abi/abi.html#rtti-layout
 //--------------------------------------------------------------------
@@ -87,3 +87,12 @@ vtable(VT, Name), vtable:typeinfo[VT] = TypeInfo <-
    global_variable:initializer[VT] = Initializer, // get array constant of vtable
    constant_array:index[Initializer, 1] = TIC,    // type info is at index 1
    _constant_contains_typeinfo(TypeInfo, TIC).
+
+
+// Class Types
+
+class_type(Type, Name) <-
+   struct_type(Type),
+   string:like(Type, "%%class.%"),
+   string:length[Type] = N,
+   string:substring[Type, 7, N - 7] = Name. // 7 is the length of the prefix "%class."
