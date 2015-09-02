@@ -87,3 +87,17 @@ vtable(VT, Name), vtable:typeinfo[VT] = TypeInfo <-
    global_variable:initializer[VT] = Initializer, // get array constant of vtable
    constant_array:index[Initializer, 1] = TIC,    // type info is at index 1
    _constant_contains_typeinfo(TypeInfo, TIC).
+
+
+// Find the functions stored inside each vtable
+
+vtable:function[VT, Index] = Function ->
+   global_variable(VT), int[64](Index), function_decl(Function).
+
+vtable:function[VT, Index] = Function <-
+   vtable(VT, _),
+   global_variable:initializer[VT] = Initializer,
+   constant_array:index[Initializer, Index] = FuncAsInteger,
+   bitcast_constant_expression:from[FuncAsInteger] = FuncConstant,
+   function_constant:function_name[FuncConstant] = FuncName,
+   function:name[Function] = FuncName.
