@@ -1,9 +1,11 @@
 //-----------------------------------------------------------------------
 // [Memory Abstraction]
 //
-// We have two types of memory locations that a variable can point to:
-// (i)  stack locations, and
-// (ii) heap locations.
+// We have three types of memory allocations that a variable can point
+// to:
+// (i)   stack allocations,
+// (ii)  heap allocations, and
+// (iii) global allocations.
 //
 // The LLVM bitcode intermediate representation transforms every named
 // variable of type `x` to a pointer to `x`, and adds an `alloca`
@@ -36,9 +38,10 @@
 //
 //-----------------------------------------------------------------------
 
-abstract_allocation(Aloc) -> .
-stack_allocation(Aloc) -> abstract_allocation(Aloc).
-heap_allocation(Aloc) -> abstract_allocation(Aloc).
+allocation(Alloc) -> .
+stack_allocation(Alloc)  -> allocation(Alloc).
+heap_allocation(Alloc)   -> allocation(Alloc).
+global_allocation(Alloc) -> allocation(Alloc).
 
 
 // Constructors
@@ -46,21 +49,21 @@ heap_allocation(Aloc) -> abstract_allocation(Aloc).
 stack_allocation:by_instruction[Insn] = StackAlloc ->
    alloca_instruction(Insn), stack_allocation(StackAlloc).
 
-stack_allocation:by_variable[Var] = StackAlloc ->
-   variable(Var), stack_allocation(StackAlloc).
-
 heap_allocation:by_instruction[Insn] = HeapAlloc ->
    instruction(Insn), heap_allocation(HeapAlloc).
 
+global_allocation:by_variable[Var] = GlobalAlloc ->
+   variable(Var), global_allocation(GlobalAlloc).
 
-lang:physical:storageModel[`abstract_allocation] = "ScalableSparse".
+
+lang:physical:storageModel[`allocation] = "ScalableSparse".
 lang:constructor(`stack_allocation:by_instruction).
-lang:constructor(`stack_allocation:by_variable).
 lang:constructor(`heap_allocation:by_instruction).
+lang:constructor(`global_allocation:by_variable).
 
 
-var_points_to(Aloc, Var) ->
-   abstract_allocation(Aloc), variable(Var).
+var_points_to(Alloc, Var) ->
+   allocation(Alloc), variable(Var).
 
-ptr_points_to(Aloc, PtrAloc) ->
-   abstract_allocation(Aloc), abstract_allocation(PtrAloc).
+ptr_points_to(Alloc, PtrAlloc) ->
+   allocation(Alloc), allocation(PtrAlloc).

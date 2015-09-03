@@ -4,6 +4,6 @@ llvm:lookup, library
 llvm:callgraph, library
 
 abstractions.logic, active
-core.logic, active
 virtual-tables.logic, active
 class-type.logic, active
+core.logic, active
