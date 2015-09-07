@@ -46,6 +46,7 @@ namespace Blah {
         DDD(int g): g(g) {}
 
         virtual int get() { return g; }
+        virtual void set(int x) { g = x; }
     };
 }
 
@@ -56,6 +57,11 @@ public:
 
     virtual int foo() {
         return 0;
+    }
+
+    virtual void set(int x) {
+        std::cout << "Field x is now set to" << x << std::endl;
+        Blah::DDD::set(x);
     }
 };
 

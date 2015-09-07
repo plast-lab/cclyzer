@@ -62,6 +62,39 @@ lang:constructor(`heap_allocation:by_instruction).
 lang:constructor(`global_allocation:by_variable).
 
 
+// Human readable representation
+
+variable:descriptor(Var, Path, Func, Type, Name) ->
+   variable(Var), string(Path), string(Func), type(Type), string(Name).
+
+variable:id_tokens[Var, Index] = Token <-
+   variable:id(Var:Id), string:split[Id, ":", Index] = Token.
+
+variable:descriptor(Var, Path, Func, Type, Name) <-
+   variable:id_tokens[Var, 0] = Path,
+   variable:id_tokens[Var, 1] = Fn,
+   variable:id_tokens[Var, 2] = Name,
+   variable:type[Var] = Type,
+   Func = "@" + Fn.
+
+allocation:to_string[Alloc] = Str ->
+   allocation(Alloc), string(Str).
+
+allocation:to_string[Alloc] = Str <-
+   stack_allocation:by_instruction[Insn] = Alloc,
+   instruction:to[Insn] = Var,
+   variable:descriptor(Var, _, Func, Type, Name),
+   Str = "*stack_alloc[" + Func + "][" + Type + " " + Name + "]".
+
+allocation:to_string[Alloc] = Str <-
+   heap_allocation:by_instruction[Insn] = Alloc,
+   instruction:to[Insn] = Var,
+   variable:descriptor(Var, _, Func, Type, Name),
+   Str = "*heap_alloc[" + Func + "][" + Type + " " + Name + "]".
+
+
+// Core concepts
+
 var_points_to(Alloc, Var) ->
    allocation(Alloc), variable(Var).
 
