@@ -131,6 +131,35 @@ schema:sanity()
    bitcast_constant_expression:to_type[CExpr] = _.
 
 
+//--------------------------------------
+// Inttoptr Constant Expression
+//--------------------------------------
+
+inttoptr_constant_expression(C) -> constant_expression(C).
+
+inttoptr_constant_expression:from[CExpr] = Value ->
+   inttoptr_constant_expression(CExpr), immediate(Value).
+
+inttoptr_constant_expression:to_type[CExpr] = Type ->
+   inttoptr_constant_expression(CExpr), type(Type).
+
+inttoptr_constant_expression:to_type[CExpr] = Type
+ <-
+   inttoptr_constant_expression(CExpr),
+   immediate:type[CExpr] = Type.
+
+
+schema:sanity()
+ , inttoptr_constant_expression(CExpr)
+ ->
+   inttoptr_constant_expression:from[CExpr] = _.
+
+schema:sanity()
+ , inttoptr_constant_expression(CExpr)
+ ->
+   inttoptr_constant_expression:to_type[CExpr] = _.
+
+
 //--------------------------------------------
 // Get Element Pointer  Constant Expression
 //--------------------------------------------

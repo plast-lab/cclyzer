@@ -2629,6 +2629,21 @@ lang:physical:filePath[`_instruction:to] = "facts/predicates/instruction-to.dlm"
 
 
 
+_inttoptr_constant_expression:from(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_inttoptr_constant_expression:from] = "\t".
+lang:physical:filePath[`_inttoptr_constant_expression:from] = "facts/predicates/inttoptr_constant_expression-from.dlm".
+
++immediate:id(e0:v0),
++inttoptr_constant_expression(e0),
++immediate:id(e1:v1),
++immediate(e1),
++inttoptr_constant_expression:from[e0] = e1
+<-
+   _inttoptr_constant_expression:from(v0, v1).
+
+
+
 _inttoptr_instruction:from$by_immediate(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_inttoptr_instruction:from$by_immediate] = "\t".

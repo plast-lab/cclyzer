@@ -417,12 +417,20 @@ void CsvGenerator::writeConstantExpr(const ConstantExpr &expr, const refmode_t &
     writeFact(pred::constant_expr::id, refmode);
 
     if (expr.isCast()) {
+        refmode_t opref;
+
         switch (expr.getOpcode()) {
           case Instruction::BitCast:
-              refmode_t opref = writeConstant(*expr.getOperand(0));
+              opref = writeConstant(*expr.getOperand(0));
 
               writeFact(pred::bitcast_constant_expr::id, refmode);
               writeFact(pred::bitcast_constant_expr::from_constant, refmode, opref);
+              break;
+          case Instruction::IntToPtr:
+              opref = writeConstant(*expr.getOperand(0));
+
+              writeFact(pred::inttoptr_constant_expr::id, refmode);
+              writeFact(pred::inttoptr_constant_expr::from_int_constant, refmode, opref);
               break;
         }
     }
