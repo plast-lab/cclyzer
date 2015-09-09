@@ -5,6 +5,16 @@ global_variable(Var) -> immediate(Var). // TODO: why??
 global_variable:type[Var] = Type ->
    global_variable(Var), type(Type).
 
+global_variable:name[Var] = Name ->
+   global_variable(Var), string(Name).
+
+// Compute global variable name by the constant value
+global_variable:name[Var] = Name <-
+   global_variable(Var),
+   immediate:value[Var] = Name.
+
+global_variable:by_name[Name] = Var <-
+   global_variable:name[Var] = Name.
 
 schema:sanity()
  , global_variable:type[Var] = Type
