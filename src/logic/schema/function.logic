@@ -24,6 +24,9 @@ function:type[Func] = Type ->
 function:name[Func] = Name ->
    function_decl(Func), string(Name).
 
+function:by_name[Name] = Func <-
+   function:name[Func] = Name.
+
 // Unmangled name with type signature
 function:signature[Func] = Signature ->
    function_decl(Func), string(Signature).
