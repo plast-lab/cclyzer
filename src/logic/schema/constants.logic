@@ -140,24 +140,30 @@ inttoptr_constant_expression(C) -> constant_expression(C).
 inttoptr_constant_expression:from[CExpr] = Value ->
    inttoptr_constant_expression(CExpr), immediate(Value).
 
-inttoptr_constant_expression:to_type[CExpr] = Type ->
-   inttoptr_constant_expression(CExpr), type(Type).
-
 inttoptr_constant_expression:to_type[CExpr] = Type
  <-
    inttoptr_constant_expression(CExpr),
    immediate:type[CExpr] = Type.
-
 
 schema:sanity()
  , inttoptr_constant_expression(CExpr)
  ->
    inttoptr_constant_expression:from[CExpr] = _.
 
+
+//--------------------------------------
+// Ptrtoint Constant Expression
+//--------------------------------------
+
+ptrtoint_constant_expression(C) -> constant_expression(C).
+
+ptrtoint_constant_expression:from[CExpr] = Value ->
+   ptrtoint_constant_expression(CExpr), immediate(Value).
+
 schema:sanity()
- , inttoptr_constant_expression(CExpr)
+ , ptrtoint_constant_expression(CExpr)
  ->
-   inttoptr_constant_expression:to_type[CExpr] = _.
+   ptrtoint_constant_expression:from[CExpr] = _.
 
 
 //--------------------------------------------

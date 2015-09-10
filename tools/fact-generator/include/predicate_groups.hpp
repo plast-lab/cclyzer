@@ -608,6 +608,11 @@ namespace predicates
         static pred_t from_int_constant;
     };
 
+    struct ptrtoint_constant_expr: predicate_group {
+        static entity_pred_t id;
+        static pred_t from_ptr_constant;
+    };
+
     struct gep_constant_expr: predicate_group {
         static entity_pred_t id;
         static pred_t base;

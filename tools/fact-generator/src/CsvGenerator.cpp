@@ -432,6 +432,12 @@ void CsvGenerator::writeConstantExpr(const ConstantExpr &expr, const refmode_t &
               writeFact(pred::inttoptr_constant_expr::id, refmode);
               writeFact(pred::inttoptr_constant_expr::from_int_constant, refmode, opref);
               break;
+          case Instruction::PtrToInt:
+              opref = writeConstant(*expr.getOperand(0));
+
+              writeFact(pred::ptrtoint_constant_expr::id, refmode);
+              writeFact(pred::ptrtoint_constant_expr::from_ptr_constant, refmode, opref);
+              break;
         }
     }
     else if (expr.isGEPWithNoNotionalOverIndexing()) {

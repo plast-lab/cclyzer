@@ -730,6 +730,18 @@ lang:physical:filePath[`_primitive_type] = "facts/entities/primitive_type.dlm".
 
 
 
+_ptrtoint_constant_expression(v0) -> string(v0).
+
+lang:physical:delimiter[`_ptrtoint_constant_expression] = "\t".
+lang:physical:filePath[`_ptrtoint_constant_expression] = "facts/entities/ptrtoint_constant_expression.dlm".
+
++immediate:id(e0:v0),
++ptrtoint_constant_expression(e0)
+<-
+   _ptrtoint_constant_expression(v0).
+
+
+
 _ptrtoint_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_ptrtoint_instruction] = "\t".
