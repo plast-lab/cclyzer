@@ -22,62 +22,62 @@ variable:firstclass(Var) <-
 
 
 //--------------
-// Immediates
+// Constants
 //--------------
 
-immediate(Imm), immediate:id(Imm:Ref) -> string(Ref).
+constant(C), constant:id(C:Ref) -> string(Ref).
 
-lang:physical:capacity[`immediate] = 8388608.
+lang:physical:capacity[`constant] = 8388608.
 
-immediate:type[Imm] = Type -> immediate(Imm), type(Type).
-immediate:value[Imm] = Val -> immediate(Imm), string(Val).
+constant:type[C] = Type -> constant(C), type(Type).
+constant:value[C] = Val -> constant(C), string(Val).
 
 
 // Auxiliary predicate that computes the last colon position of the
-// immediate's refmode
+// constant's refmode
 
-immediate:last_colon_pos[Imm] = Pos ->
-   immediate(Imm), uint[32](Pos).
+constant:last_colon_pos[C] = Pos ->
+   constant(C), uint[32](Pos).
 
-immediate:last_colon_pos[Imm] = Pos  <-
-   agg<<Pos = max(P)>> immediate:id(Imm:Ref), string:substring[Ref, P, 1] = ":".
+constant:last_colon_pos[C] = Pos  <-
+   agg<<Pos = max(P)>> constant:id(C:Ref), string:substring[Ref, P, 1] = ":".
 
 
-// Compute the actual value of the immediate, since the refmode
+// Compute the actual value of the constant, since the refmode
 // includes more fields in order to uniquely identify this constant
-// from other that happen to have the exact same value.
+// from others that happen to have the exact same value.
 
-immediate:value[Imm] = Val <-
-   immediate:id(Imm:Ref),
-   immediate:last_colon_pos[Imm] = ColonPos,
+constant:value[C] = Val <-
+   constant:id(C:Ref),
+   constant:last_colon_pos[C] = ColonPos,
    string:length[Ref] = Len,
    string:substring[Ref, ColonPos + 1, Len - ColonPos - 1] = Val.
 
 
 // Auxiliary Predicates
 
-immediate:eq(Imm1, Imm2) <-
-   immediate:value[Imm1] = Val1,
-   immediate:value[Imm2] = Val2,
+constant:eq(C1, C2) <-
+   constant:value[C1] = Val1,
+   constant:value[C2] = Val2,
    Val1 = Val2. // is this enough??
 
-immediate:ne(Imm1, Imm2) <-
-   immediate(Imm1),
-   immediate(Imm2),
-   !immediate:eq(Imm1, Imm2).
+constant:ne(C1, C2) <-
+   constant(C1),
+   constant(C2),
+   !constant:eq(C1, C2).
 
-lang:derivationType[`immediate:ne] = "Derived".
+lang:derivationType[`constant:ne] = "Derived".
 
-// immediates cannot be labels
+// constants cannot be labels
 schema:sanity()
- , immediate:type[_] = type
+ , constant:type[_] = type
  ->
    label_type[] != type.
 
 
 
 //--------------------------------------------------
-// [Operands] as union of {variable, immediate}
+// [Operands] as union of {variable, constant}
 //--------------------------------------------------
 
 operand(Operand) -> .
@@ -88,12 +88,12 @@ lang:physical:capacity[`operand] = 8388608.
 operand:by_variable[Var] = Operand  ->
    variable(Var), operand(Operand).
 
-operand:by_immediate[Imm] = Operand ->
-   immediate(Imm), operand(Operand).
+operand:by_constant[C] = Operand ->
+   constant(C), operand(Operand).
 
 lang:physical:storageModel[`operand] = "ScalableSparse".
 lang:constructor(`operand:by_variable).
-lang:constructor(`operand:by_immediate).
+lang:constructor(`operand:by_constant).
 
 
 // Type predicate
@@ -102,16 +102,16 @@ operand:type[Operand] = Type <-
    variable:type[Var] = Type.
 
 operand:type[Operand] = Type <-
-   operand:by_immediate[Imm] = Operand,
-   immediate:type[Imm] = Type.
+   operand:by_constant[C] = Operand,
+   constant:type[C] = Type.
 
 
 // View predicates
 operand:as_variable[Operand] = Var <-
    operand:by_variable[Var] = Operand.
 
-operand:as_immediate[Operand] = Imm <-
-   operand:by_immediate[Imm] = Operand.
+operand:as_constant[Operand] = C <-
+   operand:by_constant[C] = Operand.
 
 // Auxiliary functions
 operand:pointer(Operand) <-

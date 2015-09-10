@@ -110,7 +110,7 @@ allocation:to_string[Alloc] = Str <-
 // Core concepts
 
 constant:contains_alloc(Alloc, Constant) ->
-   allocation(Alloc), immediate(Constant).
+   allocation(Alloc), constant(Constant).
 
 var_points_to(Alloc, Var) ->
    allocation(Alloc), variable(Var).

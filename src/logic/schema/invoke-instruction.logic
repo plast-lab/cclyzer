@@ -30,7 +30,7 @@ indirect_invoke_instruction(Insn) -> invoke_instruction(Insn).
 
 direct_invoke_instruction(Insn) <-
    invoke_instruction:function[Insn] = Func,
-   operand:as_immediate[Func] = _.
+   operand:as_constant[Func] = _.
 
 indirect_invoke_instruction(Insn) <-
    invoke_instruction:function[Insn] = Func,

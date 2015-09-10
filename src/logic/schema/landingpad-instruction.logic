@@ -10,7 +10,7 @@ landingpad_instruction:type[Insn] = Type ->
 
 // personality function
 landingpad_instruction:pers_fn[Insn] = Func ->
-   landingpad_instruction(Insn), immediate(Func).
+   landingpad_instruction(Insn), constant(Func).
 
 
 //------------------------------------------------------------------------------
@@ -132,7 +132,7 @@ catch_clause:arg[Clause] = Arg ->
    catch_clause(Clause), global_variable(Arg).
 
 filter_clause:arg[Clause] = Arg ->
-   filter_clause(Clause), immediate(Arg).
+   filter_clause(Clause), constant(Arg).
 
 landingpad_instruction:clause[Insn, Index] = Clause ->
    landingpad_instruction(Insn), int[64](Index), clause(Clause).
@@ -171,7 +171,7 @@ lang:derivationType[`filter_clause:arg] = "DerivedAndStored".
 // Additional type constraints not mentioned above
 schema:sanity()
  , filter_clause:arg[_] = Arg
- , immediate:type[Arg] = Type
+ , constant:type[Arg] = Type
  ->
    array_type(Type).
 
@@ -182,7 +182,7 @@ schema:sanity()
 
 schema:sanity()
  , landingpad_instruction:pers_fn[_] = Func
- , immediate:type[Func] = Type
+ , constant:type[Func] = Type
  ->
    function_type(Type).
 

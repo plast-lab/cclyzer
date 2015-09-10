@@ -2,9 +2,9 @@
 // Simple constant subtypes
 //--------------------------------------
 
-integer_constant(C) -> immediate(C).
-fp_constant(C) -> immediate(C).
-nullptr_constant(C) -> immediate(C).
+integer_constant(C) -> constant(C).
+fp_constant(C) -> constant(C).
+nullptr_constant(C) -> constant(C).
 
 lang:isEntity[`integer_constant] = true.
 lang:isEntity[`fp_constant] = true.
@@ -14,7 +14,7 @@ lang:isEntity[`nullptr_constant] = true.
 // Constant that references function
 //--------------------------------------
 
-function_constant(C) -> immediate(C).
+function_constant(C) -> constant(C).
 
 function_constant:function_name[C] = FName ->
    function_constant(C), string(FName).
@@ -29,7 +29,7 @@ schema:sanity()
 // Constant that references global variable
 //---------------------------------------------
 
-global_variable_constant(C) -> immediate(C).
+global_variable_constant(C) -> constant(C).
 
 global_variable_constant:name[C] = Name ->
    global_variable_constant(C), string(Name).
@@ -44,10 +44,10 @@ schema:sanity()
 // Array of constants
 //--------------------------------------
 
-constant_array(C) -> immediate(C).
+constant_array(C) -> constant(C).
 
 constant_array:index[CA, Index] = C ->
-   constant_array(CA), int[64](Index), immediate(C).
+   constant_array(CA), int[64](Index), constant(C).
 
 constant_array:size[CA] = Size ->
    constant_array(CA), int[64](Size).
@@ -62,10 +62,10 @@ schema:sanity()
 // Constant Struct
 //--------------------------------------
 
-constant_struct(C) -> immediate(C).
+constant_struct(C) -> constant(C).
 
 constant_struct:index[CS, Index] = C ->
-   constant_struct(CS), int[64](Index), immediate(C).
+   constant_struct(CS), int[64](Index), constant(C).
 
 constant_struct:size[CS] = Size ->
    constant_struct(CS), int[64](Size).
@@ -80,10 +80,10 @@ schema:sanity()
 // Constant Vector
 //--------------------------------------
 
-constant_vector(C) -> immediate(C).
+constant_vector(C) -> constant(C).
 
 constant_vector:index[CV, Index] = C ->
-   constant_vector(CV), int[64](Index), immediate(C).
+   constant_vector(CV), int[64](Index), constant(C).
 
 constant_vector:size[CV] = Size ->
    constant_vector(CV), int[64](Size).
@@ -98,7 +98,7 @@ schema:sanity()
 // [Constant Expressions Hierarchy]
 //--------------------------------------
 
-constant_expression(Imm) -> immediate(Imm).
+constant_expression(C) -> constant(C).
 lang:isEntity[`constant_expression] = true.
 
 
@@ -109,7 +109,7 @@ lang:isEntity[`constant_expression] = true.
 bitcast_constant_expression(C) -> constant_expression(C).
 
 bitcast_constant_expression:from[CExpr] = Value ->
-   bitcast_constant_expression(CExpr), immediate(Value).
+   bitcast_constant_expression(CExpr), constant(Value).
 
 bitcast_constant_expression:to_type[CExpr] = Type ->
    bitcast_constant_expression(CExpr), type(Type).
@@ -117,7 +117,7 @@ bitcast_constant_expression:to_type[CExpr] = Type ->
 bitcast_constant_expression:to_type[CExpr] = Type
  <-
    bitcast_constant_expression(CExpr),
-   immediate:type[CExpr] = Type.
+   constant:type[CExpr] = Type.
 
 
 schema:sanity()
@@ -138,12 +138,7 @@ schema:sanity()
 inttoptr_constant_expression(C) -> constant_expression(C).
 
 inttoptr_constant_expression:from[CExpr] = Value ->
-   inttoptr_constant_expression(CExpr), immediate(Value).
-
-inttoptr_constant_expression:to_type[CExpr] = Type
- <-
-   inttoptr_constant_expression(CExpr),
-   immediate:type[CExpr] = Type.
+   inttoptr_constant_expression(CExpr), constant(Value).
 
 schema:sanity()
  , inttoptr_constant_expression(CExpr)
@@ -158,7 +153,7 @@ schema:sanity()
 ptrtoint_constant_expression(C) -> constant_expression(C).
 
 ptrtoint_constant_expression:from[CExpr] = Value ->
-   ptrtoint_constant_expression(CExpr), immediate(Value).
+   ptrtoint_constant_expression(CExpr), constant(Value).
 
 schema:sanity()
  , ptrtoint_constant_expression(CExpr)
@@ -170,13 +165,13 @@ schema:sanity()
 // Get Element Pointer  Constant Expression
 //--------------------------------------------
 
-getelementptr_constant_expression(C) -> immediate(C).
+getelementptr_constant_expression(C) -> constant(C).
 
 getelementptr_constant_expression:base[CExpr] = C ->
-   getelementptr_constant_expression(CExpr), immediate(C).
+   getelementptr_constant_expression(CExpr), constant(C).
 
 getelementptr_constant_expression:index[CExpr, Index] = C ->
-   getelementptr_constant_expression(CExpr), int[64](Index), immediate(C).
+   getelementptr_constant_expression(CExpr), int[64](Index), constant(C).
 
 getelementptr_constant_expression:nindices[CExpr] = Size ->
    getelementptr_constant_expression(CExpr), int[64](Size).

@@ -155,5 +155,5 @@ operand_points_to(Alloc, VarOperand) <-
    var_points_to(Alloc, PtrVar).
 
 operand_points_to(Alloc, ConstantOperand) <-
-   operand:as_immediate[ConstantOperand] = ToGVar,
+   operand:as_constant[ConstantOperand] = ToGVar,
    constant:contains_alloc(Alloc, ToGVar).

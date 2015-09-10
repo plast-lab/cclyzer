@@ -6,7 +6,7 @@ template<> EntityPredicateRegistry *Singleton<EntityPredicateRegistry>::INSTANCE
 template<> OperandPredicateRegistry *Singleton<OperandPredicateRegistry>::INSTANCE = NULL;
 
 // Two suffixes for the two variants of each operand predicate
-const char *OperandPredicate::CONSTANT_SUFFIX = "by_immediate";
+const char *OperandPredicate::CONSTANT_SUFFIX = "by_constant";
 const char *OperandPredicate::VARIABLE_SUFFIX = "by_variable";
 
 

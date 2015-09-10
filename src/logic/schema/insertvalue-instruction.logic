@@ -13,7 +13,7 @@ insertvalue_instruction:nindices[Insn] = Total ->
    insertvalue_instruction(Insn), int[64](Total).
 
 insertvalue_instruction:index[Insn, Index] = Idx ->
-   insertvalue_instruction(Insn), int[64](Index), immediate(Idx).
+   insertvalue_instruction(Insn), int[64](Index), constant(Idx).
 
 
 //------------------------------------------------------------------------------
@@ -112,7 +112,7 @@ schema:sanity()
 // TODO: check if other integer types are allowed for non-structures
 schema:sanity()
  , insertvalue_instruction:index[_, _] = Index
- , immediate:type[Index] = Type
+ , constant:type[Index] = Type
  ->
    int32_type[] = Type. // c3
 

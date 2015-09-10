@@ -321,7 +321,7 @@ void CsvGenerator::writeFnAttributes(
 }
 
 
-void CsvGenerator::writeVarsTypesAndImmediates(const llvm::DataLayout &layout)
+void CsvGenerator::writeVarsTypesAndConstants(const llvm::DataLayout &layout)
 {
     using llvm_extra::TypeAccumulator;
     using boost::unordered_set;

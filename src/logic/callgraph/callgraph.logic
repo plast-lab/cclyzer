@@ -47,6 +47,6 @@ reachable_function(Callback) <-
    call_instruction:function[Insn] = AtExit,
    function:name[AtExit] = "@atexit",
    call_instruction:arg[Insn, 0] = Operand,
-   operand:as_immediate[Operand] = Imm,
-   immediate:value[Imm] = FuncName,
+   operand:as_constant[Operand] = Imm,
+   constant:value[Imm] = FuncName,
    function:name[Callback] = FuncName.

@@ -376,8 +376,8 @@ namespace predicates
     entity_pred_t variable::id = "variable";
     pred_t variable::type = "variable:type";
 
-    entity_pred_t constant::id = "immediate";
-    pred_t constant::type = "immediate:type";
+    entity_pred_t constant::id = "constant";
+    pred_t constant::type = "constant:type";
 
     pred_t constant::expr = "constant_expression";
     pred_t constant::to_integer = "constant:to_int";

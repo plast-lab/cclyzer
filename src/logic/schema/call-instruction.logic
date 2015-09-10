@@ -38,7 +38,7 @@ indirect_call_instruction(Insn) -> call_instruction(Insn).
 
 direct_call_instruction(Insn) <-
    call_instruction:raw_function[Insn] = Func,
-   operand:as_immediate[Func] = _.
+   operand:as_constant[Func] = _.
 
 indirect_call_instruction(Insn) <-
    call_instruction:raw_function[Insn] = Func,

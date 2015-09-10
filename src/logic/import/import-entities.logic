@@ -87,7 +87,7 @@ _bitcast_constant_expression(v0) -> string(v0).
 lang:physical:delimiter[`_bitcast_constant_expression] = "\t".
 lang:physical:filePath[`_bitcast_constant_expression] = "facts/entities/bitcast_constant_expression.dlm".
 
-+immediate:id(e0:v0),
++constant:id(e0:v0),
 +bitcast_constant_expression(e0)
 <-
    _bitcast_constant_expression(v0).
@@ -166,12 +166,24 @@ lang:physical:filePath[`_cmpxchg_instruction] = "facts/entities/cmpxchg_instruct
 
 
 
+_constant(v0) -> string(v0).
+
+lang:physical:delimiter[`_constant] = "\t".
+lang:physical:filePath[`_constant] = "facts/entities/constant.dlm".
+
++constant:id(e0:v0),
++constant(e0)
+<-
+   _constant(v0).
+
+
+
 _constant_array(v0) -> string(v0).
 
 lang:physical:delimiter[`_constant_array] = "\t".
 lang:physical:filePath[`_constant_array] = "facts/entities/constant_array.dlm".
 
-+immediate:id(e0:v0),
++constant:id(e0:v0),
 +constant_array(e0)
 <-
    _constant_array(v0).
@@ -183,7 +195,7 @@ _constant_expression(v0) -> string(v0).
 lang:physical:delimiter[`_constant_expression] = "\t".
 lang:physical:filePath[`_constant_expression] = "facts/entities/constant_expression.dlm".
 
-+immediate:id(e0:v0),
++constant:id(e0:v0),
 +constant_expression(e0)
 <-
    _constant_expression(v0).
@@ -195,7 +207,7 @@ _constant_struct(v0) -> string(v0).
 lang:physical:delimiter[`_constant_struct] = "\t".
 lang:physical:filePath[`_constant_struct] = "facts/entities/constant_struct.dlm".
 
-+immediate:id(e0:v0),
++constant:id(e0:v0),
 +constant_struct(e0)
 <-
    _constant_struct(v0).
@@ -207,7 +219,7 @@ _constant_vector(v0) -> string(v0).
 lang:physical:delimiter[`_constant_vector] = "\t".
 lang:physical:filePath[`_constant_vector] = "facts/entities/constant_vector.dlm".
 
-+immediate:id(e0:v0),
++constant:id(e0:v0),
 +constant_vector(e0)
 <-
    _constant_vector(v0).
@@ -303,7 +315,7 @@ _fp_constant(v0) -> string(v0).
 lang:physical:delimiter[`_fp_constant] = "\t".
 lang:physical:filePath[`_fp_constant] = "facts/entities/fp_constant.dlm".
 
-+immediate:id(e0:v0),
++constant:id(e0:v0),
 +fp_constant(e0)
 <-
    _fp_constant(v0).
@@ -411,7 +423,7 @@ _function_constant(v0) -> string(v0).
 lang:physical:delimiter[`_function_constant] = "\t".
 lang:physical:filePath[`_function_constant] = "facts/entities/function_constant.dlm".
 
-+immediate:id(e0:v0),
++constant:id(e0:v0),
 +function_constant(e0)
 <-
    _function_constant(v0).
@@ -447,7 +459,7 @@ _getelementptr_constant_expression(v0) -> string(v0).
 lang:physical:delimiter[`_getelementptr_constant_expression] = "\t".
 lang:physical:filePath[`_getelementptr_constant_expression] = "facts/entities/getelementptr_constant_expression.dlm".
 
-+immediate:id(e0:v0),
++constant:id(e0:v0),
 +getelementptr_constant_expression(e0)
 <-
    _getelementptr_constant_expression(v0).
@@ -471,7 +483,7 @@ _global_variable(v0) -> string(v0).
 lang:physical:delimiter[`_global_variable] = "\t".
 lang:physical:filePath[`_global_variable] = "facts/entities/global_variable.dlm".
 
-+immediate:id(e0:v0),
++constant:id(e0:v0),
 +global_variable(e0)
 <-
    _global_variable(v0).
@@ -483,7 +495,7 @@ _global_variable_constant(v0) -> string(v0).
 lang:physical:delimiter[`_global_variable_constant] = "\t".
 lang:physical:filePath[`_global_variable_constant] = "facts/entities/global_variable_constant.dlm".
 
-+immediate:id(e0:v0),
++constant:id(e0:v0),
 +global_variable_constant(e0)
 <-
    _global_variable_constant(v0).
@@ -499,18 +511,6 @@ lang:physical:filePath[`_icmp_instruction] = "facts/entities/icmp_instruction.dl
 +icmp_instruction(e0)
 <-
    _icmp_instruction(v0).
-
-
-
-_immediate(v0) -> string(v0).
-
-lang:physical:delimiter[`_immediate] = "\t".
-lang:physical:filePath[`_immediate] = "facts/entities/immediate.dlm".
-
-+immediate:id(e0:v0),
-+immediate(e0)
-<-
-   _immediate(v0).
 
 
 
@@ -555,7 +555,7 @@ _integer_constant(v0) -> string(v0).
 lang:physical:delimiter[`_integer_constant] = "\t".
 lang:physical:filePath[`_integer_constant] = "facts/entities/integer_constant.dlm".
 
-+immediate:id(e0:v0),
++constant:id(e0:v0),
 +integer_constant(e0)
 <-
    _integer_constant(v0).
@@ -579,7 +579,7 @@ _inttoptr_constant_expression(v0) -> string(v0).
 lang:physical:delimiter[`_inttoptr_constant_expression] = "\t".
 lang:physical:filePath[`_inttoptr_constant_expression] = "facts/entities/inttoptr_constant_expression.dlm".
 
-+immediate:id(e0:v0),
++constant:id(e0:v0),
 +inttoptr_constant_expression(e0)
 <-
    _inttoptr_constant_expression(v0).
@@ -663,7 +663,7 @@ _nullptr_constant(v0) -> string(v0).
 lang:physical:delimiter[`_nullptr_constant] = "\t".
 lang:physical:filePath[`_nullptr_constant] = "facts/entities/nullptr_constant.dlm".
 
-+immediate:id(e0:v0),
++constant:id(e0:v0),
 +nullptr_constant(e0)
 <-
    _nullptr_constant(v0).
@@ -735,7 +735,7 @@ _ptrtoint_constant_expression(v0) -> string(v0).
 lang:physical:delimiter[`_ptrtoint_constant_expression] = "\t".
 lang:physical:filePath[`_ptrtoint_constant_expression] = "facts/entities/ptrtoint_constant_expression.dlm".
 
-+immediate:id(e0:v0),
++constant:id(e0:v0),
 +ptrtoint_constant_expression(e0)
 <-
    _ptrtoint_constant_expression(v0).

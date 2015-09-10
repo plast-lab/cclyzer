@@ -24,7 +24,7 @@ vtable(VT, Name) <-
 typeinfo_vtable(VT, Name) <-
    linkage_type:external[] = ExternalLinkage,
    global_variable:linkage_type[VT] = ExternalLinkage,
-   immediate:value[VT] = Name,
+   constant:value[VT] = Name,
    string:like(Name, "%class_type_info%"),
    string:like(Name, "%cxxabi%").
 
@@ -44,7 +44,7 @@ typeinfo_vtable:multiple_inheritance(VT, Name) <-
 // Track flow of vpointers to constants
 
 _constant_contains_vptr(VT, Constant) ->
-   immediate(Constant), global_variable(VT).
+   constant(Constant), global_variable(VT).
 
 _constant_contains_vptr(VTable, Constant) <-
    global_variable_constant:name[Constant] = Name,
@@ -76,14 +76,14 @@ typeinfo(TypeInfo) <-
 _constant_contains_typeinfo(TypeInfo, Constant) <-
    global_variable_constant:name[Constant] = Name,
    typeinfo(TypeInfo),
-   immediate:value[TypeInfo] = Name.
+   constant:value[TypeInfo] = Name.
 
 _constant_contains_typeinfo(TypeInfo, Outer) <-
    bitcast_constant_expression:from[Outer] = Inner,
    _constant_contains_typeinfo(TypeInfo, Inner).
 
 vtable(VT, Name), vtable:typeinfo[VT] = TypeInfo <-
-   immediate:value[VT] = Name,
+   constant:value[VT] = Name,
    global_variable:initializer[VT] = Initializer, // get array constant of vtable
    constant_array:index[Initializer, 1] = TIC,    // type info is at index 1
    _constant_contains_typeinfo(TypeInfo, TIC).

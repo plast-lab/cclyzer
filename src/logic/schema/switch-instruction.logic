@@ -14,7 +14,7 @@ switch_instruction:default_label[Insn] = Label ->
    switch_instruction(Insn), variable(Label).
 
 switch_instruction:case:value[Insn, Index] = Constant ->
-   switch_instruction(Insn), int[64](Index), immediate(Constant).
+   switch_instruction(Insn), int[64](Index), constant(Constant).
 
 switch_instruction:case:label[Insn, Index] = Label ->
    switch_instruction(Insn), int[64](Index), variable(Label).
@@ -63,7 +63,7 @@ schema:sanity()
 
 schema:sanity()
  , switch_instruction:case:value[_, _] = Constant
- , immediate:type[Constant] = Type
+ , constant:type[Constant] = Type
  ->
    integer_type(Type).
 
@@ -71,7 +71,7 @@ schema:sanity()
  , switch_instruction(Insn)
  , switch_instruction:case:value[Insn, Index1] = Const1
  , switch_instruction:case:value[Insn, Index2] = Const2
- , immediate:eq(Const1, Const2)
+ , constant:eq(Const1, Const2)
  ->
    Index1 = Index2.
 

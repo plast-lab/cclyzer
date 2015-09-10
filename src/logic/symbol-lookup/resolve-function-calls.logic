@@ -30,8 +30,8 @@
 call_instruction:function[Insn] = FuncDecl <-
    direct_call_instruction(Insn),
    call_instruction:raw_function[Insn] = Op,
-   operand:as_immediate[Op] = Imm,
-   immediate:value[Imm] = FuncName,
+   operand:as_constant[Op] = C,
+   constant:value[C] = FuncName,
    function:name[FuncDecl] = FuncName.
 
 

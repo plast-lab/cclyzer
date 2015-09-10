@@ -10,7 +10,7 @@ extractvalue_instruction:nindices[Insn] = Total ->
    extractvalue_instruction(Insn), int[64](Total).
 
 extractvalue_instruction:index[Insn, Index] = Idx ->
-   extractvalue_instruction(Insn), int[64](Index), immediate(Idx).
+   extractvalue_instruction(Insn), int[64](Index), constant(Idx).
 
 
 //------------------------------------------------------------------------------
@@ -28,7 +28,7 @@ extractvalue_instruction:index[Insn, Index] = Idx ->
 //------------------------------------------------------------------------------
 
 constant:to_int[Constant] = Value ->
-   immediate(Constant), int[64](Value).
+   constant(Constant), int[64](Value).
 
 instruction:next_index[Insn, Index] = Index + 1 <-
    extractvalue_instruction:index[Insn, Index] = _.
@@ -101,7 +101,7 @@ schema:sanity()
 // TODO: check if other integer types are allowed for non-structure
 schema:sanity()
  , extractvalue_instruction:index[_, _] = Index
- , immediate:type[Index] = Type
+ , constant:type[Index] = Type
  ->
    int32_type[] = Type. // c2
 

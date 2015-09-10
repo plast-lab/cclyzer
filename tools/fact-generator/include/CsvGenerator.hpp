@@ -105,7 +105,7 @@ class CsvGenerator : private RefmodePolicy
 
 
     void processModule(const llvm::Module *Mod, std::string& path);
-    void writeVarsTypesAndImmediates(const llvm::DataLayout &layout);
+    void writeVarsTypesAndConstants(const llvm::DataLayout &layout);
 
     /* Visitor classes */
     class TypeVisitor;

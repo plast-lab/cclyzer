@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
         const llvm::DataLayout *layout = module->getDataLayout();
 
         // Write types
-        csvGen.writeVarsTypesAndImmediates(*layout);
+        csvGen.writeVarsTypesAndConstants(*layout);
 
         delete module;
     }

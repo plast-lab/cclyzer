@@ -84,10 +84,10 @@ getelementptr_instruction:interm_type[Insn, Next] = Comp <-
 getelementptr_instruction:interm_type[Insn, Next] = Comp <-
    getelementptr_instruction:interm_type[Insn, Index] = Type,
    getelementptr_instruction:index[Insn, Index] = Idx,
-   operand:as_immediate[Idx] = Constant,
+   operand:as_constant[Idx] = Constant,
    constant:to_int[Constant] = Value, // Note: evaluated constant
    int32_type[] = i32,
-   immediate:type[Constant] = i32,   // c3
+   constant:type[Constant] = i32,   // c3
    struct_type:field[Type, Value] = Comp,
    instruction:next_index[Insn, Index] = Next.
 

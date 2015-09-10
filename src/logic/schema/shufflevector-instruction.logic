@@ -10,7 +10,7 @@ shufflevector_instruction:second_vector[Insn] = Second ->
    shufflevector_instruction(Insn), operand(Second).
 
 shufflevector_instruction:mask[Insn] = Mask ->
-   shufflevector_instruction(Insn), immediate(Mask).
+   shufflevector_instruction(Insn), constant(Mask).
 
 // The type of the two input vectors.
 // !! Functional dependency violation encodes (1.i) constraint !!
@@ -25,7 +25,7 @@ shufflevector_instruction:input_type[Insn] = Type <-
 // The type of the shuffle mask.
 shufflevector_instruction:mask_type[Insn] = Type <-
    shufflevector_instruction:mask[Insn] = Mask,
-   immediate:type[Mask] = Type.
+   constant:type[Mask] = Type.
 
 
 //------------------------------------------------------------------------------

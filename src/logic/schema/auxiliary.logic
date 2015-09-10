@@ -81,7 +81,7 @@ landingpad_instruction:clause:catch_tmp[Insn, Index] = Constant ->
    landingpad_instruction(Insn), int[64](Index), global_variable(Constant).
 
 landingpad_instruction:clause:filter_tmp[Insn, Index] = Constant ->
-   landingpad_instruction(Insn), int[64](Index), immediate(Constant).
+   landingpad_instruction(Insn), int[64](Index), constant(Constant).
 
 
 catch_clause(Clause)
