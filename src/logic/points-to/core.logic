@@ -26,6 +26,49 @@ var_points_to(HeapAlloc, Var)
    function:name[Func] = "@malloc",
    instruction:to[Insn] = Var.
 
+global_allocation(Alloc),
+global_allocation:by_variable[GVar] = Alloc
+ <-
+   global_variable(GVar).
+
+global_allocation(Alloc),
+global_allocation:by_function[Func] = Alloc
+ <-
+   function(Func).
+
+
+// Integers can be cast to pointers. In such case, the conservative
+// approach is to assume that the pointer may point to anywhere in
+// memory.
+//
+// Example: (int *) 0xabcd
+
+constant:contains_alloc(Unknown, Constant) <-
+   inttoptr_constant_expression(Constant),
+   unknown_location[] = Unknown.
+
+
+// A pointer may be masqueraded into an integer, but the associated
+// memory locations are still valid.
+
+constant:contains_alloc(Alloc, IntConstant) <-
+   ptrtoint_constant_expression:from[IntConstant] = PtrConstant,
+   constant:contains_alloc(Alloc, PtrConstant).
+
+// Global variable and function references is a common type of
+// constants. They should be matched to the corresponding global
+// allocation.
+
+constant:contains_alloc(Alloc, Constant) <-
+   global_variable_constant:name[Constant] = Name,
+   global_allocation:by_variable[GVar] = Alloc,
+   global_variable:by_name[Name] = GVar.
+
+constant:contains_alloc(Alloc, Constant) <-
+   function_constant:function_name[Constant] = FName,
+   function:by_name[FName] = Func,
+   global_allocation:by_function[Func] = Alloc.
+
 
 //----------------------------------------------------------------------
 // [Assignment Instructions]
@@ -47,32 +90,41 @@ var_points_to(HeapAlloc, Var)
 // result of the `call instruction`.
 //----------------------------------------------------------------------
 
-assign_instruction(ToVar, FromVar) ->
-   variable(ToVar), variable(FromVar).
+assign_instruction(To, Value) ->
+   variable(To), operand(Value).
 
 var_points_to(Alloc, ToVar) <-
-   assign_instruction(ToVar, FromVar),
-   var_points_to(Alloc, FromVar).
+   assign_instruction(ToVar, Value),
+   operand_points_to(Alloc, Value).
 
 // `bitcast` instructions
-assign_instruction(ToVar, FromVar) <-
-   bitcast_instruction:from[Insn] = From,
-   instruction:to[Insn] = ToVar,
-   operand:as_variable[From] = FromVar.
+assign_instruction(ToVar, Value) <-
+   bitcast_instruction:from[Insn] = Value,
+   instruction:to[Insn] = ToVar.
+
+// `phi` instructions: treat every possible pair value as a potential
+// assignment to the target variable
+assign_instruction(ToVar, Value) <-
+   phi_instruction:pair:value[Insn, _] = Value,
+   instruction:to[Insn] = ToVar.
+
+// `getelementptr` instructions (ignores indices)
+// TODO model indices, arrays, fields, etc
+assign_instruction(ToVar, Base) <-
+   getelementptr_instruction:base[Insn] = Base,
+   instruction:to[Insn] = ToVar.
 
 // actual arg to formal parameter
-assign_instruction(Param, Arg) <-
+assign_instruction(Param, Argument) <-
    call_instruction:function[Insn] = Callee,
-   call_instruction:arg[Insn, Index] = ArgOp,
-   operand:as_variable[ArgOp] = Arg,
+   call_instruction:arg[Insn, Index] = Argument,
    function:param[Callee, Index] = Param.
 
 // `return` instruction to `call` instruction target
-assign_instruction(ToVar, RetVar) <-
+assign_instruction(ToVar, RetValue) <-
    call_instruction:function[CallInsn] = Callee,
-   ret_instruction:value[RetInsn] = Value,
+   ret_instruction:value[RetInsn] = RetValue,
    instruction:function[RetInsn] = Callee,
-   operand:as_variable[Value] = RetVar,
    instruction:to[CallInsn] = ToVar.
 
 
@@ -83,15 +135,25 @@ assign_instruction(ToVar, RetVar) <-
 ptr_points_to(Alloc, BaseAlloc) <-
    store_instruction:value[Insn] = Op,
    store_instruction:address[Insn] = PtrOp,
-   operand:as_variable[PtrOp] = PtrVar,
-   operand:as_variable[Op] = Var,
-   var_points_to(BaseAlloc, PtrVar),
-   var_points_to(Alloc, Var).
-
+   operand_points_to(Alloc, Op),
+   operand_points_to(BaseAlloc, PtrOp).
 
 var_points_to(Alloc, ToVar) <-
    instruction:to[Insn] = ToVar,
    load_instruction:address[Insn] = PtrOp,
-   operand:as_variable[PtrOp] = PtrVar,
-   var_points_to(BaseAlloc, PtrVar),
+   operand_points_to(BaseAlloc, PtrOp),
    ptr_points_to(Alloc, BaseAlloc).
+
+
+// Intermediate relations
+
+operand_points_to(Alloc, Operand) ->
+   allocation(Alloc), operand(Operand).
+
+operand_points_to(Alloc, VarOperand) <-
+   operand:as_variable[VarOperand] = PtrVar,
+   var_points_to(Alloc, PtrVar).
+
+operand_points_to(Alloc, ConstantOperand) <-
+   operand:as_immediate[ConstantOperand] = ToGVar,
+   constant:contains_alloc(Alloc, ToGVar).
