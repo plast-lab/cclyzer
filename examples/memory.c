@@ -60,8 +60,10 @@ void *f4(int *ptr) {
 
 void *f5() {
     void *(*fp)(int*);
+    void *(*alloc)(size_t);
 
     fp = &f4;
+    alloc = &malloc;
     return fp;
 }
 

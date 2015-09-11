@@ -37,6 +37,17 @@ global_allocation:by_function[Func] = Alloc
    function(Func).
 
 
+// We also create allocations of functions for which we lack any
+// definition, e.g., functions that belong to dynamically linked
+// libraries
+
+global_allocation(Alloc),
+global_allocation:by_function[Func] = Alloc
+ <-
+   function_decl(Func),
+   !function:definition[Func] = _.
+
+
 // Integers can be cast to pointers. In such case, the conservative
 // approach is to assume that the pointer may point to anywhere in
 // memory.

@@ -3,7 +3,7 @@
 // always end up with a single bitcode file and don't care about
 // multiple compilation units, etc.
 //
-// We assume the following, due to are whole-program analysis scheme:
+// We assume the following, due to our whole-program analysis scheme:
 //
 //   1. For any referenced function, there will exist at least one
 //      function declaration (that may also be a definition).

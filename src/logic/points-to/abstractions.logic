@@ -56,7 +56,7 @@ global_allocation:by_variable[Var] = GlobalAlloc ->
    global_variable(Var), global_allocation(GlobalAlloc).
 
 global_allocation:by_function[Func] = GlobalAlloc ->
-   function(Func), global_allocation(GlobalAlloc).
+   function_decl(Func), global_allocation(GlobalAlloc).
 
 
 lang:physical:storageModel[`allocation] = "ScalableSparse".
