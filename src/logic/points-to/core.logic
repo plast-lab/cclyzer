@@ -66,6 +66,10 @@ constant:contains_alloc(Alloc, IntConstant) <-
    ptrtoint_constant_expression:from[IntConstant] = PtrConstant,
    constant:contains_alloc(Alloc, PtrConstant).
 
+constant:contains_alloc(Alloc, OuterConstant) <-
+   bitcast_constant_expression:from[OuterConstant] = InnerConstant,
+   constant:contains_alloc(Alloc, InnerConstant).
+
 // Global variable and function references is a common type of
 // constants. They should be matched to the corresponding global
 // allocation.
@@ -113,11 +117,34 @@ assign_instruction(ToVar, Value) <-
    bitcast_instruction:from[Insn] = Value,
    instruction:to[Insn] = ToVar.
 
+// `ptrtoint` instructions
+assign_instruction(ToVar, Value) <-
+   ptrtoint_instruction:from[Insn] = Value,
+   instruction:to[Insn] = ToVar.
+
+// `inttoptr` instructions
+var_points_to(Unknown, ToVar) <-
+   unknown_location[] = Unknown,
+   inttoptr_instruction(Insn),
+   instruction:to[Insn] = ToVar.
+
 // `phi` instructions: treat every possible pair value as a potential
 // assignment to the target variable
 assign_instruction(ToVar, Value) <-
    phi_instruction:pair:value[Insn, _] = Value,
    instruction:to[Insn] = ToVar.
+
+
+// `select` instructions; similar to `phi` instructions
+assign_instruction(ToVar, Value) <-
+   select_instruction(Insn),
+   ( select_instruction:first_operand[Insn]  = Value
+   ; select_instruction:second_operand[Insn] = Value ),
+   instruction:to[Insn] = ToVar,
+   instruction:type[Insn] = Type,
+   !vector_type(Type).
+
+
 
 // `getelementptr` instructions (ignores indices)
 // TODO model indices, arrays, fields, etc
