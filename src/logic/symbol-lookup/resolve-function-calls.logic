@@ -32,7 +32,7 @@ call_instruction:function[Insn] = FuncDecl <-
    call_instruction:raw_function[Insn] = Op,
    operand:as_constant[Op] = C,
    constant:value[C] = FuncName,
-   function:name[FuncDecl] = FuncName.
+   function:by_name[FuncName] = FuncDecl.
 
 
 // Is this always true for our tests?
