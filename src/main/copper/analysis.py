@@ -63,7 +63,7 @@ class Analysis(object):
             StatBuilder(self)
             .count('instruction')
             .count('reachable_function')
-            .count('callgraph:edge')
+            .count('callgraph:fn_edge', 'call-graph edges')
             .count('var_points_to', 'var-points-to')
             .count('ptr_points_to', 'ptr-points-to')
             .build()

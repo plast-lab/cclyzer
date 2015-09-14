@@ -172,11 +172,13 @@ function:actual_arg(Callee, Index, Argument) ->
 
 function:actual_arg(Callee, Index, Argument) <-
    call_instruction:arg[CallInsn, Index] = Argument,
-   function_lookup(Callee, CallInsn).
+   callgraph:edge(Callee, CallInsn),
+   function(Callee).
 
 function:actual_arg(Callee, Index, Argument) <-
    invoke_instruction:arg[InvokeInsn, Index] = Argument,
-   function_lookup(Callee, InvokeInsn).
+   callgraph:edge(Callee, InvokeInsn),
+   function(Callee).
 
 // Identify variable arguments for variadic functions
 function:va_actual_arg(Callee, Index, Argument) <-
@@ -194,7 +196,7 @@ assign_instruction(Param, Argument) <-
 // `return` instruction to `call` instruction target
 assign_instruction(ToVar, RetValue) <-
    call_instruction(CallInsn),  // do not model `invoke` instructions yet
-   function_lookup(Callee, CallInsn),
+   callgraph:edge(Callee, CallInsn),
    ret_instruction:value[RetInsn] = RetValue,
    instruction:function[RetInsn] = Callee,
    instruction:to[CallInsn] = ToVar.
@@ -213,24 +215,30 @@ assign_instruction(ToVar, Argument) <-
    operand:type[Argument] = ArgType.
 
 
-// Function lookup
+// Augment call-graph by adding edges for function pointers
 
 function:by_location[Alloc] = Callee <-
    global_allocation:by_function[Callee] = Alloc.
 
-function_lookup(Callee, Insn) ->
-   instruction(Insn), function(Callee).
-
-function_lookup(Callee, CallInsn) <-
-   call_instruction:function[CallInsn] = CalleeDecl,
-   function:definition[CalleeDecl] = Callee.
-
-function_lookup(Callee, CallInsn) <-
-   indirect_call_instruction(CallInsn),
-   call_instruction:raw_function[CallInsn] = Op,
+callgraph:edge(Callee, CallerInsn), reachable_function(Callee)
+ <-
+   indirect_call_instruction(CallerInsn),
+   call_instruction:raw_function[CallerInsn] = Op,
    operand_points_to(Alloc, Op),
    function:by_location[Alloc] = Callee,
    function(Callee).
+
+
+// The following rule augments the logic about identifying functions
+// registered to run at program at exit, so that it also works with
+// function pointers.
+
+reachable_function(Callback) <-
+   callgraph:edge(AtExit, Insn),
+   function:name[AtExit] = "@atexit",
+   call_instruction:arg[Insn, 0] = Operand,
+   operand_points_to(Alloc, Operand),
+   function:by_location[Alloc] = Callback.
 
 
 //----------------------------------------------------------------------

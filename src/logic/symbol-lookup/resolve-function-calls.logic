@@ -25,9 +25,9 @@
 
 
 
-// Mapping from call instructions to their declarations
+// Mapping from call instructions to function declarations
 
-call_instruction:function[Insn] = FuncDecl <-
+call_instruction:function_decl[Insn] = FuncDecl <-
    direct_call_instruction(Insn),
    call_instruction:raw_function[Insn] = Op,
    operand:as_constant[Op] = C,
@@ -36,7 +36,9 @@ call_instruction:function[Insn] = FuncDecl <-
 
 
 // Is this always true for our tests?
-direct_call_instruction(Insn) -> call_instruction:function[Insn] = _.
+direct_call_instruction(Insn)
+ ->
+   call_instruction:function[Insn] = _.
 
 
 //----------------------------------------------------------------------
@@ -55,3 +57,15 @@ function:definition[Decl] = Def ->
 
 function:definition[Func] = Func <-
    function(Func).
+
+
+// Map call instructions to functions. If definition is obtainable,
+// map to it; else map to declaration
+
+call_instruction:function[Insn] = Func <-
+   call_instruction:function_decl[Insn] = FuncDecl,
+   function:definition[FuncDecl] = Func.
+
+call_instruction:function[Insn] = FuncDecl <-
+   call_instruction:function_decl[Insn] = FuncDecl,
+   !function:definition[FuncDecl] = _.
