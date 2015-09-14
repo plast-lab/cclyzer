@@ -49,7 +49,7 @@ global_allocation:by_function[Func] = Alloc
 
 
 // Model null as a specific memory location
-constant:contains_alloc(Null, Constant) <-
+constant_points_to(Null, Constant) <-
    nullptr_constant(Constant),
    null_location[] = Null.
 
@@ -61,32 +61,32 @@ constant:contains_alloc(Null, Constant) <-
 //
 // Example: (int *) 0xabcd
 
-constant:contains_alloc(Unknown, Constant) <-
+constant_points_to(Unknown, Constant) <-
    inttoptr_constant_expression(Constant),
    unknown_location[] = Unknown.
 
 
-// A pointer may be masqueraded into an integer, but the associated
-// memory locations are still valid.
+// A pointer may be masqueraded into an integer (or something else),
+// but the associated memory locations are still valid.
 
-constant:contains_alloc(Alloc, IntConstant) <-
+constant_points_to(Alloc, IntConstant) <-
    ptrtoint_constant_expression:from[IntConstant] = PtrConstant,
-   constant:contains_alloc(Alloc, PtrConstant).
+   constant_points_to(Alloc, PtrConstant).
 
-constant:contains_alloc(Alloc, OuterConstant) <-
+constant_points_to(Alloc, OuterConstant) <-
    bitcast_constant_expression:from[OuterConstant] = InnerConstant,
-   constant:contains_alloc(Alloc, InnerConstant).
+   constant_points_to(Alloc, InnerConstant).
 
 // Global variable and function references is a common type of
 // constants. They should be matched to the corresponding global
 // allocation.
 
-constant:contains_alloc(Alloc, Constant) <-
+constant_points_to(Alloc, Constant) <-
    global_variable_constant:name[Constant] = Name,
    global_allocation:by_variable[GVar] = Alloc,
    global_variable:by_name[Name] = GVar.
 
-constant:contains_alloc(Alloc, Constant) <-
+constant_points_to(Alloc, Constant) <-
    function_constant:function_name[Constant] = FName,
    function:by_name[FName] = Func,
    global_allocation:by_function[Func] = Alloc.
@@ -269,4 +269,4 @@ operand_points_to(Alloc, VarOperand) <-
 
 operand_points_to(Alloc, ConstantOperand) <-
    operand:as_constant[ConstantOperand] = ToGVar,
-   constant:contains_alloc(Alloc, ToGVar).
+   constant_points_to(Alloc, ToGVar).
