@@ -64,6 +64,10 @@ void *f5() {
 
     fp = &f4;
     alloc = &malloc;
+
+    /* Call function through pointer */
+    (*fp)(&ep2);
+
     return fp;
 }
 
