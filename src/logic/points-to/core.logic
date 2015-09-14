@@ -151,26 +151,86 @@ assign_instruction(ToVar, Value) <-
    instruction:type[Insn] = Type,
    !vector_type(Type).
 
-
-
 // `getelementptr` instructions (ignores indices)
 // TODO model indices, arrays, fields, etc
+// TODO model also getelementptr constant expression
 assign_instruction(ToVar, Base) <-
    getelementptr_instruction:base[Insn] = Base,
    instruction:to[Insn] = ToVar.
 
+// TODO: support `cmpxchg` and `atomicrmw` instructions
+// TODO: support `invoke` and `landingpad` instructions
+
+
+//---------------------------------------
+//  [Interprocedural Logic]
+//---------------------------------------
+
+// Flow of actual arguments regardless of instruction type
+function:actual_arg(Callee, Index, Argument) ->
+   function(Callee), int[64](Index), operand(Argument).
+
+function:actual_arg(Callee, Index, Argument) <-
+   call_instruction:arg[CallInsn, Index] = Argument,
+   function_lookup(Callee, CallInsn).
+
+function:actual_arg(Callee, Index, Argument) <-
+   invoke_instruction:arg[InvokeInsn, Index] = Argument,
+   function_lookup(Callee, InvokeInsn).
+
+// Identify variable arguments for variadic functions
+function:va_actual_arg(Callee, Index, Argument) <-
+   function:actual_arg(Callee, Index, Argument),
+   function:type[Callee] = Type,
+   function_type:varargs(Type),
+   function_type:nparams[Type] = N,
+   Index >= N.
+
 // actual arg to formal parameter
 assign_instruction(Param, Argument) <-
-   call_instruction:function[Insn] = Callee,
-   call_instruction:arg[Insn, Index] = Argument,
+   function:actual_arg(Callee, Index, Argument),
    function:param[Callee, Index] = Param.
 
 // `return` instruction to `call` instruction target
 assign_instruction(ToVar, RetValue) <-
-   call_instruction:function[CallInsn] = Callee,
+   call_instruction(CallInsn),  // do not model `invoke` instructions yet
+   function_lookup(Callee, CallInsn),
    ret_instruction:value[RetInsn] = RetValue,
    instruction:function[RetInsn] = Callee,
    instruction:to[CallInsn] = ToVar.
+
+
+// `va_arg` instruction
+//
+// TODO: model target-specific value `va_list` and calls to related
+// LLVM intrinsic functions. Right now this may produce nothing
+
+assign_instruction(ToVar, Argument) <-
+   va_arg_instruction:type[VArgInsn] = ArgType,
+   instruction:to[VArgInsn] = ToVar,
+   instruction:function[VArgInsn] = Callee,
+   function:va_actual_arg(Callee, _, Argument),
+   operand:type[Argument] = ArgType.
+
+
+// Function lookup
+
+function:by_location[Alloc] = Callee <-
+   global_allocation:by_function[Callee] = Alloc.
+
+function_lookup(Callee, Insn) ->
+   instruction(Insn), function(Callee).
+
+function_lookup(Callee, CallInsn) <-
+   call_instruction:function[CallInsn] = CalleeDecl,
+   function:definition[CalleeDecl] = Callee.
+
+function_lookup(Callee, CallInsn) <-
+   indirect_call_instruction(CallInsn),
+   call_instruction:raw_function[CallInsn] = Op,
+   operand_points_to(Alloc, Op),
+   function:by_location[Alloc] = Callee,
+   function(Callee).
 
 
 //----------------------------------------------------------------------
