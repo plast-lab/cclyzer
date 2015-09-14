@@ -130,3 +130,16 @@ unknown_location[] = Unknown
  , allocation(Unknown)
  , allocation:to_string[Unknown] = "*unknown*"
  <- .
+
+
+// This nullary predicate represents `null`.
+
+null_location[] = Null ->
+   allocation(Null).
+
+lang:constructor(`null_location).
+
+null_location[] = Null
+ , allocation(Null)
+ , allocation:to_string[Null] = "*null*"
+ <- .

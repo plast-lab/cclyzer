@@ -48,6 +48,13 @@ global_allocation:by_function[Func] = Alloc
    !function:definition[Func] = _.
 
 
+// Model null as a specific memory location
+constant:contains_alloc(Null, Constant) <-
+   nullptr_constant(Constant),
+   null_location[] = Null.
+
+// TODO: model constant arrays, and constant structs
+
 // Integers can be cast to pointers. In such case, the conservative
 // approach is to assume that the pointer may point to anywhere in
 // memory.
