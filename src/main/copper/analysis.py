@@ -65,6 +65,7 @@ class Analysis(object):
             .count('reachable_function')
             .count('callgraph:fn_edge', 'call-graph edges')
             .count('var_points_to', 'var-points-to')
+            .count('constant_points_to', 'constant-points-to')
             .count('ptr_points_to', 'ptr-points-to')
             .build()
         )
