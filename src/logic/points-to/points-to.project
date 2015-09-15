@@ -3,7 +3,11 @@ llvm:schema, library
 llvm:lookup, library
 llvm:callgraph, library
 
+allocations-decl.logic, active
 abstractions.logic, active
+
 virtual-tables.logic, active
 class-type.logic, active
+
+allocations.logic, active
 core.logic, active
