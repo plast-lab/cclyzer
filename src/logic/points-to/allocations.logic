@@ -63,7 +63,9 @@ variable:descriptor(Var, Path, Func, Type, Name) <-
 //----------------------------------------------------------------------
 
 
+//----------------------------
 // Stack allocations
+//----------------------------
 
 stack_allocation(StackAlloc),
 stack_allocation:by_instruction[Insn] = StackAlloc,
@@ -73,26 +75,39 @@ var_points_to(StackAlloc, Var)
    instruction:to[Insn] = Var.
 
 
+//----------------------------
 // Heap allocations
+//----------------------------
 
 heap_allocation(HeapAlloc),
 heap_allocation:by_instruction[Insn] = HeapAlloc,
 var_points_to(HeapAlloc, Var)
  <-
+   heap_alloc_function(Func),
    call_instruction:function[Insn] = Func,
-   function:name[Func] = "@malloc",
    instruction:to[Insn] = Var.
 
+// Functions that allocate memory on heap
+heap_alloc_function(Func) -> function_decl(Func).
 
+heap_alloc_function(Func) <-
+   function:by_name["@malloc"]  = Func
+ ; function:by_name["@calloc"]  = Func
+ ; function:by_name["@realloc"] = Func.
+
+
+//--------------------------------------
 // Global variable allocations
+//--------------------------------------
 
 global_allocation(Alloc),
 global_allocation:by_variable[GVar] = Alloc
  <-
    global_variable(GVar).
 
-
+//--------------------------------------
 // Allocations for functions
+//--------------------------------------
 
 global_allocation(Alloc),
 global_allocation:by_function[Func] = Alloc
