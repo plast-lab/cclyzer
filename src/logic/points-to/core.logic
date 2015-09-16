@@ -1,8 +1,8 @@
 
 // Model null as a specific memory location
-constant_points_to(Null, Constant) <-
+constant_points_to(NULL, Constant) <-
    nullptr_constant(Constant),
-   null_location[] = Null.
+   null_location[] = NULL.
 
 // TODO: model constant arrays, and constant structs
 
@@ -12,9 +12,9 @@ constant_points_to(Null, Constant) <-
 //
 // Example: (int *) 0xabcd
 
-constant_points_to(Unknown, Constant) <-
+constant_points_to(UNKNOWN, Constant) <-
    inttoptr_constant_expression(Constant),
-   unknown_location[] = Unknown.
+   unknown_location[] = UNKNOWN.
 
 
 // A pointer may be masqueraded into an integer (or something else),
@@ -105,9 +105,10 @@ assign_instruction(ToVar, Value) <-
 // `getelementptr` instructions (ignores indices)
 // TODO model indices, arrays, fields, etc
 // TODO model also getelementptr constant expression
-assign_instruction(ToVar, Base) <-
-   getelementptr_instruction:base[Insn] = Base,
-   instruction:to[Insn] = ToVar.
+// assign_instruction(ToVar, Base) <-
+//    getelementptr_instruction:base[Insn] = Base,
+//    instruction:to[Insn] = ToVar.
+
 
 // TODO: support `cmpxchg` and `atomicrmw` instructions
 // TODO: support `invoke` and `landingpad` instructions

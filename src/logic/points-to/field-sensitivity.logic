@@ -1,0 +1,125 @@
+//------------------------------------------------------------------------------
+// [Definition of memory subregions (as subtypes of allocation)]
+//
+// We define a subregion as either (i) a field of an existing region
+// (which itself is either a subregion or a normal allocation), or
+// (ii) an array index of an existing region.
+
+// Since, our approach is field-sensitive but array-insensitive we do
+// not track the exact array index, but instead smush all possible
+// array indices into the same pseudo subregion object.
+//------------------------------------------------------------------------------
+
+alloc_subregion(Region) -> allocation(Region).
+lang:entity(`alloc_subregion).
+
+alloc_subregion:at_field[Alloc, Index] = Region ->
+   allocation(Alloc), int[64](Index), allocation(Region).
+
+alloc_subregion:at_array_index[Alloc] = Region ->
+   allocation(Alloc), allocation(Region).
+
+lang:constructor(`alloc_subregion:at_array_index).
+lang:constructor(`alloc_subregion:at_field).
+
+//-------------------------------------
+// String Representation Protocol
+//-------------------------------------
+
+allocation:to_string[Region] = RegionStr <-
+   alloc_subregion:at_array_index[Alloc] = Region,
+   allocation:to_string[Alloc] = AllocStr,
+   RegionStr = AllocStr + "[*]".
+
+allocation:to_string[Region] = RegionStr <-
+   alloc_subregion:at_field[Alloc, Index] = Region,
+   allocation:to_string[Alloc] = AllocStr,
+   int64:string:convert[Index] = IndexStr,
+   RegionStr = AllocStr + ".$" + IndexStr.
+
+
+//-------------------------------------------------------------------
+// Field Sensitive treatment of `getelementptr` instructions
+//-------------------------------------------------------------------
+
+
+// Compute intermediate points to for `getelementptr` instruction up
+// to some index
+
+gep_points_to(Insn, Index, Alloc) ->
+   getelementptr_instruction(Insn),
+   int[64](Index),
+   allocation(Alloc).
+
+gep_points_to(Insn, 1, Alloc) <-
+   getelementptr_instruction:base[Insn] = Base,
+   operand_points_to(Alloc, Base).
+
+// Create subregions on the fly to act as destinations of instructions
+// that may point to an allocation at some *offset*
+
+alloc_subregion(Region)
+ , alloc_subregion:at_array_index[Alloc] = Region
+ , gep_points_to(Insn, Next, Region)
+ <-
+   gep_points_to(Insn, Index, Alloc),
+   getelementptr_instruction:interm_type[Insn, Index] = Type,
+   array_type(Type),
+   instruction:next_index[Insn, Index] = Next.
+
+alloc_subregion(Region)
+ , alloc_subregion:at_field[Alloc, Field] = Region
+ , gep_points_to(Insn, Next, Region)
+ <-
+   gep_points_to(Insn, Index, Alloc),
+   getelementptr_instruction:interm_type[Insn, Index] = Type,
+   struct_type(Type),
+   getelementptr_instruction:index[Insn, Index] = FieldOp,
+   operand:as_constant[FieldOp] = Constant,
+   constant:to_int[Constant] = Field,
+   instruction:next_index[Insn, Index] = Next.
+
+// The destination variable holds the allocation pointed by the last
+// index of the associated `getelementptr` instruction
+
+var_points_to(Alloc, ToVar) <-
+   getelementptr_instruction:nindices[Insn] = Total,
+   gep_points_to(Insn, Total, Alloc),
+   instruction:to[Insn] = ToVar.
+
+
+//-------------------------------------------------------------------
+// [Memcpy instructions]
+//
+//  We must treat `memcpy` instructions in such a way as to ensure
+//  that it may change the points-to set of any subregion of memory
+//  that is being copied.
+//-------------------------------------------------------------------
+
+memcpy(Insn, To, From) ->
+   instruction(Insn), allocation(To), allocation(From).
+
+memcpy(Insn, DestSubobject, SrcSubobject) <-
+   memcpy(Insn, DestObject, SrcObject),
+   alloc_subregion:at_field[DestObject, Field] = DestSubobject,
+   alloc_subregion:at_field[SrcObject, Field] = SrcSubobject.
+
+memcpy(Insn, ToSubobject, FromSubobject) <-
+   memcpy(Insn, ToObject, FromObject),
+   alloc_subregion:at_array_index[ToObject] = ToSubobject,
+   alloc_subregion:at_array_index[FromObject] = FromSubobject.
+
+ptr_points_to(Alloc, To) <-
+   memcpy(_, To, From),
+   ptr_points_to(Alloc, From).
+
+// `memcpy` call instructions
+memcpy(CallInsn, ToAlloc, FromAlloc) <-
+   function:name[Callee] = Name,
+   ( string:like(Name, "@memcpy%")
+   ; string:like(Name, "@llvm.memcpy%") ),
+   callgraph:edge(Callee, CallInsn),
+   call_instruction:arg[CallInsn, 0] = To,
+   call_instruction:arg[CallInsn, 1] = From,
+   operand_points_to(FromAlloc, From),
+   operand_points_to(ToAlloc, To).
