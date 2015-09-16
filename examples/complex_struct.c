@@ -17,6 +17,7 @@ int main(int argc, char *argv[])
 {
     outer o;
     int z = 5;
+    int zzz;
 
     printf("%d\n" , z);
 
@@ -27,8 +28,14 @@ int main(int argc, char *argv[])
     *o.in[2].x = 3;
     printf("%d\n" , z);
 
-    outer oo[4];
+    inner i;
+    i.x = &zzz;
+    o.in[1] = i;
 
-    oo[2].in[2].y = &ep;
+    int **ptr = &o.in[0].x;
+    int *p = *ptr;
+    /* outer oo[4]; */
+
+    /* oo[2].in[2].y = &ep; */
     return 0;
 }
