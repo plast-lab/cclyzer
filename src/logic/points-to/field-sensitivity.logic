@@ -14,10 +14,10 @@ alloc_subregion(Region) -> allocation(Region).
 lang:entity(`alloc_subregion).
 
 alloc_subregion:at_field[Alloc, Index] = Region ->
-   allocation(Alloc), int[64](Index), allocation(Region).
+   allocation(Alloc), int[64](Index), alloc_subregion(Region).
 
 alloc_subregion:at_array_index[Alloc] = Region ->
-   allocation(Alloc), allocation(Region).
+   allocation(Alloc), alloc_subregion(Region).
 
 lang:constructor(`alloc_subregion:at_array_index).
 lang:constructor(`alloc_subregion:at_field).
@@ -123,3 +123,21 @@ memcpy(CallInsn, ToAlloc, FromAlloc) <-
    call_instruction:arg[CallInsn, 1] = From,
    operand_points_to(FromAlloc, From),
    operand_points_to(ToAlloc, To).
+
+
+//------------------------------------
+// Region containment
+//------------------------------------
+
+region_contains(Outer, Inner) ->
+   alloc_subregion(Inner), allocation(Outer).
+
+region_contains(Outer, Inner) <-
+   alloc_subregion:at_array_index[Outer] = Inner.
+
+region_contains(Outer, Inner) <-
+   alloc_subregion:at_field[Outer, _] = Inner.
+
+region_contains(Outer, Inner) <-
+   region_contains(Interm, Inner),
+   region_contains(Outer, Interm).
