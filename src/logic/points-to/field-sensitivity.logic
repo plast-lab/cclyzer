@@ -52,6 +52,7 @@ gep_points_to(Insn, Index, Alloc) ->
    allocation(Alloc).
 
 gep_points_to(Insn, 1, Alloc) <-
+   !gep:vector_based(Insn),
    getelementptr_instruction:base[Insn] = Base,
    operand_points_to(Alloc, Base).
 
