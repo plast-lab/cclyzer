@@ -2,7 +2,7 @@
 type(Type), type:id(Type:Ref) -> string(Ref).
 
 
-// Sizes of types
+// Sizes of types in bytes
 
 type:size[Type] = Size ->
    type(Type), int[64](Size).
