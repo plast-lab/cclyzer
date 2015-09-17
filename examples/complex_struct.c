@@ -25,14 +25,14 @@ int main(int argc, char *argv[])
 
     o.in[2].x = ep;
 
-    *o.in[2].x = 3;
+    *(o.in[2].x) = 3;
     printf("%d\n" , z);
 
     inner i;
     i.x = &zzz;
     o.in[1] = i;
 
-    int **ptr = &o.in[0].x;
+    int **ptr = &(o.in[0].x);
     int *p = *ptr;
     /* outer oo[4]; */
 
