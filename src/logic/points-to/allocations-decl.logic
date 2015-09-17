@@ -90,6 +90,20 @@ null_location[] = Null ->
 allocation:to_string[Alloc] = Str ->
    allocation(Alloc), string(Str).
 
+// Allocation type
+
+allocation:type[Alloc] = Type ->
+   allocation(Alloc), type(Type).
+
+// Allocation size in bytes
+
+allocation:size[Alloc] = Size ->
+   allocation(Alloc), int[64](Size).
+
+// Allocation of more than one elements
+
+array_allocation(Alloc) -> allocation(Alloc).
+lang:isEntity[`array_allocation] = false.
 
 //--------------------------------
 // Constructor declarations

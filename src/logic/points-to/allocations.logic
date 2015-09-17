@@ -138,3 +138,49 @@ null_location[] = Null
  , allocation(Null)
  , allocation:to_string[Null] = "*null*"
  <- .
+
+
+///-----------------------------------------------------------------------------
+///   Tracking of allocation size and types
+///-----------------------------------------------------------------------------
+
+array_allocation(Alloc) <-
+   allocation:type[Alloc] = Type,
+   array_type(Type).
+
+//-----------------------
+// Stack Allocations
+//-----------------------
+
+// The type of a stack allocation is noted at the allocation site
+
+allocation:type[StackAlloc] = Type <-
+   alloca_instruction(Insn),
+   alloca_instruction:type[Insn] = Type,
+   stack_allocation:by_instruction[Insn] = StackAlloc.
+
+// An array of elements is allocated in stack, if a size argument is
+// provided to the `alloca` instruction
+
+array_allocation(StackAlloc) <-
+   alloca_instruction:size[Insn] = _,
+   stack_allocation:by_instruction[Insn] = StackAlloc.
+
+// The size in bytes can be computed by the size of the allocation
+// types and the number of elements being allocated (if a constant
+// operand was provided).
+
+allocation:size[StackAlloc] = NumElements * Size <-
+   alloca_instruction:size[Insn] = Operand,
+   operand:as_constant[Operand] = Constant,
+   constant:to_int[Constant] = NumElements,
+   stack_allocation:by_instruction[Insn] = StackAlloc,
+   allocation:type[StackAlloc] = Type,
+   type:size[Type] = Size.
+
+allocation:size[StackAlloc] = Size <-
+   alloca_instruction(Insn),
+   !alloca_instruction:size[Insn] = _,
+   stack_allocation:by_instruction[Insn] = StackAlloc,
+   allocation:type[StackAlloc] = Type,
+   type:size[Type] = Size.
