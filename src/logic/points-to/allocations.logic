@@ -191,8 +191,7 @@ array_allocation(StackAlloc) <-
 
 allocation:size[StackAlloc] = NumElements * Size <-
    alloca_instruction:size[Insn] = Operand,
-   operand:as_constant[Operand] = Constant,
-   constant:to_int[Constant] = NumElements,
+   operand:to_int[Operand] = NumElements,
    stack_allocation:by_instruction[Insn] = StackAlloc,
    allocation:type[StackAlloc] = Type,
    type:size[Type] = Size.
@@ -203,3 +202,30 @@ allocation:size[StackAlloc] = Size <-
    stack_allocation:by_instruction[Insn] = StackAlloc,
    allocation:type[StackAlloc] = Type,
    type:size[Type] = Size.
+
+
+//-----------------------
+// Heap Allocations
+//-----------------------
+
+array_allocation(HeapAlloc) <-
+   heap_allocation:by_malloc[Insn] = HeapAlloc,
+   call_instruction:arg[Insn, 0] = Operand,
+   operand:as_variable[Operand] = _.
+
+allocation:size[HeapAlloc] = Size <-
+   heap_allocation:by_malloc[Insn] = HeapAlloc,
+   call_instruction:arg[Insn, 0] = Operand,
+   operand:to_int[Operand] = Size.
+
+allocation:size[HeapAlloc] = Size <-
+   heap_allocation:by_realloc[Insn] = HeapAlloc,
+   call_instruction:arg[Insn, 1] = Operand,
+   operand:to_int[Operand] = Size.
+
+allocation:size[HeapAlloc] = Size * Nmemb <-
+   heap_allocation:by_calloc[Insn] = HeapAlloc,
+   call_instruction:arg[Insn, 0] = NmembOp,
+   call_instruction:arg[Insn, 0] = SizeOp,
+   operand:to_int[NmembOp] = Nmemb,
+   operand:to_int[SizeOp] = Size.
