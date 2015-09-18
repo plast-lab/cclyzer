@@ -96,6 +96,25 @@ heap_alloc_function(Func) <-
  ; function:by_name["@realloc"] = Func.
 
 
+// Heap allocations by type of function
+
+heap_allocation:by_malloc[Insn] = HeapAlloc <-
+   function:name[Func] = "@malloc",
+   call_instruction:function[Insn] = Func,
+   heap_allocation:by_instruction[Insn] = HeapAlloc.
+
+heap_allocation:by_calloc[Insn] = HeapAlloc <-
+   function:name[Func] = "@calloc",
+   call_instruction:function[Insn] = Func,
+   heap_allocation:by_instruction[Insn] = HeapAlloc.
+
+heap_allocation:by_realloc[Insn] = HeapAlloc <-
+   function:name[Func] = "@realloc",
+   call_instruction:function[Insn] = Func,
+   heap_allocation:by_instruction[Insn] = HeapAlloc.
+
+
+
 //--------------------------------------
 // Global variable allocations
 //--------------------------------------
