@@ -6,6 +6,16 @@
 reachable_function(Func) -> function_decl(Func).
 lang:isEntity[`reachable_function] = false.
 
+// Subset of reachable instructions
+reachable_instruction(Insn) -> instruction(Insn).
+
+reachable_instruction(Insn) <-
+   reachable_function(Func), instruction:function[Insn] = Func.
+
+lang:isEntity[`reachable_instruction] = false.
+lang:derivationType[`reachable_instruction] = "Derived".
+
+
 // Entry points; functions reachable by definition (call-graph roots)
 entry_point(Func) -> function(Func).
 lang:isEntity[`entry_point] = false.
@@ -65,8 +75,7 @@ callgraph:fn_edge(Callee, Caller) ->
 
 callgraph:edge(Callee, CallerInsn), reachable_function(Callee)
  <-
-   reachable_function(Caller),
-   instruction:function[CallerInsn] = Caller,
+   reachable_instruction(CallerInsn),
    call_instruction:function[CallerInsn] = Callee.
 
 
