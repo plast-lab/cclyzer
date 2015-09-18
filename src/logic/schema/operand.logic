@@ -121,3 +121,18 @@ operand:pointer(Operand) <-
 operand:firstclass(Var) <-
    operand:type[Var] = Type,
    type:firstclass(Type).
+
+
+//----------------------------
+//  Handy Conversions
+//----------------------------
+
+constant:to_int[Constant] = Value ->
+   constant(Constant), int[64](Value).
+
+operand:to_int[Operand] = Value ->
+   operand(Operand), int[64](Value).
+
+operand:to_int[Operand] = Value <-
+   operand:by_constant[Constant] = Operand,
+   constant:to_int[Constant] = Value.
