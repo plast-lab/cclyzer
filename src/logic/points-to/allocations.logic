@@ -33,22 +33,6 @@ allocation:to_string[Alloc] = Str <-
    Str = "*global_alloc" + Name.
 
 
-// Auxiliary relations for variables
-
-variable:descriptor(Var, Path, Func, Type, Name) ->
-   variable(Var), string(Path), string(Func), type(Type), string(Name).
-
-variable:id_tokens[Var, Index] = Token <-
-   variable:id(Var:Id), string:split[Id, ":", Index] = Token.
-
-variable:descriptor(Var, Path, Func, Type, Name) <-
-   variable:id_tokens[Var, 0] = Path,
-   variable:id_tokens[Var, 1] = Fn,
-   variable:id_tokens[Var, 2] = Name,
-   variable:type[Var] = Type,
-   Func = "@" + Fn.
-
-
 //----------------------------------------------------------------------
 // [Heap and Stack Allocations]
 //
