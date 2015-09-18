@@ -76,10 +76,13 @@ int main(int argc, char *argv[])
     A a(3);
     B b(5);
     C c(4);
+    C *d = new C(111);
+
     std::cout << "Field x is " << a.foo() << std::endl;
     std::cout << "Field x is " << b.foo() << std::endl;
     std::cout << "Field x is " << c.foo() << std::endl;
     print(&b);
     print(&c);
+    print(d);
     return 0;
 }
