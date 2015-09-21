@@ -42,6 +42,33 @@ schema:sanity()
    function:name[Func] = _.
 
 
+//----------------------------------------
+// Variables and Constants contained
+//----------------------------------------
+
+constant:in_function[Constant] = Function <-
+   constant:__token1[Constant] = Fn,
+   function:by_name["@" + Fn] = Function.
+
+variable:in_function[Var] = Function <-
+   variable:descriptor(Var, _, FuncName, _, _),
+   function:by_name[FuncName] = Function.
+
+operand:in_function[Operand] = Function <-
+   operand:by_variable[Var] = Operand,
+   variable:in_function[Var] = Function.
+
+operand:in_function[Operand] = Function <-
+   operand:by_constant[Constant] = Operand,
+   constant:in_function[Constant] = Function.
+
+// Mandatory property (variable only, since constants may be global)
+
+variable(Var)
+ ->
+   variable:in_function[Var] = _.
+
+
 //-----------------------------------------------------------------
 // Optional function attributes (common for both declarations and
 // definitions)
