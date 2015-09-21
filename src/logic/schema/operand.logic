@@ -142,8 +142,15 @@ operand:to_int[Operand] = Value <-
 // Refmode Parsing
 //----------------------------
 
-constant:id_tokens[Constant, Index] = Token <-
-   constant:id(Constant:Id), string:split[Id, ":", Index] = Token.
+// TODO: This fails for large constants
+// constant:id_tokens[Constant, Index] = Token <-
+//    constant:id(Constant:Id), string:split[Id, ":", Index] = Token.
+
+constant:path[Constant] = Token <-
+   constant:id(Constant:Id), string:split[Id, ":", 0] = Token.
+
+constant:__token1[Constant] = Token <-
+   constant:id(Constant:Id), string:split[Id, ":", 1] = Token.
 
 variable:id_tokens[Var, Index] = Token <-
    variable:id(Var:Id), string:split[Id, ":", Index] = Token.
