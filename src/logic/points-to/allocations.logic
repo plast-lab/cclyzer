@@ -108,6 +108,10 @@ global_allocation:by_variable[GVar] = Alloc
  <-
    global_variable(GVar).
 
+allocation:type[Alloc] = Type <-
+   global_allocation:by_variable[GVar] = Alloc,
+   global_variable:type[GVar] = Type.
+
 //--------------------------------------
 // Allocations for functions
 //--------------------------------------
@@ -126,6 +130,12 @@ global_allocation:by_function[Func] = Alloc
  <-
    function_decl(Func),
    !function:definition[Func] = _.
+
+// Function types is readily available
+
+allocation:type[Alloc] = Type <-
+   global_allocation:by_function[Func] = Alloc,
+   function:type[Func] = Type.
 
 
 //----------------------------------
@@ -150,6 +160,11 @@ null_location[] = Null
 array_allocation(Alloc) <-
    allocation:type[Alloc] = Type,
    array_type(Type).
+
+// Mandatory type in the following cases
+
+global_allocation(Alloc) -> allocation:type[Alloc] = _.
+stack_allocation(Alloc) -> allocation:type[Alloc] = _.
 
 //-----------------------
 // Stack Allocations
