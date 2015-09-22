@@ -225,6 +225,6 @@ allocation:size[HeapAlloc] = Size <-
 allocation:size[HeapAlloc] = Size * Nmemb <-
    heap_allocation:by_calloc[Insn] = HeapAlloc,
    call_instruction:arg[Insn, 0] = NmembOp,
-   call_instruction:arg[Insn, 0] = SizeOp,
+   call_instruction:arg[Insn, 1] = SizeOp,
    operand:to_int[NmembOp] = Nmemb,
    operand:to_int[SizeOp] = Size.
