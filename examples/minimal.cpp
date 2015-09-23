@@ -14,6 +14,10 @@ public:
         return x;
     }
 
+    int *ppp() {
+        return &x;
+    }
+
 protected:
     int x;
     int y;
@@ -76,6 +80,10 @@ int main(int argc, char *argv[])
     A a(3);
     B b(5);
     C c(4);
+
+    int *ptr = a.ppp();
+    int g = *ptr;
+
     C *d = new C(111);
 
     std::cout << "Field x is " << a.foo() << std::endl;
