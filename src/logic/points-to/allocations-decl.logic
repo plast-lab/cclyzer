@@ -45,9 +45,10 @@
 
 
 allocation(Alloc) -> .
-stack_allocation(Alloc)  -> allocation(Alloc).
-heap_allocation(Alloc)   -> allocation(Alloc).
-global_allocation(Alloc) -> allocation(Alloc).
+basic_allocation(Alloc) -> allocation(Alloc).
+stack_allocation(Alloc)  -> basic_allocation(Alloc).
+heap_allocation(Alloc)   -> basic_allocation(Alloc).
+global_allocation(Alloc) -> basic_allocation(Alloc).
 
 
 // Constructors
