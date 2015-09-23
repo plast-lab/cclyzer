@@ -22,6 +22,17 @@ alloc_subregion:at_array_index[Alloc] = Region ->
 lang:constructor(`alloc_subregion:at_array_index).
 lang:constructor(`alloc_subregion:at_field).
 
+// Define region base
+
+alloc_subregion:base[Region] = Base ->
+   alloc_subregion(Region), allocation(Base).
+
+alloc_subregion:base[Region] = Base <-
+   alloc_subregion:at_field[Base, _] = Region.
+
+alloc_subregion:base[Region] = Base <-
+   alloc_subregion:at_array_index[Base] = Region.
+
 //-------------------------------------
 // String Representation Protocol
 //-------------------------------------
