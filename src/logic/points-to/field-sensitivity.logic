@@ -142,3 +142,8 @@ region_contains(Outer, Inner) <-
 region_contains(Outer, Inner) <-
    region_contains(Interm, Inner),
    region_contains(Outer, Interm).
+
+// Null cannot contain anything
+
+null_location[] = Null ->
+   !region_contains(Null, _).
