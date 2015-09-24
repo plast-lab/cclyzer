@@ -1,3 +1,6 @@
+// Temporarily mark all functions as reachable, since the reachability
+// filter is not yet enforced through all points-to relations
+// reachable_function(F) <- function(F).
 
 // Model null as a specific memory location
 constant_points_to(NULL, Constant) <-
@@ -72,29 +75,34 @@ var_points_to(Alloc, ToVar) <-
 
 // `bitcast` instructions
 assign_instruction(ToVar, Value) <-
+   reachable_instruction(Insn),
    bitcast_instruction:from[Insn] = Value,
    instruction:to[Insn] = ToVar.
 
 // `ptrtoint` instructions
 assign_instruction(ToVar, Value) <-
+   reachable_instruction(Insn),
    ptrtoint_instruction:from[Insn] = Value,
    instruction:to[Insn] = ToVar.
 
 // `inttoptr` instructions
 var_points_to(Unknown, ToVar) <-
    unknown_location[] = Unknown,
+   reachable_instruction(Insn),
    inttoptr_instruction(Insn),
    instruction:to[Insn] = ToVar.
 
 // `phi` instructions: treat every possible pair value as a potential
 // assignment to the target variable
 assign_instruction(ToVar, Value) <-
+   reachable_instruction(Insn),
    phi_instruction:pair:value[Insn, _] = Value,
    instruction:to[Insn] = ToVar.
 
 
 // `select` instructions; similar to `phi` instructions
 assign_instruction(ToVar, Value) <-
+   reachable_instruction(Insn),
    select_instruction(Insn),
    ( select_instruction:first_operand[Insn]  = Value
    ; select_instruction:second_operand[Insn] = Value ),
@@ -174,6 +182,7 @@ function:by_location[Alloc] = Callee <-
 
 callgraph:edge(Callee, CallerInsn), reachable_function(Callee)
  <-
+   reachable_instruction(CallerInsn),
    indirect_call_instruction(CallerInsn),
    call_instruction:raw_function[CallerInsn] = Op,
    operand_points_to(Alloc, Op),
@@ -198,12 +207,14 @@ reachable_function(Callback) <-
 //----------------------------------------------------------------------
 
 ptr_points_to(Alloc, BaseAlloc) <-
+   reachable_instruction(Insn),
    store_instruction:value[Insn] = Op,
    store_instruction:address[Insn] = PtrOp,
    operand_points_to(Alloc, Op),
    operand_points_to(BaseAlloc, PtrOp).
 
 var_points_to(Alloc, ToVar) <-
+   reachable_instruction(Insn),
    instruction:to[Insn] = ToVar,
    load_instruction:address[Insn] = PtrOp,
    operand_points_to(BaseAlloc, PtrOp),

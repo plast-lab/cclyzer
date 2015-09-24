@@ -56,6 +56,7 @@ stack_allocation:by_instruction[Insn] = StackAlloc,
 var_points_to(StackAlloc, Var)
  <-
    alloca_instruction(Insn),
+   reachable_instruction(Insn),
    instruction:to[Insn] = Var.
 
 
@@ -69,6 +70,7 @@ var_points_to(HeapAlloc, Var)
  <-
    heap_alloc_function(Func),
    call_instruction:function[Insn] = Func,
+   reachable_instruction(Insn),
    instruction:to[Insn] = Var.
 
 // Functions that allocate memory on heap
