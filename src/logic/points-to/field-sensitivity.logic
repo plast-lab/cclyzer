@@ -33,6 +33,41 @@ alloc_subregion:base[Region] = Base <-
 alloc_subregion:base[Region] = Base <-
    alloc_subregion:at_array_index[Base] = Region.
 
+//------------------------------------------------------------------------
+// [Maximum Subobject Depth]
+//
+// Note that pointer arithmetic and other C idioms may cause infinite
+// recursion and creation of new subobjects. For instance, the
+// instruction: `ptr = ptr + 1` when translated to a `getelementptr`
+// instruction, it will create a new subobject relative to the one
+// that `ptr` points to with some offset. However, this subobject will
+// again flow to the base variable `ptr` triggering the creation of
+// yet a new subobject. This creation of new subobjects will continue
+// indefinitely.
+//
+// To avoid non-termination we introduce a bound to object
+// depth. Hence, we do not create a new subobject when this bound is
+// going to be exceeded.
+//------------------------------------------------------------------------
+
+field_sensitivity:max_depth[] = N ->
+   int[64](N).
+
+field_sensitivity:max_depth[] = 7.
+
+allocation:depth[Alloc] = N ->
+   allocation(Alloc), int[64](N).
+
+allocation:depth[Alloc] = 0
+ <-
+   basic_allocation(Alloc).
+
+allocation:depth[Region] = N + 1
+ <-
+   alloc_subregion:base[Region] = Base,
+   allocation:depth[Base] = N.
+
+
 //-------------------------------------
 // String Representation Protocol
 //-------------------------------------
@@ -68,27 +103,53 @@ gep_points_to(Insn, 1, Alloc) <-
    operand_points_to(Alloc, Base).
 
 // Create subregions on the fly to act as destinations of instructions
-// that may point to an allocation at some *offset*
+// that may point to an allocation at some *offset*.
+//
+// We filter null and other pseudo-allocations without depth by
+// requiring that the base of the new region should itself have a depth.
 
 alloc_subregion(Region)
  , alloc_subregion:at_array_index[Alloc] = Region
+ , allocation:depth[Region] = N + 1
  , gep_points_to(Insn, Next, Region)
  <-
    gep_points_to(Insn, Index, Alloc),
+   allocation:depth[Alloc] = N,
+   field_sensitivity:max_depth[] = Max,
+   N < Max,
    getelementptr_instruction:interm_type[Insn, Index] = Type,
    array_type(Type),
    instruction:next_index[Insn, Index] = Next.
 
 alloc_subregion(Region)
  , alloc_subregion:at_field[Alloc, Field] = Region
+ , allocation:depth[Region] = N + 1
  , gep_points_to(Insn, Next, Region)
  <-
    gep_points_to(Insn, Index, Alloc),
+   allocation:depth[Alloc] = N,
+   field_sensitivity:max_depth[] = Max,
+   N < Max,
    getelementptr_instruction:interm_type[Insn, Index] = Type,
    struct_type(Type),
    getelementptr_instruction:index[Insn, Index] = FieldOp,
    operand:as_constant[FieldOp] = Constant,
    constant:to_int[Constant] = Field,
+   instruction:next_index[Insn, Index] = Next.
+
+// !! Generic fallback rule !! Whenever the maximum depth is reached
+// the indices are therefore ignored and we switch to a
+// field-insensitive approach beyond that, i.e., just propagating the
+// object that was pointed to up to the previous index. In effect,
+// when a memory region reaches its maximum depth, the points-to
+// relation regarding this region is about any word contained in that
+// region (that can be a pointer).
+
+gep_points_to(Insn, Next, Alloc)
+ <-
+   gep_points_to(Insn, Index, Alloc),
+   allocation:depth[Alloc] = N,
+   field_sensitivity:max_depth[] = N,
    instruction:next_index[Insn, Index] = Next.
 
 // The destination variable holds the allocation pointed by the last
