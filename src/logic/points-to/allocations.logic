@@ -242,3 +242,18 @@ allocation:size[HeapAlloc] = Size * Nmemb <-
    call_instruction:arg[Insn, 1] = SizeOp,
    operand:to_int[NmembOp] = Nmemb,
    operand:to_int[SizeOp] = Size.
+
+// !! Track heap allocation types !! Note that a single heap
+// allocation is just a series of bytes, which can flow to multiple
+// variables of different types in principle.
+//
+// Consider a generic wrapper to @malloc (that calls @malloc inside
+// its body). This allocation inside the wrapper function will flow to
+// all sorts of places that have nothing to do with each other, and
+// will probably involve many heterogeneous types.
+
+heap_allocation:types(Type, HeapAlloc) ->
+   heap_allocation(HeapAlloc),
+   operand_points_to(HeapAlloc, Var),
+   operand:type[Var] = PtrType,
+   pointer_type:component[PtrType] = Type.
