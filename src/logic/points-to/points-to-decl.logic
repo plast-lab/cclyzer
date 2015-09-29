@@ -27,6 +27,20 @@ constant_points_to(Alloc, Constant) ->
    allocation(Alloc), constant(Constant).
 
 
+// Intermediate relations
+
+operand_points_to(Alloc, Operand) ->
+   allocation(Alloc), operand(Operand).
+
+operand_points_to(Alloc, VarOperand) <-
+   operand:as_variable[VarOperand] = PtrVar,
+   var_points_to(Alloc, PtrVar).
+
+operand_points_to(Alloc, ConstantOperand) <-
+   operand:as_constant[ConstantOperand] = ToGVar,
+   constant_points_to(Alloc, ToGVar).
+
+
 //----------------------------
 // Dereferencing Pointers
 //----------------------------

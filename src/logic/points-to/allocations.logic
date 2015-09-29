@@ -252,7 +252,7 @@ allocation:size[HeapAlloc] = Size * Nmemb <-
 // all sorts of places that have nothing to do with each other, and
 // will probably involve many heterogeneous types.
 
-heap_allocation:types(Type, HeapAlloc) ->
+heap_allocation:types(Type, HeapAlloc) <-
    heap_allocation(HeapAlloc),
    operand_points_to(HeapAlloc, Var),
    operand:type[Var] = PtrType,
