@@ -12,3 +12,4 @@ class-type.logic, active
 allocations.logic, active
 core.logic, active
 field-sensitivity.logic, active
+cplusplus.logic, active

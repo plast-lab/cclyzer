@@ -1,0 +1,34 @@
+//------------------------------------------------------------------------------
+// Identify the new() function for C++
+//------------------------------------------------------------------------------
+
+// There must be a single allocating function
+
+new_function[] = Func -> function_decl(Func).
+
+// Consider only functions with a single parameter of integer type, no
+// definition, and whose unmangled name contains the keyword `new`
+
+new_function[] = Func, heap_alloc_function(Func)
+ <-
+   function:signature[Func] = Signature,
+   function:type[Func] = FType,
+   string:like(Signature, "operator new(%)"),
+   function_type:param[FType, 0] = Type,
+   integer_type(Type),
+   function_type:nparams[FType] = 1,
+   !function:definition[Func] = _.
+
+// Introduce new heap allocation selector
+
+heap_allocation:by_new[Insn] = HeapAlloc <-
+   new_function[] = Func,
+   call_instruction:function[Insn] = Func,
+   heap_allocation:by_instruction[Insn] = HeapAlloc.
+
+// Compute size
+
+allocation:size[HeapAlloc] = Size <-
+   heap_allocation:by_new[Insn] = HeapAlloc,
+   call_instruction:arg[Insn, 0] = SizeOp,
+   operand:to_int[SizeOp] = Size.
