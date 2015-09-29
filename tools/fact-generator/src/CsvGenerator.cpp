@@ -477,6 +477,12 @@ refmode_t CsvGenerator::writeConstant(const Constant &c)
     }
     else if (isa<ConstantInt>(c)) {
         writeFact(pred::integer_constant::id, refmode);
+
+        // Compute integer string representation
+        string int_value = c.getUniqueInteger().toString(10, true);
+
+        // Write constant to integer fact
+        writeFact(pred::constant::to_integer, refmode, int_value);
     }
     else if (isa<ConstantFP>(c)) {
         writeFact(pred::fp_constant::id, refmode);
