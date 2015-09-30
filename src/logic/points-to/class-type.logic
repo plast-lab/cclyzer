@@ -38,6 +38,9 @@ class_type:constructor(Ctor, Type)
  <-
    class_type:name[Type] = ClassName,
    function(Ctor), function:signature[Ctor] = Signature,
+   function:type[Ctor] = FType,
+   function_type:param[FType, 0] = PtrType,
+   pointer_type:component[PtrType] = Type,
    string:like(Signature, ClassName + "::" + ClassName + "(%)").
 
 

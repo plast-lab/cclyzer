@@ -32,3 +32,25 @@ allocation:size[HeapAlloc] = Size <-
    heap_allocation:by_new[Insn] = HeapAlloc,
    call_instruction:arg[Insn, 0] = SizeOp,
    operand:to_int[SizeOp] = Size.
+
+
+//------------------------------------------------------------------------------
+// [Constructor and Type]
+//
+// In order to infer the object type, we track the flow of the object
+// being created to some constructor. Intraprocedurally, there will only
+// be a single constructor being called, which will have the correct
+// type for the object.
+//------------------------------------------------------------------------------
+
+constructor:class_type[Ctor] = ClassType <-
+   class_type:constructor(Ctor, ClassType).
+
+allocation:type[HeapAlloc] = Type <-
+   heap_allocation:by_new[AllocInsn] = HeapAlloc,
+   instruction:function[AllocInsn] = InFunction,
+   instruction:function[InitInsn] = InFunction,
+   callgraph:edge(Ctor, InitInsn),
+   constructor:class_type[Ctor] = Type,
+   type:size[Type] = Size,
+   allocation:size[HeapAlloc] = Size.
