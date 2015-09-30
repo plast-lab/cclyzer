@@ -110,9 +110,12 @@ assign_instruction(ToVar, Value) <-
    instruction:type[Insn] = Type,
    !vector_type(Type).
 
-// `getelementptr` instructions (ignores indices)
 // TODO model indices, arrays, fields, etc
 // TODO model also getelementptr constant expression
+
+// // A simple field-insensitive approach (just ignore indices of
+// // `getelementptr`)
+//
 // assign_instruction(ToVar, Base) <-
 //    getelementptr_instruction:base[Insn] = Base,
 //    instruction:to[Insn] = ToVar.
@@ -189,6 +192,17 @@ callgraph:edge(Callee, CallerInsn), reachable_function(Callee)
    function:by_location[Alloc] = Callee,
    function(Callee).
 
+// Augment call-graph by adding edges for `invoke` instructions
+
+callgraph:edge(Callee, CallerInsn), reachable_function(Callee)
+ <-
+   reachable_instruction(CallerInsn),
+   invoke_instruction(CallerInsn),
+   invoke_instruction:function[CallerInsn] = Op,
+   operand_points_to(Alloc, Op),
+   function:by_location[Alloc] = Callee,
+   function(Callee).
+
 
 // The following rule augments the logic about identifying functions
 // registered to run at program at exit, so that it also works with
@@ -219,4 +233,3 @@ var_points_to(Alloc, ToVar) <-
    load_instruction:address[Insn] = PtrOp,
    operand_points_to(BaseAlloc, PtrOp),
    ptr_points_to(Alloc, BaseAlloc).
-
