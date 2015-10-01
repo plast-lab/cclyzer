@@ -43,30 +43,30 @@ typeinfo_vtable:multiple_inheritance(VT, Name) <-
 
 // Track flow of vpointers to constants
 
-_constant_contains_vptr(VT, Constant) ->
+constant_contains_vptr(VT, Constant) ->
    constant(Constant), global_variable(VT).
 
-_constant_contains_vptr(VTable, Constant) <-
+constant_contains_vptr(VTable, Constant) <-
    global_variable_constant:name[Constant] = Name,
    vtable(VTable, Name).
 
-_constant_contains_vptr(VTable, Outer) <-
+constant_contains_vptr(VTable, Outer) <-
    getelementptr_constant_expression:base[Outer] = Inner,
-   _constant_contains_vptr(VTable, Inner).
+   constant_contains_vptr(VTable, Inner).
 
-_constant_contains_vptr(VTable, Outer) <-
+constant_contains_vptr(VTable, Outer) <-
    bitcast_constant_expression:from[Outer] = Inner,
-   _constant_contains_vptr(VTable, Inner).
+   constant_contains_vptr(VTable, Inner).
 
-_constant_contains_vptr(VTable, Outer) <-
+constant_contains_vptr(VTable, Outer) <-
    constant_struct:index[Outer, 0] = Inner,
-   _constant_contains_vptr(VTable, Inner).
+   constant_contains_vptr(VTable, Inner).
 
 
 // Identify the actual type info objects throught their vpointers
 
 typeinfo(TypeInfo) <-
-   _constant_contains_vptr(VTable, Initializer),
+   constant_contains_vptr(VTable, Initializer),
    typeinfo_vtable(VTable, _),
    global_variable:initializer[TypeInfo] = Initializer.
 

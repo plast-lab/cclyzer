@@ -82,3 +82,17 @@ class_instance(Alloc) <-
 class_instance:constructor[Alloc] = Ctor <-
    allocation:type[Alloc] = Type,
    _init_by_ctor(Type, Ctor, _, Alloc).
+
+
+//----------------------------------------------------
+// Find vtables associated with given class instance
+//----------------------------------------------------
+
+class_instance:vtable[Alloc] = VTable <-
+   class_instance:constructor[Alloc] = Ctor,
+   instruction:function[StoreInsn] = Ctor,
+   store_instruction:value[StoreInsn] = Value,
+   store_instruction:address[StoreInsn] = Pointer,
+   operand_points_to(Alloc, Pointer),
+   operand:as_constant[Value] = Constant,
+   constant_contains_vptr(VTable, Constant).
