@@ -68,7 +68,7 @@ allocation:type[HeapAlloc] = Type <-
    heap_allocation:by_new[AllocInsn] = HeapAlloc,
    allocation:size[HeapAlloc] = Size,
    type:size[Type] = Size,
-   _init_by_ctor(Type, Ctor, InFunction, HeapAlloc).
+   _init_by_ctor(Type, _, InFunction, HeapAlloc).
 
 
 //----------------------------------------------------
@@ -96,3 +96,14 @@ class_instance:vtable[Alloc] = VTable <-
    operand_points_to(Alloc, Pointer),
    operand:as_constant[Value] = Constant,
    constant_contains_vptr(VTable, Constant).
+
+
+// Load instructions on class instances return the object's vtable
+
+var_points_to(VT, ToVar) <-
+   reachable_instruction(Insn),
+   instruction:to[Insn] = ToVar,
+   load_instruction:address[Insn] = PtrOp,
+   operand_points_to(Alloc, PtrOp),
+   class_instance:vtable[Alloc] = VTable,
+   global_allocation:by_variable[VTable] = VT.
