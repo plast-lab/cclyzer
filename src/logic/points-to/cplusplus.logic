@@ -46,11 +46,39 @@ allocation:size[HeapAlloc] = Size <-
 constructor:class_type[Ctor] = ClassType <-
    class_type:constructor(Ctor, ClassType).
 
-allocation:type[HeapAlloc] = Type <-
-   heap_allocation:by_new[AllocInsn] = HeapAlloc,
-   instruction:function[AllocInsn] = InFunction,
+// We have a call to a constructor function (associated with type
+// `Type`) inside function `InFunction`, where `this` points to
+// `Alloc`. Note that the latter may be initialized by many
+// constructors, unless it is of a base type.
+
+_init_by_ctor(Type, Ctor, InFunction, Alloc)
+ <-
    instruction:function[InitInsn] = InFunction,
    callgraph:edge(Ctor, InitInsn),
    constructor:class_type[Ctor] = Type,
+   function:actual_arg(Ctor, 0, This),
+   operand_points_to(Alloc, This).
+
+
+// The actual type of the object must match its size, and the relevant
+// constructor must be in the same function that allocates it.
+
+allocation:type[HeapAlloc] = Type <-
+   instruction:function[AllocInsn] = InFunction,
+   heap_allocation:by_new[AllocInsn] = HeapAlloc,
+   allocation:size[HeapAlloc] = Size,
    type:size[Type] = Size,
-   allocation:size[HeapAlloc] = Size.
+   _init_by_ctor(Type, Ctor, InFunction, HeapAlloc).
+
+
+//----------------------------------------------------
+// Identify class instances based on inferred type
+//----------------------------------------------------
+
+class_instance(Alloc) <-
+   allocation:type[Alloc] = Type,
+   class_type(Type).
+
+class_instance:constructor[Alloc] = Ctor <-
+   allocation:type[Alloc] = Type,
+   _init_by_ctor(Type, Ctor, _, Alloc).
