@@ -3,23 +3,53 @@
 //
 // We define a subregion as either (i) a field of an existing region
 // (which itself is either a subregion or a normal allocation), or
-// (ii) an array index of an existing region.
-
-// Since, our approach is field-sensitive but array-insensitive we do
-// not track the exact array index, but instead smush all possible
-// array indices into the same pseudo subregion object.
+// (ii) an array/pointer index of an existing region.
+//
+// In the second case, the index can be either a constant (which we
+// record) or a variable. This corresponds to two different
+// constructors, that in essence produce two distinct algebraic data
+// types (plus a single one for referencing struct fields).
+//
+// When the index is unknown on the other hand (variable case), there
+// is no index to record. In the string representation protocol as
+// well as in code documentation, we will represent the unknown index
+// with a star (*).
+//
+// As a final note, the need to create subregions stems from the fact
+// that in C, we can refer to field addresses, and at a later point
+// dereference them. This translates to a `getelementptr` instruction
+// that computes the offset from a base pointer variable and assigns
+// it to some other variable, which may then be supplied as the
+// address operand to a `load`/`store` instruction. These two
+// instructions may reside in different functions, so an
+// intraprocedural matching would not work.
+//
+// This is an important difference with the Java Bytecode IR, where no
+// such thing is possible and a single relation that connects two
+// abstract objects (memory allocations) through some field is
+// sufficient.
 //------------------------------------------------------------------------------
 
 alloc_subregion(Region) -> allocation(Region).
 lang:entity(`alloc_subregion).
 
+// Single constructor for field references
+
 alloc_subregion:at_field[Alloc, Index] = Region ->
    allocation(Alloc), int[64](Index), alloc_subregion(Region).
 
-alloc_subregion:at_array_index[Alloc] = Region ->
+// Constructor for constant array/pointer index
+
+alloc_subregion:at_array_index[Alloc, Index] = Region ->
+   allocation(Alloc), int[64](Index), alloc_subregion(Region).
+
+// Constructor for unknown array/pointer index
+
+alloc_subregion:at_any_array_index[Alloc] = Region ->
    allocation(Alloc), alloc_subregion(Region).
 
 lang:constructor(`alloc_subregion:at_array_index).
+lang:constructor(`alloc_subregion:at_any_array_index).
 lang:constructor(`alloc_subregion:at_field).
 
 // Define region base
@@ -31,7 +61,10 @@ alloc_subregion:base[Region] = Base <-
    alloc_subregion:at_field[Base, _] = Region.
 
 alloc_subregion:base[Region] = Base <-
-   alloc_subregion:at_array_index[Base] = Region.
+   alloc_subregion:at_any_array_index[Base] = Region.
+
+alloc_subregion:base[Region] = Base <-
+   alloc_subregion:at_array_index[Base, _] = Region.
 
 //------------------------------------------------------------------------
 // [Maximum Subobject Depth]
@@ -73,7 +106,13 @@ allocation:depth[Region] = N + 1
 //-------------------------------------
 
 allocation:to_string[Region] = RegionStr <-
-   alloc_subregion:at_array_index[Alloc] = Region,
+   alloc_subregion:at_array_index[Alloc, Index] = Region,
+   allocation:to_string[Alloc] = AllocStr,
+   int64:string:convert[Index] = IndexStr,
+   RegionStr = AllocStr + "[" + IndexStr + "]".
+
+allocation:to_string[Region] = RegionStr <-
+   alloc_subregion:at_any_array_index[Alloc] = Region,
    allocation:to_string[Alloc] = AllocStr,
    RegionStr = AllocStr + "[*]".
 
@@ -84,9 +123,24 @@ allocation:to_string[Region] = RegionStr <-
    RegionStr = AllocStr + ".$" + IndexStr.
 
 
-//-------------------------------------------------------------------
-// Field Sensitive treatment of `getelementptr` instructions
-//-------------------------------------------------------------------
+//------------------------------------------------------------------------------
+// [Field Sensitive treatment of `getelementptr` instructions]
+//
+// We create subregions on the fly to act as destinations of
+// instructions that may point to an allocation at some
+// *offset*. Essentially, we create complex allocations paired with
+// access paths in a demand-driven way, according to the given indices
+// of some GEP instruction where an existing allocation is used as the
+// base operand.
+
+// Note that a subregion allocation created at some GEP instruction
+// will be identified and used by other instructions too that happen
+// to reference the same base allocation with the same offset.
+//
+// We filter null and other pseudo-allocations without depth by
+// requiring that the base of the new region should itself have a
+// depth.
+//------------------------------------------------------------------------------
 
 
 // Compute intermediate points to for `getelementptr` instruction up
@@ -97,45 +151,96 @@ gep_points_to(Insn, Index, Alloc) ->
    int[64](Index),
    allocation(Alloc).
 
-gep_points_to(Insn, 1, Alloc) <-
+gep_points_to(Insn, 0, Alloc) <-
    !gep:vector_based(Insn),
    getelementptr_instruction:base[Insn] = Base,
    operand_points_to(Alloc, Base).
 
-// Create subregions on the fly to act as destinations of instructions
-// that may point to an allocation at some *offset*.
-//
-// We filter null and other pseudo-allocations without depth by
-// requiring that the base of the new region should itself have a depth.
+//----------------------------------------------------------
+// For the first index of the GEP instruction
+//----------------------------------------------------------
 
 alloc_subregion(Region)
- , alloc_subregion:at_array_index[Alloc] = Region
+ , alloc_subregion:at_any_array_index[Alloc] = Region
  , allocation:depth[Region] = N + 1
- , gep_points_to(Insn, Next, Region)
+ , gep_points_to(Insn, 1, Region)
+ <-
+   gep_points_to(Insn, 0, Alloc),
+   allocation:depth[Alloc] = N,
+   field_sensitivity:max_depth[] = MaxDepth,
+   N < MaxDepth,
+   getelementptr_instruction:index[Insn, 0] = IndexOp,
+   !operand:to_int[IndexOp] = _.
+
+alloc_subregion(Region)
+ , alloc_subregion:at_array_index[Alloc, Index] = Region
+ , allocation:depth[Region] = N + 1
+ , gep_points_to(Insn, 1, Region)
+ <-
+   gep_points_to(Insn, 0, Alloc),
+   allocation:depth[Alloc] = N,
+   field_sensitivity:max_depth[] = MaxDepth,
+   N < MaxDepth,
+   getelementptr_instruction:index[Insn, 0] = IndexOp,
+   operand:to_int[IndexOp] = Index.
+
+//----------------------------------------------------------
+// For the rest of the indices of the GEP instruction
+//----------------------------------------------------------
+
+// Case of unknown index
+
+alloc_subregion(Region)
+ , alloc_subregion:at_any_array_index[Alloc] = Region
+ , allocation:depth[Region] = N + 1
+ , gep_points_to(Insn, NextIndex, Region)
  <-
    gep_points_to(Insn, Index, Alloc),
    allocation:depth[Alloc] = N,
-   field_sensitivity:max_depth[] = Max,
-   N < Max,
+   field_sensitivity:max_depth[] = MaxDepth,
+   N < MaxDepth,
    getelementptr_instruction:interm_type[Insn, Index] = Type,
    array_type(Type),
-   instruction:next_index[Insn, Index] = Next.
+   getelementptr_instruction:index[Insn, Index] = IndexOp,
+   !operand:to_int[IndexOp] = _,
+   instruction:next_index[Insn, Index] = NextIndex.
+
+
+// Case of known constant index
+
+alloc_subregion(Region)
+ , alloc_subregion:at_array_index[Alloc, ConstantIndex] = Region
+ , allocation:depth[Region] = N + 1
+ , gep_points_to(Insn, NextIndex, Region)
+ <-
+   gep_points_to(Insn, Index, Alloc),
+   allocation:depth[Alloc] = N,
+   field_sensitivity:max_depth[] = MaxDepth,
+   N < MaxDepth,
+   getelementptr_instruction:interm_type[Insn, Index] = Type,
+   array_type(Type),
+   getelementptr_instruction:index[Insn, Index] = IndexOp,
+   operand:to_int[IndexOp] = ConstantIndex,
+   instruction:next_index[Insn, Index] = NextIndex.
+
+
+// Case of field access
 
 alloc_subregion(Region)
  , alloc_subregion:at_field[Alloc, Field] = Region
  , allocation:depth[Region] = N + 1
- , gep_points_to(Insn, Next, Region)
+ , gep_points_to(Insn, NextIndex, Region)
  <-
    gep_points_to(Insn, Index, Alloc),
    allocation:depth[Alloc] = N,
-   field_sensitivity:max_depth[] = Max,
-   N < Max,
+   field_sensitivity:max_depth[] = MaxDepth,
+   N < MaxDepth,
    getelementptr_instruction:interm_type[Insn, Index] = Type,
    struct_type(Type),
-   getelementptr_instruction:index[Insn, Index] = FieldOp,
-   operand:as_constant[FieldOp] = Constant,
-   constant:to_int[Constant] = Field,
-   instruction:next_index[Insn, Index] = Next.
+   getelementptr_instruction:index[Insn, Index] = IndexOp,
+   operand:to_int[IndexOp] = Field,
+   instruction:next_index[Insn, Index] = NextIndex.
+
 
 // !! Generic fallback rule !! Whenever the maximum depth is reached
 // the indices are therefore ignored and we switch to a
@@ -145,12 +250,13 @@ alloc_subregion(Region)
 // relation regarding this region is about any word contained in that
 // region (that can be a pointer).
 
-gep_points_to(Insn, Next, Alloc)
+gep_points_to(Insn, NextIndex, Alloc)
  <-
    gep_points_to(Insn, Index, Alloc),
    allocation:depth[Alloc] = N,
    field_sensitivity:max_depth[] = N,
-   instruction:next_index[Insn, Index] = Next.
+   instruction:next_index[Insn, Index] = NextIndex.
+
 
 // The destination variable holds the allocation pointed by the last
 // index of the associated `getelementptr` instruction
@@ -159,6 +265,94 @@ var_points_to(Alloc, ToVar) <-
    getelementptr_instruction:nindices[Insn] = Total,
    gep_points_to(Insn, Total, Alloc),
    instruction:to[Insn] = ToVar.
+
+
+//------------------------------------------------------------------------
+// [Implicit Pointer Aliases]
+//
+// In C, the expression `ptr[0]` and `*ptr` is the same. The 0 index
+// is often omitted from some instructions, but we must ensure that
+// such expressions are treated as aliases by the analysis and have
+// the same points-to sets.
+//------------------------------------------------------------------------
+
+ptr_points_to(Alloc, ZeroIndexBase) <-
+   ptr_points_to(Alloc, Base),
+   alloc_subregion:at_array_index[Base, 0] = ZeroIndexBase.
+
+ptr_points_to(Alloc, Base) <-
+   ptr_points_to(Alloc, ZeroIndexBase),
+   alloc_subregion:at_array_index[Base, 0] = ZeroIndexBase.
+
+
+//------------------------------------------------------------------------
+// [Pattern Matching Star Expressions]
+//
+// By allowing star expressions in subregion allocations, we must
+// ensure that when loading from some allocation we consider all other
+// allocation that could potentially alias the former.  An allocation
+// that contains a star expression (unknown index) is more generic
+// than any allocation where the star is replaced by a specific
+// constant index.
+//
+// For instance, when loading from an address that points-to an
+// allocation such as `Base[1][*].$1[*][3]`, the possible dereferenced
+// locations are not just those of its points-to set, but also those
+// from `Base[1][c1].$1[c2][3]` for any c1, c2 constants (or even just
+// one of them).
+//
+// To be able to reason about such relations between complex
+// allocations, we define a relation (actually a partial-order)
+// between allocations a1 and a2 that detects when a2 can pattern
+// match a1 by replacing any or all of its star expressions with some
+// constant indices.
+//------------------------------------------------------------------------
+
+
+// `StarredAlloc` is more generic than (ie, can pattern match)
+// `Alloc`.
+
+alloc_matches(Alloc, StarredAlloc) ->
+   allocation(Alloc), allocation(StarredAlloc).
+
+alloc_matches(Alloc, Alloc) <-
+   allocation(Alloc).
+
+alloc_matches(Alloc, StarredAlloc) <-
+   alloc_matches(Base1, Base2),
+   alloc_subregion:at_array_index[Base1, _] = Alloc,
+   alloc_subregion:at_any_array_index[Base2] = StarredAlloc.
+
+alloc_matches(Alloc1, Alloc2) <-
+   alloc_matches(Base1, Base2),
+   alloc_subregion:at_array_index[Base1, Index] = Alloc1,
+   alloc_subregion:at_array_index[Base2, Index] = Alloc2.
+
+alloc_matches(Alloc1, Alloc2) <-
+   alloc_matches(Base1, Base2),
+   alloc_subregion:at_field[Base1, Field] = Alloc1,
+   alloc_subregion:at_field[Base2, Field] = Alloc2.
+
+
+// When loading from an allocation we must also consider the more
+// specific matching allocations and merge their points-to sets also.
+
+var_points_to(Alloc, ToVar) <-
+   reachable_instruction(Insn),
+   instruction:to[Insn] = ToVar,
+   load_instruction:address[Insn] = PtrOp,
+   operand_points_to(OrigAlloc, PtrOp),
+   alloc_matches(LessGenericAlloc, OrigAlloc),
+   ptr_points_to(Alloc, LessGenericAlloc).
+
+// We must also ensure that matching is considered in the opposite
+// direction. We do that by extending the points-to set of an
+// allocation by the points-to sets of all more generic allocations,
+// ie, those that can pattern match it.
+
+ptr_points_to(Alloc, OrigAlloc) <-
+   ptr_points_to(Alloc, MoreGenericAlloc),
+   alloc_matches(OrigAlloc, MoreGenericAlloc).
 
 
 //-------------------------------------------------------------------
@@ -179,8 +373,8 @@ memcpy(Insn, DestSubobject, SrcSubobject) <-
 
 memcpy(Insn, ToSubobject, FromSubobject) <-
    memcpy(Insn, ToObject, FromObject),
-   alloc_subregion:at_array_index[ToObject] = ToSubobject,
-   alloc_subregion:at_array_index[FromObject] = FromSubobject.
+   alloc_subregion:at_any_array_index[ToObject] = ToSubobject,
+   alloc_subregion:at_any_array_index[FromObject] = FromSubobject.
 
 ptr_points_to(Alloc, To) <-
    memcpy(_, To, From),
@@ -206,7 +400,10 @@ region_contains(Outer, Inner) ->
    alloc_subregion(Inner), allocation(Outer).
 
 region_contains(Outer, Inner) <-
-   alloc_subregion:at_array_index[Outer] = Inner.
+   alloc_subregion:at_any_array_index[Outer] = Inner.
+
+region_contains(Outer, Inner) <-
+   alloc_subregion:at_array_index[Outer, _] = Inner.
 
 region_contains(Outer, Inner) <-
    alloc_subregion:at_field[Outer, _] = Inner.
