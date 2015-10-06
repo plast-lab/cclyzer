@@ -276,13 +276,86 @@ var_points_to(Alloc, ToVar) <-
 // the same points-to sets.
 //------------------------------------------------------------------------
 
-ptr_points_to(Alloc, ZeroIndexBase) <-
-   ptr_points_to(Alloc, Base),
+alloc_aliases(Alloc1, Alloc2) ->
+   allocation(Alloc1), allocation(Alloc2).
+
+// Reflexivity
+
+alloc_aliases(Alloc, Alloc) <-
+   allocation(Alloc).
+
+// Transitivity
+
+alloc_aliases(Alloc1, Alloc2) <-
+   alloc_aliases(Alloc1, IntermAlloc),
+   alloc_aliases(Alloc2, IntermAlloc).
+
+// Symmetricitity
+
+alloc_aliases(Alloc1, Alloc2) <-
+   alloc_aliases(Alloc2, Alloc1).
+
+// Aliases have the same points-to sets
+
+ptr_points_to(Alloc, BaseAlloc1) <-
+   ptr_points_to(Alloc, BaseAlloc2),
+   alloc_aliases(BaseAlloc1, BaseAlloc2).
+
+
+// A base allocation with zero index is an alias to base
+
+alloc_aliases(Base, ZeroIndexBase) <-
    alloc_subregion:at_array_index[Base, 0] = ZeroIndexBase.
 
-ptr_points_to(Alloc, Base) <-
-   ptr_points_to(Alloc, ZeroIndexBase),
-   alloc_subregion:at_array_index[Base, 0] = ZeroIndexBase.
+// Aliased bases will result in aliased subregions when extended by
+// the same field or index
+
+alloc_aliases(Alloc1, Alloc2) <-
+   alloc_aliases(Base1, Base2),
+   alloc_subregion:at_any_array_index[Base1] = Alloc1,
+   alloc_subregion:at_any_array_index[Base2] = Alloc2.
+
+alloc_aliases(Alloc1, Alloc2) <-
+   alloc_aliases(Base1, Base2),
+   alloc_subregion:at_array_index[Base1, Index] = Alloc1,
+   alloc_subregion:at_array_index[Base2, Index] = Alloc2.
+
+alloc_aliases(Alloc1, Alloc2) <-
+   alloc_aliases(Base1, Base2),
+   alloc_subregion:at_field[Base1, Field] = Alloc1,
+   alloc_subregion:at_field[Base2, Field] = Alloc2.
+
+// Create missing aliased allocations
+
+alloc_subregion(NewAlloc)
+ , alloc_subregion:at_field[Alloc1, Field] = NewAlloc
+ , allocation:depth[NewAlloc] = N1 + 1
+ <-
+   alloc_aliases(Alloc1, Alloc2),
+   allocation:depth[Alloc1] = N1,
+   allocation:depth[Alloc2] = N2,
+   N1 <= N2,
+   alloc_subregion:at_field[Alloc2, Field] = _.
+
+alloc_subregion(NewAlloc)
+ , alloc_subregion:at_array_index[Alloc1, Index] = NewAlloc
+ , allocation:depth[NewAlloc] = N1 + 1
+ <-
+   alloc_aliases(Alloc1, Alloc2),
+   allocation:depth[Alloc1] = N1,
+   allocation:depth[Alloc2] = N2,
+   N1 <= N2,
+   alloc_subregion:at_array_index[Alloc2, Index] = _.
+
+alloc_subregion(NewAlloc)
+ , alloc_subregion:at_any_array_index[Alloc1] = NewAlloc
+ , allocation:depth[NewAlloc] = N1 + 1
+ <-
+   alloc_aliases(Alloc1, Alloc2),
+   allocation:depth[Alloc1] = N1,
+   allocation:depth[Alloc2] = N2,
+   N1 <= N2,
+   alloc_subregion:at_any_array_index[Alloc2] = _.
 
 
 //------------------------------------------------------------------------
