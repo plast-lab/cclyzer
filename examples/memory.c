@@ -5,6 +5,9 @@ int *ep;
 int ep2;
 int **ep3;
 
+void foo();
+void bar(int);
+
 int main(int argc, char *argv[])
 {
     int xarr[8];
@@ -33,6 +36,8 @@ int main(int argc, char *argv[])
 
     int *ptr2 = yarr;
 
+    foo();
+    bar(argc > 2);
     return EXIT_SUCCESS;
 }
 
@@ -72,10 +77,21 @@ void *f5() {
 }
 
 void *f6() {
-    int **array = malloc(10 * sizeof(int *));
+    int **array = malloc(10 * sizeof(int *)); /* 1 */
 
     for (int i = 0; i < 10; i++)
-        array[i] = malloc(100 * sizeof(int));
+        array[i] = malloc(100 * sizeof(int)); /* 7 */
+
+    array[0] = malloc(200 * sizeof(int)); /* 17 */
+    array[2] = malloc(400 * sizeof(int)); /* 21 */
+    *array = malloc(300 * sizeof(int));   /* 25 */
+
+    int *pos1 = array[2];
+    int *pos2 = array[0];
+    int *pos3 = *array;
+
+    int j = *pos3;
+    int *pos4 = array[j];
 
     return array;
 }
