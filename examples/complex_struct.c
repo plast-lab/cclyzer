@@ -11,29 +11,46 @@ typedef struct {
 } outer;
 
 
-int *ep;
+int *ep1, *ep2, *ep3;
 
 int main(int argc, char *argv[])
 {
     outer o;
-    int z = 5;
-    int zzz;
+    int z1 = 5, z2 = 6, z3 = 7;
+    int zzz1, zzz2, zzz3, zzz4;
 
-    printf("%d\n" , z);
+    printf("%d\n" , z1);
 
-    ep = &z;
+    ep1 = &z1;
+    ep2 = &z2;
+    ep3 = &z3;
 
-    o.in[2].x = ep;
+    o.in[2].x = ep1;
+    o.in[0].x = ep2;
+    o.in[argc].x = ep3;
 
     *(o.in[2].x) = 3;
-    printf("%d\n" , z);
+    printf("%d\n" , z1);
 
-    inner i;
-    i.x = &zzz;
-    o.in[1] = i;
+    inner i1, i2, i3, i4;
+    i1.x = &zzz1;
+    i2.x = &zzz2;
+    i3.x = &zzz3;
+    i4.x = &zzz4;
 
-    int **ptr = &(o.in[0].x);
-    int *p = *ptr;
+    o.in[2] = i1;
+    o.in[0] = i2;
+    o.in[argc] = i3;
+    o.in[1] = i4;
+
+    int **ptr1 = &(o.in[2].x);
+    int *p1 = *ptr1;              /* points-to: {z1, z3, zzz1, zzz3} */
+
+    int **ptr2 = &(o.in[0].x);    /* points-to: {z2, z3, zzz2, zzz3} */
+    int *p2 = *ptr2;
+
+    int **ptr3 = &(o.in[argc].x); /* points-to: {z1, z2, z3, zzz1, zzz2, zzz3} */
+    int *p3 = *ptr3;
     /* outer oo[4]; */
 
     /* oo[2].in[2].y = &ep; */
