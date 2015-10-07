@@ -334,6 +334,8 @@ alloc_aliases(Base, ZeroIndexBase) <-
    alloc_subregion:at_array_index[Base, 0] = ZeroIndexBase.
 
 
+// TODO
+
 // REVIEW !!! The following is incorrect as it does not comply to the
 // GEP semantics. See `Why don’t GEP x,0,0,1 and GEP x,1 alias?` from
 // http://llvm.org/docs/GetElementPtr.html
@@ -474,6 +476,29 @@ ptr_points_to(Alloc, OrigAlloc) <-
 memcpy(Insn, To, From) ->
    instruction(Insn), allocation(To), allocation(From).
 
+// Copy points-to set of copied objects
+
+ptr_points_to(Alloc, To) <-
+   memcpy(_, To, From),
+   ptr_points_to(Alloc, From).
+
+// Base case of `memcpy` call instructions
+
+memcpy(CallInsn, ToAlloc, FromAlloc) <-
+   function:name[Callee] = Name,
+   ( string:like(Name, "@memcpy%")
+   ; string:like(Name, "@llvm.memcpy%") ),
+   callgraph:edge(Callee, CallInsn),
+   call_instruction:arg[CallInsn, 0] = To,
+   call_instruction:arg[CallInsn, 1] = From,
+   operand_points_to(FromAlloc, From),
+   operand_points_to(ToAlloc, To).
+
+// Note that in the following cases we have to create the destination
+// subobject if it does not exist already since we cannot afford to
+// miss its points-to set because it may be copied to more generic
+// objects that contain star expressions
+
 alloc_subregion(DestSubobject)
  , alloc_subregion:at_field[DestObject, Field] = DestSubobject
  , memcpy(Insn, DestSubobject, SrcSubobject)
@@ -497,21 +522,6 @@ alloc_subregion(DestSubobject)
    memcpy(Insn, DestObject, SrcObject),
    _may_expand_base_alloc(DestObject),
    alloc_subregion:at_any_array_index[SrcObject] = SrcSubobject.
-
-ptr_points_to(Alloc, To) <-
-   memcpy(_, To, From),
-   ptr_points_to(Alloc, From).
-
-// `memcpy` call instructions
-memcpy(CallInsn, ToAlloc, FromAlloc) <-
-   function:name[Callee] = Name,
-   ( string:like(Name, "@memcpy%")
-   ; string:like(Name, "@llvm.memcpy%") ),
-   callgraph:edge(Callee, CallInsn),
-   call_instruction:arg[CallInsn, 0] = To,
-   call_instruction:arg[CallInsn, 1] = From,
-   operand_points_to(FromAlloc, From),
-   operand_points_to(ToAlloc, To).
 
 
 //------------------------------------
