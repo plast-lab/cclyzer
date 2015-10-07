@@ -88,17 +88,34 @@ field_sensitivity:max_depth[] = N ->
 
 field_sensitivity:max_depth[] = 7.
 
+//-----------------------------------------
+// Define allocation depth recursively
+//-----------------------------------------
+
 allocation:depth[Alloc] = N ->
    allocation(Alloc), int[64](N).
 
-allocation:depth[Alloc] = 0
- <-
+allocation:depth[Alloc] = 0 <-
    basic_allocation(Alloc).
 
-allocation:depth[Region] = N + 1
- <-
+allocation:depth[Region] = N + 1 <-
    alloc_subregion:base[Region] = Base,
    allocation:depth[Base] = N.
+
+//-----------------------------------------
+// All subobject regions must have a depth
+//-----------------------------------------
+
+alloc_subregion(Alloc) -> allocation:depth[Alloc] = _.
+
+
+// Allocation is entitled to create subobjects as maximum depth has
+// not been reached
+
+_may_expand_base_alloc(Alloc) <-
+   field_sensitivity:max_depth[] = MaxDepth,
+   allocation:depth[Alloc] = N,
+   N < MaxDepth.
 
 
 //-------------------------------------
@@ -162,27 +179,45 @@ gep_points_to(Insn, 0, Alloc) <-
 
 alloc_subregion(Region)
  , alloc_subregion:at_any_array_index[Alloc] = Region
- , allocation:depth[Region] = N + 1
  , gep_points_to(Insn, 1, Region)
  <-
    gep_points_to(Insn, 0, Alloc),
-   allocation:depth[Alloc] = N,
-   field_sensitivity:max_depth[] = MaxDepth,
-   N < MaxDepth,
+   _may_expand_base_alloc(Alloc),
    getelementptr_instruction:index[Insn, 0] = IndexOp,
    !operand:to_int[IndexOp] = _.
 
 alloc_subregion(Region)
  , alloc_subregion:at_array_index[Alloc, Index] = Region
- , allocation:depth[Region] = N + 1
  , gep_points_to(Insn, 1, Region)
  <-
    gep_points_to(Insn, 0, Alloc),
-   allocation:depth[Alloc] = N,
-   field_sensitivity:max_depth[] = MaxDepth,
-   N < MaxDepth,
+   _may_expand_base_alloc(Alloc),
    getelementptr_instruction:index[Insn, 0] = IndexOp,
-   operand:to_int[IndexOp] = Index.
+   operand:to_int[IndexOp] = Index,
+   Index != 0.
+
+// First zero index is omitted when base points-to non-base object
+
+gep_points_to(Insn, 1, Alloc)
+ <-
+   gep_points_to(Insn, 0, Alloc),
+   allocation:depth[Alloc] = N,
+   N > 0,
+   getelementptr_instruction:index[Insn, 0] = IndexOp,
+   operand:to_int[IndexOp] = 0.
+
+// Same for base objects, but also create a new object at zero offset
+// (that will be aliased to its base)
+
+alloc_subregion(ZeroIndexBase)
+ , alloc_subregion:at_array_index[Alloc, 0] = ZeroIndexBase
+ , gep_points_to(Insn, 1, Alloc)
+ <-
+   gep_points_to(Insn, 0, Alloc),
+   allocation:depth[Alloc] = 0,
+   getelementptr_instruction:index[Insn, 0] = IndexOp,
+   operand:to_int[IndexOp] = 0.
+
 
 //----------------------------------------------------------
 // For the rest of the indices of the GEP instruction
@@ -192,13 +227,10 @@ alloc_subregion(Region)
 
 alloc_subregion(Region)
  , alloc_subregion:at_any_array_index[Alloc] = Region
- , allocation:depth[Region] = N + 1
  , gep_points_to(Insn, NextIndex, Region)
  <-
    gep_points_to(Insn, Index, Alloc),
-   allocation:depth[Alloc] = N,
-   field_sensitivity:max_depth[] = MaxDepth,
-   N < MaxDepth,
+   _may_expand_base_alloc(Alloc),
    getelementptr_instruction:interm_type[Insn, Index] = Type,
    array_type(Type),
    getelementptr_instruction:index[Insn, Index] = IndexOp,
@@ -210,13 +242,10 @@ alloc_subregion(Region)
 
 alloc_subregion(Region)
  , alloc_subregion:at_array_index[Alloc, ConstantIndex] = Region
- , allocation:depth[Region] = N + 1
  , gep_points_to(Insn, NextIndex, Region)
  <-
    gep_points_to(Insn, Index, Alloc),
-   allocation:depth[Alloc] = N,
-   field_sensitivity:max_depth[] = MaxDepth,
-   N < MaxDepth,
+   _may_expand_base_alloc(Alloc),
    getelementptr_instruction:interm_type[Insn, Index] = Type,
    array_type(Type),
    getelementptr_instruction:index[Insn, Index] = IndexOp,
@@ -228,13 +257,10 @@ alloc_subregion(Region)
 
 alloc_subregion(Region)
  , alloc_subregion:at_field[Alloc, Field] = Region
- , allocation:depth[Region] = N + 1
  , gep_points_to(Insn, NextIndex, Region)
  <-
    gep_points_to(Insn, Index, Alloc),
-   allocation:depth[Alloc] = N,
-   field_sensitivity:max_depth[] = MaxDepth,
-   N < MaxDepth,
+   _may_expand_base_alloc(Alloc),
    getelementptr_instruction:interm_type[Insn, Index] = Type,
    struct_type(Type),
    getelementptr_instruction:index[Insn, Index] = IndexOp,
@@ -307,55 +333,60 @@ ptr_points_to(Alloc, BaseAlloc1) <-
 alloc_aliases(Base, ZeroIndexBase) <-
    alloc_subregion:at_array_index[Base, 0] = ZeroIndexBase.
 
-// Aliased bases will result in aliased subregions when extended by
-// the same field or index
 
-alloc_aliases(Alloc1, Alloc2) <-
-   alloc_aliases(Base1, Base2),
-   alloc_subregion:at_any_array_index[Base1] = Alloc1,
-   alloc_subregion:at_any_array_index[Base2] = Alloc2.
+// REVIEW !!! The following is incorrect as it does not comply to the
+// GEP semantics. See `Why don’t GEP x,0,0,1 and GEP x,1 alias?` from
+// http://llvm.org/docs/GetElementPtr.html
 
-alloc_aliases(Alloc1, Alloc2) <-
-   alloc_aliases(Base1, Base2),
-   alloc_subregion:at_array_index[Base1, Index] = Alloc1,
-   alloc_subregion:at_array_index[Base2, Index] = Alloc2.
+// // Aliased bases will result in aliased subregions when extended by
+// // the same field or index
 
-alloc_aliases(Alloc1, Alloc2) <-
-   alloc_aliases(Base1, Base2),
-   alloc_subregion:at_field[Base1, Field] = Alloc1,
-   alloc_subregion:at_field[Base2, Field] = Alloc2.
+// alloc_aliases(Alloc1, Alloc2) <-
+//    alloc_aliases(Base1, Base2),
+//    alloc_subregion:at_any_array_index[Base1] = Alloc1,
+//    alloc_subregion:at_any_array_index[Base2] = Alloc2.
 
-// Create missing aliased allocations
+// alloc_aliases(Alloc1, Alloc2) <-
+//    alloc_aliases(Base1, Base2),
+//    alloc_subregion:at_array_index[Base1, Index] = Alloc1,
+//    alloc_subregion:at_array_index[Base2, Index] = Alloc2.
 
-alloc_subregion(NewAlloc)
- , alloc_subregion:at_field[Alloc1, Field] = NewAlloc
- , allocation:depth[NewAlloc] = N1 + 1
- <-
-   alloc_aliases(Alloc1, Alloc2),
-   allocation:depth[Alloc1] = N1,
-   allocation:depth[Alloc2] = N2,
-   N1 <= N2,
-   alloc_subregion:at_field[Alloc2, Field] = _.
+// alloc_aliases(Alloc1, Alloc2) <-
+//    alloc_aliases(Base1, Base2),
+//    alloc_subregion:at_field[Base1, Field] = Alloc1,
+//    alloc_subregion:at_field[Base2, Field] = Alloc2.
 
-alloc_subregion(NewAlloc)
- , alloc_subregion:at_array_index[Alloc1, Index] = NewAlloc
- , allocation:depth[NewAlloc] = N1 + 1
- <-
-   alloc_aliases(Alloc1, Alloc2),
-   allocation:depth[Alloc1] = N1,
-   allocation:depth[Alloc2] = N2,
-   N1 <= N2,
-   alloc_subregion:at_array_index[Alloc2, Index] = _.
+// // Create missing aliased allocations
 
-alloc_subregion(NewAlloc)
- , alloc_subregion:at_any_array_index[Alloc1] = NewAlloc
- , allocation:depth[NewAlloc] = N1 + 1
- <-
-   alloc_aliases(Alloc1, Alloc2),
-   allocation:depth[Alloc1] = N1,
-   allocation:depth[Alloc2] = N2,
-   N1 <= N2,
-   alloc_subregion:at_any_array_index[Alloc2] = _.
+// alloc_subregion(NewAlloc)
+//  , alloc_subregion:at_field[Alloc1, Field] = NewAlloc
+//  , allocation:depth[NewAlloc] = N1 + 1
+//  <-
+//    alloc_aliases(Alloc1, Alloc2),
+//    allocation:depth[Alloc1] = N1,
+//    allocation:depth[Alloc2] = N2,
+//    N1 <= N2,
+//    alloc_subregion:at_field[Alloc2, Field] = _.
+
+// alloc_subregion(NewAlloc)
+//  , alloc_subregion:at_array_index[Alloc1, Index] = NewAlloc
+//  , allocation:depth[NewAlloc] = N1 + 1
+//  <-
+//    alloc_aliases(Alloc1, Alloc2),
+//    allocation:depth[Alloc1] = N1,
+//    allocation:depth[Alloc2] = N2,
+//    N1 <= N2,
+//    alloc_subregion:at_array_index[Alloc2, Index] = _.
+
+// alloc_subregion(NewAlloc)
+//  , alloc_subregion:at_any_array_index[Alloc1] = NewAlloc
+//  , allocation:depth[NewAlloc] = N1 + 1
+//  <-
+//    alloc_aliases(Alloc1, Alloc2),
+//    allocation:depth[Alloc1] = N1,
+//    allocation:depth[Alloc2] = N2,
+//    N1 <= N2,
+//    alloc_subregion:at_any_array_index[Alloc2] = _.
 
 
 //------------------------------------------------------------------------
@@ -394,6 +425,10 @@ alloc_matches(Alloc, Alloc) <-
 alloc_matches(Alloc, StarredAlloc) <-
    alloc_matches(Base1, Base2),
    alloc_subregion:at_array_index[Base1, _] = Alloc,
+   alloc_subregion:at_any_array_index[Base2] = StarredAlloc.
+
+alloc_matches(Base1, StarredAlloc) <-
+   alloc_matches(Base1, Base2),
    alloc_subregion:at_any_array_index[Base2] = StarredAlloc.
 
 alloc_matches(Alloc1, Alloc2) <-
@@ -439,15 +474,29 @@ ptr_points_to(Alloc, OrigAlloc) <-
 memcpy(Insn, To, From) ->
    instruction(Insn), allocation(To), allocation(From).
 
-memcpy(Insn, DestSubobject, SrcSubobject) <-
+alloc_subregion(DestSubobject)
+ , alloc_subregion:at_field[DestObject, Field] = DestSubobject
+ , memcpy(Insn, DestSubobject, SrcSubobject)
+ <-
    memcpy(Insn, DestObject, SrcObject),
-   alloc_subregion:at_field[DestObject, Field] = DestSubobject,
+   _may_expand_base_alloc(DestObject),
    alloc_subregion:at_field[SrcObject, Field] = SrcSubobject.
 
-memcpy(Insn, ToSubobject, FromSubobject) <-
-   memcpy(Insn, ToObject, FromObject),
-   alloc_subregion:at_any_array_index[ToObject] = ToSubobject,
-   alloc_subregion:at_any_array_index[FromObject] = FromSubobject.
+alloc_subregion(DestSubobject)
+ , alloc_subregion:at_array_index[DestObject, Index] = DestSubobject
+ , memcpy(Insn, DestSubobject, SrcSubobject)
+ <-
+   memcpy(Insn, DestObject, SrcObject),
+   _may_expand_base_alloc(DestObject),
+   alloc_subregion:at_array_index[SrcObject, Index] = SrcSubobject.
+
+alloc_subregion(DestSubobject)
+ , alloc_subregion:at_any_array_index[DestObject] = DestSubobject
+ , memcpy(Insn, DestSubobject, SrcSubobject)
+ <-
+   memcpy(Insn, DestObject, SrcObject),
+   _may_expand_base_alloc(DestObject),
+   alloc_subregion:at_any_array_index[SrcObject] = SrcSubobject.
 
 ptr_points_to(Alloc, To) <-
    memcpy(_, To, From),
