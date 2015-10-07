@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
     int **ptr2 = &(o.in[0].x);    /* points-to: {z2, z3, zzz2, zzz3} */
     int *p2 = *ptr2;
 
-    int **ptr3 = &(o.in[argc].x); /* points-to: {z1, z2, z3, zzz1, zzz2, zzz3} */
+    int **ptr3 = &(o.in[argc].x); /* points-to: {z1, z2, z3, zzz1, zzz2, zzz3, zzz4} */
     int *p3 = *ptr3;
     /* outer oo[4]; */
 

@@ -86,12 +86,12 @@ void *f6() {
     array[2] = malloc(400 * sizeof(int)); /* 21 */
     *array = malloc(300 * sizeof(int));   /* 25 */
 
-    int *pos1 = array[2];
-    int *pos2 = array[0];
-    int *pos3 = *array;
+    int *pos1 = array[2];       /* 21,7 */
+    int *pos2 = array[0];       /* 17,25,7 */
+    int *pos3 = *array;         /* 17,25,7 */
 
     int j = *pos3;
-    int *pos4 = array[j];
+    int *pos4 = array[j];       /* 17,21,25,7 */
 
     return array;
 }
