@@ -177,46 +177,39 @@ gep_points_to(Insn, 0, Alloc) <-
 // For the first index of the GEP instruction
 //----------------------------------------------------------
 
-alloc_subregion(Region)
- , alloc_subregion:at_any_array_index[Alloc] = Region
- , gep_points_to(Insn, 1, Region)
+// First index is ignored when address operand points-to non-base
+// object, regardless of type (constant or variable). In practice,
+// most of the times the first index of any subsequent GEP
+// instructions will be zero.
+
+gep_points_to(Insn, 1, Alloc)
  <-
    gep_points_to(Insn, 0, Alloc),
-   _may_expand_base_alloc(Alloc),
-   getelementptr_instruction:index[Insn, 0] = IndexOp,
-   !operand:to_int[IndexOp] = _.
+   allocation:depth[Alloc] = N,
+   N > 0.
+
+// When address operand points-to base object, then we must record the
+// index accordingly
 
 alloc_subregion(Region)
  , alloc_subregion:at_array_index[Alloc, Index] = Region
  , gep_points_to(Insn, 1, Region)
  <-
    gep_points_to(Insn, 0, Alloc),
-   _may_expand_base_alloc(Alloc),
-   getelementptr_instruction:index[Insn, 0] = IndexOp,
-   operand:to_int[IndexOp] = Index,
-   Index != 0.
-
-// First zero index is omitted when base points-to non-base object
-
-gep_points_to(Insn, 1, Alloc)
- <-
-   gep_points_to(Insn, 0, Alloc),
-   allocation:depth[Alloc] = N,
-   N > 0,
-   getelementptr_instruction:index[Insn, 0] = IndexOp,
-   operand:to_int[IndexOp] = 0.
-
-// Same for base objects, but also create a new object at zero offset
-// (that will be aliased to its base)
-
-alloc_subregion(ZeroIndexBase)
- , alloc_subregion:at_array_index[Alloc, 0] = ZeroIndexBase
- , gep_points_to(Insn, 1, Alloc)
- <-
-   gep_points_to(Insn, 0, Alloc),
+   _may_expand_base_alloc(Alloc), // redundant here (cause of 0 depth)
    allocation:depth[Alloc] = 0,
    getelementptr_instruction:index[Insn, 0] = IndexOp,
-   operand:to_int[IndexOp] = 0.
+   operand:to_int[IndexOp] = Index.
+
+alloc_subregion(Region)
+ , alloc_subregion:at_any_array_index[Alloc] = Region
+ , gep_points_to(Insn, 1, Region)
+ <-
+   gep_points_to(Insn, 0, Alloc),
+   _may_expand_base_alloc(Alloc),
+   allocation:depth[Alloc] = 0,
+   getelementptr_instruction:index[Insn, 0] = IndexOp,
+   !operand:to_int[IndexOp] = _.
 
 
 //----------------------------------------------------------
@@ -429,6 +422,7 @@ alloc_matches(Alloc, StarredAlloc) <-
    alloc_subregion:at_array_index[Base1, _] = Alloc,
    alloc_subregion:at_any_array_index[Base2] = StarredAlloc.
 
+// TODO check with aliases
 alloc_matches(Base1, StarredAlloc) <-
    alloc_matches(Base1, Base2),
    alloc_subregion:at_any_array_index[Base2] = StarredAlloc.
@@ -494,10 +488,23 @@ memcpy(CallInsn, ToAlloc, FromAlloc) <-
    operand_points_to(FromAlloc, From),
    operand_points_to(ToAlloc, To).
 
-// Note that in the following cases we have to create the destination
-// subobject if it does not exist already since we cannot afford to
-// miss its points-to set because it may be copied to more generic
-// objects that contain star expressions
+
+// Handle syntactic aliases. For instance `memcpy(to,from)` is
+// equivalent to `memcpy(to, &from[0])`. Thus, we must propagate the
+// memcpy handling to all aliased locations.
+
+memcpy(Insn, AliasedTo, AliasedFrom) <-
+   memcpy(Insn, ToAlloc, FromAlloc),
+   alloc_aliases(AliasedTo, ToAlloc),
+   alloc_aliases(AliasedFrom, FromAlloc).
+
+
+// Recursive case for `memcpy` call instructions
+//
+// !! Note that in the following cases we have to create the
+// destination subobject if it does not exist already, since we cannot
+// afford to miss its points-to set because it may be copied to more
+// generic objects that contain star expressions !!
 
 alloc_subregion(DestSubobject)
  , alloc_subregion:at_field[DestObject, Field] = DestSubobject
