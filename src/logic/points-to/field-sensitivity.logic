@@ -137,7 +137,7 @@ allocation:to_string[Region] = RegionStr <-
    alloc_subregion:at_field[Alloc, Index] = Region,
    allocation:to_string[Alloc] = AllocStr,
    int64:string:convert[Index] = IndexStr,
-   RegionStr = AllocStr + ".$" + IndexStr.
+   RegionStr = AllocStr + ".f$" + IndexStr.
 
 
 //------------------------------------------------------------------------------
