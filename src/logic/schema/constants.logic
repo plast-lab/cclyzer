@@ -186,3 +186,65 @@ schema:sanity()
  , getelementptr_constant_expression(C)
  ->
    getelementptr_constant_expression:base[C] = _.
+
+
+// Auxiliary type predicates
+
+getelementptr_constant_expression:base_type[CExpr] = Type <-
+   getelementptr_constant_expression:base[CExpr] = Ptr,
+   constant:type[Ptr] = Type.
+
+getelementptr_constant_expression:index_type(CExpr, Type) <-
+   getelementptr_constant_expression:index[CExpr, _] = Idx,
+   constant:type[Idx] = Type.
+
+
+// Compute next index of each GEP constant expression
+
+constant_expression:next_index[CExpr, Index] = Index + 1 <-
+   getelementptr_constant_expression:index[CExpr, Index] = _.
+
+
+// Compute types of GEP constant expression up to some index
+
+getelementptr_constant_expression:interm_type[CExpr, 1] = Comp <-
+   getelementptr_constant_expression:base[CExpr] = Ptr,
+   constant:type[Ptr] = Type,
+   pointer_type:component[Type] = Comp.
+
+getelementptr_constant_expression:interm_type[CExpr, 1] = Comp <-
+   getelementptr_constant_expression:base[CExpr] = Vector,
+   constant:type[Vector] = Type,
+   vector_type:component[Type] = Interm,
+   pointer_type:component[Interm] = Comp.
+
+getelementptr_constant_expression:interm_type[CExpr, Next] = Comp <-
+   getelementptr_constant_expression:interm_type[CExpr, Index] = Type,
+   array_type:component[Type] = Comp,
+   constant_expression:next_index[CExpr, Index] = Next.
+
+getelementptr_constant_expression:interm_type[CExpr, Next] = Comp <-
+   getelementptr_constant_expression:interm_type[CExpr, Index] = Type,
+   vector_type:component[Type] = Comp,
+   constant_expression:next_index[CExpr, Index] = Next.
+
+getelementptr_constant_expression:interm_type[CExpr, Next] = Comp <-
+   getelementptr_constant_expression:interm_type[CExpr, Index] = Type,
+   getelementptr_constant_expression:index[CExpr, Index] = Idx,
+   constant:to_int[Idx] = Value,
+   int32_type[] = i32,
+   constant:type[Idx] = i32,
+   struct_type:field[Type, Value] = Comp,
+   constant_expression:next_index[CExpr, Index] = Next.
+
+getelementptr_constant_expression:value_type[CExpr] = Type <-
+   getelementptr_constant_expression:nindices[CExpr] = Total,
+   getelementptr_constant_expression:interm_type[CExpr, Total] = Type.
+
+
+// Additional constaints
+
+schema:sanity()
+ , getelementptr_constant_expression(CExpr)
+ ->
+   getelementptr_constant_expression:value_type[CExpr] = _.
