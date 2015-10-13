@@ -177,16 +177,52 @@ gep_points_to(Insn, 0, Alloc) <-
 // For the first index of the GEP instruction
 //----------------------------------------------------------
 
-// First index is ignored when address operand points-to non-base
-// object, regardless of type (constant or variable). In practice,
-// most of the times the first index of any subsequent GEP
-// instructions will be zero.
+// First zero index is ignored when address operand points-to non-base
+// object.
 
 gep_points_to(Insn, 1, Alloc)
  <-
    gep_points_to(Insn, 0, Alloc),
    allocation:depth[Alloc] = N,
-   N > 0.
+   N > 0,
+   getelementptr_instruction:index[Insn, 0] = IndexOp,
+   operand:to_int[IndexOp] = 0.
+
+// The first non-zero index must be added to the previous index of the
+// allocation to produce a new offset
+
+gep_points_to(Insn, 1, NewAlloc)
+ <-
+   gep_points_to(Insn, 0, Alloc),
+   getelementptr_instruction:index[Insn, 0] = IndexOp,
+   operand:to_int[IndexOp] = Index,
+   Index != 0,
+   alloc_subregion:at_array_index[Base, PrevIndex] = Alloc,
+   alloc_subregion:at_array_index[Base, PrevIndex + Index] = NewAlloc.
+
+// The first index, if unknown, must be used to generate a new
+// star-index allocation that replaces the older constant index
+
+alloc_subregion(NewAlloc)
+ , alloc_subregion:at_any_array_index[Base] = NewAlloc
+ , gep_points_to(Insn, 1, NewAlloc)
+ <-
+   gep_points_to(Insn, 0, Alloc),
+   getelementptr_instruction:index[Insn, 0] = IndexOp,
+   !operand:to_int[IndexOp] = _,
+   alloc_subregion:at_array_index[Base, _] = Alloc.
+
+
+// First index is also ignored when address points-to non-base object
+// with variable array index, since adding the new first index will
+// not change anything. Thus, it suffices to propagate the existing
+// allocation
+
+gep_points_to(Insn, 1, Alloc)
+ <-
+   gep_points_to(Insn, 0, Alloc),
+   alloc_subregion:at_any_array_index[_] = Alloc.
+
 
 // When address operand points-to base object, then we must record the
 // index accordingly

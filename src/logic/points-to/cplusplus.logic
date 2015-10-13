@@ -88,7 +88,8 @@ class_instance:constructor[Alloc] = Ctor <-
 // Find vtables associated with given class instance
 //----------------------------------------------------
 
-class_instance:vtable[Alloc] = VTable <-
+class_instance:vtable[Alloc] = VTable
+ <-
    class_instance:constructor[Alloc] = Ctor,
    instruction:function[StoreInsn] = Ctor,
    store_instruction:value[StoreInsn] = Value,
@@ -97,13 +98,23 @@ class_instance:vtable[Alloc] = VTable <-
    operand:as_constant[Value] = Constant,
    constant_contains_vptr(VTable, Constant).
 
+// Create points-to dereference information for every possible offset
+// of every vtable. This way, when a variable points-to some vtable
+// with some offset, loading from this address will result in the
+// appropriate function.
 
-// Load instructions on class instances return the object's vtable
+alloc_subregion(VTableOffset)
+ , alloc_subregion:at_array_index[ZeroBase, Index] = VTableOffset
+ , ptr_points_to(FAlloc, VTableOffset)
+ <-
+   vtable:function[VTable, Index] = Function,
+   global_allocation:by_variable[VTable] = Base,
+   global_allocation:by_function[Function] = FAlloc,
+   alloc_subregion:at_array_index[Base, 0] = ZeroBase.
 
-var_points_to(VT, ToVar) <-
-   reachable_instruction(Insn),
-   instruction:to[Insn] = ToVar,
-   load_instruction:address[Insn] = PtrOp,
-   operand_points_to(Alloc, PtrOp),
-   class_instance:vtable[Alloc] = VTable,
-   global_allocation:by_variable[VTable] = VT.
+
+// Note !!! Load instructions on class instances will return the
+// object's vtable. The array-sensitive treatment of GEP instructions
+// will ensure that the indices are appropriately recorded, so that
+// any subsequent dynamic dispatch will be correctly resolved by the
+// normal dereference rules !!!
