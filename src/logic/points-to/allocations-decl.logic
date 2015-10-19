@@ -111,6 +111,7 @@ lang:isEntity[`array_allocation] = false.
 //--------------------------------
 
 lang:physical:storageModel[`allocation] = "ScalableSparse".
+lang:physical:capacity[`allocation] = 4194304.
 lang:constructor(`stack_allocation:by_instruction).
 lang:constructor(`heap_allocation:by_instruction).
 lang:constructor(`global_allocation:by_variable).
