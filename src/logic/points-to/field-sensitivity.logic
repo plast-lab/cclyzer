@@ -86,7 +86,7 @@ alloc_subregion:base[Region] = Base <-
 field_sensitivity:max_depth[] = N ->
    int[64](N).
 
-field_sensitivity:max_depth[] = 7.
+field_sensitivity:max_depth[] = 5.
 
 //-----------------------------------------
 // Define allocation depth recursively
