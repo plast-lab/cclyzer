@@ -10,6 +10,10 @@ typedef struct {
     inner in[3];
 } outer;
 
+typedef struct {
+    inner in[3];
+} outer2;
+
 
 int *ep1, *ep2, *ep3;
 
@@ -54,5 +58,17 @@ int main(int argc, char *argv[])
     /* outer oo[4]; */
 
     /* oo[2].in[2].y = &ep; */
+
+    outer2 w, *wp;
+
+    wp = &w;
+    void *ptr4 = &(w.in[2]);      /* w[0 0][0 2] */
+    void *ptr5 = wp;              /* w */
+    void *ptr6 = &wp[2];          /* w[2] */
+    void *ptr7 = &(wp[2].in[2]);  /* w[2][0 0][0 2] */
+    void *ptr8 = &wp[0];          /* w[0] */
+    void *ptr9 = &(wp[0].in[2]);  /* w[0][0 0][0 2] */
+    void *ptr10 = &(wp[0].in[0]); /* w[0][0 0][0 0] */
+    void *ptr11 = &(wp->in[0]);   /* w[0][0 0][0 0] */
     return 0;
 }
