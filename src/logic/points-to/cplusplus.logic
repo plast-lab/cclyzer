@@ -88,7 +88,7 @@ class_instance:constructor[Alloc] = Ctor <-
 // Find vtables associated with given class instance
 //----------------------------------------------------
 
-class_instance:vtable[Alloc] = VTable
+class_instance:primary_vtable[Alloc] = VTable
  <-
    class_instance:constructor[Alloc] = Ctor,
    instruction:function[StoreInsn] = Ctor,
@@ -117,4 +117,7 @@ alloc_subregion(VTableOffset)
 // object's vtable. The array-sensitive treatment of GEP instructions
 // will ensure that the indices are appropriately recorded, so that
 // any subsequent dynamic dispatch will be correctly resolved by the
-// normal dereference rules !!!
+// normal dereference rules. However, in case of non-base class types,
+// we have to ensure that the vpointer gets strongly updated,
+// otherwise it may also point to all v-tables of its parent class
+// types !!!
