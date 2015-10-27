@@ -36,7 +36,7 @@ public:
     virtual int foobar() {
         return x * y;
     }
-private:
+protected:
     int z;
 };
 
@@ -57,6 +57,7 @@ namespace Blah {
 class C: public B, public Blah::DDD {
 public:
     C(int x): B(x), Blah::DDD(x) {
+        std::cout << z << std::endl;
     }
 
     virtual int foo() {
