@@ -88,7 +88,7 @@ class_instance:constructor[Alloc] = Ctor <-
 // Find vtables associated with given class instance
 //----------------------------------------------------
 
-class_instance:primary_vtable[Alloc] = VTable
+class_instance:vtable[Alloc] = VTable
  <-
    class_instance:constructor[Alloc] = Ctor,
    instruction:function[StoreInsn] = Ctor,
@@ -105,15 +105,15 @@ class_instance:primary_vtable[Alloc] = VTable
 
 alloc_subregion(VTableOffset)
  , alloc_subregion:at_array_index[ZeroBase, Index] = VTableOffset
- , allocation:type[VTableOffset] = ElementType
+ , allocation:type[VTableOffset] = PtrFType
  , ptr_points_to(FAlloc, VTableOffset)
  <-
    vtable:function[VTable, Index] = Function,
    global_allocation:by_variable[VTable] = Base,
    global_allocation:by_function[Function] = FAlloc,
    alloc_subregion:at_array_index[Base, 0] = ZeroBase,
-   allocation:type[Base] = BaseType,
-   array_type:component[BaseType] = ElementType.
+   function:type[Function] = FType,
+   pointer_type:component[PtrFType] = FType.
 
 
 // Note !!! Load instructions on class instances will return the
