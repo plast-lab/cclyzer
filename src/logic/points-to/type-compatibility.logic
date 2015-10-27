@@ -1,0 +1,51 @@
+//------------------------------------------------------------------------------
+// [Type compatibility]
+//
+// Two types are type compatible if and only if they produce the same
+// offset, when the same field or array index expression is appended
+// to them.
+//
+// This concept is essential for field sensitivity, since we need a
+// type filter that prohibits the creation of unrealizable sub-object
+// expressions.
+//------------------------------------------------------------------------------
+
+type_compatible(From, To) ->
+   type(From), type(To).
+
+
+// Reflexivity: a type is assign-compatible to itself
+
+type_compatible(Type, Type) <-
+   type(Type).
+
+// // Any type can be seen as an array of bytes
+
+// type_compatible(From, To) <-
+//    pointer_type:integer(To),
+//    type(From).
+
+// type_compatible(From, To) <-
+//    pointer_type:integer(From),
+//    type(To).
+
+// Struct types
+
+type_compatible:up_to_field(Type1, Type2, Field) ->
+   struct_type(Type1), struct_type(Type2), int[64](Field).
+
+type_compatible:up_to_field(Type1, Type2, 0) <-
+   struct_type:field[Type1, 0] = Field1,
+   struct_type:field[Type2, 0] = Field2,
+   type_compatible(Field1, Field2).
+
+type_compatible:up_to_field(Type1, Type2, i + 1) <-
+   type_compatible:up_to_field(Type1, Type2, i),
+   struct_type:field[Type1, i + 1] = Field1,
+   struct_type:field[Type2, i + 1] = Field2,
+   type_compatible(Field1, Field2).
+
+type_compatible(Type1, Type2) <-
+   struct_type:nfields[Type1] = NFields,
+   struct_type:nfields[Type2] = NFields,
+   type_compatible:up_to_field(Type1, Type2, NFields - 1).
