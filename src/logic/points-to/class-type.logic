@@ -43,6 +43,17 @@ class_type:constructor(Ctor, Type)
    pointer_type:component[PtrType] = Type,
    string:like(Signature, ClassName + "::" + ClassName + "(%)").
 
+class_type:constructor(Ctor, Type)
+ <-
+   class_type:name[Type] = FQClassName,
+   function(Ctor), function:signature[Ctor] = Signature,
+   function:type[Ctor] = FType,
+   function_type:param[FType, 0] = PtrType,
+   pointer_type:component[PtrType] = Type,
+   string:split[FQClassName, ":", _] = ClassName,
+   string:like(FQClassName, "%::" + ClassName),
+   string:like(Signature, FQClassName + "::" + ClassName + "(%)").
+
 
 // Mandatory properties of class types
 
