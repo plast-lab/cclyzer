@@ -190,7 +190,11 @@ callgraph:edge(Callee, CallerInsn), reachable_function(Callee)
    call_instruction:raw_function[CallerInsn] = Op,
    operand_points_to(Alloc, Op),
    function:by_location[Alloc] = Callee,
-   function(Callee).
+   function(Callee),
+   function:type[Callee] = ActualType,
+   operand:type[Op] = OpType,
+   pointer_type:component[OpType] = DeclaredType,
+   type_compatible(ActualType, DeclaredType).
 
 // Augment call-graph by adding edges for `invoke` instructions
 
@@ -201,7 +205,11 @@ callgraph:edge(Callee, CallerInsn), reachable_function(Callee)
    invoke_instruction:function[CallerInsn] = Op,
    operand_points_to(Alloc, Op),
    function:by_location[Alloc] = Callee,
-   function(Callee).
+   function(Callee),
+   function:type[Callee] = ActualType,
+   operand:type[Op] = OpType,
+   pointer_type:component[OpType] = DeclaredType,
+   type_compatible(ActualType, DeclaredType).
 
 
 // The following rule augments the logic about identifying functions
