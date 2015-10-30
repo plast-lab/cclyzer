@@ -164,6 +164,28 @@ class_instance:vtable[Alloc] = VTable
    operand:as_constant[Value] = Constant,
    constant_contains_vptr(VTable, Constant).
 
+
+//----------------------------------------------------
+// Find class type associated with each vtable
+//----------------------------------------------------
+
+// We do that by identifying instructions that store a pointer to a
+// vtable to the vpointer of some class instance, inside some
+// constructor. We already now the class type associated with each
+// constructor function, hence we now have the association between the
+// class type and its vtable too.
+
+vtable:class_type[VTable] = Type
+ <-
+   _init_by_ctor(Type, Ctor, _, Alloc),
+   instruction:function[StoreInsn] = Ctor,
+   store_instruction:value[StoreInsn] = Value,
+   store_instruction:address[StoreInsn] = Pointer,
+   operand_points_to(Alloc, Pointer),
+   operand:as_constant[Value] = Constant,
+   constant_contains_vptr(VTable, Constant).
+
+
 // Create points-to dereference information for every possible offset
 // of every vtable. This way, when a variable points-to some vtable
 // with some offset, loading from this address will result in the
