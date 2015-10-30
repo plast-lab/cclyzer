@@ -49,3 +49,30 @@ type_compatible(Type1, Type2) <-
    struct_type:nfields[Type1] = NFields,
    struct_type:nfields[Type2] = NFields,
    type_compatible:up_to_field(Type1, Type2, NFields - 1).
+
+
+// Function types
+
+type_compatible:up_to_arg(From, To, Arg) ->
+   function_type(From), function_type(To), int[64](Arg).
+
+type_compatible:up_to_arg(From, To, 0) <-
+   function_type:return[From] = ReturnType1,
+   function_type:return[To] = ReturnType2,
+   type_compatible(ReturnType1, ReturnType2).
+
+type_compatible:up_to_arg(From, To, i + 1) <-
+   type_compatible:up_to_arg(From, To, i),
+   function_type:param[From, i] = Param1,
+   function_type:param[To, i] = Param2,
+   type_compatible(Param1, Param2).
+
+type_compatible(From, To) <-
+   function_type:nparams[From] = NParams,
+   function_type:nparams[To] = NParams,
+   type_compatible:up_to_arg(From, To, NParams).
+
+type_compatible(From, To) <-
+   function_type:nparams[To] = NParams,
+   function_type:varargs(To),
+   type_compatible:up_to_arg(From, To, NParams).

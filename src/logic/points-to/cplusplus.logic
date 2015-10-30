@@ -212,3 +212,26 @@ alloc_subregion(VTableOffset)
 // we have to ensure that the vpointer gets strongly updated,
 // otherwise it may also point to all v-tables of its parent class
 // types !!!
+
+
+
+//----------------------------------------------------
+// C++ Type Compatibility
+//----------------------------------------------------
+
+
+// REVIEW: Enhance type compatibility rules by allowing a pointer to
+// some subclass be used in the place of the pointer to the
+// superclass!!
+
+_type_expands_base_type(Supertype, Type) <-
+   primary_superclass[Type] = Supertype.
+
+_type_expands_base_type(Supertype, Type) <-
+   primary_superclass[IntermType] = Supertype,
+   _type_expands_base_type(IntermType, Type).
+
+type_compatible(PtrActualType, PtrDeclaredType) <-
+   pointer_type:component[PtrActualType] = ActualType,
+   pointer_type:component[PtrDeclaredType] = DeclaredType,
+   _type_expands_base_type(DeclaredType, ActualType).
