@@ -77,15 +77,81 @@ allocation:type[HeapAlloc] = Type <-
 
 class_instance(Alloc) <-
    allocation:type[Alloc] = Type,
-   class_type(Type).
+   class_type(Type),
+   basic_allocation(Alloc).
 
 class_instance:constructor[Alloc] = Ctor <-
    allocation:type[Alloc] = Type,
-   _init_by_ctor(Type, Ctor, _, Alloc).
+   _init_by_ctor(Type, Ctor, _, Alloc),
+   basic_allocation(Alloc).
+
+
+//---------------------------------------------------------------------------
+// [Recovering the Class Hierarchy]
+//
+// We recover the class hierarchy by tracking the sub-object
+// constructors called inside the top constructor of some object. This
+// will miss parts of the class hierarchy for classes with no
+// instances, but these would probably by unreachable code anyway.
+//---------------------------------------------------------------------------
+
+primary_superclass[Type] = Supertype ->
+   struct_type(Type), struct_type(Supertype).
+
+secondary_superclass(Supertype, Type) ->
+   struct_type(Type), struct_type(Supertype).
+
+// The primary superclass of class B is derived by identifying the
+// call to some constructor of class A inside the B constructor, that
+// is invoked on the receiver object
+
+primary_superclass[Type] = Supertype <-
+   class_instance:constructor[Alloc] = Ctor,
+   constructor:class_type[Ctor] = Type,
+   _init_by_ctor(Supertype, _, Ctor, Alloc),
+   struct_type:field[Type, 0] = OtherType,
+   type_compatible(OtherType, Supertype).
+
+// Same thing for secondary superclasses, although the object that
+// flows to constructor will have some offset w.r.t the original
+// receiver object
+
+secondary_superclass(Supertype, Type) <-
+   alloc_subregion:base[Alloc] = BaseAlloc,
+   class_instance:constructor[BaseAlloc] = Ctor,
+   constructor:class_type[Ctor] = Type,
+   _init_by_ctor(Supertype, _, Ctor, Alloc),
+   struct_type:field[Type, Index] = OtherType,
+   Index != 0,
+   type_compatible(OtherType, Supertype).
+
+
+// Union of the above two kinds of superclasses
+
+direct_superclass(Supertype, Type) <-
+   primary_superclass[Type] = Supertype
+ ; secondary_superclass(Supertype, Type).
+
+
+// Inverse relation
+
+direct_subclass(Subtype, Type) <-
+   direct_superclass(Type, Subtype).
+
+// Transitive closure computation to compute all superclasses of each
+// type
+
+superclass(Supertype, Type) <-
+   direct_superclass(Supertype, Type).
+
+superclass(Supertype, Type) <-
+   direct_superclass(Supertype, IntermType),
+   superclass(IntermType, Type).
+
 
 
 //----------------------------------------------------
-// Find vtables associated with given class instance
+// Find vtable associated with given class instance
 //----------------------------------------------------
 
 class_instance:vtable[Alloc] = VTable
