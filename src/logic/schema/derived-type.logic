@@ -42,6 +42,10 @@ struct_type:field[Type, Index] = Field ->
 struct_type:nfields[Type] = Total ->
    struct_type(Type), int[64](Total).
 
+// Byte offset per field
+struct_type:field_offset[Type, Index] = Offset ->
+   struct_type(Type), int[64](Index), int[64](Offset).
+
 
 //----------------------
 // Array Type

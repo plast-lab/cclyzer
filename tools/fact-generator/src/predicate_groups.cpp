@@ -365,6 +365,7 @@ namespace predicates
 
     entity_pred_t struct_type::id = "struct_type";
     pred_t struct_type::field_type = "struct_type:field";
+    pred_t struct_type::field_offset = "struct_type:field_offset";
     pred_t struct_type::nfields = "struct_type:nfields";
     pred_t struct_type::opaque = "opaque_struct_type";
 

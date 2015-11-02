@@ -534,6 +534,7 @@ namespace predicates
     struct struct_type : predicate_group {
         static entity_pred_t id;
         static pred_t field_type;
+        static pred_t field_offset;
         static pred_t nfields;
         static pred_t opaque;
     };

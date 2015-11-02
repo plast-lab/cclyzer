@@ -116,13 +116,20 @@ void CsvGenerator::TypeVisitor::visitStructType(const StructType *structType)
         // Opaque structs carry no info about their internal structure
         gen.writeFact(pred::struct_type::opaque, tref);
     } else {
+        // Get struct layout
+        const StructLayout *structLayout =
+            layout.getStructLayout(const_cast<StructType*>(structType));
+
         // Record struct field types
         for (size_t i = 0; i < nFields; i++)
         {
             refmode_t fieldType = gen.refmodeOf(
                 structType->getStructElementType(i));
 
+            uint64_t fieldOffset = structLayout->getElementOffset(i);
+
             gen.writeFact(pred::struct_type::field_type, tref, fieldType, i);
+            gen.writeFact(pred::struct_type::field_offset, tref, fieldOffset, i);
         }
 
         // Record number of fields
