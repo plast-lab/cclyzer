@@ -33,10 +33,39 @@
 alloc_subregion(Region) -> allocation(Region).
 lang:entity(`alloc_subregion).
 
-// Single constructor for field references
+
+// Filter for subregion creation (defined later)
+
+_may_expand_base_alloc(Alloc) -> allocation(Alloc).
+lang:isEntity[`_may_expand_base_alloc] = false.
+
+
+//---------------------------------------------------------------
+// [Field Selections]
+//---------------------------------------------------------------
+
+// Single constructor for field selections
 
 alloc_subregion:at_field[Alloc, Index] = Region ->
    allocation(Alloc), int[64](Index), alloc_subregion(Region).
+
+lang:constructor(`alloc_subregion:at_field).
+
+// Create every field sub-expression, once type for base object is
+// established
+
+alloc_subregion(NewAlloc)
+ , alloc_subregion:at_field[Alloc, Field] = NewAlloc
+ , allocation:type[NewAlloc] = FieldType
+ <-
+   allocation:type[Alloc] = Type,
+   _may_expand_base_alloc(Alloc),
+   struct_type:field[Type, Field] = FieldType.
+
+
+//---------------------------------------------------------------
+// [Array Element Selections]
+//---------------------------------------------------------------
 
 // Constructor for constant array/pointer index
 
@@ -50,7 +79,7 @@ alloc_subregion:at_any_array_index[Alloc] = Region ->
 
 lang:constructor(`alloc_subregion:at_array_index).
 lang:constructor(`alloc_subregion:at_any_array_index).
-lang:constructor(`alloc_subregion:at_field).
+
 
 // Define region base
 
