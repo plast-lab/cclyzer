@@ -76,3 +76,20 @@ type_compatible(From, To) <-
    function_type:nparams[To] = NParams,
    function_type:varargs(To),
    type_compatible:up_to_arg(From, To, NParams).
+
+
+// Array types
+
+type_compatible(Type1, Type2) <-
+   array_type:component[Type1] = Comp1,
+   array_type:component[Type2] = Comp2,
+   ( (!array_type:size[Type1] = _ )
+   ; (!array_type:size[Type2] = _ )),
+   type_compatible(Comp1, Comp2).
+
+type_compatible(Type1, Type2) <-
+   array_type:component[Type1] = Comp1,
+   array_type:component[Type2] = Comp2,
+   array_type:size[Type1] = Size,
+   array_type:size[Type2] = Size,
+   type_compatible(Comp1, Comp2).
