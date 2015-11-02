@@ -109,14 +109,13 @@ allocation:depth[Region] = N + 1 <-
 alloc_subregion(Alloc) -> allocation:depth[Alloc] = _.
 
 
-// Allocation is entitled to create subobjects as maximum depth has
-// not been reached
+// Allocation is allowed to create subobjects as maximum depth has not
+// been reached
 
 _may_expand_base_alloc(Alloc) <-
    field_sensitivity:max_depth[] = MaxDepth,
    allocation:depth[Alloc] = N,
    N < MaxDepth.
-
 
 //-------------------------------------
 // String Representation Protocol
@@ -361,6 +360,9 @@ ptr_points_to(Alloc, BaseAlloc1) <-
 
 alloc_aliases(Base, ZeroIndexBase) <-
    alloc_subregion:at_array_index[Base, 0] = ZeroIndexBase.
+
+alloc_aliases(Base, FirstField) <-
+   alloc_subregion:at_field[Base, 0] = FirstField.
 
 
 // TODO
