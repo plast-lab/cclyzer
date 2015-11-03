@@ -93,3 +93,11 @@ type_compatible(Type1, Type2) <-
    array_type:size[Type1] = Size,
    array_type:size[Type2] = Size,
    type_compatible(Comp1, Comp2).
+
+
+// Pointer types
+
+type_compatible(PtrType1, PtrType2) <-
+   pointer_type:component[PtrType1] = Type1,
+   pointer_type:component[PtrType2] = Type2,
+   type_compatible(Type1, Type2).
