@@ -216,28 +216,43 @@ gep_points_to(Insn, 1, Alloc)
    getelementptr_instruction:index[Insn, 0] = IndexOp,
    operand:to_int[IndexOp] = 0.
 
+
 // The first non-zero index must be added to the previous index of the
 // allocation to produce a new offset
 
 gep_points_to(Insn, 1, NewAlloc)
  <-
    gep_points_to(Insn, 0, Alloc),
+   getelementptr_instruction:interm_type[Insn, 1] = DeclaredType,
+   // constant non-zero first index
    getelementptr_instruction:index[Insn, 0] = IndexOp,
    operand:to_int[IndexOp] = Index,
    Index != 0,
+   // get existing allocation at new index
    alloc_subregion:at_array_index[Base, PrevIndex] = Alloc,
-   alloc_subregion:at_array_index[Base, PrevIndex + Index] = NewAlloc.
+   alloc_subregion:at_array_index[Base, PrevIndex + Index] = NewAlloc,
+   // check for type compatibility
+   allocation:type[NewAlloc] = Type, // old type may not be compatible
+   type_compatible(Type, DeclaredType).
+
 
 // The first index, if unknown, must be used to generate a new
 // star-index allocation that replaces the older constant index
 
 alloc_subregion(NewAlloc)
  , alloc_subregion:at_any_array_index[Base] = NewAlloc
+ , allocation:type[NewAlloc] = Type
  , gep_points_to(Insn, 1, NewAlloc)
  <-
    gep_points_to(Insn, 0, Alloc),
+   getelementptr_instruction:interm_type[Insn, 1] = DeclaredType,
+   // check for type compatibility
+   allocation:type[Alloc] = Type,
+   type_compatible(Type, DeclaredType),
+   // variable first index
    getelementptr_instruction:index[Insn, 0] = IndexOp,
    !operand:to_int[IndexOp] = _,
+   // allocation pointed to some specific (known) element
    alloc_subregion:at_array_index[Base, _] = Alloc.
 
 
@@ -257,21 +272,35 @@ gep_points_to(Insn, 1, Alloc)
 
 alloc_subregion(Region)
  , alloc_subregion:at_array_index[Alloc, Index] = Region
+ , allocation:type[Region] = Type
  , gep_points_to(Insn, 1, Region)
  <-
    gep_points_to(Insn, 0, Alloc),
+   getelementptr_instruction:interm_type[Insn, 1] = DeclaredType,
    _may_expand_base_alloc(Alloc), // redundant here (cause of 0 depth)
+   // check for type compatibility
+   allocation:type[Alloc] = Type,
+   type_compatible(Type, DeclaredType),
+   // base object
    allocation:depth[Alloc] = 0,
+   // first index is a constant
    getelementptr_instruction:index[Insn, 0] = IndexOp,
    operand:to_int[IndexOp] = Index.
 
 alloc_subregion(Region)
  , alloc_subregion:at_any_array_index[Alloc] = Region
+ , allocation:type[Region] = Type
  , gep_points_to(Insn, 1, Region)
  <-
    gep_points_to(Insn, 0, Alloc),
+   getelementptr_instruction:interm_type[Insn, 1] = DeclaredType,
    _may_expand_base_alloc(Alloc),
+   // check for type compatibility
+   allocation:type[Alloc] = Type,
+   type_compatible(Type, DeclaredType),
+   // base object
    allocation:depth[Alloc] = 0,
+   // first index is a variable
    getelementptr_instruction:index[Insn, 0] = IndexOp,
    !operand:to_int[IndexOp] = _.
 
@@ -284,14 +313,21 @@ alloc_subregion(Region)
 
 alloc_subregion(Region)
  , alloc_subregion:at_any_array_index[Alloc] = Region
+ , allocation:type[Region] = ElementType
  , gep_points_to(Insn, NextIndex, Region)
  <-
    gep_points_to(Insn, Index, Alloc),
+   getelementptr_instruction:interm_type[Insn, Index] = DeclaredType,
    _may_expand_base_alloc(Alloc),
-   getelementptr_instruction:interm_type[Insn, Index] = Type,
-   array_type(Type),
+   // check for type compatibility
+   allocation:type[Alloc] = Type,
+   array_type(DeclaredType),
+   array_type:component[Type] = ElementType,
+   type_compatible(Type, DeclaredType),
+   // variable array index
    getelementptr_instruction:index[Insn, Index] = IndexOp,
    !operand:to_int[IndexOp] = _,
+   // NextIndex = Index + 1
    instruction:next_index[Insn, Index] = NextIndex.
 
 
@@ -299,14 +335,21 @@ alloc_subregion(Region)
 
 alloc_subregion(Region)
  , alloc_subregion:at_array_index[Alloc, ConstantIndex] = Region
+ , allocation:type[Region] = ElementType
  , gep_points_to(Insn, NextIndex, Region)
  <-
    gep_points_to(Insn, Index, Alloc),
+   getelementptr_instruction:interm_type[Insn, Index] = DeclaredType,
    _may_expand_base_alloc(Alloc),
-   getelementptr_instruction:interm_type[Insn, Index] = Type,
-   array_type(Type),
+   // check for type compatibility
+   allocation:type[Alloc] = Type,
+   array_type(DeclaredType),
+   array_type:component[Type] = ElementType,
+   type_compatible(Type, DeclaredType),
+   // get constant array index (as integer)
    getelementptr_instruction:index[Insn, Index] = IndexOp,
    operand:to_int[IndexOp] = ConstantIndex,
+   // NextIndex = Index + 1
    instruction:next_index[Insn, Index] = NextIndex.
 
 
@@ -314,14 +357,21 @@ alloc_subregion(Region)
 
 alloc_subregion(Region)
  , alloc_subregion:at_field[Alloc, Field] = Region
+ , allocation:type[Region] = FieldType
  , gep_points_to(Insn, NextIndex, Region)
  <-
    gep_points_to(Insn, Index, Alloc),
+   getelementptr_instruction:interm_type[Insn, Index] = DeclaredType,
    _may_expand_base_alloc(Alloc),
-   getelementptr_instruction:interm_type[Insn, Index] = Type,
-   struct_type(Type),
+   // check for type compatibility
+   allocation:type[Alloc] = Type,
+   struct_type(DeclaredType),
+   struct_type:field[Type, Field] = FieldType,
+   type_compatible:up_to_field(Type, DeclaredType, Field),
+   // get field (as integer constant)
    getelementptr_instruction:index[Insn, Index] = IndexOp,
    operand:to_int[IndexOp] = Field,
+   // NextIndex = Index + 1
    instruction:next_index[Insn, Index] = NextIndex.
 
 
@@ -357,6 +407,11 @@ var_points_to(Alloc, ToVar) <-
 // is often omitted from some instructions, but we must ensure that
 // such expressions are treated as aliases by the analysis and have
 // the same points-to sets.
+//
+// Note that this relation denotes *definite* (must) aliases. This
+// does not include possible aliases, like when a variable array index
+// may be equal to some constant c, and so X[*] *may* be aliased to
+// X[c]. For the latter concept, see the alloc_matches relation.
 //------------------------------------------------------------------------
 
 alloc_aliases(Alloc1, Alloc2) ->
@@ -385,7 +440,9 @@ ptr_points_to(Alloc, BaseAlloc1) <-
    alloc_aliases(BaseAlloc1, BaseAlloc2).
 
 
-// A base allocation with zero index is an alias to base
+// A base allocation with zero index is an alias to base. The first
+// field is also and alias to base, as it too points to the exact same
+// memory location.
 
 alloc_aliases(Base, ZeroIndexBase) <-
    alloc_subregion:at_array_index[Base, 0] = ZeroIndexBase.
@@ -575,27 +632,47 @@ memcpy(Insn, AliasedTo, AliasedFrom) <-
 
 alloc_subregion(DestSubobject)
  , alloc_subregion:at_field[DestObject, Field] = DestSubobject
+ , allocation:type[DestSubobject] = FieldType
  , memcpy(Insn, DestSubobject, SrcSubobject)
  <-
    memcpy(Insn, DestObject, SrcObject),
    _may_expand_base_alloc(DestObject),
-   alloc_subregion:at_field[SrcObject, Field] = SrcSubobject.
+   alloc_subregion:at_field[SrcObject, Field] = SrcSubobject,
+   // check for type compatibility
+   allocation:type[SrcObject] = SrcType,
+   allocation:type[DestObject] = DestType,
+   struct_type:field[DestType, Field] = FieldType,
+   type_compatible:up_to_field(SrcType, DestType, Field).
 
 alloc_subregion(DestSubobject)
  , alloc_subregion:at_array_index[DestObject, Index] = DestSubobject
+ , allocation:type[DestSubobject] = ElementType
  , memcpy(Insn, DestSubobject, SrcSubobject)
  <-
    memcpy(Insn, DestObject, SrcObject),
    _may_expand_base_alloc(DestObject),
-   alloc_subregion:at_array_index[SrcObject, Index] = SrcSubobject.
+   alloc_subregion:at_array_index[SrcObject, Index] = SrcSubobject,
+   // check for type compatibility
+   allocation:type[SrcObject] = SrcType,
+   allocation:type[DestObject] = DestType,
+   array_type(SrcType),
+   array_type:component[DestType] = ElementType,
+   type_compatible(SrcType, DestType).
 
 alloc_subregion(DestSubobject)
  , alloc_subregion:at_any_array_index[DestObject] = DestSubobject
+ , allocation:type[DestSubobject] = ElementType
  , memcpy(Insn, DestSubobject, SrcSubobject)
  <-
    memcpy(Insn, DestObject, SrcObject),
    _may_expand_base_alloc(DestObject),
-   alloc_subregion:at_any_array_index[SrcObject] = SrcSubobject.
+   alloc_subregion:at_any_array_index[SrcObject] = SrcSubobject,
+   // check for type compatibility
+   allocation:type[SrcObject] = SrcType,
+   allocation:type[DestObject] = DestType,
+   array_type(SrcType),
+   array_type:component[DestType] = ElementType,
+   type_compatible(SrcType, DestType).
 
 
 //------------------------------------
