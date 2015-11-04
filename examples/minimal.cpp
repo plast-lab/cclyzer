@@ -74,6 +74,7 @@ public:
 void print(B *b) {
     std::cout << "Field x is " << b->foo() << std::endl;
     std::cout << "Field x is " << b->foobar() << std::endl;
+    std::cout << "Field x is " << b->bar() << std::endl;
 }
 
 int main(int argc, char *argv[])
