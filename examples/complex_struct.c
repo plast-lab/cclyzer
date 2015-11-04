@@ -1,8 +1,8 @@
 #include <stdio.h>
 
 typedef struct {
-    int *x;
     int **y;
+    int *x;
 } inner ;
 
 typedef struct {
