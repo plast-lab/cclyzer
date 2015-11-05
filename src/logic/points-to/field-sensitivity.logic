@@ -37,7 +37,10 @@ lang:entity(`alloc_subregion).
 // Filter for subregion creation (defined later)
 
 _may_expand_base_alloc(Alloc) -> allocation(Alloc).
+_may_expand_alloc_with_field(Alloc) -> allocation(Alloc).
+
 lang:isEntity[`_may_expand_base_alloc] = false.
+lang:isEntity[`_may_expand_alloc_with_field] = false.
 
 
 //---------------------------------------------------------------
@@ -59,8 +62,25 @@ alloc_subregion(NewAlloc)
  , allocation:type[NewAlloc] = FieldType
  <-
    allocation:type[Alloc] = Type,
-   _may_expand_base_alloc(Alloc),
+   _may_expand_alloc_with_field(Alloc),
    struct_type:field[Type, Field] = FieldType.
+
+
+// We restrict fields expansions on non-base objects to prune the
+// space of allocations that will be created. Note that even a base
+// object will have a zero-index alias that corresponds to the its
+// first element, had it been an array allocation. The latter can be
+// used instead to construct the correct field expansion.
+
+_may_expand_alloc_with_field(Alloc) <-
+   _may_expand_base_alloc(Alloc),
+   allocation:depth[Alloc] = N,
+   N > 0.
+
+alloc_subregion:at_field[Alloc, _] = _
+ , allocation:depth[Alloc] = N
+ ->
+   N > 0.
 
 
 //---------------------------------------------------------------
@@ -196,6 +216,10 @@ gep_points_to(Insn, Index, Alloc) ->
    int[64](Index),
    allocation(Alloc).
 
+gep_points_to(Insn, Index, Alloc) <-
+   gep_points_to(Insn, Index, SomeAlloc),
+   alloc_aliases(Alloc, SomeAlloc).
+
 gep_points_to(Insn, 0, Alloc) <-
    !gep:vector_based(Insn),
    getelementptr_instruction:base[Insn] = Base,
@@ -267,6 +291,24 @@ gep_points_to(Insn, 1, Alloc)
    alloc_subregion:at_any_array_index[_] = Alloc.
 
 
+// We construct the aliased zero index of a base allocation, as if it
+// had been an array allocation, whenever the base allocation flows to
+// the address operand of some GEP instruction.
+
+alloc_subregion(ZeroAliasAlloc)
+ , alloc_subregion:at_array_index[Alloc, 0] = ZeroAliasAlloc
+ , allocation:type[ZeroAliasAlloc] = Type
+ , gep_points_to(Insn, 0, ZeroAliasAlloc)
+ <-
+   gep_points_to(Insn, 0, Alloc),
+   _may_expand_base_alloc(Alloc), // redundant here (cause of 0 depth)
+   // base object
+   allocation:depth[Alloc] = 0,
+   allocation:type[Alloc] = Type,
+   // first index can be anything
+   getelementptr_instruction:index[Insn, 0] = _.
+
+
 // When address operand points-to base object, then we must record the
 // index accordingly
 
@@ -318,7 +360,7 @@ alloc_subregion(Region)
    getelementptr_instruction:base_type[Insn] = PtrType,
    pointer_type:component[PtrType] = i8,
    int8_type[] = i8,
-   _may_expand_base_alloc(Alloc),
+   _may_expand_alloc_with_field(Alloc),
    // first index is a constant
    getelementptr_instruction:index[Insn, 0] = IndexOp,
    operand:to_int[IndexOp] = Offset,
@@ -385,7 +427,7 @@ alloc_subregion(Region)
  <-
    gep_points_to(Insn, Index, Alloc),
    getelementptr_instruction:interm_type[Insn, Index] = DeclaredType,
-   _may_expand_base_alloc(Alloc),
+   _may_expand_alloc_with_field(Alloc),
    // check for type compatibility
    allocation:type[Alloc] = Type,
    struct_type(DeclaredType),
@@ -666,7 +708,7 @@ alloc_subregion(DestSubobject)
  , memcpy(Insn, DestSubobject, SrcSubobject)
  <-
    memcpy(Insn, DestObject, SrcObject),
-   _may_expand_base_alloc(DestObject),
+   _may_expand_alloc_with_field(DestObject),
    alloc_subregion:at_field[SrcObject, Field] = SrcSubobject,
    // check for type compatibility
    allocation:type[SrcObject] = SrcType,
