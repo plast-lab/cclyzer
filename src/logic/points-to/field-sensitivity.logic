@@ -785,29 +785,29 @@ null_location[] = Null ->
 // Compute intermediate points to for `getelementptr` constant
 // expression up to some index
 
-gep_constant_expr_points_to(CExpr, Index, Alloc) ->
+gep_constant_expr_points_to[CExpr, Index] = Alloc ->
    getelementptr_constant_expression(CExpr),
    int[64](Index),
    allocation(Alloc).
 
-gep_constant_expr_points_to(CExpr, 0, Alloc) <-
+gep_constant_expr_points_to[CExpr, 0] = Alloc <-
    getelementptr_constant_expression:base[CExpr] = Base,
    constant_points_to[Base] = Alloc.
 
 
 // First index as above
 
-gep_constant_expr_points_to(CExpr, 1, Alloc)
+gep_constant_expr_points_to[CExpr, 1] = Alloc
  <-
-   gep_constant_expr_points_to(CExpr, 0, Alloc),
+   gep_constant_expr_points_to[CExpr, 0] = Alloc,
    allocation:depth[Alloc] = N,
    N > 0.
 
 alloc_subregion(Region)
  , alloc_subregion:at_array_index[Alloc, Index] = Region
- , gep_constant_expr_points_to(CExpr, 1, Region)
+ , gep_constant_expr_points_to[CExpr, 1] = Region
  <-
-   gep_constant_expr_points_to(CExpr, 0, Alloc),
+   gep_constant_expr_points_to[CExpr, 0] = Alloc,
    _may_expand_base_alloc(Alloc),
    allocation:depth[Alloc] = 0,
    getelementptr_constant_expression:index[CExpr, 0] = Constant,
@@ -818,12 +818,12 @@ alloc_subregion(Region)
 
 alloc_subregion(Region)
  , alloc_subregion:at_array_index[Alloc, ConstantIndex] = Region
- , gep_constant_expr_points_to(CExpr, NextIndex, Region)
+ , gep_constant_expr_points_to[CExpr, NextIndex] = Region
  <-
-   gep_constant_expr_points_to(CExpr, Index, Alloc),
+   gep_constant_expr_points_to[CExpr, Index] = Alloc,
+   getelementptr_constant_expression:interm_type[CExpr, Index] = DeclaredType,
    _may_expand_base_alloc(Alloc),
-   getelementptr_constant_expression:interm_type[CExpr, Index] = Type,
-   array_type(Type),
+   array_type(DeclaredType),
    getelementptr_constant_expression:index[CExpr, Index] = Constant,
    constant:to_int[Constant] = ConstantIndex,
    constant_expression:next_index[CExpr, Index] = NextIndex.
@@ -831,21 +831,21 @@ alloc_subregion(Region)
 
 alloc_subregion(Region)
  , alloc_subregion:at_field[Alloc, Field] = Region
- , gep_constant_expr_points_to(CExpr, NextIndex, Region)
+ , gep_constant_expr_points_to[CExpr, NextIndex] = Region
  <-
-   gep_constant_expr_points_to(CExpr, Index, Alloc),
+   gep_constant_expr_points_to[CExpr, Index] = Alloc,
+   getelementptr_constant_expression:interm_type[CExpr, Index] = DeclaredType,
    _may_expand_base_alloc(Alloc),
-   getelementptr_constant_expression:interm_type[CExpr, Index] = Type,
-   struct_type(Type),
+   struct_type(DeclaredType),
    getelementptr_constant_expression:index[CExpr, Index] = Constant,
    constant:to_int[Constant] = Field,
    constant_expression:next_index[CExpr, Index] = NextIndex.
 
 // Fallback
 
-gep_constant_expr_points_to(CExpr, NextIndex, Alloc)
+gep_constant_expr_points_to[CExpr, NextIndex] = Alloc
  <-
-   gep_constant_expr_points_to(CExpr, Index, Alloc),
+   gep_constant_expr_points_to[CExpr, Index] = Alloc,
    allocation:depth[Alloc] = N,
    field_sensitivity:max_depth[] = N,
    constant_expression:next_index[CExpr, Index] = NextIndex.
@@ -853,4 +853,4 @@ gep_constant_expr_points_to(CExpr, NextIndex, Alloc)
 
 constant_points_to[CExpr] = Alloc <-
    getelementptr_constant_expression:nindices[CExpr] = Total,
-   gep_constant_expr_points_to(CExpr, Total, Alloc).
+   gep_constant_expr_points_to[CExpr, Total] = Alloc.
