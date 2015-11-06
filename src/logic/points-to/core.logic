@@ -3,7 +3,7 @@
 // reachable_function(F) <- function(F).
 
 // Model null as a specific memory location
-constant_points_to(NULL, Constant) <-
+constant_points_to[Constant] = NULL <-
    nullptr_constant(Constant),
    null_location[] = NULL.
 
@@ -15,7 +15,7 @@ constant_points_to(NULL, Constant) <-
 //
 // Example: (int *) 0xabcd
 
-constant_points_to(UNKNOWN, Constant) <-
+constant_points_to[Constant] = UNKNOWN <-
    inttoptr_constant_expression(Constant),
    unknown_location[] = UNKNOWN.
 
@@ -23,24 +23,24 @@ constant_points_to(UNKNOWN, Constant) <-
 // A pointer may be masqueraded into an integer (or something else),
 // but the associated memory locations are still valid.
 
-constant_points_to(Alloc, IntConstant) <-
+constant_points_to[IntConstant] = Alloc <-
    ptrtoint_constant_expression:from[IntConstant] = PtrConstant,
-   constant_points_to(Alloc, PtrConstant).
+   constant_points_to[PtrConstant] = Alloc.
 
-constant_points_to(Alloc, OuterConstant) <-
+constant_points_to[OuterConstant] = Alloc <-
    bitcast_constant_expression:from[OuterConstant] = InnerConstant,
-   constant_points_to(Alloc, InnerConstant).
+   constant_points_to[InnerConstant] = Alloc.
 
 // Global variable and function references is a common type of
 // constants. They should be matched to the corresponding global
 // allocation.
 
-constant_points_to(Alloc, Constant) <-
+constant_points_to[Constant] = Alloc <-
    global_variable_constant:name[Constant] = Name,
    global_allocation:by_variable[GVar] = Alloc,
    global_variable:by_name[Name] = GVar.
 
-constant_points_to(Alloc, Constant) <-
+constant_points_to[Constant] = Alloc <-
    function_constant:function_name[Constant] = FName,
    function:by_name[FName] = Func,
    global_allocation:by_function[Func] = Alloc.

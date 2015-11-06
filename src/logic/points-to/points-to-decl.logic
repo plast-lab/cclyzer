@@ -23,7 +23,7 @@ var_points_to(Alloc, Var) ->
 // expression may be used as an operand to a `store` or `load`
 // instruction.
 
-constant_points_to(Alloc, Constant) ->
+constant_points_to[Constant] = Alloc ->
    allocation(Alloc), constant(Constant).
 
 
@@ -37,8 +37,8 @@ operand_points_to(Alloc, VarOperand) <-
    var_points_to(Alloc, PtrVar).
 
 operand_points_to(Alloc, ConstantOperand) <-
-   operand:as_constant[ConstantOperand] = ToGVar,
-   constant_points_to(Alloc, ToGVar).
+   operand:as_constant[ConstantOperand] = Constant,
+   constant_points_to[Constant] = Alloc.
 
 
 //----------------------------

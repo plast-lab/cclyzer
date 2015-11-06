@@ -792,7 +792,7 @@ gep_constant_expr_points_to(CExpr, Index, Alloc) ->
 
 gep_constant_expr_points_to(CExpr, 0, Alloc) <-
    getelementptr_constant_expression:base[CExpr] = Base,
-   constant_points_to(Alloc, Base).
+   constant_points_to[Base] = Alloc.
 
 
 // First index as above
@@ -851,6 +851,6 @@ gep_constant_expr_points_to(CExpr, NextIndex, Alloc)
    constant_expression:next_index[CExpr, Index] = NextIndex.
 
 
-constant_points_to(Alloc, CExpr) <-
+constant_points_to[CExpr] = Alloc <-
    getelementptr_constant_expression:nindices[CExpr] = Total,
    gep_constant_expr_points_to(CExpr, Total, Alloc).
