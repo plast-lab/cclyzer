@@ -101,3 +101,15 @@ type_compatible(PtrType1, PtrType2) <-
    pointer_type:component[PtrType1] = Type1,
    pointer_type:component[PtrType2] = Type2,
    type_compatible(Type1, Type2).
+
+// Any pointer type can be seen as an array of bytes
+
+type_compatible(From, To) <-
+   pointer_type:component[To] = i8,
+   int8_type[] = i8,
+   pointer_type(From).
+
+type_compatible(From, To) <-
+   pointer_type:component[From] = i8,
+   int8_type[] = i8,
+   pointer_type(To).
