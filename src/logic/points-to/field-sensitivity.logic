@@ -33,16 +33,6 @@
 alloc_subregion(Region) -> allocation(Region).
 lang:entity(`alloc_subregion).
 
-
-// Filter for subregion creation (defined later)
-
-_may_expand_base_alloc(Alloc) -> allocation(Alloc).
-_may_expand_alloc_with_field(Alloc) -> allocation(Alloc).
-
-lang:isEntity[`_may_expand_base_alloc] = false.
-lang:isEntity[`_may_expand_alloc_with_field] = false.
-
-
 //---------------------------------------------------------------
 // [Field Selections]
 //---------------------------------------------------------------
@@ -62,29 +52,53 @@ alloc_subregion(NewAlloc)
  , allocation:type[NewAlloc] = FieldType
  <-
    allocation:type[Alloc] = Type,
-   _may_expand_alloc_with_field(Alloc),
+   // filter base allocations
+   alloc_subregion(Alloc),
+   // determine type
+   struct_type(Type),
    struct_type:field[Type, Field] = FieldType.
 
 
-// We restrict fields expansions on non-base objects to prune the
-// space of allocations that will be created. Note that even a base
-// object will have a zero-index alias that corresponds to the its
-// first element, had it been an array allocation. The latter can be
-// used instead to construct the correct field expansion.
+//---------------------------------------------------------------
+// [Array Element Selections: unknown *star* index]
+//---------------------------------------------------------------
 
-_may_expand_alloc_with_field(Alloc) <-
-   _may_expand_base_alloc(Alloc),
-   allocation:depth[Alloc] = N,
-   N > 0.
+// Constructor for unknown array/pointer index
 
-alloc_subregion:at_field[Alloc, _] = _
- , allocation:depth[Alloc] = N
- ->
-   N > 0.
+alloc_subregion:at_any_array_index[Alloc] = Region ->
+   allocation(Alloc), alloc_subregion(Region).
+
+lang:constructor(`alloc_subregion:at_any_array_index).
+
+
+// Create star pointer index expression, once type for base object is
+// established
+
+alloc_subregion(NewAlloc)
+ , alloc_subregion:at_any_array_index[Alloc] = NewAlloc
+ , allocation:type[NewAlloc] = Type
+ <-
+   allocation:type[Alloc] = Type,
+   // base object
+   basic_allocation(Alloc).
+
+// Create star array index expression, once type for base object is
+// established
+
+alloc_subregion(NewAlloc)
+ , alloc_subregion:at_any_array_index[Alloc] = NewAlloc
+ , allocation:type[NewAlloc] = ElementType
+ <-
+   allocation:type[Alloc] = Type,
+   // filter base allocations
+   alloc_subregion(Alloc),
+   // determine type
+   array_type(Type),
+   array_type:component[Type] = ElementType.
 
 
 //---------------------------------------------------------------
-// [Array Element Selections]
+// [Array Element Selections: known index]
 //---------------------------------------------------------------
 
 // Constructor for constant array/pointer index
@@ -92,16 +106,68 @@ alloc_subregion:at_field[Alloc, _] = _
 alloc_subregion:at_array_index[Alloc, Index] = Region ->
    allocation(Alloc), int[64](Index), alloc_subregion(Region).
 
-// Constructor for unknown array/pointer index
-
-alloc_subregion:at_any_array_index[Alloc] = Region ->
-   allocation(Alloc), alloc_subregion(Region).
-
 lang:constructor(`alloc_subregion:at_array_index).
-lang:constructor(`alloc_subregion:at_any_array_index).
 
 
-// Define region base
+// Create every pointer index expression, once type for base object is
+// established
+
+alloc_subregion(NewAlloc)
+ , alloc_subregion:at_array_index[Alloc, Index] = NewAlloc
+ , allocation:type[NewAlloc] = Type
+ <-
+   allocation:type[Alloc] = Type,
+   // base object
+   basic_allocation(Alloc),
+   // first index is a constant
+   pointer_index(Index).
+
+// Create star array index expression, once type for base object is
+// established
+
+alloc_subregion(NewAlloc)
+ , alloc_subregion:at_array_index[Alloc, Index] = NewAlloc
+ , allocation:type[NewAlloc] = ElementType
+ <-
+   allocation:type[Alloc] = Type,
+   // filter base allocations
+   alloc_subregion(Alloc),
+   // determine type
+   array_type(Type),
+   array_type:component[Type] = ElementType,
+   // accept any relevant array index for this type
+   array_indices(Type, Index).
+
+
+// Find all statically possible pointer indices
+
+pointer_index(Index) -> int[64](Index).
+pointer_index(0).
+
+pointer_index(Index) <-
+   getelementptr_instruction:index[_, 0] = IndexOp,
+   operand:to_int[IndexOp] = Index.
+
+// Find all statically possible array indices
+
+array_indices(Type, Index) ->
+   array_type(Type), int[64](Index).
+
+array_indices(Type, ConstantIndex) <-
+   getelementptr_instruction:index[Insn, Index] = IndexOp,
+   getelementptr_instruction:interm_type[Insn, Index] = DeclaredType,
+   operand:to_int[IndexOp] = ConstantIndex,
+   array_type(DeclaredType),
+   array_type(Type),
+   type_compatible(Type, DeclaredType).
+
+
+//-------------------------------------------------------------------
+// Subobject properties
+//-------------------------------------------------------------------
+
+// Region base: unified predicate that applies to all types of
+// subobjects
 
 alloc_subregion:base[Region] = Base ->
    alloc_subregion(Region), allocation(Base).
@@ -115,56 +181,6 @@ alloc_subregion:base[Region] = Base <-
 alloc_subregion:base[Region] = Base <-
    alloc_subregion:at_array_index[Base, _] = Region.
 
-//------------------------------------------------------------------------
-// [Maximum Subobject Depth]
-//
-// Note that pointer arithmetic and other C idioms may cause infinite
-// recursion and creation of new subobjects. For instance, the
-// instruction: `ptr = ptr + 1` when translated to a `getelementptr`
-// instruction, it will create a new subobject relative to the one
-// that `ptr` points to with some offset. However, this subobject will
-// again flow to the base variable `ptr` triggering the creation of
-// yet a new subobject. This creation of new subobjects will continue
-// indefinitely.
-//
-// To avoid non-termination we introduce a bound to object
-// depth. Hence, we do not create a new subobject when this bound is
-// going to be exceeded.
-//------------------------------------------------------------------------
-
-field_sensitivity:max_depth[] = N ->
-   int[64](N).
-
-field_sensitivity:max_depth[] = 5.
-
-//-----------------------------------------
-// Define allocation depth recursively
-//-----------------------------------------
-
-allocation:depth[Alloc] = N ->
-   allocation(Alloc), int[64](N).
-
-allocation:depth[Alloc] = 0 <-
-   basic_allocation(Alloc).
-
-allocation:depth[Region] = N + 1 <-
-   alloc_subregion:base[Region] = Base,
-   allocation:depth[Base] = N.
-
-//-----------------------------------------
-// All subobject regions must have a depth
-//-----------------------------------------
-
-alloc_subregion(Alloc) -> allocation:depth[Alloc] = _.
-
-
-// Allocation is allowed to create subobjects as maximum depth has not
-// been reached
-
-_may_expand_base_alloc(Alloc) <-
-   field_sensitivity:max_depth[] = MaxDepth,
-   allocation:depth[Alloc] = N,
-   N < MaxDepth.
 
 //-------------------------------------
 // String Representation Protocol
@@ -187,6 +203,54 @@ allocation:to_string[Region] = RegionStr <-
    int64:string:convert[Index] = IndexStr,
    RegionStr = AllocStr + ".f$" + IndexStr.
 
+
+//------------------------------------------------------------------------
+// [Deprecated: Maximum Subobject Depth]
+//
+// Note that pointer arithmetic and other C idioms may cause infinite
+// recursion and creation of new subobjects. For instance, the
+// instruction: `ptr = ptr + 1` when translated to a `getelementptr`
+// instruction, it will create a new subobject relative to the one
+// that `ptr` points to with some offset. However, this subobject will
+// again flow to the base variable `ptr` triggering the creation of
+// yet a new subobject. This creation of new subobjects will continue
+// indefinitely.
+//
+// DEPRECATED:
+// To avoid non-termination we introduce a bound to object
+// depth. Hence, we do not create a new subobject when this bound is
+// going to be exceeded.
+//
+// Since we now create subobjects (e.g., by field access, or array
+// indexing) *only* when the analysis has discovered the type of the
+// base object, we no longer need a bound on object depth. Types alone
+// are sufficient to prohibit infinite object recursion, since the
+// type of the base object will always have a greater size compared to
+// that of any of its subobjects. Hence, as the object depth grows,
+// the object size will become smaller until it reaches zero (no
+// infinite recursion is possible).
+//------------------------------------------------------------------------
+
+// field_sensitivity:max_depth[] = N ->
+//    int[64](N).
+
+// field_sensitivity:max_depth[] = 5.
+
+// alloc_subregion(Alloc) -> allocation:depth[Alloc] = _.
+
+// _may_expand_base_alloc(Alloc) -> allocation(Alloc).
+// _may_expand_alloc_with_field(Alloc) -> allocation(Alloc).
+
+// lang:isEntity[`_may_expand_base_alloc] = false.
+// lang:isEntity[`_may_expand_alloc_with_field] = false.
+
+// Allocation is allowed to create subobjects as maximum depth has not
+// been reached
+
+// _may_expand_base_alloc(Alloc) <-
+//    field_sensitivity:max_depth[] = MaxDepth,
+//    allocation:depth[Alloc] = N,
+//    N < MaxDepth.
 
 //------------------------------------------------------------------------------
 // [Field Sensitive treatment of `getelementptr` instructions]
@@ -235,8 +299,7 @@ gep_points_to(Insn, 0, Alloc) <-
 gep_points_to(Insn, 1, Alloc)
  <-
    gep_points_to(Insn, 0, Alloc),
-   allocation:depth[Alloc] = N,
-   N > 0,
+   alloc_subregion(Alloc),
    getelementptr_instruction:index[Insn, 0] = IndexOp,
    operand:to_int[IndexOp] = 0.
 
@@ -263,10 +326,7 @@ gep_points_to(Insn, 1, NewAlloc)
 // The first index, if unknown, must be used to generate a new
 // star-index allocation that replaces the older constant index
 
-alloc_subregion(NewAlloc)
- , alloc_subregion:at_any_array_index[Base] = NewAlloc
- , allocation:type[NewAlloc] = Type
- , gep_points_to(Insn, 1, NewAlloc)
+gep_points_to(Insn, 1, NewAlloc)
  <-
    gep_points_to(Insn, 0, Alloc),
    getelementptr_instruction:interm_type[Insn, 1] = DeclaredType,
@@ -277,7 +337,8 @@ alloc_subregion(NewAlloc)
    getelementptr_instruction:index[Insn, 0] = IndexOp,
    !operand:to_int[IndexOp] = _,
    // allocation pointed to some specific (known) element
-   alloc_subregion:at_array_index[Base, _] = Alloc.
+   alloc_subregion:at_array_index[Base, _] = Alloc,
+   alloc_subregion:at_any_array_index[Base] = NewAlloc.
 
 
 // First index is also ignored when address points-to non-base object
@@ -291,83 +352,74 @@ gep_points_to(Insn, 1, Alloc)
    alloc_subregion:at_any_array_index[_] = Alloc.
 
 
-// We construct the aliased zero index of a base allocation, as if it
+// We point to the aliased zero index of a base allocation, as if it
 // had been an array allocation, whenever the base allocation flows to
 // the address operand of some GEP instruction.
 
-alloc_subregion(ZeroAliasAlloc)
- , alloc_subregion:at_array_index[Alloc, 0] = ZeroAliasAlloc
- , allocation:type[ZeroAliasAlloc] = Type
- , gep_points_to(Insn, 0, ZeroAliasAlloc)
+gep_points_to(Insn, 0, ZeroAliasAlloc)
  <-
    gep_points_to(Insn, 0, Alloc),
-   _may_expand_base_alloc(Alloc), // redundant here (cause of 0 depth)
-   // base object
-   allocation:depth[Alloc] = 0,
-   allocation:type[Alloc] = Type,
    // first index can be anything
-   getelementptr_instruction:index[Insn, 0] = _.
+   getelementptr_instruction:index[Insn, 0] = _,
+   // base object
+   basic_allocation(Alloc),
+   alloc_subregion:at_array_index[Alloc, 0] = ZeroAliasAlloc.
 
 
 // When address operand points-to base object, then we must record the
 // index accordingly
 
-alloc_subregion(Region)
- , alloc_subregion:at_array_index[Alloc, Index] = Region
- , allocation:type[Region] = Type
- , gep_points_to(Insn, 1, Region)
+gep_points_to(Insn, 1, Region)
  <-
    gep_points_to(Insn, 0, Alloc),
    getelementptr_instruction:interm_type[Insn, 1] = DeclaredType,
-   _may_expand_base_alloc(Alloc), // redundant here (cause of 0 depth)
    // check for type compatibility
    allocation:type[Alloc] = Type,
    type_compatible(Type, DeclaredType),
    // base object
-   allocation:depth[Alloc] = 0,
+   basic_allocation(Alloc),
    // first index is a constant
    getelementptr_instruction:index[Insn, 0] = IndexOp,
-   operand:to_int[IndexOp] = Index.
+   operand:to_int[IndexOp] = Index,
+   // get subojbect at this array index
+   alloc_subregion:at_array_index[Alloc, Index] = Region.
 
-alloc_subregion(Region)
- , alloc_subregion:at_any_array_index[Alloc] = Region
- , allocation:type[Region] = Type
- , gep_points_to(Insn, 1, Region)
+
+gep_points_to(Insn, 1, Region)
  <-
    gep_points_to(Insn, 0, Alloc),
    getelementptr_instruction:interm_type[Insn, 1] = DeclaredType,
-   _may_expand_base_alloc(Alloc),
    // check for type compatibility
    allocation:type[Alloc] = Type,
    type_compatible(Type, DeclaredType),
    // base object
-   allocation:depth[Alloc] = 0,
+   basic_allocation(Alloc),
    // first index is a variable
    getelementptr_instruction:index[Insn, 0] = IndexOp,
-   !operand:to_int[IndexOp] = _.
+   !operand:to_int[IndexOp] = _,
+   // get subobject at star array index
+   alloc_subregion:at_any_array_index[Alloc] = Region.
 
 
 // It also possible that a struct type is treated as an array of
 // bytes, in which case we must match the byte offset to some field
 
-alloc_subregion(Region)
- , alloc_subregion:at_field[Alloc, Field] = Region
- , allocation:type[Region] = FieldType
- , gep_points_to(Insn, 1, Region)
+gep_points_to(Insn, 1, Region)
  <-
    gep_points_to(Insn, 0, Alloc),
    // Base type of GEP is pointer to i8
    getelementptr_instruction:base_type[Insn] = PtrType,
    pointer_type:component[PtrType] = i8,
    int8_type[] = i8,
-   _may_expand_alloc_with_field(Alloc),
    // first index is a constant
    getelementptr_instruction:index[Insn, 0] = IndexOp,
    operand:to_int[IndexOp] = Offset,
    // match byte offset to field
    allocation:type[Alloc] = Type,
-   struct_type:field[Type, Field] = FieldType,
-   struct_type:field_offset[Type, Field] = Offset.
+   struct_type(Type),
+   struct_type:field_offset[Type, Field] = Offset,
+   // get subobject of this field
+   alloc_subregion:at_field[Alloc, Field] = Region.
 
 
 //----------------------------------------------------------
@@ -376,84 +428,65 @@ alloc_subregion(Region)
 
 // Case of unknown index
 
-alloc_subregion(Region)
- , alloc_subregion:at_any_array_index[Alloc] = Region
- , allocation:type[Region] = ElementType
- , gep_points_to(Insn, NextIndex, Region)
+gep_points_to(Insn, NextIndex, Region)
  <-
    gep_points_to(Insn, Index, Alloc),
    getelementptr_instruction:interm_type[Insn, Index] = DeclaredType,
-   _may_expand_base_alloc(Alloc),
    // check for type compatibility
    allocation:type[Alloc] = Type,
+   array_type(Type),
    array_type(DeclaredType),
-   array_type:component[Type] = ElementType,
    type_compatible(Type, DeclaredType),
+   alloc_subregion(Alloc),
    // variable array index
    getelementptr_instruction:index[Insn, Index] = IndexOp,
    !operand:to_int[IndexOp] = _,
    // NextIndex = Index + 1
-   instruction:next_index[Insn, Index] = NextIndex.
+   instruction:next_index[Insn, Index] = NextIndex,
+   // get subobject at *star* (unknown) index
+   alloc_subregion:at_any_array_index[Alloc] = Region.
 
 
 // Case of known constant index
 
-alloc_subregion(Region)
- , alloc_subregion:at_array_index[Alloc, ConstantIndex] = Region
- , allocation:type[Region] = ElementType
- , gep_points_to(Insn, NextIndex, Region)
+gep_points_to(Insn, NextIndex, Region)
  <-
    gep_points_to(Insn, Index, Alloc),
    getelementptr_instruction:interm_type[Insn, Index] = DeclaredType,
-   _may_expand_base_alloc(Alloc),
    // check for type compatibility
    allocation:type[Alloc] = Type,
+   array_type(Type),
    array_type(DeclaredType),
-   array_type:component[Type] = ElementType,
    type_compatible(Type, DeclaredType),
+   alloc_subregion(Alloc),
    // get constant array index (as integer)
    getelementptr_instruction:index[Insn, Index] = IndexOp,
    operand:to_int[IndexOp] = ConstantIndex,
    // NextIndex = Index + 1
-   instruction:next_index[Insn, Index] = NextIndex.
+   instruction:next_index[Insn, Index] = NextIndex,
+   // get subobject for given array index
+   alloc_subregion:at_array_index[Alloc, ConstantIndex] = Region.
 
 
 // Case of field access
 
-alloc_subregion(Region)
- , alloc_subregion:at_field[Alloc, Field] = Region
- , allocation:type[Region] = FieldType
- , gep_points_to(Insn, NextIndex, Region)
+gep_points_to(Insn, NextIndex, Region)
  <-
    gep_points_to(Insn, Index, Alloc),
    getelementptr_instruction:interm_type[Insn, Index] = DeclaredType,
-   _may_expand_alloc_with_field(Alloc),
    // check for type compatibility
    allocation:type[Alloc] = Type,
+   struct_type(Type),
    struct_type(DeclaredType),
-   struct_type:field[Type, Field] = FieldType,
    type_compatible:up_to_field(Type, DeclaredType, Field),
    // get field (as integer constant)
    getelementptr_instruction:index[Insn, Index] = IndexOp,
    operand:to_int[IndexOp] = Field,
    // NextIndex = Index + 1
-   instruction:next_index[Insn, Index] = NextIndex.
+   instruction:next_index[Insn, Index] = NextIndex,
+   // get subobject for given field
+   alloc_subregion:at_field[Alloc, Field] = Region.
 
-
-// !! Generic fallback rule !! Whenever the maximum depth is reached
-// the indices are therefore ignored and we switch to a
-// field-insensitive approach beyond that, i.e., just propagating the
-// object that was pointed to up to the previous index. In effect,
-// when a memory region reaches its maximum depth, the points-to
-// relation regarding this region is about any word contained in that
-// region (that can be a pointer).
-
-gep_points_to(Insn, NextIndex, Alloc)
- <-
-   gep_points_to(Insn, Index, Alloc),
-   allocation:depth[Alloc] = N,
-   field_sensitivity:max_depth[] = N,
-   instruction:next_index[Insn, Index] = NextIndex.
 
 
 // The destination variable holds the allocation pointed by the last
@@ -523,61 +556,10 @@ alloc_aliases(Base, FirstField) <-
    alloc_subregion:at_field[Base, 0] = FirstField.
 
 
-// TODO
+// Note !!! Aliased bases will *not* result in aliased subregions when
+// extended by the same field or index. See `Why don’t GEP x,0,0,1 and
+// GEP x,1 alias?` from http://llvm.org/docs/GetElementPtr.html
 
-// REVIEW !!! The following is incorrect as it does not comply to the
-// GEP semantics. See `Why don’t GEP x,0,0,1 and GEP x,1 alias?` from
-// http://llvm.org/docs/GetElementPtr.html
-
-// // Aliased bases will result in aliased subregions when extended by
-// // the same field or index
-
-// alloc_aliases(Alloc1, Alloc2) <-
-//    alloc_aliases(Base1, Base2),
-//    alloc_subregion:at_any_array_index[Base1] = Alloc1,
-//    alloc_subregion:at_any_array_index[Base2] = Alloc2.
-
-// alloc_aliases(Alloc1, Alloc2) <-
-//    alloc_aliases(Base1, Base2),
-//    alloc_subregion:at_array_index[Base1, Index] = Alloc1,
-//    alloc_subregion:at_array_index[Base2, Index] = Alloc2.
-
-// alloc_aliases(Alloc1, Alloc2) <-
-//    alloc_aliases(Base1, Base2),
-//    alloc_subregion:at_field[Base1, Field] = Alloc1,
-//    alloc_subregion:at_field[Base2, Field] = Alloc2.
-
-// // Create missing aliased allocations
-
-// alloc_subregion(NewAlloc)
-//  , alloc_subregion:at_field[Alloc1, Field] = NewAlloc
-//  , allocation:depth[NewAlloc] = N1 + 1
-//  <-
-//    alloc_aliases(Alloc1, Alloc2),
-//    allocation:depth[Alloc1] = N1,
-//    allocation:depth[Alloc2] = N2,
-//    N1 <= N2,
-//    alloc_subregion:at_field[Alloc2, Field] = _.
-
-// alloc_subregion(NewAlloc)
-//  , alloc_subregion:at_array_index[Alloc1, Index] = NewAlloc
-//  , allocation:depth[NewAlloc] = N1 + 1
-//  <-
-//    alloc_aliases(Alloc1, Alloc2),
-//    allocation:depth[Alloc1] = N1,
-//    allocation:depth[Alloc2] = N2,
-//    N1 <= N2,
-//    alloc_subregion:at_array_index[Alloc2, Index] = _.
-
-// alloc_subregion(NewAlloc)
-//  , alloc_subregion:at_any_array_index[Alloc1] = NewAlloc
-//  , allocation:depth[NewAlloc] = N1 + 1
-//  <-
-//    alloc_aliases(Alloc1, Alloc2),
-//    allocation:depth[Alloc1] = N1,
-//    allocation:depth[Alloc2] = N2,
-//    N1 <= N2,
-//    alloc_subregion:at_any_array_index[Alloc2] = _.
 
 
 //------------------------------------------------------------------------
@@ -672,9 +654,13 @@ ptr_points_to(Alloc, To) <-
    memcpy(_, To, From),
    ptr_points_to(Alloc, From).
 
-// Base case of `memcpy` call instructions
+// Base case of `memcpy` call instructions It should handle syntactic
+// aliases. For instance `memcpy(to,from)` is equivalent to
+// `memcpy(to, &from[0])`. We consider all possible aliases of the
+// base objects that flow to the operands of the @memcpy instruction,
+// but only keep type compatible pairs.
 
-memcpy(CallInsn, ToAlloc, FromAlloc) <-
+memcpy(CallInsn, AliasedTo, AliasedFrom) <-
    function:name[Callee] = Name,
    ( string:like(Name, "@memcpy%")
    ; string:like(Name, "@llvm.memcpy%") ),
@@ -682,17 +668,14 @@ memcpy(CallInsn, ToAlloc, FromAlloc) <-
    call_instruction:arg[CallInsn, 0] = To,
    call_instruction:arg[CallInsn, 1] = From,
    operand_points_to(FromAlloc, From),
-   operand_points_to(ToAlloc, To).
-
-
-// Handle syntactic aliases. For instance `memcpy(to,from)` is
-// equivalent to `memcpy(to, &from[0])`. Thus, we must propagate the
-// memcpy handling to all aliased locations.
-
-memcpy(Insn, AliasedTo, AliasedFrom) <-
-   memcpy(Insn, ToAlloc, FromAlloc),
+   operand_points_to(ToAlloc, To),
+   // consider any possible aliases
    alloc_aliases(AliasedTo, ToAlloc),
-   alloc_aliases(AliasedFrom, FromAlloc).
+   alloc_aliases(AliasedFrom, FromAlloc),
+   // check type compatibility
+   allocation:type[AliasedTo] = ToType,
+   allocation:type[AliasedFrom] = FromType,
+   type_compatible(FromType, ToType).
 
 
 // Recursive case for `memcpy` call instructions
@@ -702,48 +685,39 @@ memcpy(Insn, AliasedTo, AliasedFrom) <-
 // afford to miss its points-to set because it may be copied to more
 // generic objects that contain star expressions !!
 
-alloc_subregion(DestSubobject)
- , alloc_subregion:at_field[DestObject, Field] = DestSubobject
- , allocation:type[DestSubobject] = FieldType
- , memcpy(Insn, DestSubobject, SrcSubobject)
+memcpy(Insn, DestSubobject, SrcSubobject)
  <-
    memcpy(Insn, DestObject, SrcObject),
-   _may_expand_alloc_with_field(DestObject),
+   // get source and destination subobjects for given field
    alloc_subregion:at_field[SrcObject, Field] = SrcSubobject,
+   alloc_subregion:at_field[DestObject, Field] = DestSubobject,
    // check for type compatibility
-   allocation:type[SrcObject] = SrcType,
-   allocation:type[DestObject] = DestType,
-   struct_type:field[DestType, Field] = FieldType,
-   type_compatible:up_to_field(SrcType, DestType, Field).
-
-alloc_subregion(DestSubobject)
- , alloc_subregion:at_array_index[DestObject, Index] = DestSubobject
- , allocation:type[DestSubobject] = ElementType
- , memcpy(Insn, DestSubobject, SrcSubobject)
- <-
-   memcpy(Insn, DestObject, SrcObject),
-   _may_expand_base_alloc(DestObject),
-   alloc_subregion:at_array_index[SrcObject, Index] = SrcSubobject,
-   // check for type compatibility
-   allocation:type[SrcObject] = SrcType,
-   allocation:type[DestObject] = DestType,
-   array_type(SrcType),
-   array_type:component[DestType] = ElementType,
+   allocation:type[SrcSubobject] = SrcType,
+   allocation:type[DestSubobject] = DestType,
    type_compatible(SrcType, DestType).
 
-alloc_subregion(DestSubobject)
- , alloc_subregion:at_any_array_index[DestObject] = DestSubobject
- , allocation:type[DestSubobject] = ElementType
- , memcpy(Insn, DestSubobject, SrcSubobject)
+
+memcpy(Insn, DestSubobject, SrcSubobject)
  <-
    memcpy(Insn, DestObject, SrcObject),
-   _may_expand_base_alloc(DestObject),
-   alloc_subregion:at_any_array_index[SrcObject] = SrcSubobject,
+   // get source and destination subobjects
+   alloc_subregion:at_array_index[SrcObject, Index] = SrcSubobject,
+   alloc_subregion:at_array_index[DestObject, Index] = DestSubobject,
    // check for type compatibility
-   allocation:type[SrcObject] = SrcType,
-   allocation:type[DestObject] = DestType,
-   array_type(SrcType),
-   array_type:component[DestType] = ElementType,
+   allocation:type[SrcSubobject] = SrcType,
+   allocation:type[DestSubobject] = DestType,
+   type_compatible(SrcType, DestType).
+
+
+memcpy(Insn, DestSubobject, SrcSubobject)
+ <-
+   memcpy(Insn, DestObject, SrcObject),
+   // get source and destination subobjects for star index
+   alloc_subregion:at_any_array_index[SrcObject] = SrcSubobject,
+   alloc_subregion:at_any_array_index[DestObject] = DestSubobject,
+   // check for type compatibility
+   allocation:type[SrcSubobject] = SrcType,
+   allocation:type[DestSubobject] = DestType,
    type_compatible(SrcType, DestType).
 
 
@@ -782,6 +756,7 @@ null_location[] = Null ->
 // constant expressions.
 //------------------------------------------------------------------------------
 
+
 // Compute intermediate points to for `getelementptr` constant
 // expression up to some index
 
@@ -800,55 +775,49 @@ gep_constant_expr_points_to[CExpr, 0] = Alloc <-
 gep_constant_expr_points_to[CExpr, 1] = Alloc
  <-
    gep_constant_expr_points_to[CExpr, 0] = Alloc,
-   allocation:depth[Alloc] = N,
-   N > 0.
+   alloc_subregion(Alloc),
+   getelementptr_constant_expression:index[CExpr, 0] = Constant,
+   constant:to_int[Constant] = 0.
 
-alloc_subregion(Region)
- , alloc_subregion:at_array_index[Alloc, Index] = Region
- , gep_constant_expr_points_to[CExpr, 1] = Region
+
+gep_constant_expr_points_to[CExpr, 1] = Region
  <-
    gep_constant_expr_points_to[CExpr, 0] = Alloc,
-   _may_expand_base_alloc(Alloc),
-   allocation:depth[Alloc] = 0,
+   basic_allocation(Alloc),
    getelementptr_constant_expression:index[CExpr, 0] = Constant,
-   constant:to_int[Constant] = Index.
+   constant:to_int[Constant] = Index,
+   alloc_subregion:at_array_index[Alloc, Index] = Region.
 
 
 // Rest of the indices
 
-alloc_subregion(Region)
- , alloc_subregion:at_array_index[Alloc, ConstantIndex] = Region
- , gep_constant_expr_points_to[CExpr, NextIndex] = Region
+gep_constant_expr_points_to[CExpr, NextIndex] = Region
  <-
    gep_constant_expr_points_to[CExpr, Index] = Alloc,
    getelementptr_constant_expression:interm_type[CExpr, Index] = DeclaredType,
-   _may_expand_base_alloc(Alloc),
    array_type(DeclaredType),
+   alloc_subregion(Alloc),
+   // get constant array index (as integer)
    getelementptr_constant_expression:index[CExpr, Index] = Constant,
    constant:to_int[Constant] = ConstantIndex,
-   constant_expression:next_index[CExpr, Index] = NextIndex.
+   // NextIndex = Index + 1
+   constant_expression:next_index[CExpr, Index] = NextIndex,
+   // get subobject for given index
+   alloc_subregion:at_array_index[Alloc, ConstantIndex] = Region.
 
 
-alloc_subregion(Region)
- , alloc_subregion:at_field[Alloc, Field] = Region
- , gep_constant_expr_points_to[CExpr, NextIndex] = Region
+gep_constant_expr_points_to[CExpr, NextIndex] = Region
  <-
    gep_constant_expr_points_to[CExpr, Index] = Alloc,
    getelementptr_constant_expression:interm_type[CExpr, Index] = DeclaredType,
-   _may_expand_base_alloc(Alloc),
    struct_type(DeclaredType),
+   // get field (as integer constant)
    getelementptr_constant_expression:index[CExpr, Index] = Constant,
    constant:to_int[Constant] = Field,
-   constant_expression:next_index[CExpr, Index] = NextIndex.
-
-// Fallback
-
-gep_constant_expr_points_to[CExpr, NextIndex] = Alloc
- <-
-   gep_constant_expr_points_to[CExpr, Index] = Alloc,
-   allocation:depth[Alloc] = N,
-   field_sensitivity:max_depth[] = N,
-   constant_expression:next_index[CExpr, Index] = NextIndex.
+   // NextIndex = Index + 1
+   constant_expression:next_index[CExpr, Index] = NextIndex,
+   // get suboject for given field
+   alloc_subregion:at_field[Alloc, Field] = Region.
 
 
 constant_points_to[CExpr] = Alloc <-

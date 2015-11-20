@@ -110,9 +110,6 @@ assign_instruction(ToVar, Value) <-
    instruction:type[Insn] = Type,
    !vector_type(Type).
 
-// TODO model indices, arrays, fields, etc
-// TODO model also getelementptr constant expression
-
 // // A simple field-insensitive approach (just ignore indices of
 // // `getelementptr`)
 //
