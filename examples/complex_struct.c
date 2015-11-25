@@ -17,8 +17,28 @@ typedef struct {
 
 int *ep1, *ep2, *ep3;
 
+inner gl = {&ep1, NULL};
+int **ga[] = {&ep1, &ep2, &ep3};
+int **arr[][3] = {
+    {&ep1, &ep2, &ep3},
+    {&ep3, &ep2, &ep1},
+    {&ep2, &ep3, &ep1},
+};
+
 int main(int argc, char *argv[])
 {
+    int **larr[][3] = {
+        {&ep1, &ep2, &ep3},
+        {&ep3, &ep2, &ep1},
+        {&ep2, &ep3, &ep1},
+    };
+
+    arr[2][1] = &ep3;
+    larr[1][2] = NULL;
+    arr[2][1] = NULL;
+
+    int p = (int []) {1, 2, 3}[2];
+
     outer o;
     int z1 = 5, z2 = 6, z3 = 7;
     int zzz1, zzz2, zzz3, zzz4;
