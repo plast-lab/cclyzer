@@ -36,7 +36,7 @@ $(outdir):
 	mkdir $@
 
 # Target specific options
-$(outdir)/%.bc : CCFLAGS += -emit-llvm
+$(outdir)/%.bc : CCFLAGS += -emit-llvm -g
 # $(outdir)/%.bc : CCFLAGS += -Wl,-plugin-opt=also-emit-llvm
 
 
