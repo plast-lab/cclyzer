@@ -288,6 +288,7 @@ gep_points_to(Insn, 0, Alloc) <-
    !gep:vector_based(Insn),
    getelementptr_instruction:base[Insn] = Base,
    operand_points_to(Alloc, Base).
+// TODO check type compatibility
 
 //----------------------------------------------------------
 // For the first index of the GEP instruction
@@ -496,6 +497,7 @@ var_points_to(Alloc, ToVar) <-
    getelementptr_instruction:nindices[Insn] = Total,
    gep_points_to(Insn, Total, Alloc),
    instruction:to[Insn] = ToVar.
+// TODO type compatibility
 
 
 //------------------------------------------------------------------------
@@ -875,3 +877,17 @@ gep_constant_expr_points_to[CExpr, NextIndex] = Region
 constant_points_to[CExpr] = Alloc <-
    getelementptr_constant_expression:nindices[CExpr] = Total,
    gep_constant_expr_points_to[CExpr, Total] = Alloc.
+
+
+// gep_points_to(Insn, Index, Alloc) <-
+//    gep_points_to(Insn, Index, SomeAlloc),
+//    alloc_aliases(Alloc, SomeAlloc).
+
+// gep_points_to(Insn, 0, ZeroAliasAlloc)
+//  <-
+//    gep_points_to(Insn, 0, Alloc),
+//    // first index can be anything
+//    getelementptr_instruction:index[Insn, 0] = _,
+//    // base object
+//    basic_allocation(Alloc),
+//    alloc_subregion:at_array_index[Alloc, 0] = ZeroAliasAlloc.

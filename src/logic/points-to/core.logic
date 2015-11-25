@@ -69,12 +69,12 @@ assign_instruction(To, Value) ->
 
 var_points_to(Alloc, ToVar) <-
    assign_instruction(ToVar, Value),
-   operand_points_to(Alloc, Value).
+   operand_points_to(Alloc, Value). // TODO: consider adding type check
 
 // `bitcast` instructions
 assign_instruction(ToVar, Value) <-
    reachable_instruction(Insn),
-   bitcast_instruction:from[Insn] = Value,
+   bitcast_instruction:from[Insn] = Value,  // TODO: consider adding type check
    instruction:to[Insn] = ToVar.
 
 // `ptrtoint` instructions
@@ -235,4 +235,4 @@ var_points_to(Alloc, ToVar) <-
    instruction:to[Insn] = ToVar,
    load_instruction:address[Insn] = PtrOp,
    operand_points_to(BaseAlloc, PtrOp),
-   ptr_points_to(Alloc, BaseAlloc).
+   ptr_points_to(Alloc, BaseAlloc). // TODO: consider adding type check
