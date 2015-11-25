@@ -186,24 +186,6 @@ vtable:class_type[VTable] = Type
    constant_contains_vptr(VTable, Constant).
 
 
-// Create points-to dereference information for every possible offset
-// of every vtable. This way, when a variable points-to some vtable
-// with some offset, loading from this address will result in the
-// appropriate function.
-
-alloc_subregion(VTableOffset)
- , alloc_subregion:at_array_index[ZeroBase, Index] = VTableOffset
- , allocation:type[VTableOffset] = PtrFType
- , ptr_points_to(FAlloc, VTableOffset)
- <-
-   vtable:function[VTable, Index] = Function,
-   global_allocation:by_variable[VTable] = Base,
-   global_allocation:by_function[Function] = FAlloc,
-   alloc_subregion:at_array_index[Base, 0] = ZeroBase,
-   function:type[Function] = FType,
-   pointer_type:component[PtrFType] = FType.
-
-
 // Note !!! Load instructions on class instances will return the
 // object's vtable. The array-sensitive treatment of GEP instructions
 // will ensure that the indices are appropriately recorded, so that
