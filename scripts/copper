@@ -1,4 +1,4 @@
-"""This module is the main entry point for command-line execution."""
+#!python
 
 import argparse
 import contextlib

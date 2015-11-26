@@ -28,22 +28,22 @@ setup(
     keywords="LLVM datalog static analysis",
     license="MIT",
     url='https://github.com/plast-lab/llvm-datalog',
-    classifiers=[
+    classifiers = [
         "Development Status :: 3 - Alpha",
         "License :: OSI Approved :: MIT License",
         "Operating System :: POSIX :: Linux",
         "Topic :: Utilities",
     ],
-    py_modules=['__main__'],
+
     # Packages to be included
-    packages=[
+    packages = [
         'blox', 'copper', 'copper.cli', 'copper.config',
         'copper.runtime', 'resources', 'resources.logic',
         'utils'
     ],
 
     # Additional package data
-    package_data={
+    package_data = {
         'resources.logic' : [
             '*/*.lbb',
             '*/*.lbp',
@@ -56,14 +56,19 @@ setup(
     },
 
     # Additional data outside any python packages
-    data_files=[
+    data_files = [
         # Add dynamic libraries
         (site_packages_path, glob(path.join('lib', '*.so'))),
     ],
 
     # Source code directory
-    package_dir= {
+    package_dir = {
         '': 'src/main',
         'resources.logic': 'build/logic',
     },
+
+    # Python scripts
+    scripts = [
+        'scripts/copper'
+    ],
 )
