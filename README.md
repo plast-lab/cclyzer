@@ -3,8 +3,8 @@
 LLVM to Datalog
 ===============
 
-A tool for exporting LLVM bitcode into a Datalog workspace, which can
-then be used for static analysis.
+A tool for analyzing LLVM bitcode (generated either by C or C++) using
+Datalog.
 
 This project uses a commercial Datalog engine, developed by
 [LogicBlox Inc.](http://www.logicblox.com/).
@@ -51,9 +51,9 @@ lines appropriately:
 
 You will also have to install the following packages:
 
-#### Fedora 20
+#### Fedora 20, 21, 22
 
-    # yum install m4 ncurses ncurses-devel boost-devel protobuf-devel
+    # yum install m4 ncurses ncurses-devel boost-devel boost-python protobuf-devel pip
 
 #### Ubuntu
 
@@ -73,18 +73,31 @@ and the loaded logic modules.
 Installation
 ------------
 
-Build LLVM-Datalog as follows:
+We recommend first to create a
+[virtual environment](http://docs.python-guide.org/en/latest/dev/virtualenvs/)
+by running:
 
+    $ pip install virtualenv  # if not already installed
     $ cd /path/to/llvm-datalog/
-    $ make
-    $ sudo make install    # optional
+    $ virtualenv venv
 
 
-The last line is *optional*. It performs system-wide installation,
-placing the `llvm-datalog` binary to `/usr/local/bin`. You can skip
-this step and work with the binary inside `./build/dist/` entirely. In
-fact, this is what all the testing targets of the following section
-use.
+To activate the virtual environment, run:
+
+    $ . venv/bin/activate
+    (venv)$    # <--- your prompt should change to something like this
+
+
+Now, hile inside the virtualenv, build LLVM-Datalog as follows:
+
+    (venv)$ make
+    (venv)$ make install
+
+
+Then, you should be able to run the main `copper` script that analyzes
+LLVM Bitcode. Try:
+
+    (venv)$ copper -h
 
 
 Testing
@@ -98,14 +111,12 @@ You may run all the tests with:
 
 or a particular test, e.g., `stty`, with:
 
-    $ make test-stty.run
+    $ make test-stty
 
 It is also possible to invoke a python interpreter for a more
 interactive experience:
 
-    $ make shell
-    ...
-    >>>
+    $ python
     >>> from copper import *
     >>> config = AnalysisConfig(['./tests/stty/stty.bc'], './build/tests/stty')
     >>> analysis = Analysis(config)
@@ -117,11 +128,6 @@ interactive experience:
     # callgraph edges     :  144
     ...
     >>>
-
-Or if you have [ipython](http://ipython.org/) installed, you can try:
-
-    $ make PYTHON=ipython launch
-
 
 
 Troubleshooting
