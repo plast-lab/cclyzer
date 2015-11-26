@@ -1,7 +1,7 @@
 import collections
 import logging
 from os import path
-from pkg_resources import resource_stream, resource_listdir
+from pkg_resources import resource_stream, resource_listdir, resource_isdir
 from utils import singleton
 from . import settings
 from .runtime import FileManager
@@ -81,19 +81,23 @@ class ProjectManager(object):
         self._projects = {}
 
         metadata = {}           # a dict from internal names to project name, dependencies
-        logic_dir = 'logic'     # logic directory
+        logic_resource_pkg = settings.LOGIC_RESOURCE_PKG
 
         # Iterate over all project files
-        for project in resource_listdir(settings.RESOURCE_DIR, logic_dir):
+        for project in resource_listdir(logic_resource_pkg, '.'):
             # Skip empty resource paths (apparently, that can happen!!)
             if not project:
                 continue
 
+            # Skip ordinary files
+            if not resource_isdir(logic_resource_pkg, project):
+                continue
+
             # Construct project path
-            project_dir = path.join(logic_dir, project)
+            project_dir = project
 
             # Find project file
-            for resource in resource_listdir(settings.RESOURCE_DIR, project_dir):
+            for resource in resource_listdir(logic_resource_pkg, project_dir):
                 if resource.endswith(".project"):
                     # Compute path to resource
                     path_to_resource = path.join(project_dir, resource)
@@ -102,7 +106,7 @@ class ProjectManager(object):
                     # Read contents of project file
                     with open(path_to_file, 'w') as f:
                         # Copy contents from resource stream
-                        for byte in resource_stream(settings.RESOURCE_DIR, path_to_resource):
+                        for byte in resource_stream(logic_resource_pkg, path_to_resource):
                             f.write(byte)
 
                     # Extract metadata from project file

@@ -96,6 +96,16 @@ endef
 $(foreach project,$(projects),$(eval $(call project_template,$(project))))
 
 
+#-----------------------------------
+# Transform to python package
+#-----------------------------------
+
+all: $(OUTDIR)/__init__.py
+
+$(OUTDIR)/__init__.py:
+	touch $@
+
+
 #------------------------------------------------------------------------------
 #  [Generate Import Sources]
 #

@@ -50,7 +50,7 @@ class YamlConfiguration(object):
             self._data = yaml.safe_load(f)
 
     def install_default_config(self):
-        resources, default_conf = settings.RESOURCE_DIR, 'default_config.yaml'
+        resources, default_conf = settings.RESOURCE_PKG, 'default_config.yaml'
         self._logger.info("Installing configuration file to %s", self._config)
 
         with open(self._config, 'w') as conf:

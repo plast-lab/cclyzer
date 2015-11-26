@@ -12,14 +12,19 @@ site_packages_path = sysconfig.get_python_lib()
 
 
 setup(
+    # Application
     name='Copper',
     version='1.0',
-    author='George Balatsouras',
-    author_email='gbalats@gmail.com',
     description=(
         "A static analysis framework that uses the LogicBlox "
         "Datalog engine for analyzing LLVM bitcode."
     ),
+
+    # Author details
+    author='George Balatsouras',
+    author_email='gbalats@gmail.com',
+
+    # Application details
     keywords="LLVM datalog static analysis",
     license="MIT",
     url='https://github.com/plast-lab/llvm-datalog',
@@ -33,22 +38,32 @@ setup(
     # Packages to be included
     packages=[
         'blox', 'copper', 'copper.cli', 'copper.config',
-        'copper.runtime', 'resources', 'utils'
+        'copper.runtime', 'resources', 'resources.logic',
+        'utils'
     ],
+
     # Additional package data
     package_data={
+        'resources.logic' : [
+            '*/*.lbb',
+            '*/*.lbp',
+            '*/*.project',
+            '*/checksum',
+        ],
         'resources' : [
-            'logic/*.lbb',
-            'logic/*.lbp',
-            'logic/*.project',
-            'logic/*/checksum',
+            '*.yaml',
         ],
     },
+
     # Additional data outside any python packages
     data_files=[
         # Add dynamic libraries
         (site_packages_path, glob(path.join('lib', '*.so'))),
     ],
+
     # Source code directory
-    package_dir= {'': 'src/main'},
+    package_dir= {
+        '': 'src/main',
+        'resources.logic': 'build/logic',
+    },
 )

@@ -879,6 +879,8 @@ constant_points_to[CExpr] = Alloc <-
    gep_constant_expr_points_to[CExpr, Total] = Alloc.
 
 
+// TODO: check if the following is needed
+
 // gep_points_to(Insn, Index, Alloc) <-
 //    gep_points_to(Insn, Index, SomeAlloc),
 //    alloc_aliases(Alloc, SomeAlloc).

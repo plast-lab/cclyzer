@@ -14,6 +14,7 @@ class unpacked_binary(object):
     """
     def __init__(self, resource):
         self._resource = resource
+        self._pkg = settings.RESOURCE_PKG
         self.logger = logging.getLogger(__name__)
 
     def __enter__(self):
@@ -26,7 +27,7 @@ class unpacked_binary(object):
         if path.exists(path_to_file):
             # Open both cached and stored artifacts to compare
             cached_obj = open(path_to_file, 'rb')
-            disk_obj = resource_stream(settings.RESOURCE_DIR, path_to_resource)
+            disk_obj = resource_stream(self._pkg, path_to_resource)
 
             # File hasn't changed; don't overwrite
             if all(a == b for (a, b) in izip_longest(disk_obj, cached_obj)):
@@ -46,7 +47,7 @@ class unpacked_binary(object):
         # Create temporary executable file
         with open(path_to_file, 'wb') as binary:
             # Copy contents from resource stream
-            for byte in resource_stream(settings.RESOURCE_DIR, path_to_resource):
+            for byte in resource_stream(self._pkg, path_to_resource):
                 binary.write(byte)
             # Flush contents
             binary.flush()
@@ -67,19 +68,20 @@ class unpacked_project(object):
     """
     def __init__(self, project):
         self._project = project
+        self._pkg = settings.LOGIC_RESOURCE_PKG
         self.logger = logging.getLogger(__name__)
 
     def __enter__(self):
         # Compute resource path
         project = self._project
-        base_dir = path.join('logic', project)
+        base_dir = project
         root_dir = runtime.FileManager().getpath(base_dir)
 
         # Check if project has been extracted before
         if path.exists(root_dir):
             # Compare signatures
             disk_signature = resource_stream(
-                settings.RESOURCE_DIR, path.join(base_dir, 'checksum')
+                self._pkg, path.join(base_dir, 'checksum')
             ).read().strip()
 
             cached_signature = open(
@@ -96,7 +98,7 @@ class unpacked_project(object):
         self.logger.info("Extracting project %s to %s", project, root_dir)
 
         # Iterate over all project files
-        for resource in resource_listdir(settings.RESOURCE_DIR, base_dir):
+        for resource in resource_listdir(self._pkg, base_dir):
             # Skip empty resource paths (apparently, that can happen!!)
             if not resource:
                 continue
@@ -114,7 +116,7 @@ class unpacked_project(object):
 
             with open(path_to_file, 'w') as f:
                 # Copy contents from resource stream
-                for byte in resource_stream(settings.RESOURCE_DIR, path_to_resource):
+                for byte in resource_stream(self._pkg, path_to_resource):
                     f.write(byte)
 
         return root_dir
