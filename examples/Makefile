@@ -1,7 +1,7 @@
 LD = /usr/bin/ld.gold
 CC = clang
 CCFLAGS = -flto
-COPPER = ../build/dist/llvm-datalog
+COPPER = copper
 
 all:
 
