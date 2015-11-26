@@ -8,10 +8,7 @@ all:
 include $(LEVEL)/src/common.mk
 include blox.mk
 
-# Generate build directory for logic
-$(eval $(call create-destdir,logic))
-
-# Projects (add directory here to enable it)
+# Projects
 project.files := $(shell find -type f -name '*.project')
 projects      := $(patsubst ./%/,%,$(dir $(project.files)))
 
@@ -25,9 +22,9 @@ all:
 force:
 
 clean:
-	$(RM) -r $(logic.outdir)
+	$(RM) -r $(OUTDIR)
 
-.PHONY: all clean install uninstall force
+.PHONY: all clean force
 
 
 #------------------------------
@@ -38,13 +35,13 @@ define project_template
 
 $1.proj   := $1/$1.project
 $1.src    := $(wildcard $1/*.logic)
-$1.outdir := $(logic.outdir)/$1
-$1.ph     := $$($1.outdir)/.placeholder
+$1.outdir := $(OUTDIR)/$1
+$1.ph     := $$($1.outdir)/checksum
 $1.deps   := $1/deps.mk
 
 
 # Create output directory
-$$($1.outdir): | $(logic.outdir)
+$$($1.outdir): | $(OUTDIR)
 	$(MKDIR) $$@
 
 # Auto-generate project dependencies
@@ -112,7 +109,7 @@ $(foreach project,$(projects),$(eval $(call project_template,$(project))))
 #------------------------------------------------------------------------------
 
 schema.pb   := $(schema.src:schema/%.logic=$(import.outdir)/%.pb)
-export PATH := $(INSTALL_BIN):$(LEVEL)/bin:$(PATH)
+export PATH := $(LEVEL)/bin:$(PATH)
 
 # Generate protobuf messages from schema
 .INTERMEDIATE: $(schema.pb)
@@ -122,4 +119,4 @@ $(schema.pb): $(import.outdir)/%.pb: $(schema.ph) | $(import.outdir)
 # Generate import sources; this will recreate $(import.src) files
 .PHONY: import.src
 import.src: $(schema.pb)
-	$(importgen.exe) --ignore import/.ignored-predicates --dir facts --delim '\t' -o import $^
+	import-generator --ignore import/.ignored-predicates --dir facts --delim '\t' -o import $^

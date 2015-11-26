@@ -7,16 +7,16 @@ all:
 # Import common Makefile routines
 include $(LEVEL)/src/common.mk
 
-# Generate build directory
-$(eval $(call create-destdir,importgen))
-
+#-----------------------------------
+# Configure paths
+#-----------------------------------
 
 srcdir       := src
-outdir       := $(importgen.outdir)
+outdir       := $(OUTDIR)
 sources      := $(wildcard $(srcdir)/*.cc)
 objects       = $(patsubst $(srcdir)/%.cc,$(outdir)/%.o,$(sources))
 dependencies := $(patsubst $(srcdir)/%.cc,$(outdir)/%.d,$(sources))
-program      := $(or $(importgen.artifact),$(outdir)/$(importgen.exe))
+program      := $(BINDIR)/import-generator
 include_dirs := include
 
 

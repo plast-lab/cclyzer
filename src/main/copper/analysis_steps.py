@@ -1,5 +1,6 @@
 import abc
 import blox.connect
+import factgen
 import logging
 import os
 import shutil
@@ -42,8 +43,7 @@ class FactGenerationStep(AnalysisStep):
         os.makedirs(outdir)
 
         # Generate facts
-        with unpacked_binary('fact-generator') as executable:
-            subprocess.check_call([executable, "-f", "-o", outdir] + input_files)
+        factgen.run(input_files, outdir)
 
         self.logger.info("Stored facts into %s", outdir)
 

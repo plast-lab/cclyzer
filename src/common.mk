@@ -12,40 +12,22 @@ M4          := m4
 CXX         := g++
 PROTOC      := /usr/bin/protoc
 
-# Other tools
-factgen.exe   := fact-generator
-importgen.exe := import-generator
-
-
 #--------------------
 # Directory Tree
 #--------------------
 
-OUTDIR       = $(LEVEL)/build
-DESTDIR     ?= /usr/local
+BINDIR   = $(LEVEL)/bin
+LIBDIR   = $(LEVEL)/lib
+BUILDDIR = $(LEVEL)/build
+OUTDIR   = $(BUILDDIR)/$(notdir $(CURDIR))
 
-INSTALL_BIN  = $(DESTDIR)/bin
-INSTALL_LIB  = $(DESTDIR)/lib
 
+# Create build directory
 
-#---------------------------------------------------
-# Template to create destination directory
-#
-# Usage:
-#   $(eval $(call create-destdir, module-name))
-#---------------------------------------------------
-
-define create-destdir
-$1.outdir    = $(OUTDIR)/$(or $2,$(notdir $(CURDIR)))
-$1.artifact :=
-
-$$($1.outdir): | $(OUTDIR)
-	$(MKDIR) $$@
-
-endef
-
+$(OUTDIR): | $(BUILDDIR)
+	$(MKDIR) $@
 
 # Create build root-directory
 
-$(OUTDIR):
+$(BUILDDIR):
 	$(MKDIR) $@

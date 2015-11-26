@@ -8,39 +8,36 @@
 #include <llvm/Support/SourceMgr.h>
 #include "CsvGenerator.hpp"
 #include "FactWriter.hpp"
-#include "PredicateFilePolicy.hpp"
+#include "ParseException.hpp"
 #include "Options.hpp"
 
 #define foreach BOOST_FOREACH
 
+namespace fs = boost::filesystem;
 
-int main(int argc, char *argv[])
+
+void generateFacts(const std::vector<fs::path> &inputFiles,
+                   fs::path outputDir,
+                   std::string delim = "\t")
 {
-    namespace fs = boost::filesystem;
-
     llvm::LLVMContext &context = llvm::getGlobalContext();
     llvm::SMDiagnostic err;
 
-    // Parse command line
-    Options options(argc, argv);
-
     // Create fact writer
-    FactWriter writer(options);
+    FactWriter writer(delim, outputDir);
 
     // Create CSV generator
     CsvGenerator csvGen(writer);
 
     // Loop over each input file
-    foreach(fs::path inputFile, options.getInputFiles())
+    foreach(fs::path inputFile, inputFiles)
     {
         // Parse input file
         llvm::Module *module = llvm::ParseIRFile(inputFile.string(), err, context);
 
         // Check if parsing succeeded
-        if (!module) {
-            std::cerr << "Failed to parse " << inputFile << std::endl;
-            return EXIT_FAILURE;
-        }
+        if (!module)
+            throw ParseException(inputFile);
 
         // Canonicalize path
         std::string realPath = fs::canonical(inputFile).string();
@@ -56,6 +53,24 @@ int main(int argc, char *argv[])
 
         delete module;
     }
+}
 
+
+int main(int argc, char *argv[])
+{
+    // Parse command line
+    Options options(argc, argv);
+
+    // Get analysis options
+    std::string delim = options.getDelimiter();
+    fs::path outputDir = options.getOutputDirectory();
+
+    try {
+        generateFacts(options.getInputFiles(), outputDir, delim);
+    }
+    catch (const ParseException &error) {
+        std::cerr << error.what() << std::endl;
+        return EXIT_FAILURE;
+    }
     return EXIT_SUCCESS;
 }

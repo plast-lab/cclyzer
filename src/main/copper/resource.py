@@ -79,11 +79,11 @@ class unpacked_project(object):
         if path.exists(root_dir):
             # Compare signatures
             disk_signature = resource_stream(
-                settings.RESOURCE_DIR, path.join(base_dir, '.placeholder')
+                settings.RESOURCE_DIR, path.join(base_dir, 'checksum')
             ).read().strip()
 
             cached_signature = open(
-                path.join(root_dir, '.placeholder'), 'rb'
+                path.join(root_dir, 'checksum'), 'rb'
             ).read().strip()
 
             # Project hasn't changed; don't overwrite

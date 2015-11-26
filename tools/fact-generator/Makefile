@@ -7,24 +7,23 @@ all:
 # Import common Makefile routines
 include $(LEVEL)/src/common.mk
 
-# Generate build directory
-$(eval $(call create-destdir,factgen))
-
+#-----------------------------------
+# Configure paths
+#-----------------------------------
 
 srcdir       := src
-outdir       := $(factgen.outdir)
+outdir       := $(OUTDIR)
 sources      := $(wildcard $(srcdir)/*.cpp)
 objects      := $(patsubst $(srcdir)/%.cpp,$(outdir)/%.o,$(sources))
 dependencies := $(patsubst $(srcdir)/%.cpp,$(outdir)/%.d,$(sources))
-program      := $(or $(factgen.artifact),$(outdir)/$(factgen.exe))
+program      := $(BINDIR)/fact-generator
+library      := $(LIBDIR)/factgen.so
 include_dirs := include
 
 
 #-----------------------------------
 # Search in directories
 #-----------------------------------
-
-CPPFLAGS += $(addprefix -I ,$(include_dirs))
 
 vpath %.cpp $(srcdir)
 vpath %.h $(include_dirs)
@@ -35,30 +34,45 @@ vpath %.h $(include_dirs)
 #-----------------------------------
 
 CPPFLAGS += $(shell llvm-config --cppflags | sed 's/-fno-rtti//') 
-CXXFLAGS += $(shell llvm-config --cxxflags | sed 's/-fno-rtti//') -fexceptions -g -std=c++11
+CXXFLAGS += $(shell llvm-config --cxxflags | sed 's/-fno-rtti//')
 LDFLAGS  += $(shell llvm-config --libs)
 LDFLAGS  += $(filter-out -lz,$(shell llvm-config --ldflags))
 LDFLAGS  += -lpthread -lcurses -ldl -g
-LDFLAGS  += -lboost_system -lboost_filesystem -lboost_program_options
+LDFLAGS  += -lboost_system -lboost_filesystem -lboost_program_options -lboost_python
 
 
 #-----------------------------------
 # Basic Rules
 #-----------------------------------
 
+CPPFLAGS += $(addprefix -I ,$(include_dirs))
+CXXFLAGS += -fPIC -fexceptions -g -std=c++11
+
 $(outdir)/%.o: %.cpp | $(outdir)
 	$(COMPILE.cpp) -o $@ $<
 
-$(program): $(objects)
+$(program): $(filter-out $(outdir)/PyFactGen.o, $(objects))
 	$(LINK.cpp) -o $@ $^ $(LDFLAGS)
 
+$(library): $(objects)
+	$(LINK.cpp) -shared -o $@ $^ $(LDFLAGS)
+
+
+#-----------------------------------
+# Python specific flags
+#-----------------------------------
+
+py_objects := $(addprefix $(outdir)/,PyFactGen.o PyFactGen.d) $(library)
+
+$(py_objects): CXXFLAGS += $(shell python-config --includes)
+$(py_objects): LDFLAGS  += $(shell python-config --ldflags)
 
 #-----------------------------------
 # Phony targets
 #-----------------------------------
 
 .PHONY: all
-all: $(program)
+all: $(program) $(library)
 
 .PHONY: clean
 clean:

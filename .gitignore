@@ -10,3 +10,7 @@
 /tools/fact-generator/GRTAGS
 /tools/fact-generator/GTAGS
 /copper.log
+/bin/fact-generator
+/bin/import-generator
+/lib/factgen.so
+/venv/
