@@ -88,7 +88,7 @@ To activate the virtual environment, run:
     (venv)$    # <--- your prompt should change to something like this
 
 
-Now, hile inside the virtualenv, build LLVM-Datalog as follows:
+Now, while inside the virtualenv, build LLVM-Datalog as follows:
 
     (venv)$ make
     (venv)$ make install
