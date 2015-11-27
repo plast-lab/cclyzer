@@ -57,7 +57,7 @@ You will also have to install the following packages:
 
 #### Ubuntu
 
-    # apt-get install m4 libncurses5-dev libboost-dev libboost-filesystem-dev libboost-program-options-dev libprotobuf-dev
+    # apt-get install m4 libncurses5-dev libboost-dev libboost-filesystem-dev libboost-program-options-dev libprotobuf-dev libboost-python-dev
 
 #### YAML Configuration
 

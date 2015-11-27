@@ -38,7 +38,7 @@ CXXFLAGS += $(shell llvm-config --cxxflags | sed 's/-fno-rtti//')
 LDFLAGS  += $(shell llvm-config --libs)
 LDFLAGS  += $(filter-out -lz,$(shell llvm-config --ldflags))
 LDFLAGS  += -lpthread -lcurses -ldl -g
-LDFLAGS  += -lboost_system -lboost_filesystem -lboost_program_options -lboost_python
+LDFLAGS  += -lboost_system -lboost_filesystem -lboost_program_options
 
 
 #-----------------------------------
@@ -65,7 +65,7 @@ $(library): $(objects) | $(LIBDIR)
 py_objects := $(addprefix $(outdir)/,PyFactGen.o PyFactGen.d) $(library)
 
 $(py_objects): CXXFLAGS += $(shell python-config --includes)
-$(py_objects): LDFLAGS  += $(shell python-config --ldflags)
+$(py_objects): LDFLAGS  += $(shell python-config --ldflags) -lboost_python
 
 #-----------------------------------
 # Phony targets
