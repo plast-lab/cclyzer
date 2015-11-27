@@ -53,7 +53,7 @@ You will also have to install the following packages:
 
 #### Fedora 20, 21, 22
 
-    # yum install m4 ncurses ncurses-devel boost-devel boost-python protobuf-devel pip
+    # yum install m4 ncurses ncurses-devel boost-devel boost-python protobuf-devel python-pip
 
 #### Ubuntu
 
