@@ -51,10 +51,10 @@ CXXFLAGS += -fPIC -fexceptions -g -std=c++11
 $(outdir)/%.o: %.cpp | $(outdir)
 	$(COMPILE.cpp) -o $@ $<
 
-$(program): $(filter-out $(outdir)/PyFactGen.o, $(objects))
+$(program): $(filter-out $(outdir)/PyFactGen.o, $(objects))  | $(BINDIR)
 	$(LINK.cpp) -o $@ $^ $(LDFLAGS)
 
-$(library): $(objects)
+$(library): $(objects) | $(LIBDIR)
 	$(LINK.cpp) -shared -o $@ $^ $(LDFLAGS)
 
 

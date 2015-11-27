@@ -74,7 +74,7 @@ $(outdir)/%.o: %.cc | $(outdir)
 	$(QUIET) $(MKDIR) $(@D)
 	$(COMPILE.cc) -o $@ $<
 
-$(program): $(objects)
+$(program): $(objects) | $(BINDIR)
 	$(LINK.cc) -o $@ $^ $(LDFLAGS) -lprotobuf
 
 

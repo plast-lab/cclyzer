@@ -31,3 +31,11 @@ $(OUTDIR): | $(BUILDDIR)
 
 $(BUILDDIR):
 	$(MKDIR) $@
+
+# Create other directories
+
+$(LIBDIR):
+	$(MKDIR) $@
+
+$(BINDIR):
+	$(MKDIR) $@
