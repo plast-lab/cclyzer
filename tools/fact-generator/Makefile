@@ -33,12 +33,11 @@ vpath %.h $(include_dirs)
 # LLVM specific flags
 #-----------------------------------
 
-CPPFLAGS += $(shell llvm-config --cppflags | sed 's/-fno-rtti//') 
 CXXFLAGS += $(shell llvm-config --cxxflags | sed 's/-fno-rtti//')
-LDFLAGS  += $(shell llvm-config --libs)
-LDFLAGS  += $(filter-out -lz,$(shell llvm-config --ldflags))
-LDFLAGS  += -lpthread -lcurses -ldl -g
-LDFLAGS  += -lboost_system -lboost_filesystem -lboost_program_options
+LDFLAGS  += $(shell llvm-config --ldflags)
+LDLIBS   += $(shell llvm-config --libs core irreader)
+LDLIBS   += $(filter-out -lz,$(shell llvm-config --system-libs))
+LDLIBS   += -lboost_system -lboost_filesystem -lboost_program_options
 
 
 #-----------------------------------
@@ -52,10 +51,10 @@ $(outdir)/%.o: %.cpp | $(outdir)
 	$(COMPILE.cpp) -o $@ $<
 
 $(program): $(filter-out $(outdir)/PyFactGen.o, $(objects))  | $(BINDIR)
-	$(LINK.cpp) -o $@ $^ $(LDFLAGS)
+	$(LINK.cpp) -o $@ $^ $(LDLIBS)
 
 $(library): $(objects) | $(LIBDIR)
-	$(LINK.cpp) -shared -o $@ $^ $(LDFLAGS)
+	$(LINK.cpp) -shared -o $@ $^ $(LDLIBS)
 
 
 #-----------------------------------
@@ -65,7 +64,8 @@ $(library): $(objects) | $(LIBDIR)
 py_objects := $(addprefix $(outdir)/,PyFactGen.o PyFactGen.d) $(library)
 
 $(py_objects): CXXFLAGS += $(shell python-config --includes)
-$(py_objects): LDFLAGS  += $(shell python-config --ldflags) -lboost_python
+$(py_objects): LDFLAGS  += $(shell python-config --ldflags)
+$(py_objects): LDLIBS   += -lboost_python
 
 #-----------------------------------
 # Phony targets
