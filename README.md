@@ -53,11 +53,11 @@ You will also have to install the following packages:
 
 #### Fedora 20, 21, 22
 
-    # yum install m4 ncurses ncurses-devel boost-devel boost-python protobuf-devel python-pip
+    # yum install m4 ncurses ncurses-devel boost-devel boost-python protobuf-devel python-pip python-devel
 
 #### Ubuntu
 
-    # apt-get install m4 libncurses5-dev libboost-dev libboost-filesystem-dev libboost-program-options-dev libprotobuf-dev libboost-python-dev
+    # apt-get install m4 libncurses5-dev libboost-dev libboost-filesystem-dev libboost-program-options-dev libboost-python-dev libprotobuf-dev python-pip python-dev
 
 #### YAML Configuration
 
