@@ -25,8 +25,8 @@ include_dirs := include
 #-----------------------------------
 
 CPPFLAGS += $(addprefix -I ,$(include_dirs))
-LDFLAGS  += -lboost_program_options
-LDFLAGS  += -lboost_system -lboost_filesystem
+LDLIBS   += -lboost_program_options
+LDLIBS   += -lboost_system -lboost_filesystem
 
 vpath %.cc $(srcdir)
 vpath %.h  $(include_dirs)
@@ -74,8 +74,9 @@ $(outdir)/%.o: %.cc | $(outdir)
 	$(QUIET) $(MKDIR) $(@D)
 	$(COMPILE.cc) -o $@ $<
 
+$(program): LDLIBS += -lprotobuf
 $(program): $(objects) | $(BINDIR)
-	$(LINK.cc) -o $@ $^ $(LDFLAGS) -lprotobuf
+	$(LINK.cc) -o $@ $^ $(LDLIBS)
 
 
 #-----------------------------------
