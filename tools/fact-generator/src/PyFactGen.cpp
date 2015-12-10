@@ -56,7 +56,7 @@ PyObject *parseExceptionType = NULL;
 
 void translateParseException(ParseException const &e)
 {
-    assert(ParseExceptionType != NULL);
+    assert(parseExceptionType != NULL);
     py::object pythonExceptionInstance(e);
     PyErr_SetObject(parseExceptionType, pythonExceptionInstance.ptr());
 }
