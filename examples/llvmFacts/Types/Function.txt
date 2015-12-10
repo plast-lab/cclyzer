@@ -1,3 +1,0 @@
-</home/eirini/workspace/ParseIR/src/proj/test_3.3.ll>:foo
-</home/eirini/workspace/ParseIR/src/proj/test_3.3.ll>:func
-</home/eirini/workspace/ParseIR/src/proj/test_3.3.ll>:main

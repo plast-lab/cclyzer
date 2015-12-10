@@ -1,2 +1,0 @@
-</home/eirini/workspace/ParseIR/src/proj/test_3.3.ll>:func:10	</home/eirini/workspace/ParseIR/src/proj/test_3.3.ll>:func:140357756
-</home/eirini/workspace/ParseIR/src/proj/test_3.3.ll>:main:15	</home/eirini/workspace/ParseIR/src/proj/test_3.3.ll>:main:140360028

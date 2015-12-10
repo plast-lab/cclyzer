@@ -1,6 +1,0 @@
-</home/eirini/workspace/ParseIR/src/proj/test_3.3.ll>:main:20
-</home/eirini/workspace/ParseIR/src/proj/test_3.3.ll>:main:24
-</home/eirini/workspace/ParseIR/src/proj/test_3.3.ll>:main:27
-</home/eirini/workspace/ParseIR/src/proj/test_3.3.ll>:main:37
-</home/eirini/workspace/ParseIR/src/proj/test_3.3.ll>:main:38
-</home/eirini/workspace/ParseIR/src/proj/test_3.3.ll>:main:39

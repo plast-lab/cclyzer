@@ -1,3 +1,0 @@
-</home/eirini/workspace/ParseIR/src/proj/test_3.3.ll>:foo	i32
-</home/eirini/workspace/ParseIR/src/proj/test_3.3.ll>:func	i32
-</home/eirini/workspace/ParseIR/src/proj/test_3.3.ll>:main	i32

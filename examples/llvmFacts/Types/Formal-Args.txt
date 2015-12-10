@@ -1,6 +1,0 @@
-</home/eirini/workspace/ParseIR/src/proj/test_3.3.ll>:foo	0	</home/eirini/workspace/ParseIR/src/proj/test_3.3.ll>:foo:arg
-</home/eirini/workspace/ParseIR/src/proj/test_3.3.ll>:foo	1	</home/eirini/workspace/ParseIR/src/proj/test_3.3.ll>:foo:p
-</home/eirini/workspace/ParseIR/src/proj/test_3.3.ll>:foo	2	</home/eirini/workspace/ParseIR/src/proj/test_3.3.ll>:foo:str
-</home/eirini/workspace/ParseIR/src/proj/test_3.3.ll>:func	0	</home/eirini/workspace/ParseIR/src/proj/test_3.3.ll>:func:x
-</home/eirini/workspace/ParseIR/src/proj/test_3.3.ll>:func	1	</home/eirini/workspace/ParseIR/src/proj/test_3.3.ll>:func:y
-</home/eirini/workspace/ParseIR/src/proj/test_3.3.ll>:func	2	</home/eirini/workspace/ParseIR/src/proj/test_3.3.ll>:func:z
