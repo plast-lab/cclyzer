@@ -106,7 +106,7 @@ class CsvGenerator : private RefmodePolicy
     void visitNamedMDNode(const llvm::NamedMDNode *NMD);
 
 
-    void processModule(const llvm::Module *Mod, std::string& path);
+    void processModule(const llvm::Module &Mod, std::string& path);
     void writeVarsTypesAndConstants(const llvm::DataLayout &layout);
 
     /* Visitor classes */
@@ -131,9 +131,9 @@ class CsvGenerator : private RefmodePolicy
 
     /* A RAII object for recording the current context. */
     struct Context {
-        Context(CsvGenerator &generator, const llvm::Value *v)
+        Context(CsvGenerator &generator, const llvm::Value &v)
             : gen(generator) {
-            gen.enterContext(v);
+            gen.enterContext(&v);
         }
 
         ~Context() {
@@ -145,9 +145,9 @@ class CsvGenerator : private RefmodePolicy
     };
 
     struct ModuleContext {
-        ModuleContext(CsvGenerator &generator, const llvm::Module *m, const std::string &path)
+        ModuleContext(CsvGenerator &generator, const llvm::Module &m, const std::string &path)
             : gen(generator) {
-            gen.enterModule(m, path);
+            gen.enterModule(&m, path);
         }
 
         ~ModuleContext() {

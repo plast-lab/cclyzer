@@ -44,7 +44,7 @@ void generateFacts(const std::vector<fs::path> &inputFiles,
         std::string realPath = fs::canonical(inputFile).string();
 
         // Generate facts for this module
-        csvGen.processModule(module.get(), realPath);
+        csvGen.processModule(*module, realPath);
 
         // Get data layout of this module
         const llvm::DataLayout &layout = module->getDataLayout();

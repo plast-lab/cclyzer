@@ -52,7 +52,7 @@ class InstructionVisitor : public llvm::InstVisitor<InstructionVisitor>
     }
 
   public:
-    InstructionVisitor(CsvGenerator &generator, const llvm::Module *M)
+    InstructionVisitor(CsvGenerator &generator, const llvm::Module &M)
         : writer(generator.writer), gen(generator), Mod(M) {}
 
     /*******************************
@@ -208,7 +208,7 @@ class InstructionVisitor : public llvm::InstVisitor<InstructionVisitor>
     CsvGenerator &gen;
 
     /* Associated LLVM module */
-    const llvm::Module *Mod;
+    const llvm::Module &Mod;
 };
 
 #endif

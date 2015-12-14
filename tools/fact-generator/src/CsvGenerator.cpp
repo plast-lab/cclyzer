@@ -29,7 +29,7 @@ inline std::string demangle(const char* name)
 }
 
 
-void CsvGenerator::processModule(const Module * Mod, string& path)
+void CsvGenerator::processModule(const Module &Mod, string& path)
 {
     InstructionVisitor IV(*this, Mod);
     ModuleContext MC(*this, Mod, path);
@@ -38,45 +38,53 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
 
     // iterate over named metadata
     for (Module::const_named_metadata_iterator
-             I = Mod->named_metadata_begin(),
-             E = Mod->named_metadata_end(); I != E; ++I) {
-        visitNamedMDNode(I);
+             it  = Mod.named_metadata_begin(),
+             end = Mod.named_metadata_end(); it != end; ++it)
+    {
+        visitNamedMDNode(it);
     }
 
     // iterating over global variables in a module
-    for (Module::const_global_iterator gi = Mod->global_begin(), E = Mod->global_end(); gi != E; ++gi) {
-        refmode_t refmode = refmodeOfGlobalValue(gi);
-        visitGlobalVar(gi, refmode);
-        types.insert(gi->getType());
+    for (Module::const_global_iterator
+             it = Mod.global_begin(), end = Mod.global_end(); it != end; ++it)
+    {
+        refmode_t refmode = refmodeOfGlobalValue(it);
+        visitGlobalVar(it, refmode);
+        types.insert(it->getType());
     }
 
     // iterating over global alias in a module
-    for (Module::const_alias_iterator ga = Mod->alias_begin(), E = Mod->alias_end(); ga != E; ++ga) {
-        refmode_t refmode = refmodeOfGlobalValue(ga);
-        visitGlobalAlias(ga, refmode);
-        types.insert(ga->getType());
+    for (Module::const_alias_iterator
+             it = Mod.alias_begin(), end = Mod.alias_end(); it != end; ++it)
+    {
+        refmode_t refmode = refmodeOfGlobalValue(it);
+        visitGlobalAlias(it, refmode);
+        types.insert(it->getType());
     }
 
     // iterating over functions in a module
-    for (Module::const_iterator fi = Mod->begin(), fi_end = Mod->end(); fi != fi_end; ++fi)
+    for (Module::const_iterator
+             it = Mod.begin(), end = Mod.end(); it != end; ++it)
     {
-        Context C(*this, fi);
-        refmode_t funcref = refmodeOfFunction(fi);
+        const Function &func = *it;
+
+        Context C(*this, func);
+        refmode_t funcref = refmodeOfFunction(it);
 
         // Record function type
-        types.insert(fi->getFunctionType());
+        types.insert(func.getFunctionType());
 
         // Serialize function properties
-        refmode_t visibility = refmodeOf(fi->getVisibility());
-        refmode_t linkage = refmodeOf(fi->getLinkage());
-        refmode_t typeSignature = refmodeOf(fi->getFunctionType());
+        refmode_t visibility = refmodeOf(func.getVisibility());
+        refmode_t linkage = refmodeOf(func.getLinkage());
+        refmode_t typeSignature = refmodeOf(func.getFunctionType());
 
         // Record function type signature
         writeFact(pred::function::type, funcref, typeSignature);
 
         // Record function signature (name plus type signature) after
         // unmangling
-        writeFact(pred::function::signature, funcref, demangle(fi->getName().data()));
+        writeFact(pred::function::signature, funcref, demangle(func.getName().data()));
 
         // Record function linkage, visibility, alignment, and GC
         if (!linkage.empty())
@@ -85,34 +93,34 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
         if (!visibility.empty())
             writeFact(pred::function::visibility, funcref, visibility);
 
-        if (fi->getAlignment())
-            writeFact(pred::function::alignment, funcref, fi->getAlignment());
+        if (func.getAlignment())
+            writeFact(pred::function::alignment, funcref, func.getAlignment());
 
-        if (fi->hasGC())
-            writeFact(pred::function::gc, funcref, fi->getGC());
+        if (func.hasGC())
+            writeFact(pred::function::gc, funcref, func.getGC());
 
-        if (fi->hasPersonalityFn()) {
-            Constant *pers_fn = fi->getPersonalityFn();
+        if (func.hasPersonalityFn()) {
+            Constant *pers_fn = func.getPersonalityFn();
             refmode_t pers_fn_ref = writeConstant(*pers_fn);
 
-            writeFact(pred::function::pers_fn, funcref, fi->getPersonalityFn());
+            writeFact(pred::function::pers_fn, funcref, func.getPersonalityFn());
         }
 
         // Record calling convection if it not defaults to C
-        if (fi->getCallingConv() != CallingConv::C) {
-            refmode_t cconv = refmodeOf(fi->getCallingConv());
+        if (func.getCallingConv() != CallingConv::C) {
+            refmode_t cconv = refmodeOf(func.getCallingConv());
             writeFact(pred::function::calling_conv, funcref, cconv);
         }
 
         // Record function name
-        writeFact(pred::function::name, funcref, "@" + fi->getName().str());
+        writeFact(pred::function::name, funcref, "@" + func.getName().str());
 
         // Address not significant
-        if (fi->hasUnnamedAddr())
+        if (func.hasUnnamedAddr())
             writeFact(pred::function::unnamed_addr, funcref);
 
         // Record function attributes TODO
-        const AttributeSet &Attrs = fi->getAttributes();
+        const AttributeSet &Attrs = func.getAttributes();
 
         if (Attrs.hasAttributes(AttributeSet::ReturnIndex))
             writeFact(pred::function::ret_attr, funcref,
@@ -121,7 +129,7 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
         writeFnAttributes(pred::function::attr, funcref, Attrs);
 
         // Nothing more to do for function declarations
-        if (fi->isDeclaration()) {
+        if (func.isDeclaration()) {
             writeFact(pred::function::id_decl, funcref); // record function declaration
             continue;
         }
@@ -130,15 +138,15 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
         writeFact(pred::function::id_defn, funcref);
 
         // Record section
-        if(fi->hasSection())
-            writeFact(pred::function::section, funcref, fi->getSection());
+        if(func.hasSection())
+            writeFact(pred::function::section, funcref, func.getSection());
 
         // Record function parameters
         {
             int index = 0;
 
             for (Function::const_arg_iterator
-                     arg = fi->arg_begin(), arg_end = fi->arg_end();
+                     arg = func.arg_begin(), arg_end = func.arg_end();
                  arg != arg_end; arg++)
             {
                 refmode_t varId = refmodeOfLocalValue(arg);
@@ -151,9 +159,9 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
         int counter = 0;
 
         // iterating over basic blocks in a function
-        foreach (const llvm::BasicBlock &bb, *fi)
+        foreach (const llvm::BasicBlock &bb, func)
         {
-            Context C(*this, &bb);
+            Context C(*this, bb);
             refmode_t bbRef = refmodeOfBasicBlock(&bb);
 
             // Record basic block entry as a label
@@ -176,7 +184,7 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
             // iterating over basic block instructions
             foreach (const llvm::Instruction &instr, bb)
             {
-                Context C(*this, &instr);
+                Context C(*this, instr);
 
                 // Compute instruction refmode
                 refmode_t instrRef = refmodeOfInstruction(&instr, counter++);
