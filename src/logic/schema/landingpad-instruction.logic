@@ -12,6 +12,10 @@ landingpad_instruction:type[Insn] = Type ->
 landingpad_instruction:pers_fn[Insn] = Func ->
    landingpad_instruction(Insn), constant(Func).
 
+landingpad_instruction:pers_fn[Insn] = PersonalityFunction <-
+   landingpad_instruction(Insn),
+   instruction:function[Insn] = InFunction,
+   function:pers_fn[InFunction] = PersonalityFunction.
 
 //------------------------------------------------------------------------------
 // [Landing Pad]

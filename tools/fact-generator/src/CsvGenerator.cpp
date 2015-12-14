@@ -82,6 +82,13 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
         if (fi->hasGC())
             writeFact(pred::function::gc, funcref, fi->getGC());
 
+        if (fi->hasPersonalityFn()) {
+            Constant *pers_fn = fi->getPersonalityFn();
+            refmode_t pers_fn_ref = writeConstant(*pers_fn);
+
+            writeFact(pred::function::pers_fn, funcref, fi->getPersonalityFn());
+        }
+
         // Record calling convection if it not defaults to C
         if (fi->getCallingConv() != CallingConv::C) {
             refmode_t cconv = refmodeOf(fi->getCallingConv());

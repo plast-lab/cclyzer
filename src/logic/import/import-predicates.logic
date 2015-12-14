@@ -1812,6 +1812,21 @@ lang:physical:filePath[`_function:param_attribute] = "facts/predicates/function-
 
 
 
+_function:pers_fn(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_function:pers_fn] = "\t".
+lang:physical:filePath[`_function:pers_fn] = "facts/predicates/function-pers_fn.dlm".
+
++function_decl:id(e0:v0),
++function_decl(e0),
++constant:id(e1:v1),
++function_constant(e1),
++function:pers_fn[e0] = e1
+<-
+   _function:pers_fn(v0, v1).
+
+
+
 _function:return_attribute(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_function:return_attribute] = "\t".
@@ -2898,21 +2913,6 @@ lang:physical:filePath[`_landingpad_instruction:nclauses] = "facts/predicates/la
 +landingpad_instruction:nclauses[e0] = v1
 <-
    _landingpad_instruction:nclauses(v0, v1).
-
-
-
-_landingpad_instruction:pers_fn(v0, v1) -> string(v0), string(v1).
-
-lang:physical:delimiter[`_landingpad_instruction:pers_fn] = "\t".
-lang:physical:filePath[`_landingpad_instruction:pers_fn] = "facts/predicates/landingpad_instruction-pers_fn.dlm".
-
-+instruction:id(e0:v0),
-+landingpad_instruction(e0),
-+constant:id(e1:v1),
-+constant(e1),
-+landingpad_instruction:pers_fn[e0] = e1
-<-
-   _landingpad_instruction:pers_fn(v0, v1).
 
 
 

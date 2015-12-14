@@ -36,6 +36,7 @@ namespace predicates
     pred_t function::alignment = "function:alignment";
     pred_t function::attr = "function:attributes";
     pred_t function::gc = "function:gc";
+    pred_t function::pers_fn = "function:pers_fn";
     pred_t function::name = "function:name";
     pred_t function::type = "function:type";
     pred_t function::signature = "function:signature";
@@ -333,7 +334,6 @@ namespace predicates
 
     entity_pred_t landingpad::instr = "landingpad_instruction";
     pred_t landingpad::type = "landingpad_instruction:type";
-    pred_t landingpad::fn = "landingpad_instruction:pers_fn";
     pred_t landingpad::catch_clause = "landingpad_instruction:clause:catch_tmp";
     pred_t landingpad::filter_clause = "landingpad_instruction:clause:filter_tmp";
     pred_t landingpad::nclauses = "landingpad_instruction:nclauses";

@@ -535,7 +535,6 @@ void InstructionVisitor::visitLandingPadInst(LandingPadInst &LI)
     refmode_t iref = recordInstruction(pred::landingpad::instr);
 
     gen.writeFact(pred::landingpad::type, iref, gen.refmodeOf(LI.getType()));
-    writeInstrOperand(pred::landingpad::fn, iref, LI.getPersonalityFn());
 
     // cleanup
     if (LI.isCleanup())

@@ -92,6 +92,9 @@ function:alignment[Func] = Alignment ->
 function:gc[Func] = CollectorName ->
    function_decl(Func), string(CollectorName).
 
+function:pers_fn[Func] = PersonalityFunction ->
+   function_decl(Func), function_constant(PersonalityFunction).
+
 function:attributes(Func, Attr) ->
    function_decl(Func), attribute(Attr).
 

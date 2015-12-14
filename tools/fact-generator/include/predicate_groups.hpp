@@ -70,6 +70,7 @@ namespace predicates
         static pred_t alignment;
         static pred_t attr;
         static pred_t gc;
+        static pred_t pers_fn;
         static pred_t name;
         static pred_t type;
         static pred_t signature;
@@ -479,7 +480,6 @@ namespace predicates
     struct landingpad : predicate_group {
         static entity_pred_t instr;
         static pred_t type;
-        static pred_t fn;
         static pred_t catch_clause;
         static pred_t filter_clause;
         static pred_t nclauses;
