@@ -33,7 +33,8 @@ void generateFacts(const std::vector<fs::path> &inputFiles,
     foreach(fs::path inputFile, inputFiles)
     {
         // Parse input file
-        llvm::Module *module = llvm::ParseIRFile(inputFile.string(), err, context);
+        std::unique_ptr<llvm::Module> module =
+            llvm::parseIRFile(inputFile.string(), err, context);
 
         // Check if parsing succeeded
         if (!module)
@@ -43,15 +44,13 @@ void generateFacts(const std::vector<fs::path> &inputFiles,
         std::string realPath = fs::canonical(inputFile).string();
 
         // Generate facts for this module
-        csvGen.processModule(module, realPath);
+        csvGen.processModule(module.get(), realPath);
 
         // Get data layout of this module
-        const llvm::DataLayout *layout = module->getDataLayout();
+        const llvm::DataLayout &layout = module.get()->getDataLayout();
 
         // Write types
-        csvGen.writeVarsTypesAndConstants(*layout);
-
-        delete module;
+        csvGen.writeVarsTypesAndConstants(layout);
     }
 }
 

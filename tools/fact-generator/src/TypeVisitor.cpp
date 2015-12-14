@@ -67,10 +67,6 @@ void CsvGenerator::TypeVisitor::visitType(const Type *type)
           break;
       case llvm::Type::X86_MMXTyID: // TODO: handle this type
           break;
-      default:
-          type->dump();
-          llvm::errs() << "-" << type->getTypeID()
-                       << ": invalid type encountered.\n";
     }
 }
 
