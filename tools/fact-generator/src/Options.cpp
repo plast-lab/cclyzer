@@ -1,5 +1,4 @@
 #include <assert.h>
-#include <cstdlib>
 #include <iostream>
 
 #include <boost/filesystem.hpp>
