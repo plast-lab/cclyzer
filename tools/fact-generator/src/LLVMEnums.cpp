@@ -1,4 +1,5 @@
 #include <sstream>
+#include <llvm/Support/raw_ostream.h>
 #include "LLVMEnums.hpp"
 
 using std::string;
@@ -52,6 +53,9 @@ string LLVMEnumSerializer::to_string(GlobalVariable::ThreadLocalMode TLM)
       case GlobalVariable::LocalExecTLSModel:
           tlm = "thread_local(localexec)";
           break;
+      default:
+          errs() << "Unrecognized thread local mode: " << TLM << '\n';
+          tlm = "<invalid tlm>";
     }
     return tlm;
 }
@@ -77,6 +81,10 @@ string LLVMEnumSerializer::to_string(GlobalValue::LinkageTypes LT)
       case GlobalValue::AvailableExternallyLinkage:
           linkTy = "available_externally";
           break;
+      default:
+          errs() << "Unrecognized linkage type: " << LT << '\n';
+          linkTy = "<invalid linkage>";
+          break;
     }
     return linkTy;
 }
@@ -92,6 +100,10 @@ string LLVMEnumSerializer::to_string(GlobalValue::VisibilityTypes Vis)
 
       case GlobalValue::HiddenVisibility:     visibility = "hidden";      break;
       case GlobalValue::ProtectedVisibility:  visibility = "protected";   break;
+      default:
+          errs() << "Unrecognized visibility type: " << Vis << '\n';
+          visibility = "<invalid visibility>";
+          break;
     }
 
     return visibility;
@@ -110,6 +122,10 @@ string LLVMEnumSerializer::to_string(llvm::AtomicOrdering ordering)
       case Release: atomic = "release";                break;
       case AcquireRelease: atomic = "acq_rel";         break;
       case SequentiallyConsistent: atomic = "seq_cst"; break;
+      default:
+          errs() << "Unrecognized atomic ordering type: " << ordering << '\n';
+          atomic = "<invalid atomic ordering>";
+          break;
     }
     return atomic;
 }

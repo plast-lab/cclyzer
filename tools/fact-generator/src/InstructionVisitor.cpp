@@ -288,10 +288,8 @@ void InstructionVisitor::visitInvokeInst(InvokeInst &II)
                   : pred::invoke::instr_indirect, iref);
 
     Value *invokeOp = II.getCalledValue();
-    PointerType *ptrTy = cast<PointerType>(invokeOp->getType());
-    FunctionType *funcTy = cast<FunctionType>(ptrTy->getElementType());
 
-    // invoke instruction function
+    // invoke instruction function (also records type)
     writeInstrOperand(pred::invoke::function, iref, invokeOp);
 
     // actual args
@@ -562,10 +560,8 @@ void InstructionVisitor::visitCallInst(CallInst &CI)
               : pred::call::instr_indirect, iref);
 
     Value *callOp = CI.getCalledValue();
-    PointerType *ptrTy = cast<PointerType>(callOp->getType());
-    FunctionType *funcTy = cast<FunctionType>(ptrTy->getElementType());
-    Type *RetTy = funcTy->getReturnType();
 
+    // call instruction function (also records type)
     writeInstrOperand(pred::call::function, iref, callOp);
 
     for (unsigned op = 0; op < CI.getNumArgOperands(); ++op)

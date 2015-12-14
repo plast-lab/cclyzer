@@ -64,7 +64,7 @@ void translateParseException(ParseException const &e)
 
 // Create thin wrappers for overloaded function
 
-BOOST_PYTHON_FUNCTION_OVERLOADS(pyfactgen_overloads, pyfactgen, 2, 3);
+BOOST_PYTHON_FUNCTION_OVERLOADS(pyfactgen_overloads, pyfactgen, 2, 3)
 
 
 // Path converter

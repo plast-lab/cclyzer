@@ -73,9 +73,6 @@ class RefmodePolicy::Impl : LLVMEnumSerializer {
 
         // Add context
         contexts.push_back(RefContext(prefix.str()));
-
-        // Parse metadata
-        parseMetadata(module);
     }
 
     void exitModule() {
