@@ -1,4 +1,5 @@
 #include <sstream>
+#include <llvm/IR/ModuleSlotTracker.h>
 #include "RefmodePolicy.hpp"
 #include "LLVMEnums.hpp"
 
@@ -64,7 +65,7 @@ class RefmodePolicy::Impl : LLVMEnumSerializer {
         using namespace llvm;
 
         Mod = module;
-        mdnNext = 0;
+        slotTracker = new ModuleSlotTracker(Mod);
 
         // Compute global prefix for this module
         std::stringstream prefix;
@@ -79,8 +80,8 @@ class RefmodePolicy::Impl : LLVMEnumSerializer {
 
     void exitModule() {
         Mod = nullptr;
-        mdnMap.clear();
         contexts.pop_back();
+        delete slotTracker;
     }
 
   protected:
@@ -88,16 +89,6 @@ class RefmodePolicy::Impl : LLVMEnumSerializer {
 
     // Compute variable numberings
     static void computeNumbering(const llvm::Function *, std::map<const llvm::Value*,unsigned> &);
-
-    // Add metadata node
-    void createMetadataSlot(const llvm::MDNode *N);
-
-    // Retrieve metadata slot
-    int getMetadataSlot(const llvm::MDNode *N) const {
-        // Find the MDNode in the module map
-        std::map<const llvm::MDNode*, unsigned>::const_iterator MI = mdnMap.find(N);
-        return MI == mdnMap.end() ? -1 : (int) MI->second;
-    }
 
     // Compute all metadata slots
     void parseMetadata(const llvm::Module *module);
@@ -150,9 +141,9 @@ class RefmodePolicy::Impl : LLVMEnumSerializer {
         // Mapping numbers to unnamed values
         std::map<const llvm::Value*,unsigned> numbering;
 
-        bool isFunction;
-
         std::string prefix;
+
+        bool isFunction;
     };
 
     // Tracking local contexts
@@ -161,10 +152,8 @@ class RefmodePolicy::Impl : LLVMEnumSerializer {
     // Current module and path
     const llvm::Module *Mod;
 
-    // Mapping numbers to metadata nodes, module-wise
-    std::map<const llvm::MDNode*, unsigned> mdnMap;
-    unsigned mdnNext;
-
+    // Slot tracker
+    llvm::ModuleSlotTracker *slotTracker;
 
     // Instruction and constant indices
     unsigned instrIndex;

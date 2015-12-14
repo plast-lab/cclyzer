@@ -34,6 +34,15 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
     InstructionVisitor IV(*this, Mod);
     ModuleContext MC(*this, Mod, path);
 
+    SmallVector<std::pair<unsigned, MDNode*>, 4> MDForInst;
+
+    // iterate over named metadata
+    for (Module::const_named_metadata_iterator
+             I = Mod->named_metadata_begin(),
+             E = Mod->named_metadata_end(); I != E; ++I) {
+        visitNamedMDNode(I);
+    }
+
     // iterating over global variables in a module
     for (Module::const_global_iterator gi = Mod->global_begin(), E = Mod->global_end(); gi != E; ++gi) {
         refmode_t refmode = refmodeOfGlobalValue(gi);
@@ -198,6 +207,17 @@ void CsvGenerator::processModule(const Module * Mod, string& path)
 
                 // Visit instruction
                 IV.visit(const_cast<llvm::Instruction &>(instr));
+
+                // Process metadata attached with this instruction.
+                instr.getAllMetadata(MDForInst);
+                for (unsigned i = 0, e = MDForInst.size(); i != e; ++i) {
+                    const MDNode &mdNode = *MDForInst[i].second;
+
+                    // TODO process metadata node
+                }
+
+                MDForInst.clear();
+
             }
         }
     }
@@ -520,4 +540,13 @@ refmode_t CsvGenerator::writeConstant(const Constant &c)
     }
 
     return refmode;
+}
+
+
+void CsvGenerator::visitNamedMDNode(const NamedMDNode *NMD)
+{
+    for (unsigned i = 0, e = NMD->getNumOperands(); i != e; ++i) {
+        // TODO
+        ;
+    }
 }

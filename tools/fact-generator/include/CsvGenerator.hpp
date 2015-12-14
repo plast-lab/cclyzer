@@ -103,6 +103,7 @@ class CsvGenerator : private RefmodePolicy
 
     void visitGlobalAlias(const llvm::GlobalAlias *, const refmode_t &);
     void visitGlobalVar(const llvm::GlobalVariable *, const refmode_t &);
+    void visitNamedMDNode(const llvm::NamedMDNode *NMD);
 
 
     void processModule(const llvm::Module *Mod, std::string& path);

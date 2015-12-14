@@ -33,7 +33,7 @@ vpath %.h $(include_dirs)
 # LLVM specific flags
 #-----------------------------------
 
-CXXFLAGS += $(shell llvm-config --cxxflags | sed 's/-fno-rtti//')
+CPPFLAGS += $(shell llvm-config --cppflags)
 LDFLAGS  += $(shell llvm-config --ldflags)
 LDLIBS   += $(shell llvm-config --libs core irreader)
 LDLIBS   += $(filter-out -lz,$(shell llvm-config --system-libs))
@@ -45,7 +45,7 @@ LDLIBS   += -lboost_system -lboost_filesystem -lboost_program_options
 #-----------------------------------
 
 CPPFLAGS += $(addprefix -I ,$(include_dirs))
-CXXFLAGS += -fPIC -fexceptions -g -std=c++11
+CXXFLAGS += -fPIC -g -std=c++11
 
 $(outdir)/%.o: %.cpp | $(outdir)
 	$(COMPILE.cpp) -o $@ $<
