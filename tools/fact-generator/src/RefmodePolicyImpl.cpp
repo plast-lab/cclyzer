@@ -24,19 +24,20 @@ refmode_t RefmodePolicy::Impl::refmodeOf(const Value * Val) const
     }
 
     if (isa<Constant>(Val)) {
-        Val->printAsOperand(rso, false);
+        Val->printAsOperand(rso, /* PrintType */ false);
         goto print;
     }
 
     if (Val->getType()->isVoidTy()) {
-        Val->printAsOperand(rso, false, Mod);
+        Val->printAsOperand(rso, /* PrintType */ false);
         goto print;
     }
 
     if (Val->getType()->isMetadataTy()) {
         const MetadataAsValue *mv = cast<MetadataAsValue>(Val);
         const Metadata *meta = mv->getMetadata();
-        meta->printAsOperand(rso, Mod);
+        meta->printAsOperand(rso, *slotTracker);
+
         goto print;
     }
 

@@ -47,7 +47,7 @@ void generateFacts(const std::vector<fs::path> &inputFiles,
         csvGen.processModule(module.get(), realPath);
 
         // Get data layout of this module
-        const llvm::DataLayout &layout = module.get()->getDataLayout();
+        const llvm::DataLayout &layout = module->getDataLayout();
 
         // Write types
         csvGen.writeVarsTypesAndConstants(layout);
