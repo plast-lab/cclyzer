@@ -57,16 +57,22 @@ install:
 #-----------------------------------------
 
 
-# A list of our benchmarks
-benchmarks := $(dir $(wildcard tests/*/*.bc))
+# Overwrite build directory for tests
+OUTDIR = $(BUILDDIR)/tests
+
+# List of our coreutils benchmarks
+coreutils_dir    := tests/coreutils-8.24
+coreutils_outdir := $(OUTDIR)/coreutils-8.24
+coreutils_files  := $(wildcard $(coreutils_dir)/*.bc)
+coreutils_tests  := $(coreutils_files:$(coreutils_dir)/%.bc=%)
+
+$(coreutils_outdir): | $(OUTDIR)
+	$(MKDIR) $@
 
 # Load LogicBlox functions
 ifneq "$(MAKECMDGOALS)" "install"
   include $(LEVEL)/src/logic/blox.mk
 endif
-
-# Overwrite build directory for tests
-OUTDIR = $(BUILDDIR)/tests
 
 # Phony testing targets that apply to all benchmarks
 .PHONY: tests.setup tests.run tests.clean
@@ -76,15 +82,15 @@ OUTDIR = $(BUILDDIR)/tests
 # Benchmark Template
 #----------------------------
 
-define benchmark_template
+define coreutils_template
 
-$1.files  := $(wildcard tests/$1/*)
-$1.outdir := $(OUTDIR)/$1
+$1.file   := $(coreutils_dir)/$1.bc
+$1.outdir := $(coreutils_outdir)/$1
 
 
 # Create subdirectories
 
-$$($1.outdir): | $(OUTDIR)
+$$($1.outdir): | $(coreutils_outdir)
 	$(MKDIR) $$@
 
 
@@ -92,7 +98,7 @@ $$($1.outdir): | $(OUTDIR)
 
 test-$1: tests.setup
 	@echo Analyzing $1 ...
-	$(COPPER) -o $$($1.outdir) $(COPPER_OPTS) $$($1.files)
+	$(COPPER) -o $$($1.outdir) $(COPPER_OPTS) $$($1.file)
 
 
 # Cleaning target
@@ -112,4 +118,4 @@ endef
 
 
 # !! Generate rules per benchmark !!
-$(foreach benchmark,$(benchmarks),$(eval $(call benchmark_template,$(benchmark:tests/%/=%))))
+$(foreach benchmark,$(coreutils_tests),$(eval $(call coreutils_template,$(benchmark))))
