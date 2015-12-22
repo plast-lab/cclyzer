@@ -104,7 +104,7 @@ test-$1: tests.setup
 # Cleaning target
 
 .PHONY: test-$1.clean
-test-$1.clean:
+test-$1-clean:
 	$(RM) -r $$($1.outdir)/
 
 
