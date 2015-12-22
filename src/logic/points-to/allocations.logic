@@ -10,6 +10,12 @@ allocation:to_string[Alloc] = Str <-
    variable:descriptor(Var, _, Func, Type, Name),
    Str = "*stack_alloc" + Func + "[" + Type + " " + Name + "]".
 
+allocation:to_string[Alloc] = Str <-
+   stack_allocation:by_parameter[Func, Index] = Alloc,
+   function:param[Func, Index] = Param,
+   variable:descriptor(Param, _, FuncSign, Type, Name),
+   Str = "*stack_alloc" + FuncSign + "[" + Type + " " + Name + "]".
+
 // Human readable representation for heap allocations
 
 allocation:to_string[Alloc] = Str <-
@@ -58,6 +64,15 @@ var_points_to(StackAlloc, Var)
    alloca_instruction(Insn),
    reachable_instruction(Insn),
    instruction:to[Insn] = Var.
+
+
+stack_allocation(StackAlloc),
+stack_allocation:by_parameter[Func, Index] = StackAlloc,
+var_points_to(StackAlloc, Param)
+ <-
+   function:param_by_value(Func, Index),
+   function:param[Func, Index] = Param,
+   reachable_function(Func).
 
 
 //----------------------------
@@ -179,6 +194,12 @@ allocation:type[StackAlloc] = Type <-
    alloca_instruction:type[Insn] = Type,
    stack_allocation:by_instruction[Insn] = StackAlloc.
 
+allocation:type[StackAlloc] = Type <-
+   stack_allocation:by_parameter[Func, Index] = StackAlloc,
+   function:type[Func] = FuncType,
+   function_type:param[FuncType, Index] = ParamType,
+   pointer_type:component[ParamType] = Type.
+
 // An array of elements is allocated in stack, if a size argument is
 // provided to the `alloca` instruction
 
@@ -201,6 +222,11 @@ allocation:size[StackAlloc] = Size <-
    alloca_instruction(Insn),
    !alloca_instruction:size[Insn] = _,
    stack_allocation:by_instruction[Insn] = StackAlloc,
+   allocation:type[StackAlloc] = Type,
+   type:size[Type] = Size.
+
+allocation:size[StackAlloc] = Size <-
+   stack_allocation:by_parameter[_, _] = StackAlloc,
    allocation:type[StackAlloc] = Type,
    type:size[Type] = Size.
 

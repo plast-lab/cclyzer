@@ -145,6 +145,12 @@ function:return_attribute(Func, Attr) ->
 function:param_attribute(Func, Index, Attr) ->
    function_decl(Func), int[64](Index), attribute(Attr).
 
+// Parameter is passed by value
+function:param_by_value(Func, Index) <-
+   parameter_attribute:byval[] = ByValue,
+   function:param[Func, Index] = _,
+   function:param_attribute(Func, Index, ByValue).
+
 
 //------------------------------------------------------------------------------
 // [Constraints]

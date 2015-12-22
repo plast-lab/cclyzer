@@ -149,7 +149,9 @@ function:va_actual_arg(Callee, Index, Argument) <-
 // actual arg to formal parameter
 assign_instruction(Param, Argument) <-
    function:actual_arg(Callee, Index, Argument),
-   function:param[Callee, Index] = Param.
+   function:param[Callee, Index] = Param,
+   // Attribute is not passed by value
+   !function:param_by_value(Callee, Index).
 
 // `return` instruction to `call` instruction target
 assign_instruction(ToVar, RetValue) <-
