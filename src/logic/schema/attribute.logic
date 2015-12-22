@@ -3,8 +3,15 @@ attribute(Attr), attribute:value(Attr:Ref) -> string(Ref).
 
 parameter_attribute:zeroext[] = Attr <- attribute:value(Attr:"zeroext").
 parameter_attribute:signext[] = Attr <- attribute:value(Attr:"signext").
-parameter_attribute:nreg[] = Attr <- attribute:value(Attr:"nreg").
+parameter_attribute:inreg[] = Attr <- attribute:value(Attr:"inreg").
+parameter_attribute:byval[] = Attr <- attribute:value(Attr:"byval").
+parameter_attribute:inalloca[] = Attr <- attribute:value(Attr:"inalloca").
+parameter_attribute:sret[] = Attr <- attribute:value(Attr:"sret").
 parameter_attribute:noallias[] = Attr <- attribute:value(Attr:"noalias").
+parameter_attribute:nocapture[] = Attr <- attribute:value(Attr:"nocapture").
+parameter_attribute:nest[] = Attr <- attribute:value(Attr:"nest").
+parameter_attribute:returned[] = Attr <- attribute:value(Attr:"returned").
+parameter_attribute:nonnull[] = Attr <- attribute:value(Attr:"nonnull").
 
 function_attribute:noreturn[] = Attr <- attribute:value(Attr:"noreturn").
 function_attribute:nounwind[] = Attr <- attribute:value(Attr:"nounwind").

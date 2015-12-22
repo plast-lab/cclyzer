@@ -119,7 +119,7 @@ schema:sanity()
  ->
    parameter_attribute:zeroext[] = Attr ;
    parameter_attribute:signext[] = Attr ;
-   parameter_attribute:nreg[] = Attr;
+   parameter_attribute:inreg[] = Attr;
    parameter_attribute:noallias[] = Attr.   // c1
 
 schema:sanity()

@@ -131,7 +131,7 @@ schema:sanity()
  ->
    parameter_attribute:zeroext[] = Attr ;
    parameter_attribute:signext[] = Attr ;
-   parameter_attribute:nreg[] = Attr.  // c1
+   parameter_attribute:inreg[] = Attr.  // c1
 
 schema:sanity()
  , invoke_instruction:function_attribute(_, Attr)
