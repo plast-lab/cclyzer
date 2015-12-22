@@ -15,7 +15,7 @@ typedef struct {
 } outer2;
 
 
-int *ep1, *ep2, *ep3;
+int *ep1, *ep2, *ep3, *ep4;
 
 inner gl = {&ep1, NULL};
 int **ga[] = {&ep1, &ep2, &ep3};
@@ -24,6 +24,10 @@ int **arr[][3] = {
     {&ep3, &ep2, &ep1},
     {&ep2, &ep3, &ep1},
 };
+
+void foo(outer o, int i) {
+    o.in[i].y = &ep4;
+}
 
 int main(int argc, char *argv[])
 {
@@ -90,5 +94,9 @@ int main(int argc, char *argv[])
     void *ptr9 = &(wp[0].in[2]);  /* w[0][0 0][0 2] */
     void *ptr10 = &(wp[0].in[0]); /* w[0][0 0][0 0] */
     void *ptr11 = &(wp->in[0]);   /* w[0][0 0][0 0] */
+
+
+    foo(o, 2);
+
     return 0;
 }
