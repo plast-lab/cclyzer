@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cxxabi.h>
 #include <boost/foreach.hpp>
 #include <llvm/IR/Constants.h>
@@ -126,7 +127,7 @@ void CsvGenerator::processModule(const Module &Mod, string& path)
             writeFact(pred::function::ret_attr, funcref,
                       Attrs.getAsString(AttributeSet::ReturnIndex));
 
-        writeFnAttributes(pred::function::attr, funcref, Attrs);
+        writeFnAttributes<pred::function>(funcref, Attrs);
 
         // Nothing more to do for function declarations
         if (func.isDeclaration()) {
@@ -327,33 +328,51 @@ void CsvGenerator::visitGlobalVar(const GlobalVariable *gv, const refmode_t &ref
 }
 
 
+template<typename PredGroup>
 void CsvGenerator::writeFnAttributes(
-    const pred_t &predicate,
     const refmode_t &refmode,
-    const AttributeSet Attrs)
+    const AttributeSet allAttrs)
 {
-    AttributeSet AS;
-
-    if (Attrs.hasAttributes(AttributeSet::FunctionIndex))
-        AS = Attrs.getFnAttributes();
-
-    unsigned idx = 0;
-
-    for (unsigned e = AS.getNumSlots(); idx != e; ++idx) {
-        if (AS.getSlotIndex(idx) == AttributeSet::FunctionIndex)
-            break;
-    }
-
-    for (AttributeSet::iterator I = AS.begin(idx), E = AS.end(idx); I != E; ++I)
+    for (unsigned i = 0; i < allAttrs.getNumSlots(); ++i)
     {
-        Attribute Attr = *I;
+        unsigned index = allAttrs.getSlotIndex(i);
 
-        if (!Attr.isStringAttribute()) {
-            string AttrStr = Attr.getAsString();
-            writeFact(predicate, refmode, Attr.getAsString());
+        // Write out each attribute for this slot
+        for (AttributeSet::iterator
+                 it = allAttrs.begin(i), end = allAttrs.end(i);
+             it != end; ++it)
+        {
+            string attr = it->getAsString();
+            attr.erase (std::remove(attr.begin(), attr.end(), '"'), attr.end());
+
+            switch (index) {
+              case AttributeSet::AttrIndex::ReturnIndex:
+                  writeFact(PredGroup::ret_attr, refmode, attr);
+                  break;
+              case AttributeSet::AttrIndex::FunctionIndex:
+                  writeFact(PredGroup::fn_attr, refmode, attr);
+                  break;
+              default:
+                  writeFact(PredGroup::param_attr, refmode, attr, i);
+                  break;
+            }
         }
     }
 }
+
+// Instantiate template method
+
+template void CsvGenerator::writeFnAttributes<pred::function>(
+    const refmode_t &refmode,
+    const llvm::AttributeSet Attrs);
+
+template void CsvGenerator::writeFnAttributes<pred::call>(
+    const refmode_t &refmode,
+    const llvm::AttributeSet Attrs);
+
+template void CsvGenerator::writeFnAttributes<pred::invoke>(
+    const refmode_t &refmode,
+    const llvm::AttributeSet Attrs);
 
 
 void CsvGenerator::writeVarsTypesAndConstants(const llvm::DataLayout &layout)

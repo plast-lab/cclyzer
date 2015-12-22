@@ -55,7 +55,7 @@ invoke_instruction:return_attribute(Insn, Attr) ->
 invoke_instruction:param_attribute(Insn, Index, Attr) ->
    invoke_instruction(Insn), int[64](Index), attribute(Attr).
 
-invoke_instruction:function_attribute(Insn, Attr) ->
+invoke_instruction:fn_attribute(Insn, Attr) ->
    invoke_instruction(Insn), attribute(Attr).
 
 
@@ -134,7 +134,7 @@ schema:sanity()
    parameter_attribute:inreg[] = Attr.  // c1
 
 schema:sanity()
- , invoke_instruction:function_attribute(_, Attr)
+ , invoke_instruction:fn_attribute(_, Attr)
  ->
    function_attribute:noreturn[] = Attr ;
    function_attribute:nounwind[] = Attr ;

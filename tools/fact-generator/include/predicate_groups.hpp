@@ -68,7 +68,7 @@ namespace predicates
         static pred_t calling_conv;
         static pred_t section;
         static pred_t alignment;
-        static pred_t attr;
+        static pred_t fn_attr;
         static pred_t gc;
         static pred_t pers_fn;
         static pred_t name;

@@ -644,18 +644,18 @@ lang:physical:filePath[`_call_instruction:calling_convention] = "facts/predicate
 
 
 
-_call_instruction:function_attribute(v0, v1) -> string(v0), string(v1).
+_call_instruction:fn_attribute(v0, v1) -> string(v0), string(v1).
 
-lang:physical:delimiter[`_call_instruction:function_attribute] = "\t".
-lang:physical:filePath[`_call_instruction:function_attribute] = "facts/predicates/call_instruction-function_attribute.dlm".
+lang:physical:delimiter[`_call_instruction:fn_attribute] = "\t".
+lang:physical:filePath[`_call_instruction:fn_attribute] = "facts/predicates/call_instruction-fn_attribute.dlm".
 
 +instruction:id(e0:v0),
 +call_instruction(e0),
 +attribute:value(e1:v1),
 +attribute(e1),
-+call_instruction:function_attribute(e0,e1)
++call_instruction:fn_attribute(e0,e1)
 <-
-   _call_instruction:function_attribute(v0, v1).
+   _call_instruction:fn_attribute(v0, v1).
 
 
 
@@ -1711,18 +1711,18 @@ lang:physical:filePath[`_function:alignment] = "facts/predicates/function-alignm
 
 
 
-_function:attributes(v0, v1) -> string(v0), string(v1).
+_function:attribute(v0, v1) -> string(v0), string(v1).
 
-lang:physical:delimiter[`_function:attributes] = "\t".
-lang:physical:filePath[`_function:attributes] = "facts/predicates/function-attributes.dlm".
+lang:physical:delimiter[`_function:attribute] = "\t".
+lang:physical:filePath[`_function:attribute] = "facts/predicates/function-attribute.dlm".
 
 +function_decl:id(e0:v0),
 +function_decl(e0),
 +attribute:value(e1:v1),
 +attribute(e1),
-+function:attributes(e0,e1)
++function:attribute(e0,e1)
 <-
-   _function:attributes(v0, v1).
+   _function:attribute(v0, v1).
 
 
 
@@ -2768,6 +2768,21 @@ lang:physical:filePath[`_invoke_instruction:exception_label] = "facts/predicates
 
 
 
+_invoke_instruction:fn_attribute(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_invoke_instruction:fn_attribute] = "\t".
+lang:physical:filePath[`_invoke_instruction:fn_attribute] = "facts/predicates/invoke_instruction-fn_attribute.dlm".
+
++instruction:id(e0:v0),
++invoke_instruction(e0),
++attribute:value(e1:v1),
++attribute(e1),
++invoke_instruction:fn_attribute(e0,e1)
+<-
+   _invoke_instruction:fn_attribute(v0, v1).
+
+
+
 _invoke_instruction:function$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_invoke_instruction:function$by_constant] = "\t".
@@ -2797,21 +2812,6 @@ lang:physical:filePath[`_invoke_instruction:function$by_variable] = "facts/predi
    _invoke_instruction:function$by_variable(v0, v1),
    variable:id(e1:v1),
    variable(e1).
-
-
-
-_invoke_instruction:function_attribute(v0, v1) -> string(v0), string(v1).
-
-lang:physical:delimiter[`_invoke_instruction:function_attribute] = "\t".
-lang:physical:filePath[`_invoke_instruction:function_attribute] = "facts/predicates/invoke_instruction-function_attribute.dlm".
-
-+instruction:id(e0:v0),
-+invoke_instruction(e0),
-+attribute:value(e1:v1),
-+attribute(e1),
-+invoke_instruction:function_attribute(e0,e1)
-<-
-   _invoke_instruction:function_attribute(v0, v1).
 
 
 

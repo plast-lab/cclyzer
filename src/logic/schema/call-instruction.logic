@@ -63,7 +63,7 @@ call_instruction:return_attribute(Insn, Attr) ->
 call_instruction:param_attribute(Insn, Index, Attr) ->
    call_instruction(Insn), int[64](Index), attribute(Attr).
 
-call_instruction:function_attribute(Insn, Attr) ->
+call_instruction:fn_attribute(Insn, Attr) ->
    call_instruction(Insn), attribute(Attr).
 
 
@@ -123,7 +123,7 @@ schema:sanity()
    parameter_attribute:noallias[] = Attr.   // c1
 
 schema:sanity()
- , call_instruction:function_attribute(_, Attr)
+ , call_instruction:fn_attribute(_, Attr)
  ->
    function_attribute:noreturn[] = Attr ;
    function_attribute:nounwind[] = Attr ;

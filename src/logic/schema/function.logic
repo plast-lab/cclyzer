@@ -95,7 +95,7 @@ function:gc[Func] = CollectorName ->
 function:pers_fn[Func] = PersonalityFunction ->
    function_decl(Func), function_constant(PersonalityFunction).
 
-function:attributes(Func, Attr) ->
+function:attribute(Func, Attr) ->
    function_decl(Func), attribute(Attr).
 
 //-----------------------------------------------------------------

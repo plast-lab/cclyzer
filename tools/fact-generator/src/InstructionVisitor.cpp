@@ -308,15 +308,13 @@ void InstructionVisitor::visitInvokeInst(InvokeInst &II)
         gen.writeFact(pred::invoke::ret_attr, iref, attrs);
     }
 
-    gen.writeFnAttributes(pred::invoke::fn_attr, iref, Attrs);
+    gen.writeFnAttributes<pred::invoke>(iref, Attrs);
 
     // TODO: Why not CallingConv::C
     if (II.getCallingConv() != CallingConv::C) {
         refmode_t cconv = gen.refmodeOf(II.getCallingConv());
         gen.writeFact(pred::invoke::calling_conv, iref, cconv);
     }
-
-    // TODO: param attributes?
 }
 
 void InstructionVisitor::visitResumeInst(ResumeInst &RI)
@@ -583,9 +581,7 @@ void InstructionVisitor::visitCallInst(CallInst &CI)
         gen.writeFact(pred::call::ret_attr, iref, attrs);
     }
 
-    gen.writeFnAttributes(pred::call::fn_attr, iref, Attrs);
-
-    // TODO: parameter attributes?
+    gen.writeFnAttributes<pred::call>(iref, Attrs);
 }
 
 void InstructionVisitor::visitICmpInst(ICmpInst &I)

@@ -34,7 +34,7 @@ namespace predicates
     pred_t function::calling_conv = "function:calling_convention";
     pred_t function::section = "function:section";
     pred_t function::alignment = "function:alignment";
-    pred_t function::attr = "function:attributes";
+    pred_t function::fn_attr = "function:attribute";
     pred_t function::gc = "function:gc";
     pred_t function::pers_fn = "function:pers_fn";
     pred_t function::name = "function:name";
@@ -167,7 +167,7 @@ namespace predicates
     pred_t invoke::calling_conv = "invoke_instruction:calling_convention";
     pred_t invoke::ret_attr = "invoke_instruction:return_attribute";
     pred_t invoke::param_attr = "invoke_instruction:param_attribute";
-    pred_t invoke::fn_attr = "invoke_instruction:function_attribute";
+    pred_t invoke::fn_attr = "invoke_instruction:fn_attribute";
     pred_t invoke::normal_label = "invoke_instruction:normal_label";
     pred_t invoke::exc_label = "invoke_instruction:exception_label";
 
@@ -329,7 +329,7 @@ namespace predicates
     pred_t call::calling_conv = "call_instruction:calling_convention";
     pred_t call::ret_attr = "call_instruction:return_attribute";
     pred_t call::param_attr = "call_instruction:param_attribute";
-    pred_t call::fn_attr = "call_instruction:function_attribute";
+    pred_t call::fn_attr = "call_instruction:fn_attribute";
     pred_t call::tail = "call_instruction:tail";
 
     entity_pred_t landingpad::instr = "landingpad_instruction";

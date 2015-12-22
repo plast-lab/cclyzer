@@ -66,9 +66,8 @@ class CsvGenerator : private RefmodePolicy
         writer.writeFact(predicate.c_str(), entity, value, index);
     }
 
-    void writeFnAttributes(const pred_t &pred,
-                           const refmode_t &refmode,
-                           const llvm::AttributeSet Attrs);
+    template<typename PredGroup>
+    void writeFnAttributes(const refmode_t &refmode, const llvm::AttributeSet Attrs);
 
     void writeConstantArray(const llvm::ConstantArray&, const refmode_t &);
     void writeConstantStruct(const llvm::ConstantStruct&, const refmode_t &);
