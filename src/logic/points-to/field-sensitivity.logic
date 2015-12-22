@@ -122,6 +122,22 @@ alloc_subregion(NewAlloc)
    // first index is a constant
    pointer_index(Index).
 
+
+// Record trivial zero aliases on base objects
+
+allocation_zeroalias(NewAlloc)
+ <-
+   basic_allocation(Alloc),
+   alloc_subregion:at_array_index[Alloc, 0] = NewAlloc,
+   allocation:type[NewAlloc] = Type,
+   allocation:type[Alloc] = Type.
+
+ptr_points_to$no_zero_aliases(to, from) <-
+   ptr_points_to(to, from),
+   !allocation_zeroalias(to),
+   !allocation_zeroalias(from).
+
+
 // Create star array index expression, once type for base object is
 // established
 
