@@ -1,0 +1,77 @@
+#!/usr/bin/env python
+
+import fnmatch
+import os
+import string
+import sys
+
+MAKEFILE_TEMPLATE = '''\
+$target: export LB_LIBRARY_PATH := $libpath
+$target: $prerequisites
+'''
+
+def project_base(projectfile):
+    return os.path.splitext(os.path.basename(projectfile))[0]
+
+def project_property(projectfile, propname):
+    with open(projectfile) as proj:
+        for line in proj:
+            if line.rstrip().endswith(propname):
+                key, value = [s.strip() for s in line.split(',')]
+                yield key
+
+def project_name(projectfile):
+    '''Return the project name as defined in the projectfile'''
+    return next(project_property(projectfile, 'projectname'))
+
+def project_dependencies(projectfile):
+    '''Return the project dependencies as defined in the projectfile'''
+    return list(project_property(projectfile, 'library'))
+
+def collect_project_files(logicdir):
+    '''Recursively find all project files'''
+    for root, dirnames, filenames in os.walk(logicdir):
+        for filename in fnmatch.filter(filenames, '*.project'):
+            yield os.path.join(root, filename)
+
+def collect_project_names(logicdir):
+    for proj in collect_project_files(logicdir):
+        projbase = project_base(proj)
+        projname = project_name(proj)
+        yield (projname, projbase)
+
+def create_mk_segment(logicdir, projectfile, checksumfile):
+    # Collect project names recursively
+    projmeta = dict(collect_project_names(logicdir))
+
+    # Parse given project file
+    projbase = project_base(projectfile)
+    projname = project_name(projectfile)
+    dependencies = project_dependencies(projectfile)
+
+    # Transform dependencies to refer to project base
+    dependencies = [projmeta[d] for d in dependencies]
+    checksumbase = os.path.basename(checksumfile)
+
+    # Create prerequisites
+    prereqs = [checksumfile.replace(projbase, d) for d in dependencies]
+    libdirs = [os.path.dirname(p) for p in prereqs]
+
+    # Create Makefile segment from template
+    tpl = string.Template(MAKEFILE_TEMPLATE)
+
+    # Perform template substitutions
+    segment = tpl.substitute(target = checksumfile,
+                             libpath = ':'.join(libdirs),
+                             prerequisites = ' '.join(prereqs))
+    return segment
+
+
+def usage():
+    print >> sys.stderr, "Usage: {} LOGICDIR PROJECTFILE PLACEHOLDER".format(sys.argv[0])
+
+if __name__ == '__main__':
+    if len(sys.argv) != 4:
+        usage()
+        exit(1)
+    print create_mk_segment(*sys.argv[1:])

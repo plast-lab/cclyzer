@@ -45,9 +45,9 @@ $$($1.outdir): | $(OUTDIR)
 	$(MKDIR) $$@
 
 # Auto-generate project dependencies
-export PATH := $(LEVEL)/bin:$(PATH)
+export PATH := $(LEVEL)/bin:$(LEVEL)/scripts:$(PATH)
 $$($1.deps): $$($1.proj) | $$($1.outdir)
-	project-dependencies.sh . $$< $$($1.ph) > $$@
+	project-dependencies . $$< $$($1.ph) > $$@
 
 
 # When a single `.project' file changes, *all* project-dependency

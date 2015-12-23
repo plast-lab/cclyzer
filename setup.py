@@ -69,6 +69,7 @@ setup(
 
     # Python scripts
     scripts = [
-        'scripts/copper'
+        'scripts/copper',
+        'scripts/project-dependencies'
     ],
 )
