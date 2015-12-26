@@ -1,0 +1,295 @@
+//------------------------------------------------------------------------------
+// [Definition of memory subregions (as subtypes of allocation)]
+//
+// We define a subregion as either (i) a field of an existing region
+// (which itself is either a subregion or a normal allocation), or
+// (ii) an array/pointer index of an existing region.
+//
+// In the second case, the index can be either a constant (which we
+// record) or a variable. This corresponds to two different
+// constructors, that in essence produce two distinct algebraic data
+// types (plus a single one for referencing struct fields).
+//
+// When the index is unknown on the other hand (variable case), there
+// is no index to record. In the string representation protocol as
+// well as in code documentation, we will represent the unknown index
+// with a star (*).
+//
+// As a final note, the need to create subregions stems from the fact
+// that in C, we can refer to field addresses, and at a later point
+// dereference them. This translates to a `getelementptr` instruction
+// that computes the offset from a base pointer variable and assigns
+// it to some other variable, which may then be supplied as the
+// address operand to a `load`/`store` instruction. These two
+// instructions may reside in different functions, so an
+// intraprocedural matching would not work.
+//
+// This is an important difference with the Java Bytecode IR, where no
+// such thing is possible and a single relation that connects two
+// abstract objects (memory allocations) through some field is
+// sufficient.
+//------------------------------------------------------------------------------
+
+alloc_subregion(Region) -> allocation(Region).
+lang:entity(`alloc_subregion).
+
+//---------------------------------------------------------------
+// [Field Selections]
+//---------------------------------------------------------------
+
+// Single constructor for field selections
+
+alloc_subregion:at_field[Alloc, Index] = Region ->
+   allocation(Alloc), int[64](Index), alloc_subregion(Region).
+
+lang:constructor(`alloc_subregion:at_field).
+
+// Create every field sub-expression, once type for base object is
+// established
+
+alloc_subregion(NewAlloc)
+ , alloc_subregion:at_field[Alloc, Field] = NewAlloc
+ , allocation:type[NewAlloc] = FieldType
+ <-
+   allocation:type[Alloc] = Type,
+   // filter base allocations
+   alloc_subregion(Alloc),
+   // determine type
+   struct_type(Type),
+   struct_type:field[Type, Field] = FieldType.
+
+
+//---------------------------------------------------------------
+// [Array Element Selections: unknown *star* index]
+//---------------------------------------------------------------
+
+// Constructor for unknown array/pointer index
+
+alloc_subregion:at_any_array_index[Alloc] = Region ->
+   allocation(Alloc), alloc_subregion(Region).
+
+lang:constructor(`alloc_subregion:at_any_array_index).
+
+
+// Create star pointer index expression, once type for base object is
+// established
+
+alloc_subregion(NewAlloc)
+ , alloc_subregion:at_any_array_index[Alloc] = NewAlloc
+ , allocation:type[NewAlloc] = Type
+ <-
+   allocation:type[Alloc] = Type,
+   // base object
+   basic_allocation(Alloc).
+
+// Create star array index expression, once type for base object is
+// established
+
+alloc_subregion(NewAlloc)
+ , alloc_subregion:at_any_array_index[Alloc] = NewAlloc
+ , allocation:type[NewAlloc] = ElementType
+ <-
+   allocation:type[Alloc] = Type,
+   // filter base allocations
+   alloc_subregion(Alloc),
+   // determine type
+   array_type(Type),
+   array_type:component[Type] = ElementType.
+
+
+//---------------------------------------------------------------
+// [Array Element Selections: known index]
+//---------------------------------------------------------------
+
+// Constructor for constant array/pointer index
+
+alloc_subregion:at_array_index[Alloc, Index] = Region ->
+   allocation(Alloc), int[64](Index), alloc_subregion(Region).
+
+lang:constructor(`alloc_subregion:at_array_index).
+
+
+// Create every pointer index expression, once type for base object is
+// established
+
+alloc_subregion(NewAlloc)
+ , alloc_subregion:at_array_index[Alloc, Index] = NewAlloc
+ , allocation:type[NewAlloc] = Type
+ <-
+   allocation:type[Alloc] = Type,
+   // base object
+   basic_allocation(Alloc),
+   // first index is a constant
+   pointer_index(Index).
+
+
+// Record trivial zero aliases on base objects
+
+allocation_zeroalias(NewAlloc)
+ <-
+   basic_allocation(Alloc),
+   alloc_subregion:at_array_index[Alloc, 0] = NewAlloc,
+   allocation:type[NewAlloc] = Type,
+   allocation:type[Alloc] = Type.
+
+ptr_points_to$no_zero_aliases(to, from) <-
+   ptr_points_to(to, from),
+   !allocation_zeroalias(to),
+   !allocation_zeroalias(from).
+
+
+// Create star array index expression, once type for base object is
+// established
+
+alloc_subregion(NewAlloc)
+ , alloc_subregion:at_array_index[Alloc, Index] = NewAlloc
+ , allocation:type[NewAlloc] = ElementType
+ <-
+   allocation:type[Alloc] = Type,
+   // filter base allocations
+   alloc_subregion(Alloc),
+   // determine type
+   array_type(Type),
+   array_type:component[Type] = ElementType,
+   // accept any relevant array index for this type
+   array_indices(Type, Index).
+
+
+// Find all statically possible pointer indices
+
+pointer_index(Index) -> int[64](Index).
+pointer_index(0).
+
+pointer_index(Index) <-
+   getelementptr_instruction:index[_, 0] = IndexOp,
+   operand:to_int[IndexOp] = Index.
+
+// Find all statically possible array indices
+
+array_indices(Type, Index) ->
+   array_type(Type), int[64](Index).
+
+array_indices(Type, ConstantIndex) <-
+   getelementptr_instruction:index[Insn, Index] = IndexOp,
+   getelementptr_instruction:interm_type[Insn, Index] = DeclaredType,
+   operand:to_int[IndexOp] = ConstantIndex,
+   array_type(DeclaredType),
+   array_type(Type),
+   type_compatible(Type, DeclaredType).
+
+
+//-------------------------------------------------------------------
+// Subobject properties
+//-------------------------------------------------------------------
+
+// Region base: unified predicate that applies to all types of
+// subobjects
+
+alloc_subregion:base[Region] = Base ->
+   alloc_subregion(Region), allocation(Base).
+
+alloc_subregion:base[Region] = Base <-
+   alloc_subregion:at_field[Base, _] = Region.
+
+alloc_subregion:base[Region] = Base <-
+   alloc_subregion:at_any_array_index[Base] = Region.
+
+alloc_subregion:base[Region] = Base <-
+   alloc_subregion:at_array_index[Base, _] = Region.
+
+
+//-------------------------------------
+// String Representation Protocol
+//-------------------------------------
+
+allocation:to_string[Region] = RegionStr <-
+   alloc_subregion:at_array_index[Alloc, Index] = Region,
+   allocation:to_string[Alloc] = AllocStr,
+   int64:string:convert[Index] = IndexStr,
+   RegionStr = AllocStr + "[" + IndexStr + "]".
+
+allocation:to_string[Region] = RegionStr <-
+   alloc_subregion:at_any_array_index[Alloc] = Region,
+   allocation:to_string[Alloc] = AllocStr,
+   RegionStr = AllocStr + "[*]".
+
+allocation:to_string[Region] = RegionStr <-
+   alloc_subregion:at_field[Alloc, Index] = Region,
+   allocation:to_string[Alloc] = AllocStr,
+   int64:string:convert[Index] = IndexStr,
+   RegionStr = AllocStr + ".f$" + IndexStr.
+
+
+//------------------------------------------------------------------------
+// [Deprecated: Maximum Subobject Depth]
+//
+// Note that pointer arithmetic and other C idioms may cause infinite
+// recursion and creation of new subobjects. For instance, the
+// instruction: `ptr = ptr + 1` when translated to a `getelementptr`
+// instruction, it will create a new subobject relative to the one
+// that `ptr` points to with some offset. However, this subobject will
+// again flow to the base variable `ptr` triggering the creation of
+// yet a new subobject. This creation of new subobjects will continue
+// indefinitely.
+//
+// DEPRECATED:
+// To avoid non-termination we introduce a bound to object
+// depth. Hence, we do not create a new subobject when this bound is
+// going to be exceeded.
+//
+// Since we now create subobjects (e.g., by field access, or array
+// indexing) *only* when the analysis has discovered the type of the
+// base object, we no longer need a bound on object depth. Types alone
+// are sufficient to prohibit infinite object recursion, since the
+// type of the base object will always have a greater size compared to
+// that of any of its subobjects. Hence, as the object depth grows,
+// the object size will become smaller until it reaches zero (no
+// infinite recursion is possible).
+//------------------------------------------------------------------------
+
+// field_sensitivity:max_depth[] = N ->
+//    int[64](N).
+
+// field_sensitivity:max_depth[] = 5.
+
+// alloc_subregion(Alloc) -> allocation:depth[Alloc] = _.
+
+// _may_expand_base_alloc(Alloc) -> allocation(Alloc).
+// _may_expand_alloc_with_field(Alloc) -> allocation(Alloc).
+
+// lang:isEntity[`_may_expand_base_alloc] = false.
+// lang:isEntity[`_may_expand_alloc_with_field] = false.
+
+// Allocation is allowed to create subobjects as maximum depth has not
+// been reached
+
+// _may_expand_base_alloc(Alloc) <-
+//    field_sensitivity:max_depth[] = MaxDepth,
+//    allocation:depth[Alloc] = N,
+//    N < MaxDepth.
+
+
+//------------------------------------
+// Region containment
+//------------------------------------
+
+region_contains(Outer, Inner) ->
+   alloc_subregion(Inner), allocation(Outer).
+
+region_contains(Outer, Inner) <-
+   alloc_subregion:at_any_array_index[Outer] = Inner.
+
+region_contains(Outer, Inner) <-
+   alloc_subregion:at_array_index[Outer, _] = Inner.
+
+region_contains(Outer, Inner) <-
+   alloc_subregion:at_field[Outer, _] = Inner.
+
+region_contains(Outer, Inner) <-
+   region_contains(Interm, Inner),
+   region_contains(Outer, Interm).
+
+// Null cannot contain anything
+
+null_location[] = Null ->
+   !region_contains(Null, _).

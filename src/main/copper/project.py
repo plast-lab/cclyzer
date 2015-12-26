@@ -129,10 +129,10 @@ class ProjectManager(object):
         project_name = None
         project_libraries = []
 
-        with open(filename, 'r') as f:
-            for line in f:
+        with open(filename, 'r') as proj:
+            for line in proj:
                 # Skip empty lines
-                if line.strip() == "":
+                if line.strip() == "" or line.startswith("//"):
                     continue
 
                 # Get key-value pair

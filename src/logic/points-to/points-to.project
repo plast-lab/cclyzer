@@ -3,14 +3,34 @@ llvm:schema, library
 llvm:lookup, library
 llvm:callgraph, library
 
+
+// Basic Declarations
+
 allocations-decl.logic, active
 points-to-decl.logic, active
 
-virtual-tables.logic, active
-class-type.logic, active
+
+// Core logic
 
 type-compatibility.logic, active
 allocations.logic, active
+allocations-sizes.logic, active
 core.logic, active
+interprocedural.logic, active
+
+
+// Field Sensitivity
+
+allocations-subobjects.logic, active
+allocations-subobjects-aliases.logic, active
 field-sensitivity.logic, active
+memcpy.logic, active
+constant-init.logic, active
+constant-exprs.logic, active
+
+
+// C++ extensions
+
+virtual-tables.logic, active
+class-type.logic, active
 cplusplus.logic, active

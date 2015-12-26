@@ -1,3 +1,183 @@
+//----------------------------------------------------------------------
+// [Creation of Allocations]
+//
+// Every named variable of the original source code will have a
+// corresponsing `alloca_instruction` that allocates space for it in
+// the stack. Hence, we can use these instructions to track stack
+// allocations. Additionally, we have to create stack allocations for
+// parameters with pass-by-value semantics.
+//
+// Heap allocations on the other side will be created primarily by
+// calling `@malloc` or other similar memory allocating
+// functions. More heap allocation functions could be added in the
+// future.
+//----------------------------------------------------------------------
+
+
+//---------------------------------------------------------------------
+// [Stack Allocations]
+//
+// Note that the type of a stack allocation is always noted locally at
+// either the allocation site, or by the parameter's type.
+//---------------------------------------------------------------------
+
+stack_allocation(Alloc) -> allocation:type[Alloc] = _.
+
+/// 1. Alloca Instructions
+
+stack_allocation(StackAlloc),
+stack_allocation:by_instruction[Insn] = StackAlloc,
+var_points_to(StackAlloc, Var)
+ <-
+   alloca_instruction(Insn),
+   reachable_instruction(Insn),
+   instruction:to[Insn] = Var.
+
+
+allocation:type[StackAlloc] = Type <-
+   alloca_instruction(Insn),
+   alloca_instruction:type[Insn] = Type,
+   stack_allocation:by_instruction[Insn] = StackAlloc.
+
+/// 2. Parameters with pass-by-value semantics
+
+stack_allocation(StackAlloc),
+stack_allocation:by_parameter[Func, Index] = StackAlloc,
+var_points_to(StackAlloc, Param)
+ <-
+   function:param_by_value(Func, Index),
+   function:param[Func, Index] = Param,
+   reachable_function(Func).
+
+allocation:type[StackAlloc] = Type <-
+   stack_allocation:by_parameter[Func, Index] = StackAlloc,
+   function:type[Func] = FuncType,
+   function_type:param[FuncType, Index] = ParamType,
+   pointer_type:component[ParamType] = Type.
+
+
+
+//---------------------------------------------------------------------
+// [Heap Allocations]
+//
+// In contrast to the other types of allocations, an allocation on the
+// heap is not always associated with a type (at least locally).
+//---------------------------------------------------------------------
+
+heap_allocation(HeapAlloc),
+heap_allocation:by_instruction[Insn] = HeapAlloc,
+var_points_to(HeapAlloc, Var)
+ <-
+   heap_alloc_function(Func),
+   call_instruction:function[Insn] = Func,
+   reachable_instruction(Insn),
+   instruction:to[Insn] = Var.
+
+// Functions that allocate memory on heap
+heap_alloc_function(Func) -> function_decl(Func).
+
+heap_alloc_function(Func) <-
+   function:by_name["@malloc"]  = Func
+ ; function:by_name["@calloc"]  = Func
+ ; function:by_name["@realloc"] = Func.
+
+
+// Heap allocations by type of function
+
+heap_allocation:by_malloc[Insn] = HeapAlloc <-
+   function:name[Func] = "@malloc",
+   call_instruction:function[Insn] = Func,
+   heap_allocation:by_instruction[Insn] = HeapAlloc.
+
+heap_allocation:by_calloc[Insn] = HeapAlloc <-
+   function:name[Func] = "@calloc",
+   call_instruction:function[Insn] = Func,
+   heap_allocation:by_instruction[Insn] = HeapAlloc.
+
+heap_allocation:by_realloc[Insn] = HeapAlloc <-
+   function:name[Func] = "@realloc",
+   call_instruction:function[Insn] = Func,
+   heap_allocation:by_instruction[Insn] = HeapAlloc.
+
+
+// !! Track heap allocation types !! Note that a single heap
+// allocation is just a series of bytes, which can flow to multiple
+// variables of different types in principle.
+//
+// Consider a generic wrapper to @malloc (that calls @malloc inside
+// its body). This allocation inside the wrapper function will flow to
+// all sorts of places that have nothing to do with each other, and
+// will probably involve many heterogeneous types.
+
+heap_allocation:types(Type, HeapAlloc) <-
+   heap_allocation(HeapAlloc),
+   operand_points_to(HeapAlloc, Var),
+   operand:type[Var] = PtrType,
+   pointer_type:component[PtrType] = Type.
+
+
+//---------------------------------------------------------------------
+// [Global Allocations]
+//
+// Note that the type of a global allocation is readily available at
+// any case.
+//---------------------------------------------------------------------
+
+global_allocation(Alloc) -> allocation:type[Alloc] = _.
+
+/// 1. Global variable allocations
+
+global_allocation(Alloc),
+global_allocation:by_variable[GVar] = Alloc
+ <-
+   global_variable(GVar).
+
+allocation:type[Alloc] = Type <-
+   global_allocation:by_variable[GVar] = Alloc,
+   global_variable:type[GVar] = Type.
+
+
+/// 2. Function Allocations
+
+global_allocation(Alloc),
+global_allocation:by_function[Func] = Alloc
+ <-
+   function(Func).
+
+// We also create allocations of functions for which we lack any
+// definition, e.g., functions that belong to dynamically linked
+// libraries
+
+global_allocation(Alloc),
+global_allocation:by_function[Func] = Alloc
+ <-
+   function_decl(Func),
+   !function:definition[Func] = _.
+
+allocation:type[Alloc] = Type <-
+   global_allocation:by_function[Func] = Alloc,
+   function:type[Func] = Type.
+
+
+//----------------------------------
+// [Additional pseudo-allocations]
+//----------------------------------
+
+/// 1. Unknown Memory Special Object (may point to anything)
+
+unknown_location[] = Unknown
+ , allocation(Unknown)
+ , allocation:to_string[Unknown] = "*unknown*"
+ <- .
+
+/// 2. Null Special Object
+
+null_location[] = Null
+ , allocation(Null)
+ , allocation:to_string[Null] = "*null*"
+ <- .
+
+
 //------------------------------------------------
 // [Allocation String Representation Protocol]
 //------------------------------------------------
@@ -37,249 +217,3 @@ allocation:to_string[Alloc] = Str <-
    global_allocation:by_function[Func] = Alloc,
    function:name[Func] = Name,
    Str = "*global_alloc" + Name.
-
-
-//----------------------------------------------------------------------
-// [Heap and Stack Allocations]
-//
-// Every named variable of the original source code will have a
-// corresponsing `alloca_instruction` that allocates space for it in
-// the stack. Hence, we can use these instructions to track stack
-// allocations.
-//
-// Heap allocations on the other side will be created primarily by
-// calling the `@malloc` function. More heap allocation functions
-// could be added in the future.
-//----------------------------------------------------------------------
-
-
-//----------------------------
-// Stack allocations
-//----------------------------
-
-stack_allocation(StackAlloc),
-stack_allocation:by_instruction[Insn] = StackAlloc,
-var_points_to(StackAlloc, Var)
- <-
-   alloca_instruction(Insn),
-   reachable_instruction(Insn),
-   instruction:to[Insn] = Var.
-
-
-stack_allocation(StackAlloc),
-stack_allocation:by_parameter[Func, Index] = StackAlloc,
-var_points_to(StackAlloc, Param)
- <-
-   function:param_by_value(Func, Index),
-   function:param[Func, Index] = Param,
-   reachable_function(Func).
-
-
-//----------------------------
-// Heap allocations
-//----------------------------
-
-heap_allocation(HeapAlloc),
-heap_allocation:by_instruction[Insn] = HeapAlloc,
-var_points_to(HeapAlloc, Var)
- <-
-   heap_alloc_function(Func),
-   call_instruction:function[Insn] = Func,
-   reachable_instruction(Insn),
-   instruction:to[Insn] = Var.
-
-// Functions that allocate memory on heap
-heap_alloc_function(Func) -> function_decl(Func).
-
-heap_alloc_function(Func) <-
-   function:by_name["@malloc"]  = Func
- ; function:by_name["@calloc"]  = Func
- ; function:by_name["@realloc"] = Func.
-
-
-// Heap allocations by type of function
-
-heap_allocation:by_malloc[Insn] = HeapAlloc <-
-   function:name[Func] = "@malloc",
-   call_instruction:function[Insn] = Func,
-   heap_allocation:by_instruction[Insn] = HeapAlloc.
-
-heap_allocation:by_calloc[Insn] = HeapAlloc <-
-   function:name[Func] = "@calloc",
-   call_instruction:function[Insn] = Func,
-   heap_allocation:by_instruction[Insn] = HeapAlloc.
-
-heap_allocation:by_realloc[Insn] = HeapAlloc <-
-   function:name[Func] = "@realloc",
-   call_instruction:function[Insn] = Func,
-   heap_allocation:by_instruction[Insn] = HeapAlloc.
-
-
-
-//--------------------------------------
-// Global variable allocations
-//--------------------------------------
-
-global_allocation(Alloc),
-global_allocation:by_variable[GVar] = Alloc
- <-
-   global_variable(GVar).
-
-allocation:type[Alloc] = Type <-
-   global_allocation:by_variable[GVar] = Alloc,
-   global_variable:type[GVar] = Type.
-
-//--------------------------------------
-// Allocations for functions
-//--------------------------------------
-
-global_allocation(Alloc),
-global_allocation:by_function[Func] = Alloc
- <-
-   function(Func).
-
-// We also create allocations of functions for which we lack any
-// definition, e.g., functions that belong to dynamically linked
-// libraries
-
-global_allocation(Alloc),
-global_allocation:by_function[Func] = Alloc
- <-
-   function_decl(Func),
-   !function:definition[Func] = _.
-
-// Function types is readily available
-
-allocation:type[Alloc] = Type <-
-   global_allocation:by_function[Func] = Alloc,
-   function:type[Func] = Type.
-
-
-//----------------------------------
-// Additional pseudo-allocations
-//----------------------------------
-
-unknown_location[] = Unknown
- , allocation(Unknown)
- , allocation:to_string[Unknown] = "*unknown*"
- <- .
-
-null_location[] = Null
- , allocation(Null)
- , allocation:to_string[Null] = "*null*"
- <- .
-
-
-///-----------------------------------------------------------------------------
-///   Tracking of allocation size and types
-///-----------------------------------------------------------------------------
-
-array_allocation(Alloc) <-
-   allocation:type[Alloc] = Type,
-   array_type(Type).
-
-// Mandatory type in the following cases
-
-global_allocation(Alloc) -> allocation:type[Alloc] = _.
-stack_allocation(Alloc) -> allocation:type[Alloc] = _.
-
-//-----------------------
-// Stack Allocations
-//-----------------------
-
-// The type of a stack allocation is noted at the allocation site
-
-allocation:type[StackAlloc] = Type <-
-   alloca_instruction(Insn),
-   alloca_instruction:type[Insn] = Type,
-   stack_allocation:by_instruction[Insn] = StackAlloc.
-
-allocation:type[StackAlloc] = Type <-
-   stack_allocation:by_parameter[Func, Index] = StackAlloc,
-   function:type[Func] = FuncType,
-   function_type:param[FuncType, Index] = ParamType,
-   pointer_type:component[ParamType] = Type.
-
-// An array of elements is allocated in stack, if a size argument is
-// provided to the `alloca` instruction
-
-array_allocation(StackAlloc) <-
-   alloca_instruction:size[Insn] = _,
-   stack_allocation:by_instruction[Insn] = StackAlloc.
-
-// The size in bytes can be computed by the size of the allocation
-// types and the number of elements being allocated (if a constant
-// operand was provided).
-
-allocation:size[StackAlloc] = NumElements * Size <-
-   alloca_instruction:size[Insn] = Operand,
-   operand:to_int[Operand] = NumElements,
-   stack_allocation:by_instruction[Insn] = StackAlloc,
-   allocation:type[StackAlloc] = Type,
-   type:size[Type] = Size.
-
-allocation:size[StackAlloc] = Size <-
-   alloca_instruction(Insn),
-   !alloca_instruction:size[Insn] = _,
-   stack_allocation:by_instruction[Insn] = StackAlloc,
-   allocation:type[StackAlloc] = Type,
-   type:size[Type] = Size.
-
-allocation:size[StackAlloc] = Size <-
-   stack_allocation:by_parameter[_, _] = StackAlloc,
-   allocation:type[StackAlloc] = Type,
-   type:size[Type] = Size.
-
-
-//-----------------------
-// Heap Allocations
-//-----------------------
-
-array_allocation(HeapAlloc) <-
-   heap_allocation:by_malloc[Insn] = HeapAlloc,
-   call_instruction:arg[Insn, 0] = Operand,
-   operand:as_variable[Operand] = _.
-
-array_allocation(HeapAlloc) <-
-   heap_allocation:by_realloc[Insn] = HeapAlloc,
-   call_instruction:arg[Insn, 1] = Operand,
-   operand:as_variable[Operand] = _.
-
-array_allocation(HeapAlloc) <-
-   heap_allocation:by_calloc[Insn] = HeapAlloc,
-   call_instruction:arg[Insn, _] = Operand,
-   operand:as_variable[Operand] = _.
-
-// Compute sizes when available
-
-allocation:size[HeapAlloc] = Size <-
-   heap_allocation:by_malloc[Insn] = HeapAlloc,
-   call_instruction:arg[Insn, 0] = Operand,
-   operand:to_int[Operand] = Size.
-
-allocation:size[HeapAlloc] = Size <-
-   heap_allocation:by_realloc[Insn] = HeapAlloc,
-   call_instruction:arg[Insn, 1] = Operand,
-   operand:to_int[Operand] = Size.
-
-allocation:size[HeapAlloc] = Size * Nmemb <-
-   heap_allocation:by_calloc[Insn] = HeapAlloc,
-   call_instruction:arg[Insn, 0] = NmembOp,
-   call_instruction:arg[Insn, 1] = SizeOp,
-   operand:to_int[NmembOp] = Nmemb,
-   operand:to_int[SizeOp] = Size.
-
-// !! Track heap allocation types !! Note that a single heap
-// allocation is just a series of bytes, which can flow to multiple
-// variables of different types in principle.
-//
-// Consider a generic wrapper to @malloc (that calls @malloc inside
-// its body). This allocation inside the wrapper function will flow to
-// all sorts of places that have nothing to do with each other, and
-// will probably involve many heterogeneous types.
-
-heap_allocation:types(Type, HeapAlloc) <-
-   heap_allocation(HeapAlloc),
-   operand_points_to(HeapAlloc, Var),
-   operand:type[Var] = PtrType,
-   pointer_type:component[PtrType] = Type.

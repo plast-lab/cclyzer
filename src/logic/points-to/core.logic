@@ -7,28 +7,6 @@ constant_points_to[Constant] = NULL <-
    nullptr_constant(Constant),
    null_location[] = NULL.
 
-// Integers can be cast to pointers. In such case, the conservative
-// approach is to assume that the pointer may point to anywhere in
-// memory.
-//
-// Example: (int *) 0xabcd
-
-constant_points_to[Constant] = UNKNOWN <-
-   inttoptr_constant_expression(Constant),
-   unknown_location[] = UNKNOWN.
-
-
-// A pointer may be masqueraded into an integer (or something else),
-// but the associated memory locations are still valid.
-
-constant_points_to[IntConstant] = Alloc <-
-   ptrtoint_constant_expression:from[IntConstant] = PtrConstant,
-   constant_points_to[PtrConstant] = Alloc.
-
-constant_points_to[OuterConstant] = Alloc <-
-   bitcast_constant_expression:from[OuterConstant] = InnerConstant,
-   constant_points_to[InnerConstant] = Alloc.
-
 // Global variable and function references is a common type of
 // constants. They should be matched to the corresponding global
 // allocation.
@@ -118,107 +96,6 @@ assign_instruction(ToVar, Value) <-
 
 // TODO: support `cmpxchg` and `atomicrmw` instructions
 // TODO: support `invoke` and `landingpad` instructions
-
-
-//---------------------------------------
-//  [Interprocedural Logic]
-//---------------------------------------
-
-// Flow of actual arguments regardless of instruction type
-function:actual_arg(Callee, Index, Argument) ->
-   function(Callee), int[64](Index), operand(Argument).
-
-function:actual_arg(Callee, Index, Argument) <-
-   call_instruction:arg[CallInsn, Index] = Argument,
-   callgraph:edge(Callee, CallInsn),
-   function(Callee).
-
-function:actual_arg(Callee, Index, Argument) <-
-   invoke_instruction:arg[InvokeInsn, Index] = Argument,
-   callgraph:edge(Callee, InvokeInsn),
-   function(Callee).
-
-// Identify variable arguments for variadic functions
-function:va_actual_arg(Callee, Index, Argument) <-
-   function:actual_arg(Callee, Index, Argument),
-   function:type[Callee] = Type,
-   function_type:varargs(Type),
-   function_type:nparams[Type] = N,
-   Index >= N.
-
-// actual arg to formal parameter
-assign_instruction(Param, Argument) <-
-   function:actual_arg(Callee, Index, Argument),
-   function:param[Callee, Index] = Param,
-   // Attribute is not passed by value
-   !function:param_by_value(Callee, Index).
-
-// `return` instruction to `call` instruction target
-assign_instruction(ToVar, RetValue) <-
-   call_instruction(CallInsn),  // do not model `invoke` instructions yet
-   callgraph:edge(Callee, CallInsn),
-   ret_instruction:value[RetInsn] = RetValue,
-   instruction:function[RetInsn] = Callee,
-   instruction:to[CallInsn] = ToVar.
-
-
-// `va_arg` instruction
-//
-// TODO: model target-specific value `va_list` and calls to related
-// LLVM intrinsic functions. Right now this may produce nothing
-
-assign_instruction(ToVar, Argument) <-
-   va_arg_instruction:type[VArgInsn] = ArgType,
-   instruction:to[VArgInsn] = ToVar,
-   instruction:function[VArgInsn] = Callee,
-   function:va_actual_arg(Callee, _, Argument),
-   operand:type[Argument] = ArgType.
-
-
-// Augment call-graph by adding edges for function pointers
-
-function:by_location[Alloc] = Callee <-
-   global_allocation:by_function[Callee] = Alloc.
-
-callgraph:edge(Callee, CallerInsn), reachable_function(Callee)
- <-
-   reachable_instruction(CallerInsn),
-   indirect_call_instruction(CallerInsn),
-   call_instruction:raw_function[CallerInsn] = Op,
-   operand_points_to(Alloc, Op),
-   function:by_location[Alloc] = Callee,
-   function(Callee),
-   function:type[Callee] = ActualType,
-   operand:type[Op] = OpType,
-   pointer_type:component[OpType] = DeclaredType,
-   type_compatible(ActualType, DeclaredType).
-
-// Augment call-graph by adding edges for `invoke` instructions
-
-callgraph:edge(Callee, CallerInsn), reachable_function(Callee)
- <-
-   reachable_instruction(CallerInsn),
-   invoke_instruction(CallerInsn),
-   invoke_instruction:function[CallerInsn] = Op,
-   operand_points_to(Alloc, Op),
-   function:by_location[Alloc] = Callee,
-   function(Callee),
-   function:type[Callee] = ActualType,
-   operand:type[Op] = OpType,
-   pointer_type:component[OpType] = DeclaredType,
-   type_compatible(ActualType, DeclaredType).
-
-
-// The following rule augments the logic about identifying functions
-// registered to run at program at exit, so that it also works with
-// function pointers.
-
-reachable_function(Callback) <-
-   callgraph:edge(AtExit, Insn),
-   function:name[AtExit] = "@atexit",
-   call_instruction:arg[Insn, 0] = Operand,
-   operand_points_to(Alloc, Operand),
-   function:by_location[Alloc] = Callback.
 
 
 //----------------------------------------------------------------------

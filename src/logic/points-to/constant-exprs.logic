@@ -1,0 +1,125 @@
+//------------------------------------------------------------------------------
+// inttoptr constant expression
+//------------------------------------------------------------------------------
+
+// Integers can be cast to pointers. In such case, the conservative
+// approach is to assume that the pointer may point to anywhere in
+// memory.
+//
+// Example: (int *) 0xabcd
+
+constant_points_to[Constant] = UNKNOWN <-
+   inttoptr_constant_expression(Constant),
+   unknown_location[] = UNKNOWN.
+
+//------------------------------------------------------------------------------
+// ptrtoint constant expression
+//------------------------------------------------------------------------------
+
+// A pointer may be masqueraded into an integer (or something else),
+// but the associated memory locations are still valid.
+
+constant_points_to[IntConstant] = Alloc <-
+   ptrtoint_constant_expression:from[IntConstant] = PtrConstant,
+   constant_points_to[PtrConstant] = Alloc.
+
+//------------------------------------------------------------------------------
+// bitcast constant expression
+//------------------------------------------------------------------------------
+
+constant_points_to[OuterConstant] = Alloc <-
+   bitcast_constant_expression:from[OuterConstant] = InnerConstant,
+   constant_points_to[InnerConstant] = Alloc.
+
+
+//------------------------------------------------------------------------------
+// [Field Sensitivity for `getelementptr` constant expressions]
+//
+// This is equivalent to the treatment of GEP instructions, but with
+// no support for variable indices, as they are not allowed in
+// constant expressions.
+//------------------------------------------------------------------------------
+
+
+// Compute intermediate points to for `getelementptr` constant
+// expression up to some index
+
+gep_constant_expr_points_to[CExpr, Index] = Alloc ->
+   getelementptr_constant_expression(CExpr),
+   int[64](Index),
+   allocation(Alloc).
+
+gep_constant_expr_points_to[CExpr, 0] = Alloc <-
+   getelementptr_constant_expression:base[CExpr] = Base,
+   constant_points_to[Base] = Alloc.
+
+
+// First index as above
+
+gep_constant_expr_points_to[CExpr, 1] = Alloc
+ <-
+   gep_constant_expr_points_to[CExpr, 0] = Alloc,
+   alloc_subregion(Alloc),
+   getelementptr_constant_expression:index[CExpr, 0] = Constant,
+   constant:to_int[Constant] = 0.
+
+
+gep_constant_expr_points_to[CExpr, 1] = Region
+ <-
+   gep_constant_expr_points_to[CExpr, 0] = Alloc,
+   basic_allocation(Alloc),
+   getelementptr_constant_expression:index[CExpr, 0] = Constant,
+   constant:to_int[Constant] = Index,
+   alloc_subregion:at_array_index[Alloc, Index] = Region.
+
+
+// Rest of the indices
+
+gep_constant_expr_points_to[CExpr, NextIndex] = Region
+ <-
+   gep_constant_expr_points_to[CExpr, Index] = Alloc,
+   getelementptr_constant_expression:interm_type[CExpr, Index] = DeclaredType,
+   array_type(DeclaredType),
+   alloc_subregion(Alloc),
+   // get constant array index (as integer)
+   getelementptr_constant_expression:index[CExpr, Index] = Constant,
+   constant:to_int[Constant] = ConstantIndex,
+   // NextIndex = Index + 1
+   constant_expression:next_index[CExpr, Index] = NextIndex,
+   // get subobject for given index
+   alloc_subregion:at_array_index[Alloc, ConstantIndex] = Region.
+
+
+gep_constant_expr_points_to[CExpr, NextIndex] = Region
+ <-
+   gep_constant_expr_points_to[CExpr, Index] = Alloc,
+   getelementptr_constant_expression:interm_type[CExpr, Index] = DeclaredType,
+   struct_type(DeclaredType),
+   // get field (as integer constant)
+   getelementptr_constant_expression:index[CExpr, Index] = Constant,
+   constant:to_int[Constant] = Field,
+   // NextIndex = Index + 1
+   constant_expression:next_index[CExpr, Index] = NextIndex,
+   // get suboject for given field
+   alloc_subregion:at_field[Alloc, Field] = Region.
+
+
+constant_points_to[CExpr] = Alloc <-
+   getelementptr_constant_expression:nindices[CExpr] = Total,
+   gep_constant_expr_points_to[CExpr, Total] = Alloc.
+
+
+// TODO: check if the following is needed
+
+// gep_points_to(Insn, Index, Alloc) <-
+//    gep_points_to(Insn, Index, SomeAlloc),
+//    alloc_aliases(Alloc, SomeAlloc).
+
+// gep_points_to(Insn, 0, ZeroAliasAlloc)
+//  <-
+//    gep_points_to(Insn, 0, Alloc),
+//    // first index can be anything
+//    getelementptr_instruction:index[Insn, 0] = _,
+//    // base object
+//    basic_allocation(Alloc),
+//    alloc_subregion:at_array_index[Alloc, 0] = ZeroAliasAlloc.

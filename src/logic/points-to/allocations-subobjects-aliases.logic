@@ -1,0 +1,137 @@
+//------------------------------------------------------------------------
+// [Implicit Pointer Aliases]
+//
+// In C, the expression `ptr[0]` and `*ptr` is the same. The 0 index
+// is often omitted from some instructions, but we must ensure that
+// such expressions are treated as aliases by the analysis and have
+// the same points-to sets.
+//
+// Note that this relation denotes *definite* (must) aliases. This
+// does not include possible aliases, like when a variable array index
+// may be equal to some constant c, and so X[*] *may* be aliased to
+// X[c]. For the latter concept, see the alloc_matches relation.
+//------------------------------------------------------------------------
+
+alloc_aliases(Alloc1, Alloc2) ->
+   allocation(Alloc1), allocation(Alloc2).
+
+// Reflexivity
+
+alloc_aliases(Alloc, Alloc) <-
+   allocation(Alloc).
+
+// Transitivity
+
+alloc_aliases(Alloc1, Alloc2) <-
+   alloc_aliases(Alloc1, IntermAlloc),
+   alloc_aliases(Alloc2, IntermAlloc).
+
+// Symmetricitity
+
+alloc_aliases(Alloc1, Alloc2) <-
+   alloc_aliases(Alloc2, Alloc1).
+
+// Aliases have the same points-to sets
+
+ptr_points_to(Alloc, BaseAlloc1) <-
+   ptr_points_to(Alloc, BaseAlloc2),
+   alloc_aliases(BaseAlloc1, BaseAlloc2).
+
+// When a pointer points to an allocation, it must also point to all
+// of its aliases
+
+ptr_points_to(Alloc1, BaseAlloc) <-
+   ptr_points_to(Alloc2, BaseAlloc),
+   alloc_aliases(Alloc1, Alloc2).
+
+
+// A base allocation with zero index is an alias to base. The first
+// field is also and alias to base, as it too points to the exact same
+// memory location.
+
+alloc_aliases(Base, ZeroIndexBase) <-
+   alloc_subregion:at_array_index[Base, 0] = ZeroIndexBase.
+
+alloc_aliases(Base, FirstField) <-
+   alloc_subregion:at_field[Base, 0] = FirstField.
+
+
+// Note !!! Aliased bases will *not* result in aliased subregions when
+// extended by the same field or index. See `Why don’t GEP x,0,0,1 and
+// GEP x,1 alias?` from http://llvm.org/docs/GetElementPtr.html
+
+
+
+//------------------------------------------------------------------------
+// [Pattern Matching Star Expressions]
+//
+// By allowing star expressions in subregion allocations, we must
+// ensure that when loading from some allocation we consider all other
+// allocation that could potentially alias the former.  An allocation
+// that contains a star expression (unknown index) is more generic
+// than any allocation where the star is replaced by a specific
+// constant index.
+//
+// For instance, when loading from an address that points-to an
+// allocation such as `Base[1][*].$1[*][3]`, the possible dereferenced
+// locations are not just those of its points-to set, but also those
+// from `Base[1][c1].$1[c2][3]` for any c1, c2 constants (or even just
+// one of them).
+//
+// To be able to reason about such relations between complex
+// allocations, we define a relation (actually a partial-order)
+// between allocations a1 and a2 that detects when a2 can pattern
+// match a1 by replacing any or all of its star expressions with some
+// constant indices.
+//------------------------------------------------------------------------
+
+
+// `StarredAlloc` is more generic than (ie, can pattern match)
+// `Alloc`.
+
+alloc_matches(Alloc, StarredAlloc) ->
+   allocation(Alloc), allocation(StarredAlloc).
+
+alloc_matches(Alloc, Alloc) <-
+   allocation(Alloc).
+
+alloc_matches(Alloc, StarredAlloc) <-
+   alloc_matches(Base1, Base2),
+   alloc_subregion:at_array_index[Base1, _] = Alloc,
+   alloc_subregion:at_any_array_index[Base2] = StarredAlloc.
+
+// TODO check with aliases
+alloc_matches(Base1, StarredAlloc) <-
+   alloc_matches(Base1, Base2),
+   alloc_subregion:at_any_array_index[Base2] = StarredAlloc.
+
+alloc_matches(Alloc1, Alloc2) <-
+   alloc_matches(Base1, Base2),
+   alloc_subregion:at_array_index[Base1, Index] = Alloc1,
+   alloc_subregion:at_array_index[Base2, Index] = Alloc2.
+
+alloc_matches(Alloc1, Alloc2) <-
+   alloc_matches(Base1, Base2),
+   alloc_subregion:at_field[Base1, Field] = Alloc1,
+   alloc_subregion:at_field[Base2, Field] = Alloc2.
+
+
+// When loading from an allocation we must also consider the more
+// specific matching allocations and merge their points-to sets also.
+
+var_points_to(Alloc, ToVar) <-
+   reachable_instruction(Insn),
+   instruction:to[Insn] = ToVar,
+   load_instruction:address[Insn] = PtrOp,
+   operand_points_to(OrigAlloc, PtrOp),
+   alloc_matches(LessGenericAlloc, OrigAlloc),
+   ptr_points_to(Alloc, LessGenericAlloc).
+
+// We must also ensure that matching is considered in the opposite
+// direction. We do that by extending the points-to set of an
+// allocation by the points-to sets of all more generic allocations,
+// ie, those that can pattern match it.
+
+ptr_points_to(Alloc, OrigAlloc) <-
+   ptr_points_to(Alloc, MoreGenericAlloc),
+   alloc_matches(OrigAlloc, MoreGenericAlloc).
