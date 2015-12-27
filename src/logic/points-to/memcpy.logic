@@ -6,11 +6,16 @@
 //  that is being copied.
 //-------------------------------------------------------------------
 
+// Overloaded `memcpy` predicates that will trigger the deep copy
+// semantics for the corresponding allocations they point to
+
 memcpy$to_operand(Insn, To, From) ->
    instruction(Insn), operand(To), operand(From).
 
 memcpy$to_var(Insn, To, From) ->
    instruction(Insn), variable(To), operand(From).
+
+// Bitwise copy semantics that respect type information
 
 memcpy(Insn, To, From) ->
    instruction(Insn), allocation(To), allocation(From).
