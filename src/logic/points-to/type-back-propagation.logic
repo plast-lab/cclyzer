@@ -1,0 +1,47 @@
+heap_allocation:by_type_instruction[Type, Insn] = HeapAlloc ->
+   type(Type), instruction(Insn), heap_allocation(HeapAlloc).
+
+lang:constructor(`heap_allocation:by_type_instruction).
+
+
+// Mark all heap allocations that do not carry any type information
+
+untyped_allocation(Insn, Alloc) <-
+   heap_allocation:by_malloc[Insn] = Alloc
+ ; heap_allocation:by_calloc[Insn] = Alloc
+ ; heap_allocation:by_realloc[Insn] = Alloc.
+
+
+// Type indication for *untyped* allocation
+
+type_indication(Type, Alloc) ->
+   type(Type), allocation(Alloc).
+
+
+// Only bitcast instructions are considered type indications for now
+
+type_indication(Type, Alloc) <-
+   reachable_instruction(Insn),
+   bitcast_instruction:to_type[Insn] = PtrType,
+   bitcast_instruction:from[Insn] = FromOperand,
+   operand_points_to(Alloc, FromOperand),
+   untyped_allocation(_, Alloc),
+   pointer_type:component[PtrType] = Type.
+
+
+heap_allocation(HeapAlloc)
+ , heap_allocation:by_type_instruction[Type, AllocInsn] = HeapAlloc
+ , var_points_to(HeapAlloc, Var)
+ <-
+   untyped_allocation(AllocInsn, Alloc),
+   type_indication(Type, Alloc),
+   instruction:to[AllocInsn] = Var.
+
+allocation:type[Alloc] = Type <-
+   heap_allocation:by_type_instruction[Type, _] = Alloc.
+
+allocation:to_string[Alloc] = Str <-
+   heap_allocation:by_type_instruction[Type, Insn] = Alloc,
+   instruction:to[Insn] = Var,
+   variable:descriptor(Var, _, Func, _, Name),
+   Str = "*typed_heap_alloc" + Func + "[" + Type + " " + Name + "]".
