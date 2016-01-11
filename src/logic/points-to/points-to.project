@@ -35,3 +35,7 @@ virtual-tables.logic, active
 class-type.logic, active
 cplusplus.logic, active
 type-back-propagation.logic, active
+
+
+// Common queries
+queries.logic, inactive
