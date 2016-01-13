@@ -535,6 +535,8 @@ namespace predicates
         static entity_pred_t id;
         static pred_t field_type;
         static pred_t field_offset;
+        static pred_t field_bit_offset;
+        static pred_t field_name;
         static pred_t nfields;
         static pred_t opaque;
     };

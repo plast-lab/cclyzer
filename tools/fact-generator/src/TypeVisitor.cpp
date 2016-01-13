@@ -123,9 +123,11 @@ void CsvGenerator::TypeVisitor::visitStructType(const StructType *structType)
                 structType->getStructElementType(i));
 
             uint64_t fieldOffset = structLayout->getElementOffset(i);
+            uint64_t fieldBitOffset = structLayout->getElementOffsetInBits(i);
 
             gen.writeFact(pred::struct_type::field_type, tref, fieldType, i);
             gen.writeFact(pred::struct_type::field_offset, tref, fieldOffset, i);
+            gen.writeFact(pred::struct_type::field_bit_offset, tref, fieldBitOffset, i);
         }
 
         // Record number of fields

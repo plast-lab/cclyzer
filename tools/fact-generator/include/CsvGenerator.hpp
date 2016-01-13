@@ -5,6 +5,7 @@
 #include <boost/unordered_map.hpp>
 #include <llvm/IR/Attributes.h>
 #include <llvm/IR/Constants.h>
+#include <llvm/IR/DebugInfo.h>
 #include <llvm/IR/Type.h>
 #include <llvm/IR/DataLayout.h>
 #include <llvm/Support/raw_ostream.h>
@@ -106,6 +107,8 @@ class CsvGenerator : private RefmodePolicy
 
 
     void processModule(const llvm::Module &Mod, std::string& path);
+    void processDebugInfo(const llvm::Module &Mod);
+    void processCompTypeDebug(const llvm::DICompositeType &, const std::string altName = "");
     void writeVarsTypesAndConstants(const llvm::DataLayout &layout);
 
     /* Visitor classes */
@@ -123,6 +126,8 @@ class CsvGenerator : private RefmodePolicy
     type_cache_t variableTypes;
     type_cache_t constantTypes;
 
+    /* Debug Info */
+    llvm::DebugInfoFinder debugInfoFinder;
 
     /* Auxiliary methods */
 
@@ -145,12 +150,15 @@ class CsvGenerator : private RefmodePolicy
 
     struct ModuleContext {
         ModuleContext(CsvGenerator &generator, const llvm::Module &m, const std::string &path)
-            : gen(generator) {
+            : gen(generator)
+        {
             gen.enterModule(&m, path);
+            gen.debugInfoFinder.processModule(m);
         }
 
         ~ModuleContext() {
             gen.exitModule();
+            gen.debugInfoFinder.reset();
         }
 
       private:

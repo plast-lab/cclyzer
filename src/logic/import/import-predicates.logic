@@ -4023,6 +4023,32 @@ lang:physical:filePath[`_struct_type:field] = "facts/predicates/struct_type-fiel
 
 
 
+_struct_type:field_bit_offset(v0, v1, v2) -> string(v0), int[64](v1), int[64](v2).
+
+lang:physical:delimiter[`_struct_type:field_bit_offset] = "\t".
+lang:physical:filePath[`_struct_type:field_bit_offset] = "facts/predicates/struct_type-field_bit_offset.dlm".
+
++type:id(e0:v0),
++struct_type(e0),
++struct_type:field_bit_offset[e0,v1] = v2
+<-
+   _struct_type:field_bit_offset(v0, v1, v2).
+
+
+
+_struct_type:field_name_at_offset(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
+
+lang:physical:delimiter[`_struct_type:field_name_at_offset] = "\t".
+lang:physical:filePath[`_struct_type:field_name_at_offset] = "facts/predicates/struct_type-field_name_at_offset.dlm".
+
++type:id(e0:v0),
++struct_type(e0),
++struct_type:field_name_at_offset[e0,v1] = v2
+<-
+   _struct_type:field_name_at_offset(v0, v1, v2).
+
+
+
 _struct_type:field_offset(v0, v1, v2) -> string(v0), int[64](v1), int[64](v2).
 
 lang:physical:delimiter[`_struct_type:field_offset] = "\t".

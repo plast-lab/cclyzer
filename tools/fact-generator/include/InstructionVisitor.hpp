@@ -131,6 +131,8 @@ class InstructionVisitor : public llvm::InstVisitor<InstructionVisitor>
     void visitSelectInst(llvm::SelectInst &);
     void visitLandingPadInst(llvm::LandingPadInst &);
     void visitCallInst(llvm::CallInst &);
+    void visitDbgDeclareInst(llvm::DbgDeclareInst &);
+    void visitDbgValueInst(llvm::DbgValueInst &);
     void visitVAArgInst(llvm::VAArgInst &);
 
     // Vector Operations

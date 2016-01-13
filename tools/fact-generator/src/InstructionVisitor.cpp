@@ -1,6 +1,7 @@
 #include <cassert>
 #include <string>
 #include <llvm/IR/Operator.h>
+#include <llvm/IR/DebugInfo.h>
 #include "InstructionVisitor.hpp"
 #include "predicate_groups.hpp"
 
@@ -582,6 +583,24 @@ void InstructionVisitor::visitCallInst(CallInst &CI)
     }
 
     gen.writeFnAttributes<pred::call>(iref, Attrs);
+}
+
+void InstructionVisitor::visitDbgDeclareInst(DbgDeclareInst &DDI)
+{
+    // First visit it as a generic call instruction
+    InstructionVisitor::visitCallInst(static_cast<CallInst&>(DDI));
+
+    // Process debug info
+    gen.debugInfoFinder.processDeclare(Mod, &DDI);
+}
+
+void InstructionVisitor::visitDbgValueInst(DbgValueInst &DDI)
+{
+    // First visit it as a generic call instruction
+    InstructionVisitor::visitCallInst(static_cast<CallInst&>(DDI));
+
+    // Process debug info
+    gen.debugInfoFinder.processValue(Mod, &DDI);
 }
 
 void InstructionVisitor::visitICmpInst(ICmpInst &I)

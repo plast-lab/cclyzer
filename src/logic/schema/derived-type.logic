@@ -46,6 +46,21 @@ struct_type:nfields[Type] = Total ->
 struct_type:field_offset[Type, Index] = Offset ->
    struct_type(Type), int[64](Index), int[64](Offset).
 
+// Bit offset per field
+struct_type:field_bit_offset[Type, Index] = Offset ->
+   struct_type(Type), int[64](Index), int[64](Offset).
+
+// Name of field
+struct_type:field_name_at_offset[Type, Offset] = Name ->
+   struct_type(Type), int[64](Offset), string(Name).
+
+struct_type:field_name[Type, Index] = Name ->
+   struct_type(Type), int[64](Index), string(Name).
+
+struct_type:field_name[Type, Index] = Name <-
+   struct_type:field_name_at_offset[Type, Offset] = Name,
+   struct_type:field_bit_offset[Type, Index] = Offset.
+
 
 //----------------------
 // Array Type
