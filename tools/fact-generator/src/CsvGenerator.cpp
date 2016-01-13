@@ -31,6 +31,10 @@ inline std::string demangle(const char* name)
     return (status == 0) ? res.get() : std::string(name);
 }
 
+inline std::string demangle(const std::string name)
+{
+    return demangle(name.c_str());
+}
 
 void CsvGenerator::processModule(const Module &Mod, string& path)
 {
