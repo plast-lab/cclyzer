@@ -214,10 +214,20 @@ allocation:to_string[Region] = RegionStr <-
    RegionStr = AllocStr + "[*]".
 
 allocation:to_string[Region] = RegionStr <-
+   allocation:type[Alloc] = Type,
+   struct_type:field_name[Type, Index] = FieldName,
    alloc_subregion:at_field[Alloc, Index] = Region,
    allocation:to_string[Alloc] = AllocStr,
    int64:string:convert[Index] = IndexStr,
-   RegionStr = AllocStr + ".f$" + IndexStr.
+   RegionStr = AllocStr + "." + FieldName + "/" + IndexStr.
+
+allocation:to_string[Region] = RegionStr <-
+   allocation:type[Alloc] = Type,
+   !struct_type:field_name[Type, Index] = _,
+   alloc_subregion:at_field[Alloc, Index] = Region,
+   allocation:to_string[Alloc] = AllocStr,
+   int64:string:convert[Index] = IndexStr,
+   RegionStr = AllocStr + ".?/" + IndexStr.
 
 
 //------------------------------------------------------------------------
