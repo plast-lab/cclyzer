@@ -682,6 +682,10 @@ void CsvGenerator::processCompTypeDebug(const DICompositeType &type, const strin
             if (fieldName.empty())
                 continue;
 
+            if (field->isStaticMember()) { // TODO
+                continue;
+            }
+
             writeFact(pred::struct_type::field_name, refmode, fieldName, bitOffset);
         }
     }
