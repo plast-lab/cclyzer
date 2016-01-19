@@ -34,6 +34,8 @@ DebugInfoProcessor::postProcess(const Module &m)
               const DIDerivedType &did = cast<DIDerivedType>(dbgType);
               const Metadata *baseType = did.getRawBaseType();
 
+              if (!baseType) continue;
+
               if (const DICompositeType *compType = dyn_cast<DICompositeType>(baseType))
                   postProcessType(*compType, dbgType.getName());
               break;
