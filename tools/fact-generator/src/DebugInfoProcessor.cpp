@@ -13,7 +13,6 @@ using std::string;
 namespace pred = predicates;
 
 
-
 void
 DebugInfoProcessor::postProcess(const Module &m)
 {
@@ -31,24 +30,29 @@ DebugInfoProcessor::postProcess(const Module &m)
         // dbgType.dump();
 
         switch (dbgType.getTag()) {
-          case dwarf::Tag::DW_TAG_typedef:
-              {
-                  const DIDerivedType &did = cast<DIDerivedType>(dbgType);
-                  const Metadata *baseType = did.getRawBaseType();
+          case dwarf::Tag::DW_TAG_typedef: {
+              const DIDerivedType &did = cast<DIDerivedType>(dbgType);
+              const Metadata *baseType = did.getRawBaseType();
 
-                  if (const DICompositeType *compType = dyn_cast<DICompositeType>(baseType))
-                      postProcessType(*compType, dbgType.getName());
-              }
+              if (const DICompositeType *compType = dyn_cast<DICompositeType>(baseType))
+                  postProcessType(*compType, dbgType.getName());
               break;
-          case dwarf::Tag::DW_TAG_structure_type:
-          case dwarf::Tag::DW_TAG_class_type:
+          }
+          case dwarf::Tag::DW_TAG_structure_type: {
               postProcessType(cast<DICompositeType>(dbgType));
               break;
-          default:
+          }
+          case dwarf::Tag::DW_TAG_class_type: {
+              postProcessType(cast<DICompositeType>(dbgType));
               break;
+          }
+          default: {
+              break;
+          }
         }
     }
 }
+
 
 void
 DebugInfoProcessor::postProcessType(const DICompositeType &type, const string altName)
@@ -59,14 +63,17 @@ DebugInfoProcessor::postProcessType(const DICompositeType &type, const string al
 
     // Append prefix based on dwarf tag
     switch (type.getTag()) {
-      case dwarf::Tag::DW_TAG_class_type:
+      case dwarf::Tag::DW_TAG_class_type: {
           rso << "%class.";
           break;
-      case dwarf::Tag::DW_TAG_structure_type:
+      }
+      case dwarf::Tag::DW_TAG_structure_type: {
           rso << "%struct.";
           break;
-      default:
+      }
+      default: {
           return;
+      }
     }
 
     DIScopeRef iScope = type.getScope();
@@ -118,7 +125,8 @@ DebugInfoProcessor::postProcessType(const DICompositeType &type, const string al
                 continue;
             }
 
-            writeFact(pred::struct_type::field_name, refmode, bitOffset, fieldName);
+            PredicateFactWriter::writeFact(
+                pred::struct_type::field_name, refmode, bitOffset, fieldName);
         }
     }
 }
