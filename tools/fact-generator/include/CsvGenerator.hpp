@@ -15,6 +15,7 @@
 #include <string>
 #include "predicate_groups.hpp"
 #include "Demangler.hpp"
+#include "DebugInfoProcessor.hpp"
 #include "FactWriter.hpp"
 #include "RefmodePolicy.hpp"
 
@@ -78,7 +79,7 @@ class CsvGenerator
   public:
     /* Constructor must initialize output file streams */
     CsvGenerator(FactWriter &writer)
-        : PredicateFactWriter(writer) {}
+        : PredicateFactWriter(writer), debugInfoProcessor(writer) {}
 
     /* Global fact writing methods */
 
@@ -88,8 +89,6 @@ class CsvGenerator
 
 
     void processModule(const llvm::Module &Mod, std::string& path);
-    void processDebugInfo(const llvm::Module &Mod);
-    void processCompTypeDebug(const llvm::DICompositeType &, const std::string altName = "");
     void writeVarsTypesAndConstants(const llvm::DataLayout &layout);
 
     /* Visitor classes */
@@ -105,7 +104,7 @@ class CsvGenerator
     type_cache_t constantTypes;
 
     /* Debug Info */
-    llvm::DebugInfoFinder debugInfoFinder;
+    DebugInfoProcessor debugInfoProcessor;
 
     /* Auxiliary methods */
 
@@ -131,12 +130,12 @@ class CsvGenerator
             : gen(generator)
         {
             gen.enterModule(&m, path);
-            gen.debugInfoFinder.processModule(m);
+            gen.debugInfoProcessor.processModule(m);
         }
 
         ~ModuleContext() {
             gen.exitModule();
-            gen.debugInfoFinder.reset();
+            gen.debugInfoProcessor.reset();
         }
 
       private:

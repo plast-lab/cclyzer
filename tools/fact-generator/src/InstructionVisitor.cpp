@@ -591,7 +591,7 @@ void InstructionVisitor::visitDbgDeclareInst(DbgDeclareInst &DDI)
     InstructionVisitor::visitCallInst(static_cast<CallInst&>(DDI));
 
     // Process debug info
-    gen.debugInfoFinder.processDeclare(Mod, &DDI);
+    gen.debugInfoProcessor.processDeclare(Mod, &DDI);
 }
 
 void InstructionVisitor::visitDbgValueInst(DbgValueInst &DDI)
@@ -600,7 +600,7 @@ void InstructionVisitor::visitDbgValueInst(DbgValueInst &DDI)
     InstructionVisitor::visitCallInst(static_cast<CallInst&>(DDI));
 
     // Process debug info
-    gen.debugInfoFinder.processValue(Mod, &DDI);
+    gen.debugInfoProcessor.processValue(Mod, &DDI);
 }
 
 void InstructionVisitor::visitICmpInst(ICmpInst &I)
