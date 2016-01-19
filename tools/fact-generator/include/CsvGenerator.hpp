@@ -53,10 +53,10 @@ class CsvGenerator
         writer.writeFact(predicate.c_str(), entity);
     }
 
-    template<class ValType>
+    template<class V>
     inline void writeFact(const pred_t &predicate,
                           const refmode_t& entity,
-                          const ValType& value)
+                          const V& value)
     {
         writer.writeFact(predicate.c_str(), entity, value);
     }
@@ -66,7 +66,7 @@ class CsvGenerator
                           const refmode_t& entity,
                           const ValType& value, int index)
     {
-        writer.writeFact(predicate.c_str(), entity, value, index);
+        writer.writeFact(predicate.c_str(), entity, index, value);
     }
 
     template<typename PredGroup>

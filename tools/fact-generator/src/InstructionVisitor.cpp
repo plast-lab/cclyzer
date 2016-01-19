@@ -48,7 +48,7 @@ refmode_t InstructionVisitor::writeInstrOperand(
     if (index == -1) {
         writer.writeFact(predname, instr, refmode);
     } else {
-        writer.writeFact(predname, instr, refmode, index);
+        writer.writeFact(predname, instr, index, refmode);
     }
     return refmode;
 }
@@ -83,7 +83,7 @@ refmode_t InstructionVisitor::writeInstrOperand(
     if (index == -1) {
         writer.writeFact(predname, instr, refmode);
     } else {
-        writer.writeFact(predname, instr, refmode, index);
+        writer.writeFact(predname, instr, index, refmode);
     }
     return refmode;
 }

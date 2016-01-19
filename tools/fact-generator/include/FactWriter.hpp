@@ -102,10 +102,10 @@ class FactWriter
     }
 
 
-    template<class ValType>
+    template<typename V>
     void writeFact(const char *predName,
                    const std::string& r_entity,
-                   const ValType& r_value)
+                   const V& r_value)
     {
         // Locate CSV file for the given predicate
         ofstream *csvFile = getCsvFile(predName);
@@ -115,22 +115,35 @@ class FactWriter
                    << delim << r_value << "\n";
     }
 
-    template<class ValType>
+    template<typename V, typename... Vs>
     void writeFact(const char *predName,
                    const std::string& r_entity,
-                   const ValType& r_value, int index)
+                   const V& r_value,
+                   const Vs&... r_values)
     {
         // Locate CSV file for the given predicate
         ofstream *csvFile = getCsvFile(predName);
 
         // Append fact
-        (*csvFile) << r_entity
-                   << delim << index
-                   << delim << r_value << "\n";
+        (*csvFile) << r_entity;
+        appendValues(*csvFile, r_value, r_values...);
+        (*csvFile) << "\n";
     }
-
 
   private:
+
+    /* Variadic method to append values to fact */
+
+    template<typename V, typename ...Vargs>
+    void appendValues(ofstream &csvFile, const V& value) {
+        csvFile << delim << value;
+    }
+
+    template<typename V, typename ...Vs>
+    void appendValues(ofstream &csvFile, const V& value, const Vs&... values) {
+        appendValues(csvFile, value);
+        appendValues(csvFile, values...);
+    }
 
     /* Column Delimiter */
     const std::string delim;
