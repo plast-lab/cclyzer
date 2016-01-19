@@ -19,7 +19,9 @@
 #include "RefmodePolicy.hpp"
 
 class CsvGenerator
-    : private RefmodePolicy, private Demangler
+    : private RefmodePolicy,
+      private Demangler,
+      private PredicateFactWriter
 {
     friend class InstructionVisitor;
     using RefmodePolicy::refmodeOf;
@@ -47,28 +49,6 @@ class CsvGenerator
 
     /* Fact writing methods */
 
-    inline void writeFact(const pred_t &predicate,
-                          const refmode_t& entity)
-    {
-        writer.writeFact(predicate.c_str(), entity);
-    }
-
-    template<class V>
-    inline void writeFact(const pred_t &predicate,
-                          const refmode_t& entity,
-                          const V& value)
-    {
-        writer.writeFact(predicate.c_str(), entity, value);
-    }
-
-    template<class ValType>
-    inline void writeFact(const pred_t &predicate,
-                          const refmode_t& entity,
-                          const ValType& value, int index)
-    {
-        writer.writeFact(predicate.c_str(), entity, index, value);
-    }
-
     template<typename PredGroup>
     void writeFnAttributes(const refmode_t &refmode, const llvm::AttributeSet Attrs);
 
@@ -88,7 +68,7 @@ class CsvGenerator
             const llvm::Constant *c = base.getOperand(i);
 
             refmode_t index_ref = writeConstant(*c);
-            writeFact(PredGroup::index, refmode, index_ref, i);
+            writeFact(PredGroup::index, refmode, i, index_ref);
         }
 
         writeFact(PredGroup::size, refmode, nOperands);
@@ -97,9 +77,8 @@ class CsvGenerator
 
   public:
     /* Constructor must initialize output file streams */
-    CsvGenerator(FactWriter &writer) : writer(writer) {
-        initStreams();
-    }
+    CsvGenerator(FactWriter &writer)
+        : PredicateFactWriter(writer) {}
 
     /* Global fact writing methods */
 
@@ -120,9 +99,6 @@ class CsvGenerator
   private:
     /* Initialize output file streams */
     void initStreams();
-
-    /* Fact writer */
-    FactWriter &writer;
 
     /* Caches for variable and constant types */
     type_cache_t variableTypes;

@@ -125,9 +125,9 @@ void CsvGenerator::TypeVisitor::visitStructType(const StructType *structType)
             uint64_t fieldOffset = structLayout->getElementOffset(i);
             uint64_t fieldBitOffset = structLayout->getElementOffsetInBits(i);
 
-            gen.writeFact(pred::struct_type::field_type, tref, fieldType, i);
-            gen.writeFact(pred::struct_type::field_offset, tref, fieldOffset, i);
-            gen.writeFact(pred::struct_type::field_bit_offset, tref, fieldBitOffset, i);
+            gen.writeFact(pred::struct_type::field_type, tref, i, fieldType);
+            gen.writeFact(pred::struct_type::field_offset, tref, i, fieldOffset);
+            gen.writeFact(pred::struct_type::field_bit_offset, tref, i, fieldBitOffset);
         }
 
         // Record number of fields
@@ -157,7 +157,7 @@ void CsvGenerator::TypeVisitor::visitFunctionType(const FunctionType *functionTy
     {
         refmode_t paramType = gen.refmodeOf(functionType->getFunctionParamType(i));
 
-        gen.writeFact(pred::func_type::param_type, signature, paramType, i);
+        gen.writeFact(pred::func_type::param_type, signature, i, paramType);
     }
 
     // Record number of formal parameters

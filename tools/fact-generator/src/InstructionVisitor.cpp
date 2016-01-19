@@ -376,7 +376,7 @@ void InstructionVisitor::visitExtractValueInst(ExtractValueInst &EVI)
     int index = 0;
 
     for (const unsigned *i = EVI.idx_begin(), *e = EVI.idx_end(); i != e; ++i) {
-        gen.writeFact(pred::extract_value::index, iref, *i, index);
+        gen.writeFact(pred::extract_value::index, iref, index, *i);
         index++;
     }
 
@@ -521,7 +521,7 @@ void InstructionVisitor::visitInsertValueInst(InsertValueInst &IVI)
     for (const unsigned *i = IVI.idx_begin(), *e = IVI.idx_end();
          i != e; ++i,index++)
     {
-        gen.writeFact(pred::insert_value::index, iref, *i, index);
+        gen.writeFact(pred::insert_value::index, iref, index, *i);
     }
 
     gen.writeFact(pred::insert_value::nindices, iref, IVI.getNumIndices());
@@ -544,7 +544,7 @@ void InstructionVisitor::visitLandingPadInst(LandingPadInst &LI)
             ? pred::landingpad::catch_clause
             : pred::landingpad::filter_clause;
 
-        gen.writeFact(pred_clause, iref, LI.getClause(i), i);
+        gen.writeFact(pred_clause, iref, i, LI.getClause(i));
     }
 
     gen.writeFact(pred::landingpad::nclauses, iref, LI.getNumClauses());

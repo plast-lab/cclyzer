@@ -53,7 +53,7 @@ class InstructionVisitor : public llvm::InstVisitor<InstructionVisitor>
 
   public:
     InstructionVisitor(CsvGenerator &generator, const llvm::Module &M)
-        : writer(generator.writer), gen(generator), Mod(M) {}
+        : writer(generator.getWriter()), gen(generator), Mod(M) {}
 
     /*******************************
      * Instruction Visitor methods *

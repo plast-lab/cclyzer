@@ -145,7 +145,7 @@ void CsvGenerator::processModule(const Module &Mod, string& path)
             {
                 refmode_t varId = refmodeOfLocalValue(arg);
 
-                writeFact(pred::function::param, funcref, varId, index++);
+                writeFact(pred::function::param, funcref, index++, varId);
                 recordVariable(varId, arg->getType());
             }
         }
@@ -349,7 +349,7 @@ void CsvGenerator::writeFnAttributes(
                   writeFact(PredGroup::fn_attr, refmode, attr);
                   break;
               default:
-                  writeFact(PredGroup::param_attr, refmode, attr, i);
+                  writeFact(PredGroup::param_attr, refmode, i, attr);
                   break;
             }
         }
@@ -420,36 +420,6 @@ void CsvGenerator::writeVarsTypesAndConstants(const llvm::DataLayout &layout)
        TV.visitType(type);
 }
 
-
-void CsvGenerator::initStreams()
-{
-    using namespace predicates;
-
-    std::vector<const char *> all_predicates;
-
-    for (pred_t *pred : predicates::predicates())
-    {
-        operand_pred_t *operand_pred = dynamic_cast< operand_pred_t*>(pred);
-
-        if (operand_pred) {
-            pred_t cpred = operand_pred->asConstant();
-            pred_t vpred = operand_pred->asVariable();
-
-            all_predicates.push_back(cpred.c_str());
-            all_predicates.push_back(vpred.c_str());
-        }
-        else {
-            all_predicates.push_back(pred->c_str());
-        }
-    }
-
-    writer.init_streams(all_predicates);
-
-    // TODO: Consider closing streams and opening them lazily, so as
-    // not to exceed the maximum number of open file descriptors
-}
-
-
 void CsvGenerator::writeConstantArray(const ConstantArray &array, const refmode_t &refmode) {
     writeConstantWithOperands<pred::constant_array>(array, refmode);
 }
@@ -500,7 +470,7 @@ void CsvGenerator::writeConstantExpr(const ConstantExpr &expr, const refmode_t &
             refmode_t index_ref = writeConstant(*c);
 
             if (i > 0)
-                writeFact(pred::gep_constant_expr::index, refmode, index_ref, i - 1);
+                writeFact(pred::gep_constant_expr::index, refmode, i - 1, index_ref);
             else
                 writeFact(pred::gep_constant_expr::base, refmode, index_ref);
         }
@@ -677,7 +647,7 @@ void CsvGenerator::processCompTypeDebug(const DICompositeType &type, const strin
                 continue;
             }
 
-            writeFact(pred::struct_type::field_name, refmode, fieldName, bitOffset);
+            writeFact(pred::struct_type::field_name, refmode, bitOffset, fieldName);
         }
     }
 }
