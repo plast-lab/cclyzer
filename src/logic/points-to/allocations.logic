@@ -182,6 +182,9 @@ null_location[] = Null
 // [Allocation String Representation Protocol]
 //------------------------------------------------
 
+// Every allocation must have a string representation
+allocation(Alloc) -> allocation:to_string[Alloc] = _.
+
 // Human readable representation for stack allocations
 
 allocation:to_string[Alloc] = Str <-
