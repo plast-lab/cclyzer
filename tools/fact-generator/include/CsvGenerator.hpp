@@ -14,10 +14,12 @@
 #include <llvm/IR/GlobalVariable.h>
 #include <string>
 #include "predicate_groups.hpp"
+#include "Demangler.hpp"
 #include "FactWriter.hpp"
 #include "RefmodePolicy.hpp"
 
-class CsvGenerator : private RefmodePolicy
+class CsvGenerator
+    : private RefmodePolicy, private Demangler
 {
     friend class InstructionVisitor;
     using RefmodePolicy::refmodeOf;
