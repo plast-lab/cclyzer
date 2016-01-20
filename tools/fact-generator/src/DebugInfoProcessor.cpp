@@ -74,6 +74,39 @@ DebugInfoProcessor::postProcess(const Module &m)
                   postProcessType(*compType, dbgType.getName());
               break;
           }
+          case dwarf::Tag::DW_TAG_inheritance: {
+              const DIDerivedType &did = cast<DIDerivedType>(dbgType);
+              const Metadata *baseType = did.getRawBaseType();
+              const DIScopeRef scope = did.getScope();
+
+              if (const MDString *mds = dyn_cast<MDString>(baseType)) {
+                  if (const MDString *mdscope = dyn_cast<MDString>(scope)) {
+                      string subtypeID = mdscope->getString();
+                      string supertypeID = mds->getString();
+
+                      if (!typeNameByID.count(subtypeID))
+                          continue;
+
+                      if (!typeNameByID.count(supertypeID))
+                          continue;
+
+                      refmode_t refmode = typeNameByID[subtypeID];
+                      refmode_t baseRefmode = typeNameByID[supertypeID];
+                      uint64_t bitOffset = did.getOffsetInBits();
+
+                      // Inheritance relation accounts for a subobject
+                      // field at some given offset
+
+                      size_t pos = baseRefmode.find_first_of(".");
+                      refmode_t basename = baseRefmode.substr(pos + 1);
+                      refmode_t subobjField = "_subobj$" + basename;
+
+                      writeFact(pred::struct_type::field_name,
+                                refmode, bitOffset, subobjField);
+                  }
+              }
+              break;
+          }
           case dwarf::Tag::DW_TAG_structure_type: {
               postProcessType(cast<DICompositeType>(dbgType));
               break;
