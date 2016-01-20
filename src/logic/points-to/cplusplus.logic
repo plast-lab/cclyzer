@@ -217,3 +217,12 @@ type_compatible(PtrActualType, PtrDeclaredType) <-
    pointer_type:component[PtrActualType] = ActualType,
    pointer_type:component[PtrDeclaredType] = DeclaredType,
    _type_expands_base_type(DeclaredType, ActualType).
+
+struct_type(Type)
+ , struct_type(UnpaddedType)
+ , type:id(Type:Sign)
+ , type:id(UnpaddedType:UnpaddedSign)
+ , struct_type:nfields[UnpaddedType] = NFields
+ , UnpaddedSign = Sign + ".base"
+ ->
+   type_compatible:up_to_field(Type, UnpaddedType, NFields - 1).
