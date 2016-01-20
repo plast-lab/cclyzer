@@ -62,6 +62,23 @@ struct_type:field_name[Type, Index] = Name <-
    struct_type:field_bit_offset[Type, Index] = Offset.
 
 
+// A derived type may include extra byte fields that account for the
+// required padding. However, when a subtype inherits a base type it
+// uses an *unpadded* version of the latter (with the `.base`) suffix,
+// since it does not need to include its padding.
+
+// Here we replicate any existing field name information of the
+// original derived type to the *unpadded* one.
+
+struct_type:field_name[UnpaddedType, Index] = Name <-
+   struct_type:field_name_at_offset[Type, Offset] = Name,
+   struct_type:field_bit_offset[Type, Index] = Offset,
+   struct_type:field_bit_offset[UnpaddedType, Index] = Offset,
+   type:id(Type:Sign),
+   type:id(UnpaddedType:UnpaddedSign),
+   UnpaddedSign = Sign + ".base".
+
+
 //----------------------
 // Array Type
 //----------------------
