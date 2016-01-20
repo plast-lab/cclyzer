@@ -1,6 +1,7 @@
 #ifndef DEBUG_INFO_PROCESSOR_HPP__
 #define DEBUG_INFO_PROCESSOR_HPP__
 
+#include <map>
 #include <llvm/IR/DebugInfo.h>
 #include "Demangler.hpp"
 #include "PredicateFactWriter.hpp"
@@ -40,12 +41,31 @@ class DebugInfoProcessor
     postProcess(const llvm::Module &);
 
     void
-    postProcessType(const llvm::DICompositeType &,
-                    const std::string altName = "");
+    postProcessType(const llvm::DICompositeType &, const std::string &);
 
+    void
+    postProcessType(const llvm::DICompositeType &tp) {
+        postProcessType(tp, "");
+    }
+
+  protected:
+
+    // Construct a mapping from type ID to type name
+    void CollectTypeIDs();
+
+    // Append debug info scope to stream
+    template<typename Stream>
+    void printScope(Stream &stream, const llvm::DIScopeRef &outerScope);
+
+    // Generate refmode for debug info composite type
+    refmode_t refmodeOf(const llvm::DICompositeType &,
+                        const std::string &altName = "");
   private:
     /* Debug Info */
     llvm::DebugInfoFinder debugInfoFinder;
+
+    /* Mapping from DIType ID to type name  */
+    std::map<std::string, refmode_t> typeNameByID;
 };
 
 #endif /* DEBUG_INFO_PROCESSOR_HPP__ */

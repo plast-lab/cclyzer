@@ -13,6 +13,37 @@ using std::string;
 namespace pred = predicates;
 
 
+template
+void DebugInfoProcessor::printScope<raw_string_ostream>(
+    raw_string_ostream &, const DIScopeRef &);
+
+template<typename Stream> void
+DebugInfoProcessor::printScope(Stream &stream, const DIScopeRef &outerScope)
+{
+    DIScopeRef iScope = outerScope;
+    list<string> nsComponents;
+
+    // Find all enclosing namespaces
+    while (iScope) {
+        const Metadata &scope = *iScope;
+
+        if (const MDString *mds = dyn_cast<MDString>(&scope)) {
+            nsComponents.push_front(mds->getString());
+            iScope = nullptr;
+        }
+        else {
+            const DIScope *dis = dyn_cast<DIScope>(&scope);
+            nsComponents.push_front(dis->getName());
+            iScope = dis->getScope();
+        }
+    }
+
+    // Append namespaces in reverse visiting order
+    for (list<string>::iterator it = nsComponents.begin(),
+             end = nsComponents.end(); it != end; ++it)
+        stream << demangle(*it) << "::";
+}
+
 void
 DebugInfoProcessor::postProcess(const Module &m)
 {
@@ -20,6 +51,9 @@ DebugInfoProcessor::postProcess(const Module &m)
 
     // Get iterator over all module types
     llvm::iterator_range<di_type_iterator> allTypes = debugInfoFinder.types();
+
+    // Construct a mapping from Type ID to Type name
+    CollectTypeIDs();
 
     // iterate over types
     for (di_type_iterator iType = allTypes.begin(), E = allTypes.end();
@@ -56,8 +90,7 @@ DebugInfoProcessor::postProcess(const Module &m)
 }
 
 
-void
-DebugInfoProcessor::postProcessType(const DICompositeType &type, const string altName)
+refmode_t DebugInfoProcessor::refmodeOf(const DICompositeType &type, const string &altName)
 {
     // Construct refmode
     refmode_t refmode;
@@ -74,42 +107,33 @@ DebugInfoProcessor::postProcessType(const DICompositeType &type, const string al
           break;
       }
       default: {
-          return;
+          return "";
       }
     }
 
-    DIScopeRef iScope = type.getScope();
-    list<string> nsComponents;
-
-    // Find all enclosing namespaces
-    while (iScope) {
-        const Metadata &scope = *iScope;
-
-        if (const MDString *mds = dyn_cast<MDString>(&scope)) {
-            nsComponents.push_front(mds->getString());
-            iScope = nullptr;
-        }
-        else {
-            const DIScope *dis = dyn_cast<DIScope>(&scope);
-            nsComponents.push_front(dis->getName());
-            iScope = dis->getScope();
-        }
-    }
-
-    // Append namespaces in reverse visiting order
-    for (list<string>::iterator it = nsComponents.begin(),
-             end = nsComponents.end(); it != end; ++it)
-        rso << *it << "::";
+    // Append scope to name
+    printScope(rso, type.getScope());
 
     // Append class name to refmode
     string typeName = type.getName();
     typeName = (typeName.empty() ? altName : typeName);
 
     if (typeName.empty())
-        return;
+        return "";
 
     rso << typeName;
     rso.flush();
+
+    return refmode;
+}
+
+void
+DebugInfoProcessor::postProcessType(const DICompositeType &type, const string &altName)
+{
+    // Construct refmode
+    refmode_t refmode = refmodeOf(type, altName);
+
+    if (refmode.empty()) return;
 
     // Record fields of composite type
     const DINodeArray &elements = type.getElements();
@@ -131,4 +155,17 @@ DebugInfoProcessor::postProcessType(const DICompositeType &type, const string al
                 pred::struct_type::field_name, refmode, bitOffset, fieldName);
         }
     }
+}
+
+
+void DebugInfoProcessor::CollectTypeIDs()
+{
+    // collect type ids
+    for (const DIType *type : debugInfoFinder.types())
+        if (const DICompositeType *tp = dyn_cast<DICompositeType>(type)) {
+            refmode_t refmode = refmodeOf(*tp);
+
+            if (!refmode.empty())
+                typeNameByID[tp->getIdentifier()] = refmode;
+        }
 }
