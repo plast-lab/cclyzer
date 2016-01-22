@@ -24,6 +24,7 @@ memcpy(Insn, To, From) ->
 
 ptr_points_to(Alloc, To) <-
    memcpy(_, To, From),
+   ptr_compatible_allocation(To),
    ptr_points_to(Alloc, From).
 
 // Base case of `memcpy` call instructions It should handle syntactic

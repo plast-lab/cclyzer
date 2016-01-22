@@ -33,6 +33,9 @@
 alloc_subregion(Region) -> allocation(Region).
 lang:entity(`alloc_subregion).
 
+ptr_compatible_allocation(Alloc) <-
+   alloc_subregion(Alloc).
+
 //---------------------------------------------------------------
 // [Field Selections]
 //---------------------------------------------------------------
@@ -300,7 +303,7 @@ region_contains(Outer, Inner) <-
    region_contains(Interm, Inner),
    region_contains(Outer, Interm).
 
-// Null cannot contain anything
+// Non-allocations (e.g., *null*) cannot contain anything
 
-null_location[] = Null ->
-   !region_contains(Null, _).
+non_allocation(NonAlloc) ->
+   !region_contains(NonAlloc, _).

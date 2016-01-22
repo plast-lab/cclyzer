@@ -69,20 +69,30 @@ global_allocation:by_function[Func] = GlobalAlloc ->
    function_decl(Func), global_allocation(GlobalAlloc).
 
 
+// Pointer-compatible allocations
+
+ptr_compatible_allocation(Alloc) -> allocation(Alloc).
+lang:isEntity[`ptr_compatible_allocation] = false.
+
+ptr_compatible_allocation(Alloc) <-
+   basic_allocation(Alloc).
+
 
 //-------------------------------------
 // Additional pseudo-allocation types
 //-------------------------------------
 
+non_allocation(Alloc) -> allocation(Alloc).
+
 // This nullary predicate represents any unknown memory location.
 
 unknown_location[] = Unknown ->
-   allocation(Unknown).
+   non_allocation(Unknown).
 
 // This nullary predicate represents `null`.
 
 null_location[] = Null ->
-   allocation(Null).
+   non_allocation(Null).
 
 
 //--------------------------------

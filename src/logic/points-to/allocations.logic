@@ -166,16 +166,28 @@ allocation:type[Alloc] = Type <-
 /// 1. Unknown Memory Special Object (may point to anything)
 
 unknown_location[] = Unknown
- , allocation(Unknown)
+ , non_allocation(Unknown)
  , allocation:to_string[Unknown] = "*unknown*"
  <- .
+
+// An unknown location points to an unknown location
+
+ptr_points_to(Unknown, Unknown) <-
+   unknown_location[] = Unknown.
+
+unknown_location[] = Unknown, ptr_points_to(To, Unknown) -> To = Unknown.
+
 
 /// 2. Null Special Object
 
 null_location[] = Null
- , allocation(Null)
+ , non_allocation(Null)
  , allocation:to_string[Null] = "*null*"
  <- .
+
+// Null cannot point to anything
+
+null_location[] = Null -> !ptr_points_to(_, Null).
 
 
 //------------------------------------------------

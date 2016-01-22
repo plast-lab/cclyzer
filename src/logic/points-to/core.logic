@@ -107,7 +107,8 @@ ptr_points_to(Alloc, BaseAlloc) <-
    store_instruction:value[Insn] = Op,
    store_instruction:address[Insn] = PtrOp,
    operand_points_to(Alloc, Op),
-   operand_points_to(BaseAlloc, PtrOp).
+   operand_points_to(BaseAlloc, PtrOp),
+   ptr_compatible_allocation(BaseAlloc).
 
 var_points_to(Alloc, ToVar) <-
    reachable_instruction(Insn),
