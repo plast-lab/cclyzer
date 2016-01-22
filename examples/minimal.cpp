@@ -52,6 +52,15 @@ namespace Blah {
         virtual int get() { return g; }
         virtual void set(int x) { g = x; }
     };
+
+    namespace Bling {
+        typedef B MyMy;
+
+        class Bong {
+          private:
+            int whatev;
+        };
+    }
 }
 
 class C: public B, public Blah::DDD {
@@ -94,5 +103,8 @@ int main(int argc, char *argv[])
     print(&b);
     print(&c);
     print(d);
+
+    Blah::Bling::MyMy asd(99);
+    Blah::Bling::Bong asfd;
     return 0;
 }

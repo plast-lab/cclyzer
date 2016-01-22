@@ -3,7 +3,9 @@
 typedef struct {
     int **y;
     int *x;
-} inner ;
+} inner2;
+
+typedef inner2 inner;
 
 typedef struct {
     int *g;
