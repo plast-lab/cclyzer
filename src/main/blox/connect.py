@@ -10,12 +10,14 @@ import subprocess
 import sys
 from textwrap import dedent
 
-_IGNORED_WARNINGS = ('''\
-                     *******************************************************************
-                     Warning: BloxBatch is deprecated and will not be supported in LogicBlox 4.0.
-                     Please use 'lb' instead of 'bloxbatch'.
-                     *******************************************************************
-                     ''',)
+_IGNORED_WARNINGS = (
+    '''\
+    *******************************************************************
+    Warning: BloxBatch is deprecated and will not be supported in LogicBlox 4.0.
+    Please use 'lb' instead of 'bloxbatch'.
+    *******************************************************************
+    ''',
+)
 
 
 def filter_errors(stream):

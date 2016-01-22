@@ -162,7 +162,8 @@ pointer_index(0).
 
 pointer_index(Index) <-
    getelementptr_instruction:index[_, 0] = IndexOp,
-   operand:to_int[IndexOp] = Index.
+   operand:to_int[IndexOp] = Index,
+   Index >= 0.
 
 // Find all statically possible array indices
 
