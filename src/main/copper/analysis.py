@@ -9,6 +9,7 @@ class Analysis(object):
         self.logger = logging.getLogger(__name__)
         self._config = config
         self._stats = None
+        self._projects = projects
         self._pipeline = [
             CleaningStep(),
             FactGenerationStep(),
@@ -47,6 +48,10 @@ class Analysis(object):
     def database_directory(self):
         return os.path.join(self.output_directory, 'db')
 
+    @property
+    def results_directory(self):
+        return os.path.join(self.output_directory, 'results')
+
     def load_project(self, project):
         LoadProjectStep(project).apply(self)
 
@@ -75,3 +80,6 @@ class Analysis(object):
             .count('array_allocation')
             .build()
         )
+
+    def enable_exports(self):
+        self._pipeline.append(RunOutputQueriesStep(self._projects.POINTS_TO))

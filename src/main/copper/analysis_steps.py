@@ -150,3 +150,29 @@ class SanityCheckStep(AnalysisStep):
     @property
     def message(self):
         return 'enable {} sanity checks'.format(self._project.name)
+
+
+class RunOutputQueriesStep(AnalysisStep):
+    def __init__(self, project):
+        AnalysisStep.__init__(self)
+        self._project = project
+
+    def apply(self, analysis):
+        # Create database connector
+        connector = blox.connect.Connector(analysis.database_directory)
+
+        # Create empty directory
+        outdir = analysis.results_directory
+        os.makedirs(outdir)
+
+        # Compute query block name
+        blockname = '{}-queries'.format(self._project.name)
+        self.logger.info("Executing named block %s", blockname)
+
+        # Execute relevant block
+        with cd(outdir):
+            connector.execute_block(blockname)
+
+    @property
+    def message(self):
+        return 'run {} output queries'.format(self._project.name)

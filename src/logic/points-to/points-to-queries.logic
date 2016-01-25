@@ -1,3 +1,15 @@
+// We only need to add declarations and file associations for the
+// queries we are interested in exporting
+
+_dereferences(SrcAllocStr, DestAllocStr) ->
+   string(SrcAllocStr), string(DestAllocStr).
+
+lang:physical:delimiter[`_dereferences] = "\t".
+lang:physical:filePath[`_dereferences] = "pointer-dereferences.tsv".
+
+
+// Here start the queries
+
 _cg(CallerSign, CalleeSign) <-
    callgraph:fn_edge(Callee, Caller),
    function:signature[Callee] = CalleeSign,

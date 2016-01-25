@@ -50,6 +50,8 @@ def main():
     parser.add_argument('-o', '--output-dir', metavar='DIRECTORY', required=True,
                         help='output directory')
     parser.add_argument('-q', '--no-config-file', dest='read_config', action='store_false')
+    parser.add_argument('--no-exports', dest='run_exports', action='store_false',
+                        help='disable result query exports')
     parser.set_defaults(read_config=True)
 
     # Initialize analysis
@@ -68,6 +70,10 @@ def main():
     if opts.read_config:
         from copper.config import CustomAnalysis
         analysis = CustomAnalysis(config)
+
+    # Add query exporting steps
+    if opts.run_exports:
+        analysis.enable_exports()
 
     # Dynamically decorate each analysis step
     for step in analysis.pipeline:

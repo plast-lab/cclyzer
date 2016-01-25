@@ -38,4 +38,4 @@ type-back-propagation.logic, active
 
 
 // Common queries
-queries.logic, inactive
+points-to-queries.logic, inactive
