@@ -37,7 +37,7 @@ class Connector(object):
         """A connector to a LogicBlox workspace."""
         self._workspace = workspace
 
-    def _run_command(self, command_line):
+    def _process_lines(self, command_line):
         # Run the command with separate pipes for stdout/stderr streams
         p = subprocess.Popen(
             command_line, shell=True,
@@ -48,6 +48,28 @@ class Connector(object):
         # Parse output and lazily return each line
         for line in p.stdout:
             yield line.strip()
+
+        # Wait for the process to exit and store the return code
+        returncode = p.wait()
+
+        # Create filtered error string
+        errors = filter_errors(p.stderr)
+
+        # Print the remaining warnings
+        if errors.strip() is not '':
+            print >> sys.stderr, errors
+
+        # Check return code and raise exception at failure indication
+        if returncode != 0:
+            raise subprocess.CalledProcessError(returncode, command_line)
+
+    def _run_command(self, command_line):
+        # Run the command with separate pipes for stdout/stderr streams
+        p = subprocess.Popen(
+            command_line, shell=True,
+            stdout=None,
+            stderr=subprocess.PIPE
+        )
 
         # Wait for the process to exit and store the return code
         returncode = p.wait()
@@ -100,7 +122,7 @@ class Connector(object):
         # Parse results and add counters to dictionary
         for (pred, num) in (
                 line.rsplit(':', 1) for
-                line in self._run_command(command_line)
+                line in self._process_lines(command_line)
         ):
             counters[pred] = int(num)
 
@@ -134,7 +156,7 @@ class Connector(object):
         if printOpt:
             command_line += "print %s" % (printOpt,)
 
-        return self._run_command(command_line)
+        return self._process_lines(command_line)
 
     def execute_block(self, blockName):
         command_line = "bloxbatch -db %s -execute -name '%s' " % (self._workspace, blockName)
