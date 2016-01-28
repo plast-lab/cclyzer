@@ -65,7 +65,9 @@ invoke_instruction:fn_attribute(Insn, Attr) ->
 
 invoke_instruction:signature[Insn] = Type <-
    invoke_instruction:function[Insn] = Func,
-   operand:type[Func] = Type.
+   operand:type[Func] = PtrType,
+   pointer_type:component[PtrType] = Type,
+   function_type(Type).
 
 invoke_instruction:return_type[Insn] = Type <-
    invoke_instruction:signature[Insn] = Signature,
