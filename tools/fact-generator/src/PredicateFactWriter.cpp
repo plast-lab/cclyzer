@@ -22,7 +22,7 @@ void PredicateFactWriter::CreatePredicateFiles(FactWriter &writer)
 {
     using namespace predicates;
 
-    std::vector<const char *> all_predicates;
+    std::vector<std::string> all_predicates;
 
     for (const pred_t *pred : predicates::predicates())
     {
@@ -30,14 +30,14 @@ void PredicateFactWriter::CreatePredicateFiles(FactWriter &writer)
             dynamic_cast< const operand_pred_t*>(pred);
 
         if (operand_pred) {
-            pred_t cpred = operand_pred->asConstant();
-            pred_t vpred = operand_pred->asVariable();
+            const pred_t &cpred = operand_pred->asConstant();
+            const pred_t &vpred = operand_pred->asVariable();
 
-            all_predicates.push_back(cpred.c_str());
-            all_predicates.push_back(vpred.c_str());
+            all_predicates.push_back(cpred);
+            all_predicates.push_back(vpred);
         }
         else {
-            all_predicates.push_back(pred->c_str());
+            all_predicates.push_back(*pred);
         }
     }
 

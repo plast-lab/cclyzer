@@ -90,6 +90,9 @@ class Predicate
 
   private:
     const std::string name;
+
+    Predicate( const Predicate& other ) = delete; // non construction-copyable
+    Predicate& operator=( const Predicate& ) = delete; // non copyable
 };
 
 

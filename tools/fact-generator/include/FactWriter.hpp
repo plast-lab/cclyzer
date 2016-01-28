@@ -35,6 +35,10 @@ class FactWriter
         return prepend_dir(filePolicy.toPath(predName));
     }
 
+    path toPath(const std::string &predName) const {
+        return toPath(predName.c_str());
+    }
+
     ofstream* getCsvFile(const char *predname) {
         return getCsvFile(toPath(predname));
     }
@@ -77,7 +81,7 @@ class FactWriter
     }
 
     template<class FileCollection>
-    void init_streams(FileCollection items)
+    void init_streams(const FileCollection &items)
     {
         using namespace std;
 
