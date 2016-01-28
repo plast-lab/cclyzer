@@ -127,6 +127,9 @@ refmode_t RefmodePolicy::Impl::refmodeOfConstant(const llvm::Constant *c)
 
 refmode_t RefmodePolicy::Impl::refmodeOfLocalValue(const llvm::Value *val, bool prefix) const
 {
+    if (const llvm::BasicBlock *bb = dyn_cast<llvm::BasicBlock>(val))
+        return refmodeOfBasicBlock(bb, prefix);
+
     refmode_t id = refmodeOf(val);
 
     if (!prefix)
