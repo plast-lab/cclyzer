@@ -116,6 +116,11 @@ function_type:nparams[Type] = Total ->
    function_type(Type), int[64](Total).
 
 schema:sanity()
+ , function_type(Type)
+ ->
+   function_type:nparams[Type] = _.
+
+schema:sanity()
  , function_type:return[_] = Ret
  ->
    metadata_type[] != Ret,
