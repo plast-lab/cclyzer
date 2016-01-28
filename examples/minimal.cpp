@@ -100,9 +100,9 @@ int main(int argc, char *argv[])
     std::cout << "Field x is " << a.foo() << std::endl;
     std::cout << "Field x is " << b.foo() << std::endl;
     std::cout << "Field x is " << c.foo() << std::endl;
-    print(&b);
-    print(&c);
-    print(d);
+    print(&b);                  // calls B::foo(), B::foobar(), A::bar()
+    print(&c);                  // calls C::foo(), B::foobar(), A::bar()
+    print(d);                   // same as line above
 
     Blah::Bling::MyMy asd(99);
     Blah::Bling::Bong asfd;
