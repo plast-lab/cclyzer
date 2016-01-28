@@ -97,7 +97,7 @@ void CsvGenerator::processModule(const Module &Mod, string& path)
             Constant *pers_fn = func.getPersonalityFn();
             refmode_t pers_fn_ref = writeConstant(*pers_fn);
 
-            writeFact(pred::function::pers_fn, funcref, func.getPersonalityFn());
+            writeFact(pred::function::pers_fn, funcref, pers_fn_ref);
         }
 
         // Record calling convection if it not defaults to C

@@ -10,12 +10,25 @@ landingpad_instruction:type[Insn] = Type ->
 
 // personality function
 landingpad_instruction:pers_fn[Insn] = Func ->
-   landingpad_instruction(Insn), constant(Func).
+   landingpad_instruction(Insn), function_decl(Func).
 
-landingpad_instruction:pers_fn[Insn] = PersonalityFunction <-
+landingpad_instruction:pers_fn[Insn] = PersFunction <-
    landingpad_instruction(Insn),
    instruction:function[Insn] = InFunction,
-   function:pers_fn[InFunction] = PersonalityFunction.
+   function:pers_fn[InFunction] = FnConstant,
+   function_constant(FnConstant),
+   function_constant:function_name[FnConstant] = PersFnName,
+   function:by_name[PersFnName] = PersFunction.
+
+landingpad_instruction:pers_fn[Insn] = PersFunction <-
+   landingpad_instruction(Insn),
+   instruction:function[Insn] = InFunction,
+   function:pers_fn[InFunction] = BitcastConstant,
+   bitcast_constant_expression:from[BitcastConstant] = FnConstant,
+   function_constant(FnConstant),
+   function_constant:function_name[FnConstant] = PersFnName,
+   function:by_name[PersFnName] = PersFunction.
+
 
 //------------------------------------------------------------------------------
 // [Landing Pad]
@@ -183,12 +196,6 @@ schema:sanity()
  , landingpad_instruction:type[Insn] = Type
  ->
    instruction:type[Insn] = Type.
-
-schema:sanity()
- , landingpad_instruction:pers_fn[_] = Func
- , constant:type[Func] = Type
- ->
-   function_type(Type).
 
 
 // 1st Constraint is omitted, since it is not really a constraint,

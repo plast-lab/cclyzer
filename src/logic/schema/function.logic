@@ -93,7 +93,7 @@ function:gc[Func] = CollectorName ->
    function_decl(Func), string(CollectorName).
 
 function:pers_fn[Func] = PersonalityFunction ->
-   function_decl(Func), function_constant(PersonalityFunction).
+   function_decl(Func), constant(PersonalityFunction).
 
 function:attribute(Func, Attr) ->
    function_decl(Func), attribute(Attr).
