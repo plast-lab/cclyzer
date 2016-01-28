@@ -109,21 +109,26 @@ primary_superclass[Type] = Supertype <-
    class_instance:constructor[Alloc] = Ctor,
    constructor:class_type[Ctor] = Type,
    _init_by_ctor(Supertype, _, Ctor, Alloc),
-   struct_type:field[Type, 0] = OtherType,
-   type_compatible(OtherType, Supertype).
+   struct_type:field[Type, 0] = UnpaddedType,
+   struct_type:nfields[UnpaddedType] = NFields,
+   type_compatible:up_to_field(Supertype, UnpaddedType, NFields - 1).
 
 // Same thing for secondary superclasses, although the object that
 // flows to constructor will have some offset w.r.t the original
 // receiver object
 
 secondary_superclass(Supertype, Type) <-
-   alloc_subregion:base[Alloc] = BaseAlloc,
    class_instance:constructor[BaseAlloc] = Ctor,
    constructor:class_type[Ctor] = Type,
+   alloc_aliases(BaseAlloc0, BaseAlloc),
+   alloc_aliases(BaseAlloc, BaseAlloc0),     // redundant opt clause
+   alloc_subregion:base[Alloc] = BaseAlloc0, // reduntant opt clause
+   alloc_subregion:at_field[BaseAlloc0, Index] = Alloc,
    _init_by_ctor(Supertype, _, Ctor, Alloc),
-   struct_type:field[Type, Index] = OtherType,
-   Index != 0,
-   type_compatible(OtherType, Supertype).
+   struct_type:field[Type, Index] = UnpaddedType,
+   struct_type:nfields[UnpaddedType] = NFields,
+   type_compatible:up_to_field(Supertype, UnpaddedType, NFields - 1),
+   Index != 0.
 
 
 // Union of the above two kinds of superclasses
