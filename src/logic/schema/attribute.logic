@@ -1,22 +1,71 @@
 // Attribute
 attribute(Attr), attribute:value(Attr:Ref) -> string(Ref).
 
+// Parameter Attributes
+
 parameter_attribute:zeroext[] = Attr <- attribute:value(Attr:"zeroext").
 parameter_attribute:signext[] = Attr <- attribute:value(Attr:"signext").
 parameter_attribute:inreg[] = Attr <- attribute:value(Attr:"inreg").
 parameter_attribute:byval[] = Attr <- attribute:value(Attr:"byval").
 parameter_attribute:inalloca[] = Attr <- attribute:value(Attr:"inalloca").
 parameter_attribute:sret[] = Attr <- attribute:value(Attr:"sret").
+
+parameter_attribute:align[] = Attr <-
+   attribute:value(Attr:Val), string:like(Val, "alias %").
+
 parameter_attribute:noallias[] = Attr <- attribute:value(Attr:"noalias").
 parameter_attribute:nocapture[] = Attr <- attribute:value(Attr:"nocapture").
 parameter_attribute:nest[] = Attr <- attribute:value(Attr:"nest").
 parameter_attribute:returned[] = Attr <- attribute:value(Attr:"returned").
 parameter_attribute:nonnull[] = Attr <- attribute:value(Attr:"nonnull").
 
-function_attribute:noreturn[] = Attr <- attribute:value(Attr:"noreturn").
-function_attribute:nounwind[] = Attr <- attribute:value(Attr:"nounwind").
-function_attribute:readonly[] = Attr <- attribute:value(Attr:"readonly").
-function_attribute:readnone[] = Attr <- attribute:value(Attr:"readnone").
+parameter_attribute:dereferenceable[] = Attr <-
+   attribute:value(Attr:Val), string:like(Val, "dereferenceable(%)").
+
+parameter_attribute:dereferenceable_or_null[] = Attr <-
+   attribute:value(Attr:Val), string:like(Val, "dereferenceable_or_null(%)").
+
+
+// Function Attributes
+
+function_attribute:alignstack[] = Attr <-
+   attribute:value(Attr:Val), string:like(Val, "alignstack(%)").
+
+function_attribute:alwaysinline[] = Attr <- attribute:value(Attr:"alwaysinline").
+function_attribute:builtin[] = Attr <- attribute:value(Attr:"builtin").
 function_attribute:cold[] = Attr <- attribute:value(Attr:"cold").
+function_attribute:convergent[] = Attr <- attribute:value(Attr:"convergent").
+
+function_attribute:inaccessiblememonly[] = Attr <-
+   attribute:value(Attr:"inaccessiblememonly").
+
+function_attribute:inaccessiblemem_or_argmemonly[] = Attr <-
+   attribute:value(Attr:"inaccessiblemem_or_argmemonly").
+
+function_attribute:inlinehint[] = Attr <- attribute:value(Attr:"inlinehint").
+function_attribute:jumptable[] = Attr <- attribute:value(Attr:"jumptable").
+function_attribute:minsize[] = Attr <- attribute:value(Attr:"minsize").
+function_attribute:naked[] = Attr <- attribute:value(Attr:"naked").
+function_attribute:nobuiltin[] = Attr <- attribute:value(Attr:"nobuiltin").
+function_attribute:noduplicate[] = Attr <- attribute:value(Attr:"noduplicate").
+function_attribute:noimplicitfloat[] = Attr <- attribute:value(Attr:"noimplicitfloat").
+function_attribute:noinline[] = Attr <- attribute:value(Attr:"noinline").
+function_attribute:nonlazybind[] = Attr <- attribute:value(Attr:"nonlazybind").
+function_attribute:noredzone[] = Attr <- attribute:value(Attr:"noredzone").
+function_attribute:noreturn[] = Attr <- attribute:value(Attr:"noreturn").
+function_attribute:norecurse[] = Attr <- attribute:value(Attr:"norecurse").
+function_attribute:nounwind[] = Attr <- attribute:value(Attr:"nounwind").
+function_attribute:optnone[] = Attr <- attribute:value(Attr:"optnone").
+function_attribute:optsize[] = Attr <- attribute:value(Attr:"optsize").
+function_attribute:readnone[] = Attr <- attribute:value(Attr:"readnone").
+function_attribute:readonly[] = Attr <- attribute:value(Attr:"readonly").
+function_attribute:argmemonly[] = Attr <- attribute:value(Attr:"argmemonly").
 function_attribute:returns_twice[] = Attr <- attribute:value(Attr:"returns_twice").
+function_attribute:safestack[] = Attr <- attribute:value(Attr:"safestack").
+function_attribute:sanitize_address[] = Attr <- attribute:value(Attr:"sanitize_address").
+function_attribute:sanitize_memory[] = Attr <- attribute:value(Attr:"sanitize_memory").
+function_attribute:sanitize_thread[] = Attr <- attribute:value(Attr:"sanitize_thread").
+function_attribute:ssp[] = Attr <- attribute:value(Attr:"ssp").
+function_attribute:sspreq[] = Attr <- attribute:value(Attr:"sspreq").
+function_attribute:sspstrong[] = Attr <- attribute:value(Attr:"sspstrong").
 function_attribute:uwtable[] = Attr <- attribute:value(Attr:"uwtable").
