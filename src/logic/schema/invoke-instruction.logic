@@ -129,18 +129,22 @@ schema:sanity()
 schema:sanity()
  , invoke_instruction:return_attribute(_, Attr)
  ->
-   parameter_attribute:zeroext[] = Attr ;
-   parameter_attribute:signext[] = Attr ;
-   parameter_attribute:inreg[] = Attr.  // c1
+   parameter_attribute:zeroext[] = Attr
+ ; parameter_attribute:signext[] = Attr
+ ; parameter_attribute:inreg[] = Attr
+ ; parameter_attribute:noallias[] = Attr
+ ; parameter_attribute:dereferenceable[] = Attr.   // c1
 
 schema:sanity()
  , invoke_instruction:fn_attribute(_, Attr)
  ->
-   function_attribute:noreturn[] = Attr ;
-   function_attribute:nounwind[] = Attr ;
-   function_attribute:readonly[] = Attr ;
-   function_attribute:readnone[] = Attr. // c5
-
+   function_attribute:noreturn[] = Attr
+ ; function_attribute:nounwind[] = Attr
+ ; function_attribute:readonly[] = Attr
+ ; function_attribute:readnone[] = Attr
+ ; function_attribute:cold[] = Attr
+ ; function_attribute:returns_twice[] = Attr
+ ; function_attribute:builtin[] = Attr. // c5
 
 // cc compatibility
 schema:sanity()
