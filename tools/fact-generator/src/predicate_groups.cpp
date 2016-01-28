@@ -429,15 +429,15 @@ namespace predicates
 
     // Auxiliary functions
 
-    const std::set<entity_pred_t*> entity_predicates() {
+    const std::set<const entity_pred_t*> entity_predicates() {
         return EntityPredicateRegistry::getInstance()->items();
     }
 
-    const std::set<operand_pred_t*> operand_predicates() {
+    const std::set<const operand_pred_t*> operand_predicates() {
         return OperandPredicateRegistry::getInstance()->items();
     }
 
-    const std::set<pred_t*> predicates() {
+    const std::set<const pred_t*> predicates() {
         return PredicateRegistry::getInstance()->items();
     }
 }

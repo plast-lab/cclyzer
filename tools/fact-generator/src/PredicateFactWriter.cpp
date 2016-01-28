@@ -24,9 +24,10 @@ void PredicateFactWriter::CreatePredicateFiles(FactWriter &writer)
 
     std::vector<const char *> all_predicates;
 
-    for (pred_t *pred : predicates::predicates())
+    for (const pred_t *pred : predicates::predicates())
     {
-        operand_pred_t *operand_pred = dynamic_cast< operand_pred_t*>(pred);
+        const operand_pred_t *operand_pred =
+            dynamic_cast< const operand_pred_t*>(pred);
 
         if (operand_pred) {
             pred_t cpred = operand_pred->asConstant();

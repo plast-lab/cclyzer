@@ -13,12 +13,12 @@ class Registry
   public:
     Registry() {}
 
-    const std::set<T*> items() const {
+    const std::set<const T*> items() const {
         return allInstances;
     }
 
   protected:
-    std::set< T* > allInstances;
+    std::set< const T* > allInstances;
 };
 
 /* Forward declarations to be able to define actual registries */
