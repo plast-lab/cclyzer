@@ -67,45 +67,45 @@ class unpacked_project(object):
 
     """
     def __init__(self, project):
-        self._project = project
-        self._pkg = settings.LOGIC_RESOURCE_PKG
+        self._project = project                      # project name
+        self._pkg = settings.LOGIC_RESOURCE_PKG      # logic resources package name
         self.logger = logging.getLogger(__name__)
 
     def __enter__(self):
         # Compute resource path
         project = self._project
-        base_dir = project
-        root_dir = runtime.FileManager().getpath(base_dir)
+        cached_logic_dir = runtime.FileManager().getpath('logic')
+        cached_proj_dir  = path.join(cached_logic_dir, project)
 
         # Check if project has been extracted before
-        if path.exists(root_dir):
+        if path.exists(cached_proj_dir):
             # Compare signatures
             disk_signature = resource_stream(
-                self._pkg, path.join(base_dir, 'checksum')
+                self._pkg, path.join(project, 'checksum')
             ).read().strip()
 
             cached_signature = open(
-                path.join(root_dir, 'checksum'), 'rb'
+                path.join(cached_proj_dir, 'checksum'), 'rb'
             ).read().strip()
 
             # Project hasn't changed; don't overwrite
             if disk_signature == cached_signature:
-                return root_dir
+                return cached_proj_dir
 
             # remove stale cached project
-            shutil.rmtree(root_dir)
+            shutil.rmtree(cached_proj_dir)
 
-        self.logger.info("Extracting project %s to %s", project, root_dir)
+        self.logger.info("Extracting project %s to %s", project, cached_proj_dir)
 
         # Iterate over all project files
-        for resource in resource_listdir(self._pkg, base_dir):
+        for resource in resource_listdir(self._pkg, project):
             # Skip empty resource paths (apparently, that can happen!!)
             if not resource:
                 continue
 
             # Compute path to resource
-            path_to_resource = path.join(base_dir, resource)
-            path_to_file = path.join(root_dir, resource)
+            path_to_resource = path.join(project, resource)
+            path_to_file = path.join(cached_proj_dir, resource)
 
             self.logger.debug("Extracting project file %s", path_to_resource)
 
@@ -119,7 +119,7 @@ class unpacked_project(object):
                 for byte in resource_stream(self._pkg, path_to_resource):
                     f.write(byte)
 
-        return root_dir
+        return cached_proj_dir
 
     def __exit__(self, type, value, traceback):
         pass
