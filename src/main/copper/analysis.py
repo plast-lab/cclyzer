@@ -67,6 +67,8 @@ class Analysis(object):
         self._stats = (
             StatBuilder(self)
             .count('instruction')
+            .count('function_decl', 'functions')
+            .count('function', 'app functions')
             .count('reachable_function')
             .count('callgraph:fn_edge', 'call-graph edges')
             .count('var_points_to', 'var-points-to')
