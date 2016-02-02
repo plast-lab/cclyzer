@@ -63,11 +63,17 @@ gep_points_to(Insn, 1, NewAlloc)
    operand:to_int[IndexOp] = Index,
    Index != 0,
    // get existing allocation at new index
-   alloc_subregion:at_array_index[Base, PrevIndex] = Alloc,
-   alloc_subregion:at_array_index[Base, PrevIndex + Index] = NewAlloc,
+   _array_index_subobject:at_offset[Alloc, Index] = NewAlloc,
    // check for type compatibility
    allocation:type[NewAlloc] = Type, // old type may not be compatible
    type_compatible(Type, DeclaredType).
+
+// Fetch an array index subobject given another array index subobject
+// as a base, plus some offset to its index.
+
+_array_index_subobject:at_offset[Alloc, Offset] = NewAlloc <-
+   alloc_subregion:at_array_index[Base, Index] = Alloc,
+   alloc_subregion:at_array_index[Base, Index + Offset] = NewAlloc.
 
 
 // The first index, if unknown, must be used to generate a new
@@ -85,7 +91,8 @@ gep_points_to(Insn, 1, NewAlloc)
    !operand:to_int[IndexOp] = _,
    // allocation pointed to some specific (known) element
    alloc_subregion:at_array_index[Base, _] = Alloc,
-   alloc_subregion:at_any_array_index[Base] = NewAlloc.
+   alloc_subregion:at_any_array_index[Base] = NewAlloc,
+   alloc_subregion:base[Alloc] = Base. // OPT: redundant clause
 
 
 // First index is also ignored when address points-to non-base object
@@ -96,7 +103,8 @@ gep_points_to(Insn, 1, NewAlloc)
 gep_points_to(Insn, 1, Alloc)
  <-
    gep_points_to(Insn, 0, Alloc),
-   alloc_subregion:at_any_array_index[_] = Alloc.
+   alloc_subregion:at_any_array_index[Base] = Alloc,
+   alloc_subregion:base[Alloc] = Base. // OPT: redundant clause
 
 
 // We point to the aliased zero index of a base allocation, as if it
