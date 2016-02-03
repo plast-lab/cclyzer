@@ -1,4 +1,4 @@
-APP_NAME = 'copper'
+APP_NAME = 'cclyzer'
 
 # Packages
 RESOURCE_PKG = 'resources'

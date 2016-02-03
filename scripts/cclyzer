@@ -1,0 +1,6 @@
+#!python
+
+import cclyzer.cli.commands
+
+if __name__ == '__main__':
+    cclyzer.cli.commands.main()

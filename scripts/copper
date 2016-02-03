@@ -1,6 +1,0 @@
-#!python
-
-import copper.cli.commands
-
-if __name__ == '__main__':
-    copper.cli.commands.main()

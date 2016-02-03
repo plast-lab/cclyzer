@@ -1,7 +1,7 @@
 LD = /usr/bin/ld.gold
 CC = clang
 CCFLAGS = -flto
-COPPER = copper
+CCLYZER = cclyzer
 
 all:
 
@@ -66,7 +66,7 @@ example-$1: $1.bc
 	@echo "   >>> Running example $1 <<<   "
 	@echo ---------------------------------------
 	@echo
-	$(COPPER) -o $$($1.db) $(COPPER_OPTS) $$<
+	$(CCLYZER) -o $$($1.db) $(CCLYZER_OPTS) $$<
 	@echo
 	@echo
 

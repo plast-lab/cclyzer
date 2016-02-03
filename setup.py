@@ -13,7 +13,7 @@ site_packages_path = sysconfig.get_python_lib()
 
 setup(
     # Application
-    name='Copper',
+    name='cclyzer',
     version='1.0',
     description=(
         "A static analysis framework that uses the LogicBlox "
@@ -37,8 +37,8 @@ setup(
 
     # Packages to be included
     packages = [
-        'blox', 'copper', 'copper.cli', 'copper.config',
-        'copper.runtime', 'resources', 'resources.logic',
+        'blox', 'cclyzer', 'cclyzer.cli', 'cclyzer.config',
+        'cclyzer.runtime', 'resources', 'resources.logic',
         'utils'
     ],
 
@@ -69,7 +69,7 @@ setup(
 
     # Python scripts
     scripts = [
-        'scripts/copper',
+        'scripts/cclyzer',
         'scripts/project-dependencies'
     ],
 )

@@ -1,7 +1,7 @@
 [![License MIT][badge-license]](LICENSE.txt)
 
-LLVM to Datalog
-===============
+cclyzer
+=======
 
 A tool for analyzing LLVM bitcode (generated either by C or C++) using
 Datalog.
@@ -65,7 +65,7 @@ To be able to easily customize your analysis via a configuration file,
 you will also need to install the `python-yaml` package.
 
 The default user configuration will be automagically installed at
-`~/.config/copper/config.yaml` the first time you run the tool. Then,
+`~/.config/cclyzer/config.yaml` the first time you run the tool. Then,
 you can tweak this config file, e.g., to change the printed statistics
 and the loaded logic modules.
 
@@ -94,10 +94,10 @@ Now, while inside the virtualenv, build LLVM-Datalog as follows:
     (venv)$ make install
 
 
-Then, you should be able to run the main `copper` script that analyzes
+Then, you should be able to run the main `cclyzer` script that analyzes
 LLVM Bitcode. Try:
 
-    (venv)$ copper -h
+    (venv)$ cclyzer -h
 
 
 Testing
@@ -117,7 +117,7 @@ It is also possible to invoke a python interpreter for a more
 interactive experience:
 
     $ python
-    >>> from copper import *
+    >>> from cclyzer import *
     >>> config = AnalysisConfig(['./tests/stty/stty.bc'], './build/tests/stty')
     >>> analysis = Analysis(config)
     >>> analysis.run()
@@ -135,8 +135,8 @@ Troubleshooting
 
 The warnings and errors that may come up during execution are not very
 informative. Instead, the log file located at
-`$XDG_CACHE_HOME/copper/copper.log` (which at most systems defaults to
-`~/.cache/copper/copper.log`), or the *system log*, can be much more
+`$XDG_CACHE_HOME/cclyzer/cclyzer.log` (which at most systems defaults to
+`~/.cache/cclyzer/cclyzer.log`), or the *system log*, can be much more
 helpful.
 
 

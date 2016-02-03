@@ -1,7 +1,7 @@
 LEVEL := .
-COPPER_OPTS ?=
+CCLYZER_OPTS ?=
 PYTHON = python
-COPPER = copper
+CCLYZER = cclyzer
 
 all:
 
@@ -98,7 +98,7 @@ $$($1.outdir): | $(coreutils_outdir)
 
 test-$1: tests.setup
 	@echo Analyzing $1 ...
-	$(COPPER) -o $$($1.outdir) $(COPPER_OPTS) $$($1.file)
+	$(CCLYZER) -o $$($1.outdir) $(CCLYZER_OPTS) $$($1.file)
 
 
 # Cleaning target
