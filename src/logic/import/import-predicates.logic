@@ -4524,6 +4524,32 @@ lang:physical:filePath[`_va_arg_instruction:va_list$by_variable] = "facts/predic
 
 
 
+_variable:debug:decl_pos(v0, v1, v2) -> string(v0), int[64](v1), int[64](v2).
+
+lang:physical:delimiter[`_variable:debug:decl_pos] = "\t".
+lang:physical:filePath[`_variable:debug:decl_pos] = "facts/predicates/variable-debug-decl_pos.dlm".
+
++variable:id(e0:v0),
++variable(e0),
++variable:debug:decl_pos(e0,v1,v2)
+<-
+   _variable:debug:decl_pos(v0, v1, v2).
+
+
+
+_variable:debug:source_name(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_variable:debug:source_name] = "\t".
+lang:physical:filePath[`_variable:debug:source_name] = "facts/predicates/variable-debug-source_name.dlm".
+
++variable:id(e0:v0),
++variable(e0),
++variable:debug:source_name[e0] = v1
+<-
+   _variable:debug:source_name(v0, v1).
+
+
+
 _variable:type(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_variable:type] = "\t".

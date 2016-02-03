@@ -378,6 +378,8 @@ namespace predicates
 
     entity_pred_t variable::id("variable");
     pred_t variable::type("variable:type");
+    pred_t variable::source_name("variable:debug:source_name");
+    pred_t variable::pos("variable:debug:decl_pos");
 
     entity_pred_t constant::id("constant");
     pred_t constant::type("constant:type");

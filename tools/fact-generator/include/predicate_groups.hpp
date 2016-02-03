@@ -546,6 +546,8 @@ namespace predicates
     struct variable : predicate_group {
         static entity_pred_t id;
         static pred_t type;
+        static pred_t source_name;
+        static pred_t pos;
     };
 
     struct constant : predicate_group {

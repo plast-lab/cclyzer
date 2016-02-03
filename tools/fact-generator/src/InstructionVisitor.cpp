@@ -592,6 +592,23 @@ void InstructionVisitor::visitDbgDeclareInst(DbgDeclareInst &DDI)
 
     // Process debug info
     gen.debugInfoProcessor.processDeclare(Mod, &DDI);
+
+    // Obtain the refmode of the local variable
+    refmode_t refmode = gen.refmodeOfLocalValue(DDI.getAddress());
+
+    // Record source variable name
+    if (const DILocalVariable *var = DDI.getVariable()) {
+        string name = var->getName();
+        gen.writeFact(pred::variable::source_name, refmode, name);
+    }
+
+    // Get debug location if available
+    if (const DebugLoc &location = DDI.getDebugLoc()) {
+        unsigned line = location.getLine();
+        unsigned column = location.getCol();
+
+        gen.writeFact(pred::variable::pos, refmode, line, column);
+    }
 }
 
 void InstructionVisitor::visitDbgValueInst(DbgValueInst &DDI)

@@ -21,6 +21,15 @@ variable:firstclass(Var) <-
    type:firstclass(Type).
 
 
+// Debug-level information
+
+variable:debug:source_name[Var] = Name ->
+   variable(Var), string(Name).
+
+variable:debug:decl_pos(Var, Line, Column) ->
+   variable(Var), int[64](Line), int[64](Column).
+
+
 //--------------
 // Constants
 //--------------
