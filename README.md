@@ -1,6 +1,6 @@
 [![License MIT][badge-license]](LICENSE.txt)
 
-cclyzer
+CCLYZER
 =======
 
 A tool for analyzing LLVM bitcode (generated either by C or C++) using
