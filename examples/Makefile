@@ -66,7 +66,7 @@ example-$1: $1.bc
 	@echo "   >>> Running example $1 <<<   "
 	@echo ---------------------------------------
 	@echo
-	$(CCLYZER) -o $$($1.db) $(CCLYZER_OPTS) $$<
+	$(CCLYZER) analyze -o $$($1.db) $(CCLYZER_OPTS) $$<
 	@echo
 	@echo
 

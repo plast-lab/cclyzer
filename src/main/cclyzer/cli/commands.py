@@ -1,74 +1,67 @@
 import argparse
 import logging
 import sys
-from utils.contextlib2 import stdout_redirected
+from abc import ABCMeta, abstractmethod
 from .logging_utils import setup_logging
-from .timing_utils import task_timing
-from ..analysis import Analysis
-from ..analysis_config import AnalysisConfig
 
 
-def run():
-    """The main function that will be called by command-line execution
-    of the tool.
+class CliCommandMeta(ABCMeta):
+    def __init__(cls, name, bases, dct):
+        if not hasattr(cls, 'registry'):
+            # this is the base class.  Create an empty registry
+            cls.registry = {}
 
-    """
-    logger = logging.getLogger(__name__)
-
-    # Create CLI parser
-    parser = argparse.ArgumentParser(description='Analyze LLVM bitcode.')
-    parser.add_argument('input_files', metavar='FILE', nargs='+',
-                        help='LLVM bitcode file to be analyzed')
-    parser.add_argument('-o', '--output-dir', metavar='DIRECTORY', required=True,
-                        help='output directory')
-    parser.add_argument('-q', '--no-config-file', dest='read_config', action='store_false')
-    parser.add_argument('--no-exports', dest='run_exports', action='store_false',
-                        help='disable result query exports')
-    parser.set_defaults(read_config=True)
-
-    # Initialize analysis
-    opts = parser.parse_args()
-    config = AnalysisConfig.from_cli_options(opts)
-    analysis = Analysis(config)
-
-    # Try loading yaml
-    try:
-        import yaml
-    except ImportError:
-        logging.getLogger().warning('Cannot load yaml')
-        opts.read_config = False
-
-    # Customized analysis
-    if opts.read_config:
-        from ..config import CustomAnalysis
-        analysis = CustomAnalysis(config)
-
-    # Add query exporting steps
-    if opts.run_exports:
-        analysis.enable_exports()
-
-    # Dynamically decorate each analysis step
-    for step in analysis.pipeline:
-        # Time step plus redirect stdout to /dev/null
-        step.apply = task_timing(step.message)(
-            stdout_redirected()(
-                step.apply
+            # create the top level parser
+            cls.parser = argparse.ArgumentParser() # TODO add description
+            cls.subparsers = cls.parser.add_subparsers(
+                dest = 'subcommand_name',
+                title = 'subcommands'
             )
-        )
+        else:
+            # Sanity check
+            assert name.endswith('Command')
 
-    # Run analysis while timing each step, plus total time
-    with task_timing('total time'):
-        analysis.run()
+            # this is a derived class.  Add cls to the registry
+            subcommand_id = name[:len('Command')].lower()
+            cls.registry[subcommand_id] = cls
 
-    # Print statistics
-    print "\n\n[Statistics]\n"
-    print analysis.stats
+            # Create and initialize subparser
+            cls.parser = cls.subparsers.add_parser(
+                subcommand_id,
+                description = dct.get('description')
+            )
 
+            cls.init_parser_args(cls.parser)
+
+        super(CliCommandMeta, cls).__init__(name, bases, dct)
+
+
+class CliCommand(object):
+    __metaclass__ = CliCommandMeta
+
+    def __init__(self, args):
+        self.logger = logging.getLogger(__name__)
+        self._args = args
+
+    @classmethod
+    def run_command(cls):
+        # Get command line arguments
+        args = cls.parser.parse_args()
+
+        # Create new subcommand instance
+        cmd_name = args.subcommand_name
+        subcommand = cls.registry[cmd_name](args)
+
+        # Run subcommand
+        subcommand.run()
+
+    @abstractmethod
+    def run(self): pass
 
 def main():
     with setup_logging() as logger:
         try:
-            run()
+            CliCommand.run_command()
         except Exception as e:
             logger.exception('')
             print >> sys.stderr, 'Exiting ...'
