@@ -17,6 +17,18 @@ void pyfactgen(py::list inputFiles, std::string outputDir, std::string delim = "
     // Create list of input files
     for (int i = 0; i < len(inputFiles); ++i) {
         files[i] = py::extract<char const *>(inputFiles[i]);
+
+        // Check file existence
+        if (!fs::exists(files[i])) {
+            std::stringstream error_stream;
+            error_stream << "No such file or directory: "
+                         << files[i];
+
+            std::string err_msg = error_stream.str();
+            PyErr_SetString(PyExc_IOError, err_msg.c_str());
+            boost::python::throw_error_already_set();
+            return;
+        }
     }
 
     // Create non-existing directory
