@@ -57,10 +57,13 @@ def setup_logging(lvl=logging.INFO):
     root_logger.addHandler(file_handler)
 
     # Add system log handler
-    syslog_formatter = logging.Formatter("[{}] %(message)s".format(app_name))
-    syslog_handler = SysLogHandler(address='/dev/log')
-    syslog_handler.setFormatter(syslog_formatter)
-    root_logger.addHandler(syslog_handler)
+    try:
+        syslog_formatter = logging.Formatter("[{}] %(message)s".format(app_name))
+        syslog_handler = SysLogHandler(address='/dev/log')
+        syslog_handler.setFormatter(syslog_formatter)
+        root_logger.addHandler(syslog_handler)
+    except:
+        root_logger.warning('Cannot add system logger')
 
     # Add stderr handler
     stderr_formatter = ConsoleFormatter("%(levelname)s (%(name)s): %(message)s")
