@@ -57,7 +57,7 @@ You will also have to install the following packages:
 
 #### Ubuntu
 
-    # apt-get install m4 libncurses5-dev libboost-dev libboost-filesystem-dev libboost-program-options-dev libboost-python-dev libprotobuf-dev python-pip python-dev
+    # apt-get install build-essential libboost-dev libboost-filesystem-dev libboost-program-options-dev libboost-python-dev libprotobuf-dev libprotoc-dev protobuf-compiler python-pip python-dev
 
 #### YAML Configuration
 
