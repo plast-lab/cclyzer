@@ -13,6 +13,8 @@ CXXFLAGS += -fvisibility-inlines-hidden -Wall -W -Wno-unused-parameter      \
             -pedantic -Wno-long-long -Wnon-virtual-dtor -ffunction-sections \
             -fdata-sections -O3
 
+LLVM_CONFIG ?= llvm-config
+
 #-----------------------------------
 # Configure paths
 #-----------------------------------
@@ -39,10 +41,10 @@ vpath %.h $(include_dirs)
 # LLVM specific flags
 #-----------------------------------
 
-CPPFLAGS += $(shell llvm-config --cppflags)
-LDFLAGS  += $(shell llvm-config --ldflags)
-LDLIBS   += $(shell llvm-config --libs core irreader)
-LDLIBS   += $(filter-out -lz,$(shell llvm-config --system-libs))
+CPPFLAGS += $(shell $(LLVM_CONFIG) --cppflags)
+LDFLAGS  += $(shell $(LLVM_CONFIG) --ldflags)
+LDLIBS   += $(shell $(LLVM_CONFIG) --libs core irreader)
+LDLIBS   += $(filter-out -lz,$(shell $(LLVM_CONFIG) --system-libs))
 LDLIBS   += -lboost_system -lboost_filesystem -lboost_program_options
 
 
