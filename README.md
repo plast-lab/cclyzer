@@ -59,6 +59,29 @@ You will also have to install the following packages:
 
     # apt-get install build-essential libboost-dev libboost-filesystem-dev libboost-program-options-dev libboost-python-dev libprotobuf-dev libprotoc-dev protobuf-compiler python-pip python-dev
 
+### Ubuntu 15.10
+
+In latest distro versions, that have switched to gcc 5, the binary
+compatibility between clang and gcc is broken (see
+[bug 23529](https://llvm.org/bugs/show_bug.cgi?id=23529)). So, the
+pre-built LLVM binaries will not work there.
+
+Instead, for Ubuntu 15.10, you can:
+
+1. Skip the pre-built binary download step entirely, but otherwise
+   follow the (Ubuntu) instructions
+
+2. Additionally install LLVM 3.7 and libedit from the system's package manager by
+   running:
+
+        # apt-get install llvm-3.7 libedit-dev
+
+3. When compiling the project, run `make` as follows:
+
+        (venv)$ LLVM_CONFIG=llvm-config-3.7 make
+        (venv)$ make install
+
+
 #### YAML Configuration
 
 To be able to easily customize your analysis via a configuration file,
