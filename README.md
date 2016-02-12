@@ -40,11 +40,11 @@ lines appropriately:
 
 ### Install LLVM
 
-* Download LLVM 3.5.1 pre-built binary from the
-  [LLVM Download Page](http://www.llvm.org/releases/download.html#3.5.1). 
+* Download LLVM 3.7.0 pre-built binary from the
+  [LLVM Download Page](http://www.llvm.org/releases/download.html#3.7.0).
 * Untar the downloaded file to a destination path of your choice
   (e.g., `/opt/llvm/`) and modify permissions accordingly. 
-* Add the `/path/to/llvm-3.5.1/bin` to your `$PATH` (by modifying your
+* Add the `/path/to/llvm-3.7.0/bin` to your `$PATH` (by modifying your
   `.bashrc` or `.bash_profile`). 
 
 ### Additional Libraries
