@@ -59,7 +59,7 @@ You will also have to install the following packages:
 
     # apt-get install build-essential libboost-dev libboost-filesystem-dev libboost-program-options-dev libboost-python-dev libprotobuf-dev libprotoc-dev protobuf-compiler python-pip python-dev
 
-### Ubuntu 15.10
+#### Ubuntu 15.10
 
 In latest distro versions, that have switched to gcc 5, the binary
 compatibility between clang and gcc is broken (see
