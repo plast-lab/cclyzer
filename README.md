@@ -1,7 +1,7 @@
 [![License MIT][badge-license]](LICENSE.txt)
 
-CCLYZER
-=======
+![CCLYZER](/cclyzer-logo.png)
+=============================
 
 A tool for analyzing LLVM bitcode (generated either by C or C++) using
 Datalog.
