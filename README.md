@@ -101,7 +101,7 @@ We recommend first to create a
 by running:
 
     $ pip install virtualenv  # if not already installed
-    $ cd /path/to/llvm-datalog/
+    $ cd /path/to/cclyzer/
     $ virtualenv venv
 
 
@@ -111,7 +111,7 @@ To activate the virtual environment, run:
     (venv)$    # <--- your prompt should change to something like this
 
 
-Now, while inside the virtualenv, build LLVM-Datalog as follows:
+Now, while inside the virtualenv, build `cclyzer` as follows:
 
     (venv)$ make
     (venv)$ make install
@@ -121,6 +121,7 @@ Then, you should be able to run the main `cclyzer` script that analyzes
 LLVM Bitcode. Try:
 
     (venv)$ cclyzer -h
+    (venv)$ cclyzer analyze -h
 
 
 Testing
