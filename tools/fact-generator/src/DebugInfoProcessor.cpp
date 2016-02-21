@@ -65,13 +65,7 @@ DebugInfoProcessor::postProcess(const Module &m)
 
         switch (dbgType.getTag()) {
           case dwarf::Tag::DW_TAG_typedef: {
-              const DIDerivedType &did = cast<DIDerivedType>(dbgType);
-              const Metadata *baseType = did.getRawBaseType();
-
-              if (!baseType) continue;
-
-              if (const DICompositeType *compType = dyn_cast<DICompositeType>(baseType))
-                  postProcessType(*compType, dbgType.getName());
+              postProcessTypedef(cast<DIDerivedType>(dbgType), dbgType.getName().str());
               break;
           }
           case dwarf::Tag::DW_TAG_inheritance: {
@@ -158,6 +152,19 @@ refmode_t DebugInfoProcessor::refmodeOf(const DICompositeType &type, const strin
     rso.flush();
 
     return refmode;
+}
+
+void
+DebugInfoProcessor::postProcessTypedef(const DIDerivedType &dbgType, const string &name) {
+    const Metadata *baseType = dbgType.getRawBaseType();
+
+    if (!baseType) return;
+
+    if (const DICompositeType *compType = dyn_cast<DICompositeType>(baseType))
+        postProcessType(*compType, name);
+    else if (const DIDerivedType *derType = dyn_cast<DIDerivedType>(baseType)) {
+        postProcessTypedef(*derType, name);
+    }
 }
 
 void
