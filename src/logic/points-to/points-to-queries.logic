@@ -1,19 +1,36 @@
 // We only need to add declarations and file associations for the
 // queries we are interested in exporting
 
-_dereferences(SrcAllocStr, DestAllocStr) ->
-   string(SrcAllocStr), string(DestAllocStr).
+//---------------------------
+// Pointer dereferences
+//---------------------------
 
 lang:physical:delimiter[`_dereferences] = "\t".
 lang:physical:filePath[`_dereferences] = "pointer-dereferences.tsv".
 
+_dereferences(SrcAllocStr, DestAllocStr) <-
+   ptr_points_to$no_zero_aliases(DestAlloc, SrcAlloc),
+   allocation:to_string[SrcAlloc] = SrcAllocStr,
+   allocation:to_string[DestAlloc] = DestAllocStr.
 
-// Here start the queries
+//---------------------------
+// Call-graph
+//---------------------------
+
+lang:physical:delimiter[`_cg] = "\t".
+lang:physical:filePath[`_cg] = "call-graph.tsv".
 
 _cg(CallerSign, CalleeSign) <-
    callgraph:fn_edge(Callee, Caller),
    function:signature[Callee] = CalleeSign,
    function:signature[Caller] = CallerSign.
+
+
+
+//------------------------------------------------------------------------------
+// The following queries are not exported
+//------------------------------------------------------------------------------
+
 
 _var_points_to(FuncSign, VarName, AllocStr, Type) <-
    var_points_to(Alloc, Var),
@@ -34,11 +51,6 @@ _init_by_constant(AllocStr, ConstantValue)
    initialized_by_constant[Alloc] = Constant,
    constant:value[Constant] = ConstantValue,
    allocation:to_string[Alloc] = AllocStr.
-
-_dereferences(SrcAllocStr, DestAllocStr) <-
-   ptr_points_to$no_zero_aliases(DestAlloc, SrcAlloc),
-   allocation:to_string[SrcAlloc] = SrcAllocStr,
-   allocation:to_string[DestAlloc] = DestAllocStr.
 
 _typed_dereferences(SrcAllocStr, SrcAllocType, DestAllocStr, DestAllocType)
  <-
