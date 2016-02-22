@@ -216,6 +216,13 @@ void CsvGenerator::processModule(const Module &Mod, string& path)
                     const MDNode &mdNode = *MDForInst[i].second;
 
                     // TODO process metadata node
+                    // Get debug location if available
+                    if (const DebugLoc &location = instr.getDebugLoc()) {
+                        unsigned line = location.getLine();
+                        unsigned column = location.getCol();
+
+                        writeFact(pred::instruction::pos, instrRef, line, column);
+                    }
                 }
 
                 MDForInst.clear();

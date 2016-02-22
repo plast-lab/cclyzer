@@ -88,6 +88,7 @@ namespace predicates
         static pred_t bb_entry;
         static pred_t function;
         static entity_pred_t unreachable; // terminator also
+        static pred_t pos;
     };
 
     // Binary Instructions

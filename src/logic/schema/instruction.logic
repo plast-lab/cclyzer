@@ -34,6 +34,10 @@ instruction:next_index[Insn, Index] = Next ->
 // prevent import-generator from producing file predicates
 lang:derivationType[`instruction:next_index] = "DerivedAndStored".
 
+// Position of instruction on source code (if debug info is available)
+instruction:pos(Insn, Line, Column) ->
+   instruction(Insn), int[64](Line), int[64](Column).
+
 
 //------------------------------------
 // Sequence of instructions
