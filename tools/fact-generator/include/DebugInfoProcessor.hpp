@@ -48,6 +48,9 @@ class DebugInfoProcessor
         postProcessType(tp, "");
     }
 
+    void
+    postProcessTypedef(const llvm::DIDerivedType &, const std::string &);
+
   protected:
 
     // Construct a mapping from type ID to type name
