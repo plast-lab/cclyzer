@@ -155,13 +155,15 @@ refmode_t DebugInfoProcessor::refmodeOf(const DICompositeType &type, const strin
 }
 
 void
-DebugInfoProcessor::postProcessTypedef(const DIDerivedType &dbgType, const string &name) {
+DebugInfoProcessor::postProcessTypedef(const DIDerivedType &dbgType, const string &name)
+{
     const Metadata *baseType = dbgType.getRawBaseType();
 
     if (!baseType) return;
 
-    if (const DICompositeType *compType = dyn_cast<DICompositeType>(baseType))
+    if (const DICompositeType *compType = dyn_cast<DICompositeType>(baseType)) {
         postProcessType(*compType, name);
+    }
     else if (const DIDerivedType *derType = dyn_cast<DIDerivedType>(baseType)) {
         postProcessTypedef(*derType, name);
     }
