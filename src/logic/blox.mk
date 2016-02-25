@@ -19,11 +19,3 @@ endif
 define deploy-datalog-project
   bloxbatch -script $1
 endef
-
-# Disassemble protobuf command
-define generate-protobuf-message
-  $(info Generating protobuf message file for $1 ...)
-  bloxdisassembler -p $1 > $2
-  $(QUIET) cut-protobuf-message.sh $2 > tmp.pb
-  $(QUIET) mv tmp.pb $2
-endef

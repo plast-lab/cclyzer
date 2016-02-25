@@ -124,7 +124,7 @@ export PATH := $(LEVEL)/bin:$(PATH)
 # Generate protobuf messages from schema
 .INTERMEDIATE: $(schema.pb)
 $(schema.pb): $(import.outdir)/%.pb: $(schema.ph) | $(import.outdir)
-	$(call generate-protobuf-message,$(schema.outdir)/$*.lbb,$@)
+	gen-protobuf-message $(schema.outdir)/$*.lbb $@
 
 # Generate import sources; this will recreate $(import.src) files
 .PHONY: import.src

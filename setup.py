@@ -70,6 +70,7 @@ setup(
     # Python scripts
     scripts = [
         'scripts/cclyzer',
-        'scripts/project-dependencies'
+        'scripts/gen-protobuf-message',
+        'scripts/project-dependencies',
     ],
 )

@@ -1,0 +1,43 @@
+#!python
+
+from os.path import basename, splitext
+import subprocess
+import sys
+
+def process_proto_msg(msg_stream, name):
+    # Skip first line
+    next(msg_stream)
+
+    # Pattern that ends the part we are interested in
+    pattern = 'name: "{}"'.format(name)
+
+    for line in msg_stream:
+        if line.startswith(pattern):
+            break
+        yield line
+
+def disassemble(lbbfile, outfile):
+    # Get basename of lbbfile sans extension
+    name, ext = splitext(basename(lbbfile))
+    pattern = 'name: "{}"'.format(name)
+
+    # Construct command to execute
+    command = 'bloxdisassembler -p {}'.format(lbbfile)
+
+    # Spawn sub-process to invoke bloxdisassembler
+    proc = subprocess.Popen([command], stdout=subprocess.PIPE, shell=True)
+
+    # Transform output
+    with open(outfile, 'w') as out:
+        for line in process_proto_msg(proc.stdout, name):
+            out.write(line)
+
+def usage():
+    print >> sys.stderr, "Usage: {} LBBFILE OUTFILE".format(sys.argv[0])
+
+if __name__ == '__main__':
+    if len(sys.argv) != 3:
+        usage()
+        exit(1)
+
+    disassemble(sys.argv[1], sys.argv[2])
