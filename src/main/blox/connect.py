@@ -158,6 +158,18 @@ class Connector(object):
 
         return self._process_lines(command_line)
 
-    def execute_block(self, blockName):
-        command_line = "bloxbatch -db %s -execute -name '%s' " % (self._workspace, blockName)
+    def execute_block(self, blockname):
+        command_line = "bloxbatch -db %s -execute -name '%s' " % (self._workspace, blockname)
+        return self._run_command(command_line)
+
+    def execute_logic(self, logic):
+        command_line = "bloxbatch -db %s -execute '%s' " % (self._workspace, logic)
+        return self._run_command(command_line)
+
+    def add_logic(self, logic, blockname=None):
+        command_line = "bloxbatch -db %s -addBlock '%s' " % (self._workspace, logic)
+
+        if blockname:
+            command_line += '-name {}'.format(blockname)
+
         return self._run_command(command_line)
