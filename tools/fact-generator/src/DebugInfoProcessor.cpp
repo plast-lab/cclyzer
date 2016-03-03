@@ -95,6 +95,11 @@ DebugInfoProcessor::postProcess(const Module &m)
                       refmode_t basename = baseRefmode.substr(pos + 1);
                       refmode_t subobjField = "_subobj$" + basename;
 
+                      // UPDATE - In fact, it can account for more
+                      // than one fields at the same offset, since
+                      // there all super-classes of zero size would be
+                      // mapped to offset 0.
+
                       writeFact(pred::struct_type::field_name,
                                 refmode, bitOffset, subobjField);
                   }
