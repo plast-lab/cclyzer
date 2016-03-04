@@ -6,7 +6,11 @@
 #include "Demangler.hpp"
 #include "PredicateFactWriter.hpp"
 
-class DebugInfoProcessor
+namespace cclyzer {
+    class DebugInfoProcessor;
+}
+
+class cclyzer::DebugInfoProcessor
     : private PredicateFactWriter, private Demangler
 {
   public:

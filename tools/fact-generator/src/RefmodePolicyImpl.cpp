@@ -5,25 +5,31 @@
 #include <llvm/IR/Metadata.h>
 #include "RefmodePolicyImpl.hpp"
 
+using cclyzer::RefmodePolicy;
+
+using boost::algorithm::trim;
+using llvm::cast;
+using llvm::dyn_cast;
+using llvm::isa;
+using llvm::raw_string_ostream;
 using std::string;
-using namespace llvm;
-using namespace boost::algorithm;
 
 
 // Refmode for LLVM Values
 
-refmode_t RefmodePolicy::Impl::refmodeOf(const Value * Val) const
+cclyzer::refmode_t
+RefmodePolicy::Impl::refmodeOf(const llvm::Value * Val) const
 {
     string rv;
     raw_string_ostream rso(rv);
 
     if (Val->hasName()) {
-        rso << (isa<GlobalValue>(Val) ? '@' : '%')
+        rso << (isa<llvm::GlobalValue>(Val) ? '@' : '%')
             << Val->getName();
         goto print;
     }
 
-    if (isa<Constant>(Val)) {
+    if (isa<llvm::Constant>(Val)) {
         Val->printAsOperand(rso, /* PrintType */ false);
         goto print;
     }
@@ -34,8 +40,8 @@ refmode_t RefmodePolicy::Impl::refmodeOf(const Value * Val) const
     }
 
     if (Val->getType()->isMetadataTy()) {
-        const MetadataAsValue *mv = cast<MetadataAsValue>(Val);
-        const Metadata *meta = mv->getMetadata();
+        const llvm::MetadataAsValue *mv = cast<llvm::MetadataAsValue>(Val);
+        const llvm::Metadata *meta = mv->getMetadata();
         meta->printAsOperand(rso, *slotTracker);
 
         goto print;
@@ -52,7 +58,9 @@ refmode_t RefmodePolicy::Impl::refmodeOf(const Value * Val) const
             if (ctxt.isFunction) {
 
                 if (ctxt.numbering.empty())
-                    computeNumbering(cast<Function>(ctxt.anchor), ctxt.numbering);
+                    computeNumbering(
+                        cast<llvm::Function>(ctxt.anchor), ctxt.numbering
+                    );
 
                 rso << '%' << ctxt.numbering[Val];
                 goto print;
@@ -74,7 +82,8 @@ print:
 
 // Refmode for LLVM Functions
 
-refmode_t RefmodePolicy::Impl::refmodeOfFunction(const Function * func, bool prefix) const
+cclyzer::refmode_t
+RefmodePolicy::Impl::refmodeOfFunction(const llvm::Function * func, bool prefix) const
 {
     string functionName = string(func->getName());
 
@@ -88,7 +97,8 @@ refmode_t RefmodePolicy::Impl::refmodeOfFunction(const Function * func, bool pre
 }
 
 
-refmode_t RefmodePolicy::Impl::refmodeOfBasicBlock(const BasicBlock *bb, bool prefix) const
+cclyzer::refmode_t
+RefmodePolicy::Impl::refmodeOfBasicBlock(const llvm::BasicBlock *bb, bool prefix) const
 {
     string bbName = refmodeOf(bb);
 
@@ -97,35 +107,38 @@ refmode_t RefmodePolicy::Impl::refmodeOfBasicBlock(const BasicBlock *bb, bool pr
 
     std::ostringstream refmode;
 
-    withContext<Function>(refmode) << "[basicblock]" << bbName;
+    withContext<llvm::Function>(refmode) << "[basicblock]" << bbName;
     return refmode.str();
 }
 
 
-refmode_t RefmodePolicy::Impl::refmodeOfInstruction(const Instruction *instr, unsigned index) const
+cclyzer::refmode_t
+RefmodePolicy::Impl::refmodeOfInstruction(const llvm::Instruction *instr, unsigned index) const
 {
     std::ostringstream refmode;
 
     // BasicBlock context is intented so as not to qualify instruction
     // id by its surrounding basic block's id
 
-    withContext<Function>(refmode) << std::to_string(index);
+    withContext<llvm::Function>(refmode) << std::to_string(index);
     return refmode.str();
 }
 
 
-refmode_t RefmodePolicy::Impl::refmodeOfConstant(const llvm::Constant *c)
+cclyzer::refmode_t
+RefmodePolicy::Impl::refmodeOfConstant(const llvm::Constant *c)
 {
     std::ostringstream refmode;
 
-    withContext<Instruction>(refmode)
+    withContext<llvm::Instruction>(refmode)
         << constantIndex++ << ':' << refmodeOf(c);
 
     return refmode.str();
 }
 
 
-refmode_t RefmodePolicy::Impl::refmodeOfLocalValue(const llvm::Value *val, bool prefix) const
+cclyzer::refmode_t
+RefmodePolicy::Impl::refmodeOfLocalValue(const llvm::Value *val, bool prefix) const
 {
     if (const llvm::BasicBlock *bb = dyn_cast<llvm::BasicBlock>(val))
         return refmodeOfBasicBlock(bb, prefix);
@@ -137,12 +150,13 @@ refmode_t RefmodePolicy::Impl::refmodeOfLocalValue(const llvm::Value *val, bool 
 
     std::ostringstream refmode;
 
-    withContext<Function>(refmode) << id;
+    withContext<llvm::Function>(refmode) << id;
     return refmode.str();
 }
 
 
-refmode_t RefmodePolicy::Impl::refmodeOfGlobalValue(const llvm::GlobalValue *val, bool prefix) const
+cclyzer::refmode_t
+RefmodePolicy::Impl::refmodeOfGlobalValue(const llvm::GlobalValue *val, bool prefix) const
 {
     string id = refmodeOf(val);
 
@@ -157,12 +171,12 @@ refmode_t RefmodePolicy::Impl::refmodeOfGlobalValue(const llvm::GlobalValue *val
 
 
 void RefmodePolicy::Impl::computeNumbering(
-    const Function *func, std::map<const Value*,unsigned> &numbering)
+    const llvm::Function *func, std::map<const llvm::Value*,unsigned> &numbering)
 {
     unsigned counter = 0;
 
     // Arguments get the first numbers.
-    for (Function::const_arg_iterator
+    for (llvm::Function::const_arg_iterator
              ai = func->arg_begin(), ae = func->arg_end(); ai != ae; ++ai)
     {
         if (!ai->hasName())
@@ -170,14 +184,14 @@ void RefmodePolicy::Impl::computeNumbering(
     }
 
     // Walk the basic blocks in order.
-    for (Function::const_iterator
+    for (llvm::Function::const_iterator
              fi = func->begin(), fe = func->end(); fi != fe; ++fi)
     {
         if (!fi->hasName())
             numbering[&*fi] = counter++;
 
         // Walk the instructions in order.
-        for (BasicBlock::const_iterator
+        for (llvm::BasicBlock::const_iterator
                  bi = fi->begin(), be = fi->end(); bi != be; ++bi)
         {
             // void instructions don't get numbers.
@@ -192,36 +206,42 @@ void RefmodePolicy::Impl::computeNumbering(
 
 // Refmodes for LLVM Enums
 
-refmode_t RefmodePolicy::Impl::refmodeOf(GlobalValue::LinkageTypes LT) const {
+cclyzer::refmode_t
+RefmodePolicy::Impl::refmodeOf(llvm::GlobalValue::LinkageTypes LT) const {
     return enums::to_string(LT);
 }
 
-refmode_t RefmodePolicy::Impl::refmodeOf(GlobalValue::VisibilityTypes Vis) const {
+cclyzer::refmode_t
+RefmodePolicy::Impl::refmodeOf(llvm::GlobalValue::VisibilityTypes Vis) const {
     return enums::to_string(Vis);
 }
 
-refmode_t RefmodePolicy::Impl::refmodeOf(GlobalVariable::ThreadLocalMode TLM) const {
+cclyzer::refmode_t
+RefmodePolicy::Impl::refmodeOf(llvm::GlobalVariable::ThreadLocalMode TLM) const {
     return enums::to_string(TLM);
 }
 
-refmode_t RefmodePolicy::Impl::refmodeOf(CallingConv::ID CC) const {
+cclyzer::refmode_t
+RefmodePolicy::Impl::refmodeOf(llvm::CallingConv::ID CC) const {
     return enums::to_string(CC);
 }
 
-refmode_t RefmodePolicy::Impl::refmodeOf(AtomicOrdering AO) const {
+cclyzer::refmode_t
+RefmodePolicy::Impl::refmodeOf(llvm::AtomicOrdering AO) const {
     return enums::to_string(AO);
 }
 
 
 // Refmodes for LLVM Type
 
-refmode_t RefmodePolicy::Impl::refmodeOf(const Type *type) const
+cclyzer::refmode_t
+RefmodePolicy::Impl::refmodeOf(const llvm::Type *type) const
 {
     string type_str;
     raw_string_ostream rso(type_str);
 
     if (type->isStructTy()) {
-        const StructType *STy = cast<StructType>(type);
+        const llvm::StructType *STy = cast<llvm::StructType>(type);
 
         if (STy->isLiteral()) {
             type->print(rso);

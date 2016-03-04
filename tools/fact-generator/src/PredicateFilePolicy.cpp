@@ -7,6 +7,8 @@
 // Type and namespace definitions
 namespace fs = boost::filesystem;
 
+using cclyzer::PredicateFilePolicy;
+
 // Predicate File Policy implementation
 class PredicateFilePolicy::Impl {
   public:

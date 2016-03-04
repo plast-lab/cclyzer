@@ -15,7 +15,6 @@
 
 namespace fs = boost::filesystem;
 
-
 void generateFacts(const std::vector<fs::path> &inputFiles,
                    fs::path outputDir,
                    std::string delim = "\t")
@@ -24,10 +23,10 @@ void generateFacts(const std::vector<fs::path> &inputFiles,
     llvm::SMDiagnostic err;
 
     // Create fact writer
-    FactWriter writer(delim, outputDir);
+    cclyzer::FactWriter writer(delim, outputDir);
 
     // Create CSV generator
-    CsvGenerator csvGen(writer);
+    cclyzer::CsvGenerator csvGen(writer);
 
     // Loop over each input file
     foreach(fs::path inputFile, inputFiles)
@@ -58,7 +57,7 @@ void generateFacts(const std::vector<fs::path> &inputFiles,
 int main(int argc, char *argv[])
 {
     // Parse command line
-    Options options(argc, argv);
+    cclyzer::Options options(argc, argv);
 
     // Get analysis options
     std::string delim = options.getDelimiter();

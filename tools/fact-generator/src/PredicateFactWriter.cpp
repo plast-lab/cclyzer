@@ -3,6 +3,8 @@
 #include "predicate.hpp"
 #include "predicate_groups.hpp"
 
+using cclyzer::PredicateFactWriter;
+
 // Marks if predicate files have been initialized
 bool PredicateFactWriter::INITIALIZED_PREDICATE_FILES = false;
 
@@ -16,7 +18,6 @@ PredicateFactWriter::PredicateFactWriter(FactWriter &writer)
         INITIALIZED_PREDICATE_FILES = true;
     }
 }
-
 
 void PredicateFactWriter::CreatePredicateFiles(FactWriter &writer)
 {

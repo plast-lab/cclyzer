@@ -11,10 +11,20 @@
 #include <llvm/IR/Value.h>
 #include <llvm/IR/Instructions.h>
 
-/* Type aliases */
-typedef std::string refmode_t;
+namespace cclyzer {
+    namespace refmode {
+        /* Type aliases */
+        typedef std::string refmode_t;
+    }
 
-class RefmodePolicy {
+    /* Forward Declartion */
+    class RefmodePolicy;
+
+    typedef refmode::refmode_t refmode_t;
+}
+
+
+class cclyzer::RefmodePolicy {
   public:
     RefmodePolicy();
     ~RefmodePolicy();

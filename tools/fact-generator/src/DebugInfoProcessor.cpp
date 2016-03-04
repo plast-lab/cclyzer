@@ -6,11 +6,12 @@
 #include "RefmodePolicy.hpp"
 #include "predicate_groups.hpp"
 
+using cclyzer::DebugInfoProcessor;
 using namespace llvm;
 using std::list;
 using std::map;
 using std::string;
-namespace pred = predicates;
+namespace pred = cclyzer::predicates;
 
 
 template
@@ -122,7 +123,8 @@ DebugInfoProcessor::postProcess(const Module &m)
 }
 
 
-refmode_t DebugInfoProcessor::refmodeOf(const DICompositeType &type, const string &altName)
+cclyzer::refmode_t
+DebugInfoProcessor::refmodeOf(const DICompositeType &type, const string &altName)
 {
     // Construct refmode
     refmode_t refmode;

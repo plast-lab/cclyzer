@@ -9,8 +9,12 @@
 #include "predicate_groups.hpp"
 #include "CsvGenerator.hpp"
 
+namespace cclyzer {
+    class InstructionVisitor;
+}
 
-class InstructionVisitor : public llvm::InstVisitor<InstructionVisitor>
+class cclyzer::InstructionVisitor
+    : public llvm::InstVisitor<InstructionVisitor>
 {
   protected:
     friend class CsvGenerator;

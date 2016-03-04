@@ -5,7 +5,11 @@
 #include "RefmodePolicy.hpp"
 #include "predicate.hpp"
 
-class PredicateFactWriter
+namespace cclyzer {
+    class PredicateFactWriter;
+}
+
+class cclyzer::PredicateFactWriter
 {
   public:
     PredicateFactWriter(FactWriter &writer);

@@ -2,7 +2,7 @@
 #include <llvm/IR/Type.h>
 #include "CsvGenerator.hpp"
 
-class CsvGenerator::TypeVisitor
+class cclyzer::CsvGenerator::TypeVisitor
 {
   public:
 

@@ -19,7 +19,11 @@
 #include "FactWriter.hpp"
 #include "RefmodePolicy.hpp"
 
-class CsvGenerator
+namespace cclyzer {
+    class CsvGenerator;
+}
+
+class cclyzer::CsvGenerator
     : private RefmodePolicy,
       private Demangler,
       private PredicateFactWriter

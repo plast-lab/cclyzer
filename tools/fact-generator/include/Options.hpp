@@ -4,7 +4,11 @@
 #include <boost/filesystem.hpp>
 #include <string>
 
-class Options
+namespace cclyzer {
+    class Options;
+}
+
+class cclyzer::Options
 {
   public:
     /* Constructor given command-line options */

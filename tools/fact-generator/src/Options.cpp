@@ -15,6 +15,7 @@
 namespace fs = boost::filesystem;
 namespace po = boost::program_options;
 
+using cclyzer::Options;
 
 Options::Options(int argc, char* argv[])
 {

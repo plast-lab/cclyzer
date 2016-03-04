@@ -9,8 +9,11 @@
 #include "PredicateFilePolicy.hpp"
 #include "Options.hpp"
 
+namespace cclyzer {
+    class FactWriter;
+}
 
-class FactWriter
+class cclyzer::FactWriter
 {
   protected:
 

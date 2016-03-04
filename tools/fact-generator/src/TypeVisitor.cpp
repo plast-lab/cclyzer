@@ -4,9 +4,9 @@
 
 #define foreach BOOST_FOREACH
 
-namespace pred = predicates;
+namespace pred = cclyzer::predicates;
 using namespace llvm;
-
+using cclyzer::CsvGenerator;
 
 //-------------------------------------------------------------------
 // Methods for recording different kinds of LLVM types.

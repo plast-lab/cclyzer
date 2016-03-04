@@ -18,8 +18,6 @@ class Demangler
     inline std::string demangle(const std::string name) {
         return demangle(name.c_str());
     }
-
-
 };
 
 

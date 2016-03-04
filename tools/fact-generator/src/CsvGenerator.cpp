@@ -16,11 +16,12 @@
 #define foreach BOOST_FOREACH
 
 
+using cclyzer::CsvGenerator;
 using namespace llvm;
 using namespace std;
 using namespace boost;
 namespace fs = boost::filesystem;
-namespace pred = predicates;
+namespace pred = cclyzer::predicates;
 
 
 void CsvGenerator::processModule(const Module &Mod, string& path)
@@ -490,7 +491,7 @@ void CsvGenerator::writeConstantExpr(const ConstantExpr &expr, const refmode_t &
     }
 }
 
-refmode_t CsvGenerator::writeConstant(const Constant &c)
+cclyzer::refmode_t CsvGenerator::writeConstant(const Constant &c)
 {
     refmode_t refmode = refmodeOfConstant(&c);
 

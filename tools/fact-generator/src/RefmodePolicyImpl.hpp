@@ -4,7 +4,9 @@
 #include "LLVMEnums.hpp"
 
 // Refmode Policy implementation
-class RefmodePolicy::Impl : LLVMEnumSerializer {
+class cclyzer::RefmodePolicy::Impl
+    : LLVMEnumSerializer
+{
   public:
 
     // Methods that compute refmodes for various LLVM types

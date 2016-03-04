@@ -4,8 +4,12 @@
 #include <boost/filesystem.hpp>
 #include "Singleton.hpp"
 
+namespace cclyzer {
+    class PredicateFilePolicy;
+}
+
 // A strategy to map predicate names to filesystem paths
-class PredicateFilePolicy
+class cclyzer::PredicateFilePolicy
 {
   protected:
     typedef boost::filesystem::path path;
