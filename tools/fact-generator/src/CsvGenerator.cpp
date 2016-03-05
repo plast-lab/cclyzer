@@ -233,7 +233,7 @@ void CsvGenerator::processModule(const Module &Mod, string& path)
     }
 
     // Process any existing debug information
-    debugInfoProcessor.postProcess(Mod);
+    debugInfoProcessor.postProcess(Mod, path);
 }
 
 
