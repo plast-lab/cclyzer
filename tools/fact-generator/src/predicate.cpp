@@ -1,13 +1,13 @@
 #include "predicate.hpp"
 
+// Add to current namespace
+using cclyzer::Registry;
 using cclyzer::Predicate;
 using cclyzer::OperandPredicate;
 using cclyzer::EntityPredicate;
 
-// Initialize registry singleton instances
-template<> Predicate::Registry *Singleton<Predicate::Registry>::INSTANCE = nullptr;
-template<> EntityPredicate::Registry *Singleton<EntityPredicate::Registry>::INSTANCE = nullptr;
-template<> OperandPredicate::Registry *Singleton<OperandPredicate::Registry>::INSTANCE = nullptr;
+// Initialize registries
+template <typename T> std::set< const T* > Registry<T>::allInstances;
 
 // Two suffixes for the two variants of each operand predicate
 const char *OperandPredicate::CONSTANT_SUFFIX = "by_constant";

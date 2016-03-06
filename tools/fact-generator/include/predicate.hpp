@@ -17,38 +17,45 @@ namespace cclyzer {
     class Registry
     {
       public:
-        Registry() {}
+        Registry() {
+            allInstances.insert(static_cast<const T*>(this));
+        }
 
-        const std::set<const T*> items() const {
-            return allInstances;
+        // Define iterator methods over class instances
+
+        typedef typename std::set< const T* >::const_iterator iterator;
+
+        static iterator begin() {
+            return allInstances.begin();
+        }
+
+        static iterator end() {
+            return allInstances.end();
         }
 
       protected:
-        std::set< const T* > allInstances;
+        ~Registry() {
+            allInstances.erase(static_cast<const T*>(this));
+        }
+
+        // Collection of instances
+        static std::set< const T* > allInstances;
+
+      private:
+        // Make objects non-copyable
+        Registry (const Registry &);
+        Registry & operator = (const Registry &);
     };
 }
 
 /* Predicate */
 
 class cclyzer::Predicate
+    : protected Registry<Predicate>
 {
   public:
 
-    /* Registry singleton instance */
-
-    class Registry
-        : public Singleton<Registry>,
-          public cclyzer::Registry<Predicate>
-    {
-      protected:
-        friend class Predicate;
-        friend class Singleton<Registry>;
-    };
-
-
-    Predicate(const char *name) : name(name) {
-        Registry::getInstance()->allInstances.insert(this);
-    }
+    Predicate(const char *name) : name(name) {}
 
     operator std::string() const {
         return name;
@@ -81,23 +88,12 @@ class cclyzer::Predicate
 
 /* Predicate that defines entity */
 
-class cclyzer::EntityPredicate : public cclyzer::Predicate
+class cclyzer::EntityPredicate
+    : public cclyzer::Predicate,
+      protected Registry<EntityPredicate>
 {
   public:
-    /* Registry singleton instance */
-
-    class Registry
-        : public Singleton<Registry>,
-          public cclyzer::Registry<EntityPredicate>
-    {
-      protected:
-        friend class EntityPredicate;
-        friend class Singleton<Registry>;
-    };
-
-    EntityPredicate(const char *name) : Predicate(name) {
-        Registry::getInstance()->allInstances.insert(this);
-    }
+    EntityPredicate(const char *name) : Predicate(name) {}
 
     virtual ~EntityPredicate() {};
 };
@@ -105,27 +101,16 @@ class cclyzer::EntityPredicate : public cclyzer::Predicate
 
 /* Predicate that involves operand */
 
-class cclyzer::OperandPredicate : public cclyzer::Predicate
+class cclyzer::OperandPredicate
+    : public cclyzer::Predicate,
+      protected Registry<OperandPredicate>
 {
   public:
-    /* Registry singleton instance */
-
-    class Registry
-        : public Singleton<Registry>,
-          public cclyzer::Registry<OperandPredicate>
-    {
-      protected:
-        friend class OperandPredicate;
-        friend class Singleton<Registry>;
-    };
-
     OperandPredicate(const char *name)
         : Predicate(name)
         , constantOperand((std::string(name) + ":" + CONSTANT_SUFFIX).c_str())
         , variableOperand((std::string(name) + ":" + VARIABLE_SUFFIX).c_str())
-    {
-        Registry::getInstance()->allInstances.insert(this);
-    }
+    {}
 
     virtual ~OperandPredicate() {}
 

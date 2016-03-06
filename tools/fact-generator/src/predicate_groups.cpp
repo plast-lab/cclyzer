@@ -427,24 +427,3 @@ entity_pred_t gep_constant_expr::id("getelementptr_constant_expression");
 pred_t gep_constant_expr::base("getelementptr_constant_expression:base");
 pred_t gep_constant_expr::index("getelementptr_constant_expression:index");
 pred_t gep_constant_expr::nindices("getelementptr_constant_expression:nindices");
-
-
-// Auxiliary functions
-
-namespace cclyzer
-{
-    namespace predicates
-    {
-        const std::set<const entity_pred_t*> entity_predicates() {
-            return EntityPredicate::Registry::getInstance()->items();
-        }
-
-        const std::set<const operand_pred_t*> operand_predicates() {
-            return OperandPredicate::Registry::getInstance()->items();
-        }
-
-        const std::set<const pred_t*> predicates() {
-            return Predicate::Registry::getInstance()->items();
-        }
-    }
-}

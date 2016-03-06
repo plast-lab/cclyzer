@@ -17,12 +17,35 @@ namespace cclyzer
         struct predicate_group {};
 
 
-        // Functions that return the different sets of predicates
+        // Iterators for the different sets of predicates
 
-        const std::set<const entity_pred_t*> entity_predicates();
-        const std::set<const operand_pred_t*> operand_predicates();
-        const std::set<const pred_t*> predicates();
+        typedef Registry<Predicate>::iterator pred_iterator;
+        typedef Registry<EntityPredicate>::iterator entity_pred_iterator;
+        typedef Registry<OperandPredicate>::iterator operand_pred_iterator;
 
+        inline pred_iterator predicates_begin() {
+            return Registry<Predicate>::begin();
+        }
+
+        inline pred_iterator predicates_end() {
+            return Registry<Predicate>::end();
+        }
+
+        inline entity_pred_iterator entity_predicates_begin() {
+            return Registry<EntityPredicate>::begin();
+        }
+
+        inline entity_pred_iterator entity_predicates_end() {
+            return Registry<EntityPredicate>::end();
+        }
+
+        inline operand_pred_iterator operand_predicates_begin() {
+            return Registry<OperandPredicate>::begin();
+        }
+
+        inline operand_pred_iterator operand_predicates_end() {
+            return Registry<OperandPredicate>::end();
+        }
 
 
         //----------------------------------------------------
