@@ -24,7 +24,7 @@ namespace fs = boost::filesystem;
 namespace pred = cclyzer::predicates;
 
 
-void CsvGenerator::processModule(const Module &Mod, string& path)
+void CsvGenerator::processModule(const Module &Mod, const string& path)
 {
     InstructionVisitor IV(*this, Mod);
     ModuleContext MC(*this, Mod, path);

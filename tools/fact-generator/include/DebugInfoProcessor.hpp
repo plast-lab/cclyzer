@@ -42,7 +42,7 @@ class cclyzer::DebugInfoProcessor
     /* Fact-generating methods */
 
     void
-    postProcess(const llvm::Module &, std::string &path);
+    postProcess(const llvm::Module &, const std::string &);
 
     void
     postProcessType(const llvm::DICompositeType &, const std::string &);
@@ -68,9 +68,9 @@ class cclyzer::DebugInfoProcessor
     refmode_t refmodeOf(const llvm::DICompositeType &,
                         const std::string &altName = "");
 
-    // Generate refmode for debug info global variables
+    // Generate refmode for debug info global variable
     refmode_t refmodeOf(const llvm::DIGlobalVariable &,
-                        std::string &);
+                        const std::string &);
   private:
     /* Debug Info */
     llvm::DebugInfoFinder debugInfoFinder;

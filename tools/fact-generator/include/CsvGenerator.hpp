@@ -92,7 +92,7 @@ class cclyzer::CsvGenerator
     void visitNamedMDNode(const llvm::NamedMDNode *NMD);
 
 
-    void processModule(const llvm::Module &Mod, std::string& path);
+    void processModule(const llvm::Module &Mod, const std::string& path);
     void writeVarsTypesAndConstants(const llvm::DataLayout &layout);
 
     /* Visitor classes */

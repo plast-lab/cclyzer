@@ -71,7 +71,7 @@ namespace cclyzer
             static pred_t linkage;
             static pred_t visibility;
             static pred_t threadlocal_mode;
-            static pred_t location;
+            static pred_t pos;
         };
 
         struct alias : public predicate_group {

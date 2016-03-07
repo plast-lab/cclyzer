@@ -120,13 +120,13 @@ string LLVMEnumSerializer::to_string(llvm::AtomicOrdering ordering)
     const char *atomic;
 
     switch (ordering) {
-      case llvm::NotAtomic: atomic = "";                     break;
-      case llvm::Unordered: atomic = "unordered";            break;
-      case llvm::Monotonic: atomic = "monotonic";            break;
-      case llvm::Acquire: atomic = "acquire";                break;
-      case llvm::Release: atomic = "release";                break;
-      case llvm::AcquireRelease: atomic = "acq_rel";         break;
-      case llvm::SequentiallyConsistent: atomic = "seq_cst"; break;
+      case llvm::NotAtomic:              atomic = "";          break;
+      case llvm::Unordered:              atomic = "unordered"; break;
+      case llvm::Monotonic:              atomic = "monotonic"; break;
+      case llvm::Acquire:                atomic = "acquire";   break;
+      case llvm::Release:                atomic = "release";   break;
+      case llvm::AcquireRelease:         atomic = "acq_rel";   break;
+      case llvm::SequentiallyConsistent: atomic = "seq_cst";   break;
       default:
           llvm::errs() << "Unrecognized atomic ordering type: "
                        << ordering << '\n';

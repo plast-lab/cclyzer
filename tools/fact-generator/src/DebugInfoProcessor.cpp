@@ -46,29 +46,34 @@ DebugInfoProcessor::printScope(Stream &stream, const DIScopeRef &outerScope)
 }
 
 void
-DebugInfoProcessor::postProcess(const Module &m, string &path)
+DebugInfoProcessor::postProcess(const Module &m, const string &path)
 {
     typedef DebugInfoFinder::type_iterator di_type_iterator;
-    typedef DebugInfoFinder::global_variable_iterator di_global_variable_iterator;
+    typedef DebugInfoFinder::global_variable_iterator di_global_var_iterator;
 
-    // Get iterators
-    llvm::iterator_range<di_type_iterator> allTypes = debugInfoFinder.types();
-    llvm::iterator_range<di_global_variable_iterator> allVars = debugInfoFinder.global_variables();
+    // Get global variable iterator
+    llvm::iterator_range<di_global_var_iterator> allVars =
+        debugInfoFinder.global_variables();
 
     // Construct a mapping from Type ID to Type name
     CollectTypeIDs();
 
     // iterate over global variables
-    for (di_global_variable_iterator iVar = allVars.begin(), E = allVars.end();
+    for (di_global_var_iterator iVar = allVars.begin(), E = allVars.end();
          iVar != E; ++iVar)
     {
         const DIGlobalVariable &dbgGlobalVar = **iVar;
         refmode_t refmode = refmodeOf(dbgGlobalVar, path);
-        unsigned globalVarLine = dbgGlobalVar.getLine();
-        std::string globalFileName = dbgGlobalVar.getFilename();
-        std::string globalDirectory = dbgGlobalVar.getDirectory();
-        writeFact(pred::global_var::location, refmode, globalDirectory, globalFileName, globalVarLine);
+
+        unsigned lineNum = dbgGlobalVar.getLine();
+        string fileName = dbgGlobalVar.getFilename();
+        string dir = dbgGlobalVar.getDirectory();
+
+        writeFact(pred::global_var::pos, refmode, dir, fileName, lineNum);
     }
+
+    // Get type iterator
+    llvm::iterator_range<di_type_iterator> allTypes = debugInfoFinder.types();
 
     // iterate over types
     for (di_type_iterator iType = allTypes.begin(), E = allTypes.end();
@@ -176,15 +181,13 @@ DebugInfoProcessor::refmodeOf(const DICompositeType &type, const string &altName
 }
 
 cclyzer::refmode_t
-DebugInfoProcessor::refmodeOf(const DIGlobalVariable &dbgGlobalVar, string &path)
+DebugInfoProcessor::refmodeOf(const DIGlobalVariable &dbgGlobalVar, const string &path)
 {
     // Construct refmode
     refmode_t refmode;
     raw_string_ostream rso(refmode);
 
-    rso << "<";
-    rso << path;
-    rso << ">:";
+    rso << "<" << path << ">:";
 
     // Append global var name to refmode
 
@@ -192,8 +195,7 @@ DebugInfoProcessor::refmodeOf(const DIGlobalVariable &dbgGlobalVar, string &path
     if (globalName.empty())
         return "";
 
-    rso << "@";
-    rso << globalName;
+    rso << "@" << globalName;
     rso.flush();
 
     return refmode;
