@@ -46,15 +46,29 @@ DebugInfoProcessor::printScope(Stream &stream, const DIScopeRef &outerScope)
 }
 
 void
-DebugInfoProcessor::postProcess(const Module &m)
+DebugInfoProcessor::postProcess(const Module &m, string &path)
 {
     typedef DebugInfoFinder::type_iterator di_type_iterator;
+    typedef DebugInfoFinder::global_variable_iterator di_global_variable_iterator;
 
-    // Get iterator over all module types
+    // Get iterators
     llvm::iterator_range<di_type_iterator> allTypes = debugInfoFinder.types();
+    llvm::iterator_range<di_global_variable_iterator> allVars = debugInfoFinder.global_variables();
 
     // Construct a mapping from Type ID to Type name
     CollectTypeIDs();
+
+    // iterate over global variables
+    for (di_global_variable_iterator iVar = allVars.begin(), E = allVars.end();
+         iVar != E; ++iVar)
+    {
+        const DIGlobalVariable &dbgGlobalVar = **iVar;
+        refmode_t refmode = refmodeOf(dbgGlobalVar, path);
+        unsigned globalVarLine = dbgGlobalVar.getLine();
+        std::string globalFileName = dbgGlobalVar.getFilename();
+        std::string globalDirectory = dbgGlobalVar.getDirectory();
+        writeFact(pred::global_var::location, refmode, globalDirectory, globalFileName, globalVarLine);
+    }
 
     // iterate over types
     for (di_type_iterator iType = allTypes.begin(), E = allTypes.end();
@@ -156,6 +170,30 @@ DebugInfoProcessor::refmodeOf(const DICompositeType &type, const string &altName
         return "";
 
     rso << typeName;
+    rso.flush();
+
+    return refmode;
+}
+
+cclyzer::refmode_t
+DebugInfoProcessor::refmodeOf(const DIGlobalVariable &dbgGlobalVar, string &path)
+{
+    // Construct refmode
+    refmode_t refmode;
+    raw_string_ostream rso(refmode);
+
+    rso << "<";
+    rso << path;
+    rso << ">:";
+
+    // Append global var name to refmode
+
+    std::string globalName = dbgGlobalVar.getName();
+    if (globalName.empty())
+        return "";
+
+    rso << "@";
+    rso << globalName;
     rso.flush();
 
     return refmode;
