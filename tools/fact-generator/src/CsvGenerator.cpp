@@ -381,8 +381,7 @@ template void CsvGenerator::writeFnAttributes<pred::invoke>(
 
 void CsvGenerator::writeVarsTypesAndConstants(const llvm::DataLayout &layout)
 {
-    using llvm_extra::TypeAccumulator;
-    using boost::unordered_set;
+    using llvm_utils::TypeAccumulator;
 
     // Record every constant encountered so far
     foreach (type_cache_t::value_type kv, constantTypes) {
@@ -408,24 +407,27 @@ void CsvGenerator::writeVarsTypesAndConstants(const llvm::DataLayout &layout)
         types.insert(type);
     }
 
-    // Type accumulator that identifies simple types from complex ones
-    TypeAccumulator<unordered_set<const llvm::Type *> > collector;
-
-    // Set of all encountered types
-    unordered_set<const llvm::Type *> collectedTypes = collector(types);
-
     // Add basic primitive types
     writeFact(pred::primitive_type::id, "void");
     writeFact(pred::primitive_type::id, "label");
     writeFact(pred::primitive_type::id, "metadata");
     writeFact(pred::primitive_type::id, "x86mmx");
 
+    // Find types contained in the types encountered so far, but not
+    // referenced directly
+
+    TypeAccumulator alltypes;
+    alltypes.accumulate(types.begin(), types.end());
+
     // Create type visitor
     TypeVisitor TV(*this, layout);
 
     // Record each type encountered
-    foreach (const Type *type, collectedTypes)
-       TV.visitType(type);
+    for(TypeAccumulator::const_iterator
+            it = alltypes.begin(), end = alltypes.end(); it != end; ++it)
+    {
+        TV.visitType(*it);
+    }
 }
 
 void CsvGenerator::writeConstantArray(const ConstantArray &array, const refmode_t &refmode) {
