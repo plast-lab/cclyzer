@@ -52,7 +52,7 @@ class cclyzer::InstructionVisitor
 
         writeInstrOperand(pred::first_operand, iref, instr.getOperand(0));
         writeInstrOperand(pred::second_operand, iref, instr.getOperand(1));
-        writeOptimizationInfoToFile(&instr, iref);
+        writeOptimizationInfo(iref, &instr);
     }
 
   public:
@@ -164,13 +164,25 @@ class cclyzer::InstructionVisitor
         return iref;
     }
 
+    refmode_t recordOperand(const llvm::Value *);
+
     refmode_t writeInstrOperand(const operand_pred_t &predicate,
                                 const refmode_t &instr,
-                                const llvm::Value *Operand, int index = -1);
+                                const llvm::Value *Operand);
 
     refmode_t writeInstrOperand(const pred_t &predicate,
                                 const refmode_t &instr,
-                                const llvm::Value *Value, int index = -1);
+                                const llvm::Value *Value);
+
+    refmode_t writeInstrOperand(const operand_pred_t &predicate,
+                                const refmode_t &instr,
+                                const llvm::Value *Operand,
+                                int index);
+
+    refmode_t writeInstrOperand(const pred_t &predicate,
+                                const refmode_t &instr,
+                                const llvm::Value *Value,
+                                int index);
 
 
     /* Auxiliary methods */
@@ -180,7 +192,7 @@ class cclyzer::InstructionVisitor
     static const char* pred_to_string(unsigned predicate);
 
     // Record several facts regarding optimizations
-    void writeOptimizationInfoToFile(const llvm::User *, refmode_t);
+    void writeOptimizationInfo(refmode_t, const llvm::User *);
 
     // Record `atomicrmw` binary operator
     void writeAtomicRMWOp(refmode_t, llvm::AtomicRMWInst::BinOp);

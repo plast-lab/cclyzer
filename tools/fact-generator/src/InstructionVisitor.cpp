@@ -5,27 +5,21 @@
 #include "InstructionVisitor.hpp"
 #include "predicate_groups.hpp"
 
-using cclyzer::InstructionVisitor;
-
 namespace pred = cclyzer::predicates;
+
+using cclyzer::InstructionVisitor;
 using llvm::dyn_cast;
 using std::string;
 
-// TODO: Why do we store the volatile property with two different
-//       ways?  (see writeVolatileFlag and :volatile for some
-//       entities)
 
+//------------------------------------------------------------------------------
+// Operand-writing utility methods
+//------------------------------------------------------------------------------
 
-cclyzer::refmode_t InstructionVisitor::writeInstrOperand(
-    const pred_t &predicate,    // the operand predicate
-    const refmode_t &instr,     // the instruction refmode
-    const llvm::Value * Val,    // the operand value
-    int index)                  // an optional index
+cclyzer::refmode_t InstructionVisitor::recordOperand(const llvm::Value *Val)
 {
-    // Value refmode and type
-    string refmode;
-    const llvm::Type * type = Val->getType();
-    const char *predname = predicate.c_str();
+    refmode_t refmode;
+    const llvm::Type *type = Val->getType();
 
     if (const llvm::Constant *c = dyn_cast<llvm::Constant>(Val)) {
         // Compute refmode for constant value.
@@ -45,49 +39,85 @@ cclyzer::refmode_t InstructionVisitor::writeInstrOperand(
         gen.recordVariable(refmode, type);
     }
 
-    // Write value fact
-    if (index == -1) {
-        writer.writeFact(predname, instr, refmode);
-    } else {
-        writer.writeFact(predname, instr, index, refmode);
-    }
     return refmode;
 }
 
-cclyzer::refmode_t InstructionVisitor::writeInstrOperand(
+cclyzer::refmode_t
+InstructionVisitor::writeInstrOperand(
+    const pred_t &predicate,    // the operand predicate
+    const refmode_t &instr,     // the instruction refmode
+    const llvm::Value *Val)     // the operand value
+{
+    refmode_t refmode = recordOperand(Val);
+
+    // Write value fact
+    gen.writeFact(predicate, instr, refmode);
+
+    return refmode;
+}
+
+cclyzer::refmode_t
+InstructionVisitor::writeInstrOperand(
+    const pred_t &predicate,    // the operand predicate
+    const refmode_t &instr,     // the instruction refmode
+    const llvm::Value *Val,     // the operand value
+    int index)                  // the operand index
+{
+    refmode_t refmode = recordOperand(Val);
+
+    // Write value fact
+    gen.writeFact(predicate, instr, index, refmode);
+
+    return refmode;
+}
+
+cclyzer::refmode_t
+InstructionVisitor::writeInstrOperand(
     const operand_pred_t &predicate, // the operand predicate
     const refmode_t &instr,          // the instruction refmode
-    const llvm::Value * Operand,     // the operand value
-    int index)                       // an optional index
+    const llvm::Value *Operand)      // the operand value
 {
-    // Operand refmode and type
-    string refmode;
-    const llvm::Type * type = Operand->getType();
-    const char *predname;
+    refmode_t refmode = recordOperand(Operand);
 
-    if (const llvm::Constant *c = dyn_cast<llvm::Constant>(Operand)) {
-        // Compute refmode for constant
-        refmode = gen.writeConstant(*c);
-
-        // Record constant operand
-        predname = predicate.asConstant().c_str();
-    }
-    else {
-        refmode = gen.refmodeOfLocalValue(Operand);
-
-        // Record variable operand
-        predname = predicate.asVariable().c_str();
-        gen.recordVariable(refmode, type);
-    }
+    // Predicate name
+    const pred_t &pred =
+        llvm::isa<llvm::Constant>(Operand)
+        ? predicate.asConstant()
+        : predicate.asVariable();
 
     // Write operand fact
-    if (index == -1) {
-        writer.writeFact(predname, instr, refmode);
-    } else {
-        writer.writeFact(predname, instr, index, refmode);
-    }
+    gen.writeFact(pred, instr, refmode);
+
     return refmode;
 }
+
+cclyzer::refmode_t
+InstructionVisitor::writeInstrOperand(
+    const operand_pred_t &predicate, // the operand predicate
+    const refmode_t &instr,          // the instruction refmode
+    const llvm::Value *Operand,      // the operand value
+    int index)                       // the operand index
+{
+    refmode_t refmode = recordOperand(Operand);
+
+    // Predicate name
+    const pred_t &pred =
+        llvm::isa<llvm::Constant>(Operand)
+        ? predicate.asConstant()
+        : predicate.asVariable();
+
+    // Write operand fact
+    gen.writeFact(pred, instr, index, refmode);
+
+    return refmode;
+}
+
+
+
+//------------------------------------------------------------------------------
+// Fact-writing methods for each instruction type
+//------------------------------------------------------------------------------
+
 
 void InstructionVisitor::visitTruncInst(llvm::TruncInst &I) {
     _visitCastInst<pred::trunc>(I);
@@ -463,7 +493,8 @@ void InstructionVisitor::visitGetElementPtrInst(llvm::GetElementPtrInst &GEP)
     {
         const llvm::Value * GepOperand = GEP.getOperand(index);
 
-        refmode_t opref = writeInstrOperand(pred::gep::index, iref, GepOperand, index - 1);
+        refmode_t opref =
+            writeInstrOperand(pred::gep::index, iref, GepOperand, index - 1);
 
         if (const llvm::Constant *c = dyn_cast<llvm::Constant>(GepOperand)) {
             // Compute integer string representation
@@ -471,8 +502,6 @@ void InstructionVisitor::visitGetElementPtrInst(llvm::GetElementPtrInst &GEP)
 
             // Write constant to integer fact
             gen.writeFact(pred::constant::to_integer, opref, int_value);
-
-            // TODO: maybe call writeConstant here
         }
     }
 
@@ -520,9 +549,9 @@ void InstructionVisitor::visitInsertValueInst(llvm::InsertValueInst &IVI)
     int index = 0;
 
     for (const unsigned *i = IVI.idx_begin(), *e = IVI.idx_end();
-         i != e; ++i,index++)
+         i != e; ++i)
     {
-        gen.writeFact(pred::insert_value::index, iref, index, *i);
+        gen.writeFact(pred::insert_value::index, iref, index++, *i);
     }
 
     gen.writeFact(pred::insert_value::nindices, iref, IVI.getNumIndices());
@@ -680,7 +709,11 @@ void  InstructionVisitor::visitInstruction(llvm::Instruction &I) {
 }
 
 
-// Auxiliary Methods
+
+//------------------------------------------------------------------------------
+// Auxiliary Methods for non-instructions
+//------------------------------------------------------------------------------
+
 
 const char* InstructionVisitor::pred_to_string(unsigned predicate)
 {
@@ -720,13 +753,14 @@ const char* InstructionVisitor::pred_to_string(unsigned predicate)
 }
 
 
-void InstructionVisitor::writeOptimizationInfoToFile(const llvm::User *u, refmode_t iref)
+void InstructionVisitor::writeOptimizationInfo(refmode_t iref, const llvm::User *u)
 {
     using llvm::FPMathOperator;
     using llvm::OverflowingBinaryOperator;
     using llvm::PossiblyExactOperator;
 
     if (const FPMathOperator *fpo = dyn_cast<const FPMathOperator>(u)) {
+
         if (fpo->hasUnsafeAlgebra()) {
             gen.writeFact(pred::instruction::flag, iref, "fast");
         }
@@ -744,7 +778,9 @@ void InstructionVisitor::writeOptimizationInfoToFile(const llvm::User *u, refmod
                 gen.writeFact(pred::instruction::flag, iref, "arcp");
         }
     }
+
     if (const OverflowingBinaryOperator *obo = dyn_cast<OverflowingBinaryOperator>(u)) {
+
         if (obo->hasNoUnsignedWrap())
             gen.writeFact(pred::instruction::flag, iref, "nuw");
 
@@ -752,6 +788,7 @@ void InstructionVisitor::writeOptimizationInfoToFile(const llvm::User *u, refmod
             gen.writeFact(pred::instruction::flag, iref, "nsw");
     }
     else if (const PossiblyExactOperator *div = dyn_cast<PossiblyExactOperator>(u)) {
+
         if (div->isExact())
             gen.writeFact(pred::instruction::flag, iref, "exact");
     }
@@ -760,7 +797,7 @@ void InstructionVisitor::writeOptimizationInfoToFile(const llvm::User *u, refmod
 
 void InstructionVisitor::writeAtomicRMWOp(refmode_t instrref, llvm::AtomicRMWInst::BinOp op)
 {
-    const char *oper = (char *) 0;
+    const char *oper;
 
     switch (op) {
       case llvm::AtomicRMWInst::Xchg: oper = "xchg";    break;
@@ -774,9 +811,8 @@ void InstructionVisitor::writeAtomicRMWOp(refmode_t instrref, llvm::AtomicRMWIns
       case llvm::AtomicRMWInst::Min:  oper = "min";     break;
       case llvm::AtomicRMWInst::UMax: oper = "umax";    break;
       case llvm::AtomicRMWInst::UMin: oper = "umin";    break;
-      default: break;
+      default: return;
     }
 
-    if (oper)
-        gen.writeFact(pred::atomicrmw::operation, instrref, oper);
+    gen.writeFact(pred::atomicrmw::operation, instrref, oper);
 }

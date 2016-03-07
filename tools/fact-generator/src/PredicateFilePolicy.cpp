@@ -76,6 +76,12 @@ PredicateFilePolicy::PredicateFilePolicy() {
     impl = new Impl();
 }
 
+PredicateFilePolicy::~PredicateFilePolicy() {
+    if (impl) {
+        delete impl;
+    }
+}
+
 fs::path PredicateFilePolicy::toPath(const char * predName) const {
     return impl->toPath(predName);
 }

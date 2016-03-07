@@ -57,6 +57,8 @@ class cclyzer::Predicate
 
     Predicate(const char *name) : name(name) {}
 
+    // Conversions
+
     operator std::string() const {
         return name;
     }
@@ -64,6 +66,9 @@ class cclyzer::Predicate
     const char *c_str() const {
         return name.c_str();
     }
+
+
+    // Comparison operators
 
     friend bool operator== (Predicate &p1, Predicate &p2);
     friend bool operator!= (Predicate &p1, Predicate &p2);

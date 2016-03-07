@@ -17,7 +17,7 @@ class cclyzer::PredicateFilePolicy
   public:
 
     PredicateFilePolicy();
-    ~PredicateFilePolicy() {}
+    ~PredicateFilePolicy();
 
     /* Transform predicate name to filesystem path */
     path toPath(const char * predName) const;
