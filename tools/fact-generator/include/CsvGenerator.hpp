@@ -29,6 +29,7 @@ class cclyzer::CsvGenerator
       private PredicateFactWriter
 {
     friend class InstructionVisitor;
+    friend class TypeVisitor;
     using RefmodePolicy::refmodeOf;
 
   protected:
@@ -95,9 +96,6 @@ class cclyzer::CsvGenerator
     void processModule(const llvm::Module &Mod, const std::string& path);
     void writeVarsTypesAndConstants(const llvm::DataLayout &layout);
 
-    /* Visitor classes */
-    class TypeVisitor;
-    friend class TypeVisitor;
 
   private:
     /* Initialize output file streams */

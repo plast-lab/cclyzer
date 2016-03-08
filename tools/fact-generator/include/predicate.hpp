@@ -3,7 +3,6 @@
 
 #include <set>
 #include <string>
-
 #include "Singleton.hpp"
 
 namespace cclyzer {

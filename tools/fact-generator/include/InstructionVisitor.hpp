@@ -2,16 +2,16 @@
 #define INSTR_VISITOR_H__
 
 #include <string>
-#include <boost/unordered_map.hpp>
 #include <llvm/IR/InstVisitor.h>
-#include <llvm/IR/Attributes.h>
-
 #include "CsvGenerator.hpp"
+#include "RefmodePolicy.hpp"
 
-namespace cclyzer {
-    class InstructionVisitor;
-}
 
+// Add to namespace
+namespace cclyzer { class InstructionVisitor; }
+
+
+// Processor of instructions
 class cclyzer::InstructionVisitor
     : public llvm::InstVisitor<InstructionVisitor>
 {
@@ -20,7 +20,7 @@ class cclyzer::InstructionVisitor
   public:
 
     InstructionVisitor(CsvGenerator &generator, const llvm::Module &M)
-        : gen(generator) , Mod(M)
+        : gen(generator) , module(M)
     {}
 
 
@@ -218,7 +218,7 @@ class cclyzer::InstructionVisitor
     CsvGenerator &gen;
 
     /* Associated LLVM module */
-    const llvm::Module &Mod;
+    const llvm::Module &module;
 };
 
 #endif

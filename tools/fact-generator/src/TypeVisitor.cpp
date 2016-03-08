@@ -1,26 +1,33 @@
-#include <boost/foreach.hpp>
+#include "CsvGenerator.hpp"
 #include "predicate_groups.hpp"
 #include "TypeVisitor.hpp"
 
-#define foreach BOOST_FOREACH
-
+using cclyzer::TypeVisitor;
 namespace pred = cclyzer::predicates;
-using namespace llvm;
-using cclyzer::CsvGenerator;
+
+// Add basic LLVM types to current namespace
+using llvm::Type;
+using llvm::ArrayType;
+using llvm::FunctionType;
+using llvm::PointerType;
+using llvm::StructType;
+using llvm::VectorType;
+using llvm::cast;
+
 
 //-------------------------------------------------------------------
 // Methods for recording different kinds of LLVM types.
 //-------------------------------------------------------------------
 
-
-void CsvGenerator::TypeVisitor::visitType(const Type *type)
+void
+TypeVisitor::visitType(const llvm::Type *type)
 {
     // Record type sizes while skipping unsized types (e.g.,
     // labels, functions)
 
     if (type->isSized()) {
-        uint64_t allocSize = layout.getTypeAllocSize(const_cast<Type *>(type));
-        uint64_t storeSize = layout.getTypeStoreSize(const_cast<Type *>(type));
+        uint64_t allocSize = layout.getTypeAllocSize(const_cast<Type*>(type));
+        uint64_t storeSize = layout.getTypeStoreSize(const_cast<Type*>(type));
 
         // Store size of type in bytes
         refmode_t typeRef = gen.refmodeOf(type);
@@ -33,17 +40,17 @@ void CsvGenerator::TypeVisitor::visitType(const Type *type)
 
     // Record each different kind of type
     switch (type->getTypeID()) { // Fallthrough is intended
-      case llvm::Type::VoidTyID:
-      case llvm::Type::LabelTyID:
-      case llvm::Type::MetadataTyID:
+      case Type::VoidTyID:
+      case Type::LabelTyID:
+      case Type::MetadataTyID:
           gen.writeFact(pred::primitive_type::id, tref);
           break;
-      case llvm::Type::HalfTyID: // Fallthrough to all 6 floating point types
-      case llvm::Type::FloatTyID:
-      case llvm::Type::DoubleTyID:
-      case llvm::Type::X86_FP80TyID:
-      case llvm::Type::FP128TyID:
-      case llvm::Type::PPC_FP128TyID:
+      case Type::HalfTyID: // Fallthrough to all 6 floating point types
+      case Type::FloatTyID:
+      case Type::DoubleTyID:
+      case Type::X86_FP80TyID:
+      case Type::FP128TyID:
+      case Type::PPC_FP128TyID:
           assert(type->isFloatingPointTy());
           gen.writeFact(pred::fp_type::id, tref);
           break;
@@ -71,7 +78,8 @@ void CsvGenerator::TypeVisitor::visitType(const Type *type)
 }
 
 
-void CsvGenerator::TypeVisitor::visitPointerType(const PointerType *ptrType)
+void
+TypeVisitor::visitPointerType(const PointerType *ptrType)
 {
     refmode_t tref = gen.refmodeOf(ptrType);
     refmode_t elementType = gen.refmodeOf(ptrType->getPointerElementType());
@@ -88,7 +96,8 @@ void CsvGenerator::TypeVisitor::visitPointerType(const PointerType *ptrType)
 }
 
 
-void CsvGenerator::TypeVisitor::visitArrayType(const ArrayType *arrayType)
+void
+TypeVisitor::visitArrayType(const ArrayType *arrayType)
 {
     refmode_t tref = gen.refmodeOf(arrayType);
     refmode_t componentType = gen.refmodeOf(arrayType->getArrayElementType());
@@ -100,8 +109,11 @@ void CsvGenerator::TypeVisitor::visitArrayType(const ArrayType *arrayType)
 }
 
 
-void CsvGenerator::TypeVisitor::visitStructType(const StructType *structType)
+void
+TypeVisitor::visitStructType(const StructType *structType)
 {
+    using llvm::StructLayout;
+
     refmode_t tref = gen.refmodeOf(structType);
     size_t nFields = structType->getStructNumElements();
 
@@ -136,7 +148,8 @@ void CsvGenerator::TypeVisitor::visitStructType(const StructType *structType)
 }
 
 
-void CsvGenerator::TypeVisitor::visitFunctionType(const FunctionType *functionType)
+void
+TypeVisitor::visitFunctionType(const FunctionType *functionType)
 {
     refmode_t signature  = gen.refmodeOf(functionType);
     refmode_t returnType = gen.refmodeOf(functionType->getReturnType());
@@ -155,7 +168,8 @@ void CsvGenerator::TypeVisitor::visitFunctionType(const FunctionType *functionTy
     // Record function formal parameters
     for (size_t i = 0; i < nParameters; i++)
     {
-        refmode_t paramType = gen.refmodeOf(functionType->getFunctionParamType(i));
+        refmode_t paramType =
+            gen.refmodeOf(functionType->getFunctionParamType(i));
 
         gen.writeFact(pred::func_type::param_type, signature, i, paramType);
     }
@@ -165,7 +179,8 @@ void CsvGenerator::TypeVisitor::visitFunctionType(const FunctionType *functionTy
 }
 
 
-void CsvGenerator::TypeVisitor::visitVectorType(const VectorType *vectorType)
+void
+TypeVisitor::visitVectorType(const VectorType *vectorType)
 {
     refmode_t tref = gen.refmodeOf(vectorType);
     size_t nElements = vectorType->getVectorNumElements();

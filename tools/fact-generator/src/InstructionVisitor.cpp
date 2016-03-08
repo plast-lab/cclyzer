@@ -1,5 +1,6 @@
 #include <cassert>
 #include <string>
+#include <llvm/IR/Attributes.h>
 #include <llvm/IR/Operator.h>
 #include <llvm/IR/DebugInfo.h>
 #include "InstructionVisitor.hpp"
@@ -718,7 +719,7 @@ InstructionVisitor::visitDbgDeclareInst(const llvm::DbgDeclareInst &DDI)
     InstructionVisitor::visitCallInst(static_cast<const llvm::CallInst&>(DDI));
 
     // Process debug info
-    gen.debugInfoProcessor.processDeclare(Mod, &DDI);
+    gen.debugInfoProcessor.processDeclare(module, &DDI);
 
     // Obtain the refmode of the local variable
     refmode_t refmode = gen.refmodeOfLocalValue(DDI.getAddress());
@@ -746,7 +747,7 @@ InstructionVisitor::visitDbgValueInst(const llvm::DbgValueInst &DDI)
     InstructionVisitor::visitCallInst(static_cast<const llvm::CallInst&>(DDI));
 
     // Process debug info
-    gen.debugInfoProcessor.processValue(Mod, &DDI);
+    gen.debugInfoProcessor.processValue(module, &DDI);
 }
 
 

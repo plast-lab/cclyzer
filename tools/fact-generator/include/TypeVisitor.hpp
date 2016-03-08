@@ -1,31 +1,39 @@
 #include <llvm/IR/DataLayout.h>
+#include <llvm/IR/DerivedTypes.h>
 #include <llvm/IR/Type.h>
-#include "CsvGenerator.hpp"
 
-class cclyzer::CsvGenerator::TypeVisitor
+namespace cclyzer
 {
-  public:
+    // Forward declaration
+    class CsvGenerator;
 
-    TypeVisitor(CsvGenerator &generator, const llvm::DataLayout &DL)
-        : gen(generator), layout(DL) {}
 
-    /* Type Visitor methods */
+    // Processor of type entities
+    class TypeVisitor
+    {
+      public:
 
-    void visitType(const llvm::Type *);
-    void visitPointerType(const llvm::PointerType *);
-    void visitArrayType(const llvm::ArrayType *);
-    void visitStructType(const llvm::StructType *);
-    void visitFunctionType(const llvm::FunctionType *);
-    void visitVectorType(const llvm::VectorType *);
+        TypeVisitor(CsvGenerator &generator, const llvm::DataLayout &DL)
+            : gen(generator), layout(DL) {}
 
-  private:
-    /* Instance of outer CSV generator */
-    CsvGenerator &gen;
+        /* Type visitor methods */
 
-    /**
-     * Data layout. To compute the byte size of each type, we need a
-     * data layout object, that is associated with the given LLVM
-     * module.
-     */
-    const llvm::DataLayout &layout;
-};
+        void visitType(const llvm::Type *);
+        void visitPointerType(const llvm::PointerType *);
+        void visitArrayType(const llvm::ArrayType *);
+        void visitStructType(const llvm::StructType *);
+        void visitFunctionType(const llvm::FunctionType *);
+        void visitVectorType(const llvm::VectorType *);
+
+      private:
+        /* Instance of outer CSV generator */
+        CsvGenerator &gen;
+
+        /**
+         * Data layout. To compute the byte size of each type, we need a
+         * data layout object, that is associated with the given LLVM
+         * module.
+         */
+        const llvm::DataLayout &layout;
+    };
+}
