@@ -214,7 +214,7 @@ class cclyzer::InstructionVisitor
                         const llvm::CmpInst&);
 
   private:
-    /* Instance of outer CSV generator */
+    /* Instance of outer fact-generator */
     CsvGenerator &gen;
 
     /* Associated LLVM module */

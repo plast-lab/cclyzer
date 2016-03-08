@@ -2,6 +2,7 @@
 #define TYPE_ACCUMULATOR_HPP__
 
 #include <boost/unordered_set.hpp>
+#include <llvm/IR/DerivedTypes.h>
 #include <llvm/IR/Type.h>
 #include <llvm/Support/raw_ostream.h>
 
