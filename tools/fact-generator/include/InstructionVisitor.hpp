@@ -6,7 +6,6 @@
 #include <llvm/IR/InstVisitor.h>
 #include <llvm/IR/Attributes.h>
 
-#include "predicate_groups.hpp"
 #include "CsvGenerator.hpp"
 
 namespace cclyzer {
@@ -16,24 +15,118 @@ namespace cclyzer {
 class cclyzer::InstructionVisitor
     : public llvm::InstVisitor<InstructionVisitor>
 {
-  protected:
     friend class CsvGenerator;
 
-    // Type aliases
-    typedef predicates::pred_t pred_t;
-    typedef predicates::entity_pred_t entity_pred_t;
-    typedef predicates::operand_pred_t operand_pred_t;
+  public:
+
+    InstructionVisitor(CsvGenerator &generator, const llvm::Module &M)
+        : gen(generator) , Mod(M)
+    {}
 
 
-    // Methods that handle many similar instructions
+    //--------------------------------------------------------------------------
+    // Instruction Visitor methods
+    //--------------------------------------------------------------------------
 
+    // Binary Operations
+
+    void visitAdd(const llvm::BinaryOperator &);
+    void visitFAdd(const llvm::BinaryOperator &);
+    void visitSub(const llvm::BinaryOperator &);
+    void visitFSub(const llvm::BinaryOperator &);
+    void visitMul(const llvm::BinaryOperator &);
+    void visitFMul(const llvm::BinaryOperator &);
+    void visitSDiv(const llvm::BinaryOperator &);
+    void visitFDiv(const llvm::BinaryOperator &);
+    void visitUDiv(const llvm::BinaryOperator &);
+    void visitSRem(const llvm::BinaryOperator &);
+    void visitFRem(const llvm::BinaryOperator &);
+    void visitURem(const llvm::BinaryOperator &);
+
+    // Bitwise Binary Operations
+
+    void visitShl(const llvm::BinaryOperator &);
+    void visitLShr(const llvm::BinaryOperator &);
+    void visitAShr(const llvm::BinaryOperator &);
+    void visitAnd(const llvm::BinaryOperator &);
+    void visitOr(const llvm::BinaryOperator &);
+    void visitXor(const llvm::BinaryOperator &);
+
+    // Conversion Operations
+
+    void visitTruncInst(const llvm::TruncInst &);
+    void visitZExtInst(const llvm::ZExtInst &);
+    void visitSExtInst(const llvm::SExtInst &);
+    void visitFPTruncInst(const llvm::FPTruncInst &);
+    void visitFPExtInst(const llvm::FPExtInst &);
+    void visitFPToUIInst(const llvm::FPToUIInst &);
+    void visitFPToSIInst(const llvm::FPToSIInst &);
+    void visitUIToFPInst(const llvm::UIToFPInst &);
+    void visitSIToFPInst(const llvm::SIToFPInst &);
+    void visitPtrToIntInst(const llvm::PtrToIntInst &);
+    void visitIntToPtrInst(const llvm::IntToPtrInst &);
+    void visitBitCastInst(const llvm::BitCastInst &);
+
+    // Terminator Instructions
+
+    void visitReturnInst(const llvm::ReturnInst &);
+    void visitBranchInst(const llvm::BranchInst &);
+    void visitSwitchInst(const llvm::SwitchInst &);
+    void visitIndirectBrInst(const llvm::IndirectBrInst &);
+    void visitInvokeInst(const llvm::InvokeInst &);
+    void visitResumeInst(const llvm::ResumeInst &);
+    void visitUnreachableInst(const llvm::UnreachableInst &);
+
+    // Aggregate Operations
+
+    void visitInsertValueInst(const llvm::InsertValueInst &);
+    void visitExtractValueInst(const llvm::ExtractValueInst &);
+
+    // Memory Operations
+
+    void visitAllocaInst(const llvm::AllocaInst &);
+    void visitLoadInst(const llvm::LoadInst &);
+    void visitStoreInst(const llvm::StoreInst &);
+    void visitAtomicCmpXchgInst(const llvm::AtomicCmpXchgInst &);
+    void visitAtomicRMWInst(const llvm::AtomicRMWInst &);
+    void visitFenceInst(const llvm::FenceInst &);
+    void visitGetElementPtrInst(const llvm::GetElementPtrInst &);
+
+    // Other
+
+    void visitICmpInst(const llvm::ICmpInst &);
+    void visitFCmpInst(const llvm::FCmpInst &);
+    void visitPHINode(const llvm::PHINode &);
+    void visitSelectInst(const llvm::SelectInst &);
+    void visitLandingPadInst(const llvm::LandingPadInst &);
+    void visitCallInst(const llvm::CallInst &);
+    void visitDbgDeclareInst(const llvm::DbgDeclareInst &);
+    void visitDbgValueInst(const llvm::DbgValueInst &);
+    void visitVAArgInst(const llvm::VAArgInst &);
+
+    // Vector Operations
+
+    void visitExtractElementInst(const llvm::ExtractElementInst &);
+    void visitInsertElementInst(const llvm::InsertElementInst &);
+    void visitShuffleVectorInst(const llvm::ShuffleVectorInst &);
+
+    // 'default' case
+    void visitInstruction(const llvm::Instruction &I);
+
+  protected:
+
+    //--------------------------------------------------------------------------
+    // Template methods that handle many similar instructions
+    //--------------------------------------------------------------------------
+
+    // Process cast instruction
     template<typename T>
-    inline void _visitCastInst(llvm::CastInst &instr)
+    inline void _visitCastInst(const llvm::CastInst &instr)
     {
         typedef T pred;
 
         // Record instruction entity
-        refmode_t iref = recordInstruction(pred::instr);
+        refmode_t iref = recordInstruction(pred::instr, instr);
 
         // Record right-hand-side operand
         writeInstrOperand(pred::from_operand, iref, instr.getOperand(0));
@@ -42,170 +135,23 @@ class cclyzer::InstructionVisitor
         gen.writeFact(pred::to_type, iref, gen.refmodeOf(instr.getType()));
     }
 
+    // Process binary instruction
     template<typename T>
-    inline void _visitBinaryInst(llvm::BinaryOperator &instr)
+    inline void _visitBinaryInst(const llvm::BinaryOperator &instr)
     {
         typedef T pred;
 
         // Record instruction entity
-        refmode_t iref = recordInstruction(pred::instr);
+        refmode_t iref = recordInstruction(pred::instr, instr);
 
         writeInstrOperand(pred::first_operand, iref, instr.getOperand(0));
         writeInstrOperand(pred::second_operand, iref, instr.getOperand(1));
         writeOptimizationInfo(iref, &instr);
     }
 
-  public:
-    InstructionVisitor(CsvGenerator &generator, const llvm::Module &M)
-        : writer(generator.getWriter()), gen(generator), Mod(M) {}
-
-    /*******************************
-     * Instruction Visitor methods *
-     *******************************/
-
-    // Binary Operations
-
-    void visitAdd(llvm::BinaryOperator &);
-    void visitFAdd(llvm::BinaryOperator &);
-    void visitSub(llvm::BinaryOperator &);
-    void visitFSub(llvm::BinaryOperator &);
-    void visitMul(llvm::BinaryOperator &);
-    void visitFMul(llvm::BinaryOperator &);
-    void visitSDiv(llvm::BinaryOperator &);
-    void visitFDiv(llvm::BinaryOperator &);
-    void visitUDiv(llvm::BinaryOperator &);
-    void visitSRem(llvm::BinaryOperator &);
-    void visitFRem(llvm::BinaryOperator &);
-    void visitURem(llvm::BinaryOperator &);
-
-    // Bitwise Binary Operations
-
-    void visitShl(llvm::BinaryOperator &);
-    void visitLShr(llvm::BinaryOperator &);
-    void visitAShr(llvm::BinaryOperator &);
-    void visitAnd(llvm::BinaryOperator &);
-    void visitOr(llvm::BinaryOperator &);
-    void visitXor(llvm::BinaryOperator &);
-
-    // Conversion Operations
-
-    void visitTruncInst(llvm::TruncInst &);
-    void visitZExtInst(llvm::ZExtInst &);
-    void visitSExtInst(llvm::SExtInst &);
-    void visitFPTruncInst(llvm::FPTruncInst &);
-    void visitFPExtInst(llvm::FPExtInst &);
-    void visitFPToUIInst(llvm::FPToUIInst &);
-    void visitFPToSIInst(llvm::FPToSIInst &);
-    void visitUIToFPInst(llvm::UIToFPInst &);
-    void visitSIToFPInst(llvm::SIToFPInst &);
-    void visitPtrToIntInst(llvm::PtrToIntInst &);
-    void visitIntToPtrInst(llvm::IntToPtrInst &);
-    void visitBitCastInst(llvm::BitCastInst &);
-
-    // Terminator Instructions
-
-    void visitReturnInst(llvm::ReturnInst &);
-    void visitBranchInst(llvm::BranchInst &);
-    void visitSwitchInst(const llvm::SwitchInst &);
-    void visitIndirectBrInst(llvm::IndirectBrInst &);
-    void visitInvokeInst(llvm::InvokeInst &);
-    void visitResumeInst(llvm::ResumeInst &);
-    void visitUnreachableInst(llvm::UnreachableInst &);
-
-    // Aggregate Operations
-
-    void visitInsertValueInst(llvm::InsertValueInst &);
-    void visitExtractValueInst(llvm::ExtractValueInst &);
-
-    // Memory Operations
-
-    void visitAllocaInst(llvm::AllocaInst &);
-    void visitLoadInst(llvm::LoadInst &);
-    void visitStoreInst(llvm::StoreInst &);
-    void visitAtomicCmpXchgInst(llvm::AtomicCmpXchgInst &);
-    void visitAtomicRMWInst(llvm::AtomicRMWInst &);
-    void visitFenceInst(llvm::FenceInst &);
-    void visitGetElementPtrInst(llvm::GetElementPtrInst &);
-
-    // Other
-
-    void visitICmpInst(llvm::ICmpInst &);
-    void visitFCmpInst(llvm::FCmpInst &);
-    void visitPHINode(llvm::PHINode &);
-    void visitSelectInst(llvm::SelectInst &);
-    void visitLandingPadInst(llvm::LandingPadInst &);
-    void visitCallInst(llvm::CallInst &);
-    void visitDbgDeclareInst(llvm::DbgDeclareInst &);
-    void visitDbgValueInst(llvm::DbgValueInst &);
-    void visitVAArgInst(llvm::VAArgInst &);
-
-    // Vector Operations
-
-    void visitExtractElementInst(llvm::ExtractElementInst &);
-    void visitInsertElementInst(llvm::InsertElementInst &);
-    void visitShuffleVectorInst(llvm::ShuffleVectorInst &);
-
-    // 'default' case
-    void visitInstruction(llvm::Instruction &I);
-
-  private:
-
-    /* Fact writer */
-    FactWriter &writer;
-
-
-    /* Instruction-specific write functions */
-
-    refmode_t recordInstruction(const entity_pred_t &instrType) {
-        // Get refmode of enclosing instruction
-        refmode_t iref = gen.refmodeOfInstruction(nullptr);
-
-        writer.writeFact(instrType.c_str(), iref);
-        return iref;
-    }
-
-    refmode_t recordOperand(const llvm::Value *);
-
-    refmode_t writeInstrOperand(const operand_pred_t &predicate,
-                                const refmode_t &instr,
-                                const llvm::Value *Operand);
-
-    refmode_t writeInstrOperand(const pred_t &predicate,
-                                const refmode_t &instr,
-                                const llvm::Value *Value);
-
-    refmode_t writeInstrOperand(const operand_pred_t &predicate,
-                                const refmode_t &instr,
-                                const llvm::Value *Operand,
-                                int index);
-
-    refmode_t writeInstrOperand(const pred_t &predicate,
-                                const refmode_t &instr,
-                                const llvm::Value *Value,
-                                int index);
-
-
-    /* Auxiliary methods */
-
-
-    // Transform a condition predicate code to string
-    static const char* pred_to_string(unsigned predicate);
-
-    // Record several facts regarding optimizations
-    void writeOptimizationInfo(refmode_t, const llvm::User *);
-
-    // Record `atomicrmw` binary operator
-    void writeAtomicRMWOp(refmode_t, llvm::AtomicRMWInst::BinOp);
-
-    // Deprecated
-    void writeVolatileFlag(refmode_t iref, bool volatileFlag) {
-        if (volatileFlag)
-            gen.writeFact(predicates::instruction::flag, iref, "volatile");
-    }
-
     // Record atomic instruction info
     template<typename P, typename I>
-    void writeAtomicInfo(refmode_t iref, I &instr)
+    void writeAtomicInfo(refmode_t iref, const I &instr)
     {
         using namespace llvm;
 
@@ -222,6 +168,52 @@ class cclyzer::InstructionVisitor
             gen.writeFact(P::ordering, iref, atomic);
     }
 
+    //--------------------------------------------------------------------------
+    // Auxiliary methods that record instruction entities and operands
+    //--------------------------------------------------------------------------
+
+    // Record instruction entity and generate refmode
+    refmode_t recordInstruction(const predicates::entity_pred_t &,
+                                const llvm::Instruction &);
+
+    // Record value and generate refmode
+    refmode_t recordValue(const llvm::Value *);
+
+
+    // Record instruction operand and generate refmode
+    refmode_t writeInstrOperand(const predicates::operand_pred_t &predicate,
+                                const refmode_t &instr,
+                                const llvm::Value *Operand);
+
+    refmode_t writeInstrOperand(const predicates::pred_t &predicate,
+                                const refmode_t &instr,
+                                const llvm::Value *Value);
+
+    refmode_t writeInstrOperand(const predicates::operand_pred_t &predicate,
+                                const refmode_t &instr,
+                                const llvm::Value *Operand,
+                                int index);
+
+    refmode_t writeInstrOperand(const predicates::pred_t &predicate,
+                                const refmode_t &instr,
+                                const llvm::Value *Value,
+                                int index);
+
+    //--------------------------------------------------------------------------
+    // Other auxiliary methods
+    //--------------------------------------------------------------------------
+
+    // Record several facts regarding optimizations
+    void writeOptimizationInfo(refmode_t, const llvm::User *);
+
+    // Record `atomicrmw` binary operator
+    void writeAtomicRMWOp(refmode_t, llvm::AtomicRMWInst::BinOp);
+
+    // Record predicate for comparison instruction
+    void writeCondition(const predicates::pred_t&, refmode_t,
+                        const llvm::CmpInst&);
+
+  private:
     /* Instance of outer CSV generator */
     CsvGenerator &gen;
 

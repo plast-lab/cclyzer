@@ -5,18 +5,36 @@
 #include "InstructionVisitor.hpp"
 #include "predicate_groups.hpp"
 
+
 namespace pred = cclyzer::predicates;
 
 using cclyzer::InstructionVisitor;
+using pred::pred_t;
+using pred::entity_pred_t;
+using pred::operand_pred_t;
 using llvm::dyn_cast;
 using std::string;
 
 
+
 //------------------------------------------------------------------------------
-// Operand-writing utility methods
+// Generic instruction writing utility methods
 //------------------------------------------------------------------------------
 
-cclyzer::refmode_t InstructionVisitor::recordOperand(const llvm::Value *Val)
+cclyzer::refmode_t
+InstructionVisitor::recordInstruction(
+    const entity_pred_t &pred, const llvm::Instruction &instr)
+{
+    // Get refmode of enclosing instruction
+    refmode_t iref = gen.refmodeOfInstruction(&instr);
+
+    gen.writeFact(pred, iref);
+    return iref;
+}
+
+
+cclyzer::refmode_t
+InstructionVisitor::recordValue(const llvm::Value *Val)
 {
     refmode_t refmode;
     const llvm::Type *type = Val->getType();
@@ -42,13 +60,14 @@ cclyzer::refmode_t InstructionVisitor::recordOperand(const llvm::Value *Val)
     return refmode;
 }
 
+
 cclyzer::refmode_t
 InstructionVisitor::writeInstrOperand(
     const pred_t &predicate,    // the operand predicate
     const refmode_t &instr,     // the instruction refmode
-    const llvm::Value *Val)     // the operand value
+    const llvm::Value *operand) // the operand value
 {
-    refmode_t refmode = recordOperand(Val);
+    refmode_t refmode = recordValue(operand);
 
     // Write value fact
     gen.writeFact(predicate, instr, refmode);
@@ -56,14 +75,15 @@ InstructionVisitor::writeInstrOperand(
     return refmode;
 }
 
+
 cclyzer::refmode_t
 InstructionVisitor::writeInstrOperand(
     const pred_t &predicate,    // the operand predicate
     const refmode_t &instr,     // the instruction refmode
-    const llvm::Value *Val,     // the operand value
+    const llvm::Value *operand, // the operand value
     int index)                  // the operand index
 {
-    refmode_t refmode = recordOperand(Val);
+    refmode_t refmode = recordValue(operand);
 
     // Write value fact
     gen.writeFact(predicate, instr, index, refmode);
@@ -71,17 +91,18 @@ InstructionVisitor::writeInstrOperand(
     return refmode;
 }
 
+
 cclyzer::refmode_t
 InstructionVisitor::writeInstrOperand(
     const operand_pred_t &predicate, // the operand predicate
     const refmode_t &instr,          // the instruction refmode
-    const llvm::Value *Operand)      // the operand value
+    const llvm::Value *operand)      // the operand value
 {
-    refmode_t refmode = recordOperand(Operand);
+    refmode_t refmode = recordValue(operand);
 
     // Predicate name
     const pred_t &pred =
-        llvm::isa<llvm::Constant>(Operand)
+        llvm::isa<llvm::Constant>(operand)
         ? predicate.asConstant()
         : predicate.asVariable();
 
@@ -91,18 +112,19 @@ InstructionVisitor::writeInstrOperand(
     return refmode;
 }
 
+
 cclyzer::refmode_t
 InstructionVisitor::writeInstrOperand(
     const operand_pred_t &predicate, // the operand predicate
     const refmode_t &instr,          // the instruction refmode
-    const llvm::Value *Operand,      // the operand value
+    const llvm::Value *operand,      // the operand value
     int index)                       // the operand index
 {
-    refmode_t refmode = recordOperand(Operand);
+    refmode_t refmode = recordValue(operand);
 
     // Predicate name
     const pred_t &pred =
-        llvm::isa<llvm::Constant>(Operand)
+        llvm::isa<llvm::Constant>(operand)
         ? predicate.asConstant()
         : predicate.asVariable();
 
@@ -119,129 +141,162 @@ InstructionVisitor::writeInstrOperand(
 //------------------------------------------------------------------------------
 
 
-void InstructionVisitor::visitTruncInst(llvm::TruncInst &I) {
+void
+InstructionVisitor::visitTruncInst(const llvm::TruncInst &I) {
     _visitCastInst<pred::trunc>(I);
 }
 
-void InstructionVisitor::visitZExtInst(llvm::ZExtInst &I) {
+void
+InstructionVisitor::visitZExtInst(const llvm::ZExtInst &I) {
     _visitCastInst<pred::zext>(I);
 }
 
-void InstructionVisitor::visitSExtInst(llvm::SExtInst &I) {
+void
+InstructionVisitor::visitSExtInst(const llvm::SExtInst &I) {
     _visitCastInst<pred::sext>(I);
 }
 
-void InstructionVisitor::visitFPTruncInst(llvm::FPTruncInst &I) {
+void
+InstructionVisitor::visitFPTruncInst(const llvm::FPTruncInst &I) {
     _visitCastInst<pred::fptrunc>(I);
 }
 
-void InstructionVisitor::visitFPExtInst(llvm::FPExtInst &I) {
+void
+InstructionVisitor::visitFPExtInst(const llvm::FPExtInst &I) {
     _visitCastInst<pred::fpext>(I);
 }
 
-void InstructionVisitor::visitFPToUIInst(llvm::FPToUIInst &I) {
+void
+InstructionVisitor::visitFPToUIInst(const llvm::FPToUIInst &I) {
     _visitCastInst<pred::fptoui>(I);
 }
 
-void InstructionVisitor::visitFPToSIInst(llvm::FPToSIInst &I) {
+void
+InstructionVisitor::visitFPToSIInst(const llvm::FPToSIInst &I) {
     _visitCastInst<pred::fptosi>(I);
 }
 
-void InstructionVisitor::visitUIToFPInst(llvm::UIToFPInst &I) {
+void
+InstructionVisitor::visitUIToFPInst(const llvm::UIToFPInst &I) {
     _visitCastInst<pred::uitofp>(I);
 }
 
-void InstructionVisitor::visitSIToFPInst(llvm::SIToFPInst &I) {
+void
+InstructionVisitor::visitSIToFPInst(const llvm::SIToFPInst &I) {
     _visitCastInst<pred::sitofp>(I);
 }
 
-void InstructionVisitor::visitPtrToIntInst(llvm::PtrToIntInst &I) {
+void
+InstructionVisitor::visitPtrToIntInst(const llvm::PtrToIntInst &I) {
     _visitCastInst<pred::ptrtoint>(I);
 }
 
-void InstructionVisitor::visitIntToPtrInst(llvm::IntToPtrInst &I) {
+void
+InstructionVisitor::visitIntToPtrInst(const llvm::IntToPtrInst &I) {
     _visitCastInst<pred::inttoptr>(I);
 }
 
-void InstructionVisitor::visitBitCastInst(llvm::BitCastInst &I) {
+void
+InstructionVisitor::visitBitCastInst(const llvm::BitCastInst &I) {
     _visitCastInst<pred::bitcast>(I);
 }
 
-void InstructionVisitor::visitAdd(llvm::BinaryOperator &BI) {
+void
+InstructionVisitor::visitAdd(const llvm::BinaryOperator &BI) {
     _visitBinaryInst<pred::add>(BI);
 }
 
-void InstructionVisitor::visitFAdd(llvm::BinaryOperator &BI) {
+void
+InstructionVisitor::visitFAdd(const llvm::BinaryOperator &BI) {
     _visitBinaryInst<pred::fadd>(BI);
 }
 
-void InstructionVisitor::visitSub(llvm::BinaryOperator &BI) {
+void
+InstructionVisitor::visitSub(const llvm::BinaryOperator &BI) {
     _visitBinaryInst<pred::sub>(BI);
 }
 
-void InstructionVisitor::visitFSub(llvm::BinaryOperator &BI) {
+void
+InstructionVisitor::visitFSub(const llvm::BinaryOperator &BI) {
     _visitBinaryInst<pred::fsub>(BI);
 }
 
-void InstructionVisitor::visitMul(llvm::BinaryOperator &BI) {
+void
+InstructionVisitor::visitMul(const llvm::BinaryOperator &BI) {
     _visitBinaryInst<pred::mul>(BI);
 }
 
-void InstructionVisitor::visitFMul(llvm::BinaryOperator &BI) {
+void
+InstructionVisitor::visitFMul(const llvm::BinaryOperator &BI) {
     _visitBinaryInst<pred::fmul>(BI);
 }
 
-void InstructionVisitor::visitSDiv(llvm::BinaryOperator &BI) {
+void
+InstructionVisitor::visitSDiv(const llvm::BinaryOperator &BI) {
     _visitBinaryInst<pred::sdiv>(BI);
 }
 
-void InstructionVisitor::visitFDiv(llvm::BinaryOperator &BI) {
+void
+InstructionVisitor::visitFDiv(const llvm::BinaryOperator &BI) {
     _visitBinaryInst<pred::fdiv>(BI);
 }
 
-void InstructionVisitor::visitUDiv(llvm::BinaryOperator &BI) {
+void
+InstructionVisitor::visitUDiv(const llvm::BinaryOperator &BI) {
     _visitBinaryInst<pred::udiv>(BI);
 }
 
-void InstructionVisitor::visitSRem(llvm::BinaryOperator &BI) {
+void
+InstructionVisitor::visitSRem(const llvm::BinaryOperator &BI) {
     _visitBinaryInst<pred::srem>(BI);
 }
 
-void InstructionVisitor::visitFRem(llvm::BinaryOperator &BI) {
+
+void
+InstructionVisitor::visitFRem(const llvm::BinaryOperator &BI) {
     _visitBinaryInst<pred::frem>(BI);
 }
 
-void InstructionVisitor::visitURem(llvm::BinaryOperator &BI) {
+void
+InstructionVisitor::visitURem(const llvm::BinaryOperator &BI) {
     _visitBinaryInst<pred::urem>(BI);
 }
 
-void InstructionVisitor::visitShl(llvm::BinaryOperator &BI) {
+void
+InstructionVisitor::visitShl(const llvm::BinaryOperator &BI) {
     _visitBinaryInst<pred::shl>(BI);
 }
 
-void InstructionVisitor::visitLShr(llvm::BinaryOperator &BI) {
+void
+InstructionVisitor::visitLShr(const llvm::BinaryOperator &BI) {
     _visitBinaryInst<pred::lshr>(BI);
 }
 
-void InstructionVisitor::visitAShr(llvm::BinaryOperator &BI) {
+void
+InstructionVisitor::visitAShr(const llvm::BinaryOperator &BI) {
     _visitBinaryInst<pred::ashr>(BI);
 }
 
-void InstructionVisitor::visitAnd(llvm::BinaryOperator &BI) {
+void
+InstructionVisitor::visitAnd(const llvm::BinaryOperator &BI) {
     _visitBinaryInst<pred::and_>(BI);
 }
 
-void InstructionVisitor::visitOr(llvm::BinaryOperator &BI) {
+void
+InstructionVisitor::visitOr(const llvm::BinaryOperator &BI) {
     _visitBinaryInst<pred::or_>(BI);
 }
 
-void InstructionVisitor::visitXor(llvm::BinaryOperator &BI) {
+void
+InstructionVisitor::visitXor(const llvm::BinaryOperator &BI) {
     _visitBinaryInst<pred::xor_>(BI);
 }
 
-void InstructionVisitor::visitReturnInst(llvm::ReturnInst &RI)
+
+void
+InstructionVisitor::visitReturnInst(const llvm::ReturnInst &RI)
 {
-    refmode_t iref = recordInstruction(pred::ret::instr);
+    refmode_t iref = recordInstruction(pred::ret::instr, RI);
 
     if (RI.getReturnValue()) {  // with returned value
         writeInstrOperand(pred::ret::operand, iref, RI.getReturnValue());
@@ -251,9 +306,11 @@ void InstructionVisitor::visitReturnInst(llvm::ReturnInst &RI)
     }
 }
 
-void InstructionVisitor::visitBranchInst(llvm::BranchInst &BI)
+
+void
+InstructionVisitor::visitBranchInst(const llvm::BranchInst &BI)
 {
-    refmode_t iref = recordInstruction(pred::br::instr);
+    refmode_t iref = recordInstruction(pred::br::instr, BI);
 
     if (BI.isConditional()) {    // conditional branch
         // br i1 <cond>, label <iftrue>, label <iffalse>
@@ -273,10 +330,12 @@ void InstructionVisitor::visitBranchInst(llvm::BranchInst &BI)
     }
 }
 
-void InstructionVisitor::visitSwitchInst(const llvm::SwitchInst &SI)
+
+void
+InstructionVisitor::visitSwitchInst(const llvm::SwitchInst &SI)
 {
     // switch <intty> <value>, label <defaultdest> [ <intty> <val>, label <dest> ... ]
-    refmode_t iref = recordInstruction(pred::switch_::instr);
+    refmode_t iref = recordInstruction(pred::switch_::instr, SI);
 
     writeInstrOperand(pred::switch_::operand, iref, SI.getOperand(0));
     writeInstrOperand(pred::switch_::default_label, iref, SI.getOperand(1));
@@ -298,10 +357,12 @@ void InstructionVisitor::visitSwitchInst(const llvm::SwitchInst &SI)
     gen.writeFact(pred::switch_::ncases, iref, SI.getNumCases());
 }
 
-void InstructionVisitor::visitIndirectBrInst(llvm::IndirectBrInst &IBR)
+
+void
+InstructionVisitor::visitIndirectBrInst(const llvm::IndirectBrInst &IBR)
 {
     // indirectbr <somety>* <address>, [ label <dest1>, label <dest2>, ... ]
-    refmode_t iref = recordInstruction(pred::indirectbr::instr);
+    refmode_t iref = recordInstruction(pred::indirectbr::instr, IBR);
 
     // 'label' list
     for(unsigned i = 1; i < IBR.getNumOperands(); ++i)
@@ -311,15 +372,17 @@ void InstructionVisitor::visitIndirectBrInst(llvm::IndirectBrInst &IBR)
     writeInstrOperand(pred::indirectbr::address, iref, IBR.getOperand(0));
 }
 
-void InstructionVisitor::visitInvokeInst(llvm::InvokeInst &II)
+
+void
+InstructionVisitor::visitInvokeInst(const llvm::InvokeInst &II)
 {
-    refmode_t iref = recordInstruction(pred::invoke::instr);
+    refmode_t iref = recordInstruction(pred::invoke::instr, II);
 
     gen.writeFact(II.getCalledFunction()
                   ? pred::invoke::instr_direct
                   : pred::invoke::instr_indirect, iref);
 
-    llvm::Value *invokeOp = II.getCalledValue();
+    const llvm::Value *invokeOp = II.getCalledValue();
 
     // invoke instruction function (also records type)
     writeInstrOperand(pred::invoke::function, iref, invokeOp);
@@ -349,19 +412,25 @@ void InstructionVisitor::visitInvokeInst(llvm::InvokeInst &II)
     }
 }
 
-void InstructionVisitor::visitResumeInst(llvm::ResumeInst &RI)
+
+void
+InstructionVisitor::visitResumeInst(const llvm::ResumeInst &RI)
 {
-    refmode_t iref = recordInstruction(pred::resume::instr);
+    refmode_t iref = recordInstruction(pred::resume::instr, RI);
     writeInstrOperand(pred::resume::operand, iref, RI.getValue());
 }
 
-void InstructionVisitor::visitUnreachableInst(llvm::UnreachableInst &I) {
-    recordInstruction(pred::instruction::unreachable);
+
+void
+InstructionVisitor::visitUnreachableInst(const llvm::UnreachableInst &I) {
+    recordInstruction(pred::instruction::unreachable, I);
 }
 
-void InstructionVisitor::visitAllocaInst(llvm::AllocaInst &AI)
+
+void
+InstructionVisitor::visitAllocaInst(const llvm::AllocaInst &AI)
 {
-    refmode_t iref = recordInstruction(pred::alloca::instr);
+    refmode_t iref = recordInstruction(pred::alloca::instr, AI);
 
     gen.writeFact(pred::alloca::type, iref, gen.refmodeOf(AI.getAllocatedType()));
 
@@ -372,9 +441,11 @@ void InstructionVisitor::visitAllocaInst(llvm::AllocaInst &AI)
         gen.writeFact(pred::alloca::alignment, iref, AI.getAlignment());
 }
 
-void InstructionVisitor::visitLoadInst(llvm::LoadInst &LI)
+
+void
+InstructionVisitor::visitLoadInst(const llvm::LoadInst &LI)
 {
-    refmode_t iref = recordInstruction(pred::load::instr);
+    refmode_t iref = recordInstruction(pred::load::instr, LI);
 
     writeInstrOperand(pred::load::address, iref, LI.getPointerOperand());
 
@@ -388,17 +459,21 @@ void InstructionVisitor::visitLoadInst(llvm::LoadInst &LI)
         gen.writeFact(pred::load::isvolatile, iref);
 }
 
-void InstructionVisitor::visitVAArgInst(llvm::VAArgInst &VI)
+
+void
+InstructionVisitor::visitVAArgInst(const llvm::VAArgInst &VI)
 {
-    refmode_t iref = recordInstruction(pred::va_arg::instr);
+    refmode_t iref = recordInstruction(pred::va_arg::instr, VI);
 
     gen.writeFact(pred::va_arg::type, iref, gen.refmodeOf(VI.getType()));
     writeInstrOperand(pred::va_arg::va_list, iref, VI.getPointerOperand());
 }
 
-void InstructionVisitor::visitExtractValueInst(llvm::ExtractValueInst &EVI)
+
+void
+InstructionVisitor::visitExtractValueInst(const llvm::ExtractValueInst &EVI)
 {
-    refmode_t iref = recordInstruction(pred::extract_value::instr);
+    refmode_t iref = recordInstruction(pred::extract_value::instr, EVI);
 
     // Aggregate Operand
     writeInstrOperand(pred::extract_value::base, iref, EVI.getOperand(0));
@@ -414,9 +489,11 @@ void InstructionVisitor::visitExtractValueInst(llvm::ExtractValueInst &EVI)
     gen.writeFact(pred::extract_value::nindices, iref, EVI.getNumIndices());
 }
 
-void InstructionVisitor::visitStoreInst(llvm::StoreInst &SI)
+
+void
+InstructionVisitor::visitStoreInst(const llvm::StoreInst &SI)
 {
-    refmode_t iref = recordInstruction(pred::store::instr);
+    refmode_t iref = recordInstruction(pred::store::instr, SI);
 
     writeInstrOperand(pred::store::value, iref, SI.getValueOperand());
     writeInstrOperand(pred::store::address, iref, SI.getPointerOperand());
@@ -431,9 +508,11 @@ void InstructionVisitor::visitStoreInst(llvm::StoreInst &SI)
         gen.writeFact(pred::store::isvolatile, iref);
 }
 
-void InstructionVisitor::visitAtomicCmpXchgInst(llvm::AtomicCmpXchgInst &AXI)
+
+void
+InstructionVisitor::visitAtomicCmpXchgInst(const llvm::AtomicCmpXchgInst &AXI)
 {
-    refmode_t iref = recordInstruction(pred::cmpxchg::instr);
+    refmode_t iref = recordInstruction(pred::cmpxchg::instr, AXI);
 
     writeInstrOperand(pred::cmpxchg::address, iref, AXI.getPointerOperand());
     writeInstrOperand(pred::cmpxchg::cmp, iref, AXI.getCompareOperand());
@@ -462,9 +541,11 @@ void InstructionVisitor::visitAtomicCmpXchgInst(llvm::AtomicCmpXchgInst &AXI)
     // TODO: type?
 }
 
-void InstructionVisitor::visitAtomicRMWInst(llvm::AtomicRMWInst &AWI)
+
+void
+InstructionVisitor::visitAtomicRMWInst(const llvm::AtomicRMWInst &AWI)
 {
-    refmode_t iref = recordInstruction(pred::atomicrmw::instr);
+    refmode_t iref = recordInstruction(pred::atomicrmw::instr, AWI);
 
     writeInstrOperand(pred::atomicrmw::address, iref, AWI.getPointerOperand());
     writeInstrOperand(pred::atomicrmw::value, iref, AWI.getValOperand());
@@ -476,17 +557,21 @@ void InstructionVisitor::visitAtomicRMWInst(llvm::AtomicRMWInst &AWI)
     writeAtomicInfo<pred::atomicrmw>(iref, AWI);
 }
 
-void InstructionVisitor::visitFenceInst(llvm::FenceInst &FI)
+
+void
+InstructionVisitor::visitFenceInst(const llvm::FenceInst &FI)
 {
-    refmode_t iref = recordInstruction(pred::fence::instr);
+    refmode_t iref = recordInstruction(pred::fence::instr, FI);
 
     // fence [singleThread]  <ordering>
     writeAtomicInfo<pred::fence>(iref, FI);
 }
 
-void InstructionVisitor::visitGetElementPtrInst(llvm::GetElementPtrInst &GEP)
+
+void
+InstructionVisitor::visitGetElementPtrInst(const llvm::GetElementPtrInst &GEP)
 {
-    refmode_t iref = recordInstruction(pred::gep::instr);
+    refmode_t iref = recordInstruction(pred::gep::instr, GEP);
     writeInstrOperand(pred::gep::base, iref, GEP.getPointerOperand());
 
     for (unsigned index = 1; index < GEP.getNumOperands(); ++index)
@@ -511,10 +596,12 @@ void InstructionVisitor::visitGetElementPtrInst(llvm::GetElementPtrInst &GEP)
         gen.writeFact(pred::gep::inbounds, iref);
 }
 
-void InstructionVisitor::visitPHINode(llvm::PHINode &PHI)
+
+void
+InstructionVisitor::visitPHINode(const llvm::PHINode &PHI)
 {
     // <result> = phi <ty> [ <val0>, <label0>], ...
-    refmode_t iref = recordInstruction(pred::phi::instr);
+    refmode_t iref = recordInstruction(pred::phi::instr, PHI);
 
     // type
     gen.writeFact(pred::phi::type, iref, gen.refmodeOf(PHI.getType()));
@@ -528,9 +615,11 @@ void InstructionVisitor::visitPHINode(llvm::PHINode &PHI)
     gen.writeFact(pred::phi::npairs, iref, PHI.getNumIncomingValues());
 }
 
-void InstructionVisitor::visitSelectInst(llvm::SelectInst &SI)
+
+void
+InstructionVisitor::visitSelectInst(const llvm::SelectInst &SI)
 {
-    refmode_t iref = recordInstruction(pred::select::instr);
+    refmode_t iref = recordInstruction(pred::select::instr, SI);
 
     // Condition and operands
     writeInstrOperand(pred::select::condition, iref, SI.getOperand(0));
@@ -538,9 +627,11 @@ void InstructionVisitor::visitSelectInst(llvm::SelectInst &SI)
     writeInstrOperand(pred::select::second_operand, iref, SI.getOperand(2));
 }
 
-void InstructionVisitor::visitInsertValueInst(llvm::InsertValueInst &IVI)
+
+void
+InstructionVisitor::visitInsertValueInst(const llvm::InsertValueInst &IVI)
 {
-    refmode_t iref = recordInstruction(pred::insert_value::instr);
+    refmode_t iref = recordInstruction(pred::insert_value::instr, IVI);
 
     writeInstrOperand(pred::insert_value::base, iref, IVI.getOperand(0));
     writeInstrOperand(pred::insert_value::value, iref, IVI.getOperand(1));
@@ -557,9 +648,11 @@ void InstructionVisitor::visitInsertValueInst(llvm::InsertValueInst &IVI)
     gen.writeFact(pred::insert_value::nindices, iref, IVI.getNumIndices());
 }
 
-void InstructionVisitor::visitLandingPadInst(llvm::LandingPadInst &LI)
+
+void
+InstructionVisitor::visitLandingPadInst(const llvm::LandingPadInst &LI)
 {
-    refmode_t iref = recordInstruction(pred::landingpad::instr);
+    refmode_t iref = recordInstruction(pred::landingpad::instr, LI);
 
     gen.writeFact(pred::landingpad::type, iref, gen.refmodeOf(LI.getType()));
 
@@ -580,15 +673,17 @@ void InstructionVisitor::visitLandingPadInst(llvm::LandingPadInst &LI)
     gen.writeFact(pred::landingpad::nclauses, iref, LI.getNumClauses());
 }
 
-void InstructionVisitor::visitCallInst(llvm::CallInst &CI)
+
+void
+InstructionVisitor::visitCallInst(const llvm::CallInst &CI)
 {
-    refmode_t iref = recordInstruction(pred::call::instr);
+    refmode_t iref = recordInstruction(pred::call::instr, CI);
 
     gen.writeFact(CI.getCalledFunction()
               ? pred::call::instr_direct
               : pred::call::instr_indirect, iref);
 
-    llvm::Value *callOp = CI.getCalledValue();
+    const llvm::Value *callOp = CI.getCalledValue();
 
     // call instruction function (also records type)
     writeInstrOperand(pred::call::function, iref, callOp);
@@ -615,10 +710,12 @@ void InstructionVisitor::visitCallInst(llvm::CallInst &CI)
     gen.writeFnAttributes<pred::call>(iref, Attrs);
 }
 
-void InstructionVisitor::visitDbgDeclareInst(llvm::DbgDeclareInst &DDI)
+
+void
+InstructionVisitor::visitDbgDeclareInst(const llvm::DbgDeclareInst &DDI)
 {
     // First visit it as a generic call instruction
-    InstructionVisitor::visitCallInst(static_cast<llvm::CallInst&>(DDI));
+    InstructionVisitor::visitCallInst(static_cast<const llvm::CallInst&>(DDI));
 
     // Process debug info
     gen.debugInfoProcessor.processDeclare(Mod, &DDI);
@@ -641,70 +738,80 @@ void InstructionVisitor::visitDbgDeclareInst(llvm::DbgDeclareInst &DDI)
     }
 }
 
-void InstructionVisitor::visitDbgValueInst(llvm::DbgValueInst &DDI)
+
+void
+InstructionVisitor::visitDbgValueInst(const llvm::DbgValueInst &DDI)
 {
     // First visit it as a generic call instruction
-    InstructionVisitor::visitCallInst(static_cast<llvm::CallInst&>(DDI));
+    InstructionVisitor::visitCallInst(static_cast<const llvm::CallInst&>(DDI));
 
     // Process debug info
     gen.debugInfoProcessor.processValue(Mod, &DDI);
 }
 
-void InstructionVisitor::visitICmpInst(llvm::ICmpInst &I)
+
+void
+InstructionVisitor::visitICmpInst(const llvm::ICmpInst &I)
 {
-    refmode_t iref = recordInstruction(pred::icmp::instr);
-    const char *pred = pred_to_string(I.getPredicate());
+    refmode_t iref = recordInstruction(pred::icmp::instr, I);
 
-    // Condition
-    if (pred)
-        gen.writeFact(pred::icmp::condition, iref, pred);
+    // Record condition
+    writeCondition(pred::icmp::condition, iref, I);
 
-    // Operands
+    // Record operands
     writeInstrOperand(pred::icmp::first_operand, iref, I.getOperand(0));
     writeInstrOperand(pred::icmp::second_operand, iref, I.getOperand(1));
 }
 
-void InstructionVisitor::visitFCmpInst(llvm::FCmpInst &I)
+
+void
+InstructionVisitor::visitFCmpInst(const llvm::FCmpInst &I)
 {
-    refmode_t iref = recordInstruction(pred::fcmp::instr);
-    const char *pred = pred_to_string(I.getPredicate());
+    refmode_t iref = recordInstruction(pred::fcmp::instr, I);
 
-    // Condition
-    if (pred)
-        gen.writeFact(pred::fcmp::condition, iref, pred);
+    // Record condition
+    writeCondition(pred::fcmp::condition, iref, I);
 
-    // Operands
+    // Record operands
     writeInstrOperand(pred::fcmp::first_operand, iref, I.getOperand(0));
     writeInstrOperand(pred::fcmp::second_operand, iref, I.getOperand(1));
 }
 
-void InstructionVisitor::visitExtractElementInst(llvm::ExtractElementInst &EEI)
+
+void
+InstructionVisitor::visitExtractElementInst(const llvm::ExtractElementInst &EEI)
 {
-    refmode_t iref = recordInstruction(pred::extract_element::instr);
+    refmode_t iref = recordInstruction(pred::extract_element::instr, EEI);
 
     writeInstrOperand(pred::extract_element::base, iref, EEI.getVectorOperand());
     writeInstrOperand(pred::extract_element::index, iref, EEI.getIndexOperand());
 }
 
-void InstructionVisitor::visitInsertElementInst(llvm::InsertElementInst &IEI)
+
+void
+InstructionVisitor::visitInsertElementInst(const llvm::InsertElementInst &IEI)
 {
-    refmode_t iref = recordInstruction(pred::insert_element::instr);
+    refmode_t iref = recordInstruction(pred::insert_element::instr, IEI);
 
     writeInstrOperand(pred::insert_element::base, iref, IEI.getOperand(0));
     writeInstrOperand(pred::insert_element::value, iref, IEI.getOperand(1));
     writeInstrOperand(pred::insert_element::index, iref, IEI.getOperand(2));
 }
 
-void InstructionVisitor::visitShuffleVectorInst(llvm::ShuffleVectorInst &SVI)
+
+void
+InstructionVisitor::visitShuffleVectorInst(const llvm::ShuffleVectorInst &SVI)
 {
-    refmode_t iref = recordInstruction(pred::shuffle_vector::instr);
+    refmode_t iref = recordInstruction(pred::shuffle_vector::instr, SVI);
 
     writeInstrOperand(pred::shuffle_vector::first_vector, iref, SVI.getOperand(0));
     writeInstrOperand(pred::shuffle_vector::second_vector, iref, SVI.getOperand(1));
     writeInstrOperand(pred::shuffle_vector::mask, iref, SVI.getOperand(2));
 }
 
-void  InstructionVisitor::visitInstruction(llvm::Instruction &I) {
+
+void
+InstructionVisitor::visitInstruction(const llvm::Instruction &I) {
     llvm::errs() << I.getOpcodeName() << ": Unhandled instruction\n";
 }
 
@@ -715,45 +822,54 @@ void  InstructionVisitor::visitInstruction(llvm::Instruction &I) {
 //------------------------------------------------------------------------------
 
 
-const char* InstructionVisitor::pred_to_string(unsigned predicate)
+void InstructionVisitor::writeCondition(
+    const pred_t &pred, refmode_t iref, const llvm::CmpInst &I)
 {
-    const char *pred = (char *) 0;
+    const char *cmpStr;
 
-    switch (predicate) {
-      case llvm::FCmpInst::FCMP_FALSE: pred = "false";  break;
-      case llvm::FCmpInst::FCMP_OEQ:   pred = "oeq";    break;
-      case llvm::FCmpInst::FCMP_OGT:   pred = "ogt";    break;
-      case llvm::FCmpInst::FCMP_OGE:   pred = "oge";    break;
-      case llvm::FCmpInst::FCMP_OLT:   pred = "olt";    break;
-      case llvm::FCmpInst::FCMP_OLE:   pred = "ole";    break;
-      case llvm::FCmpInst::FCMP_ONE:   pred = "one";    break;
-      case llvm::FCmpInst::FCMP_ORD:   pred = "ord";    break;
-      case llvm::FCmpInst::FCMP_UNO:   pred = "uno";    break;
-      case llvm::FCmpInst::FCMP_UEQ:   pred = "ueq";    break;
-      case llvm::FCmpInst::FCMP_UGT:   pred = "ugt";    break;
-      case llvm::FCmpInst::FCMP_UGE:   pred = "uge";    break;
-      case llvm::FCmpInst::FCMP_ULT:   pred = "ult";    break;
-      case llvm::FCmpInst::FCMP_ULE:   pred = "ule";    break;
-      case llvm::FCmpInst::FCMP_UNE:   pred = "une";    break;
-      case llvm::FCmpInst::FCMP_TRUE:  pred = "true";   break;
+    switch (I.getPredicate()) {
+      case llvm::FCmpInst::FCMP_FALSE: cmpStr = "false";  break;
+      case llvm::FCmpInst::FCMP_OEQ:   cmpStr = "oeq";    break;
+      case llvm::FCmpInst::FCMP_OGT:   cmpStr = "ogt";    break;
+      case llvm::FCmpInst::FCMP_OGE:   cmpStr = "oge";    break;
+      case llvm::FCmpInst::FCMP_OLT:   cmpStr = "olt";    break;
+      case llvm::FCmpInst::FCMP_OLE:   cmpStr = "ole";    break;
+      case llvm::FCmpInst::FCMP_ONE:   cmpStr = "one";    break;
+      case llvm::FCmpInst::FCMP_ORD:   cmpStr = "ord";    break;
+      case llvm::FCmpInst::FCMP_UNO:   cmpStr = "uno";    break;
+      case llvm::FCmpInst::FCMP_UEQ:   cmpStr = "ueq";    break;
+      case llvm::FCmpInst::FCMP_UGT:   cmpStr = "ugt";    break;
+      case llvm::FCmpInst::FCMP_UGE:   cmpStr = "uge";    break;
+      case llvm::FCmpInst::FCMP_ULT:   cmpStr = "ult";    break;
+      case llvm::FCmpInst::FCMP_ULE:   cmpStr = "ule";    break;
+      case llvm::FCmpInst::FCMP_UNE:   cmpStr = "une";    break;
+      case llvm::FCmpInst::FCMP_TRUE:  cmpStr = "true";   break;
 
-      case llvm::ICmpInst::ICMP_EQ:    pred = "eq";     break;
-      case llvm::ICmpInst::ICMP_NE:    pred = "ne";     break;
-      case llvm::ICmpInst::ICMP_SGT:   pred = "sgt";    break;
-      case llvm::ICmpInst::ICMP_SGE:   pred = "sge";    break;
-      case llvm::ICmpInst::ICMP_SLT:   pred = "slt";    break;
-      case llvm::ICmpInst::ICMP_SLE:   pred = "sle";    break;
-      case llvm::ICmpInst::ICMP_UGT:   pred = "ugt";    break;
-      case llvm::ICmpInst::ICMP_UGE:   pred = "uge";    break;
-      case llvm::ICmpInst::ICMP_ULT:   pred = "ult";    break;
-      case llvm::ICmpInst::ICMP_ULE:   pred = "ule";    break;
-      default: break;
+      case llvm::ICmpInst::ICMP_EQ:    cmpStr = "eq";     break;
+      case llvm::ICmpInst::ICMP_NE:    cmpStr = "ne";     break;
+      case llvm::ICmpInst::ICMP_SGT:   cmpStr = "sgt";    break;
+      case llvm::ICmpInst::ICMP_SGE:   cmpStr = "sge";    break;
+      case llvm::ICmpInst::ICMP_SLT:   cmpStr = "slt";    break;
+      case llvm::ICmpInst::ICMP_SLE:   cmpStr = "sle";    break;
+      case llvm::ICmpInst::ICMP_UGT:   cmpStr = "ugt";    break;
+      case llvm::ICmpInst::ICMP_UGE:   cmpStr = "uge";    break;
+      case llvm::ICmpInst::ICMP_ULT:   cmpStr = "ult";    break;
+      case llvm::ICmpInst::ICMP_ULE:   cmpStr = "ule";    break;
+      default:
+          cmpStr = "<badpred>";
+
+          // Report the unknown predicate
+          llvm::errs() << "Unknown comparison predicate:"
+                       << I.getPredicate() << '\n';
+          break;
     }
-    return pred;
+
+    gen.writeFact(pred, iref, cmpStr);
 }
 
 
-void InstructionVisitor::writeOptimizationInfo(refmode_t iref, const llvm::User *u)
+void
+InstructionVisitor::writeOptimizationInfo(refmode_t iref, const llvm::User *u)
 {
     using llvm::FPMathOperator;
     using llvm::OverflowingBinaryOperator;
@@ -795,7 +911,8 @@ void InstructionVisitor::writeOptimizationInfo(refmode_t iref, const llvm::User 
 }
 
 
-void InstructionVisitor::writeAtomicRMWOp(refmode_t instrref, llvm::AtomicRMWInst::BinOp op)
+void
+InstructionVisitor::writeAtomicRMWOp(refmode_t instrref, llvm::AtomicRMWInst::BinOp op)
 {
     const char *oper;
 
