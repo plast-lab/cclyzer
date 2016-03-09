@@ -668,7 +668,8 @@ InstructionVisitor::visitLandingPadInst(const llvm::LandingPadInst &LI)
             ? pred::landingpad::catch_clause
             : pred::landingpad::filter_clause;
 
-        gen.writeFact(pred_clause, iref, i, LI.getClause(i));
+        // Record clause
+        writeInstrOperand(pred_clause, iref, LI.getClause(i), i);
     }
 
     gen.writeFact(pred::landingpad::nclauses, iref, LI.getNumClauses());
