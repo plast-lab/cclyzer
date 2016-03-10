@@ -1,10 +1,11 @@
 #include <sstream>
 #include <llvm/Support/raw_ostream.h>
-#include "LLVMEnums.hpp"
+#include "llvm_enums.hpp"
 
 using std::string;
 
-string LLVMEnumSerializer::to_string(llvm::CallingConv::ID cc)
+string
+cclyzer::utils::to_string(llvm::CallingConv::ID cc)
 {
     string conv;
 
@@ -30,7 +31,8 @@ string LLVMEnumSerializer::to_string(llvm::CallingConv::ID cc)
 }
 
 
-string LLVMEnumSerializer::to_string(llvm::GlobalVariable::ThreadLocalMode TLM)
+string
+cclyzer::utils::to_string(llvm::GlobalVariable::ThreadLocalMode TLM)
 {
     const char *tlm;
 
@@ -58,7 +60,8 @@ string LLVMEnumSerializer::to_string(llvm::GlobalVariable::ThreadLocalMode TLM)
 }
 
 
-string LLVMEnumSerializer::to_string(llvm::GlobalValue::LinkageTypes LT)
+string
+cclyzer::utils::to_string(llvm::GlobalValue::LinkageTypes LT)
 {
     const char *linkTy;
     using llvm::GlobalValue;
@@ -88,7 +91,8 @@ string LLVMEnumSerializer::to_string(llvm::GlobalValue::LinkageTypes LT)
 }
 
 
-string LLVMEnumSerializer::to_string(llvm::GlobalValue::VisibilityTypes Vis)
+string
+cclyzer::utils::to_string(llvm::GlobalValue::VisibilityTypes Vis)
 {
     const char *visibility;
     using llvm::GlobalValue;
@@ -115,7 +119,8 @@ string LLVMEnumSerializer::to_string(llvm::GlobalValue::VisibilityTypes Vis)
 }
 
 
-string LLVMEnumSerializer::to_string(llvm::AtomicOrdering ordering)
+string
+cclyzer::utils::to_string(llvm::AtomicOrdering ordering)
 {
     const char *atomic;
 

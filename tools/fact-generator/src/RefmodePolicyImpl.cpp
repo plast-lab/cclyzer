@@ -4,6 +4,7 @@
 #include <llvm/Support/raw_ostream.h>
 #include <llvm/IR/Metadata.h>
 #include "RefmodePolicyImpl.hpp"
+#include "llvm_enums.hpp"
 
 using cclyzer::RefmodePolicy;
 
@@ -13,6 +14,8 @@ using llvm::dyn_cast;
 using llvm::isa;
 using llvm::raw_string_ostream;
 using std::string;
+
+namespace enums = cclyzer::utils;
 
 
 // Refmode for LLVM Values

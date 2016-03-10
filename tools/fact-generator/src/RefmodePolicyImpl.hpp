@@ -1,11 +1,9 @@
 #include <sstream>
 #include <llvm/IR/ModuleSlotTracker.h>
 #include "RefmodePolicy.hpp"
-#include "LLVMEnums.hpp"
 
 // Refmode Policy implementation
 class cclyzer::RefmodePolicy::Impl
-    : LLVMEnumSerializer
 {
   public:
 
@@ -84,8 +82,6 @@ class cclyzer::RefmodePolicy::Impl
     }
 
   protected:
-    typedef LLVMEnumSerializer enums;
-
     // Compute variable numberings
     static void computeNumbering(const llvm::Function *, std::map<const llvm::Value*,unsigned> &);
 
