@@ -523,14 +523,17 @@ cclyzer::refmode_t CsvGenerator::writeConstant(const Constant &c)
     else if (isa<Function>(c)) {
         const Function &func = cast<Function>(c);
 
+        // TODO get value from refmode itself
         writeFact(pred::function_constant::id, refmode);
         writeFact(pred::function_constant::name, refmode, "@" + func.getName().str());
     }
     else if (isa<GlobalVariable>(c)) {
         const GlobalVariable &global_var = cast<GlobalVariable>(c);
+        const string value = "@" + global_var.getName().str();
 
+        // TODO get value from refmode itself
         writeFact(pred::global_variable_constant::id, refmode);
-        writeFact(pred::global_variable_constant::name, refmode, refmodeOf(&global_var));
+        writeFact(pred::global_variable_constant::name, refmode, value);
     }
     else if (isa<ConstantExpr>(c)) {
         writeConstantExpr(cast<ConstantExpr>(c), refmode);

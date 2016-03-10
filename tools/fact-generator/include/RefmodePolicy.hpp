@@ -37,9 +37,6 @@ class cclyzer::RefmodePolicy {
     refmode_t refmodeOf(llvm::AtomicOrdering AO) const;
     refmode_t refmodeOf(const llvm::Type *type) const;
 
-    // TODO: eventually this method should be removed
-    refmode_t refmodeOf(const llvm::Value *Val) const;
-
     // Fully qualified refmodes that guarantee uniqueness
     refmode_t refmodeOfFunction(const llvm::Function *) const;
     refmode_t refmodeOfBasicBlock(const llvm::BasicBlock *) const;

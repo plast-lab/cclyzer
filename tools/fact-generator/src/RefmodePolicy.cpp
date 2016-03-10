@@ -38,10 +38,6 @@ cclyzer::refmode_t RefmodePolicy::refmodeOf(const llvm::Type *type) const {
     return impl->refmodeOf(type);
 }
 
-cclyzer::refmode_t RefmodePolicy::refmodeOf(const llvm::Value * Val) const {
-    return impl->refmodeOf(Val);
-}
-
 cclyzer::refmode_t RefmodePolicy::refmodeOfFunction(const llvm::Function * func) const {
     return impl->refmodeOfFunction(func);
 }
