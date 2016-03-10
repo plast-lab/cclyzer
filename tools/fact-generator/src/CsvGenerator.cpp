@@ -271,7 +271,10 @@ void CsvGenerator::visitGlobalAlias(const GlobalAlias *ga, const refmode_t &refm
 
     // Record aliasee
     if (Aliasee) {
-        refmode_t aliasee = refmodeOf(Aliasee);
+        // Record aliasee constant and generate refmode for it
+        refmode_t aliasee = writeConstant(*Aliasee);
+
+        // Record aliasee
         writeFact(pred::alias::aliasee, refmode, aliasee);
     }
 }
