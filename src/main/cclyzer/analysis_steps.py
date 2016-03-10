@@ -176,3 +176,37 @@ class RunOutputQueriesStep(AnalysisStep):
     @property
     def message(self):
         return 'run {} output queries'.format(self._project.name)
+
+
+class UserOptionsStep(AnalysisStep):
+    def __init__(self, options):
+        AnalysisStep.__init__(self)
+        self._options = options
+
+    def apply(self, analysis):
+        # Create database connector
+        connector = blox.connect.Connector(analysis.database_directory)
+
+        # Function that declares the given option
+        def enable_option(opt):
+            return '+user_options:{0}().'.format(opt.replace('-', '_'))
+
+        # Function that returns a line which enables the given option
+        def declare_option(opt):
+            return 'user_options:{0}() -> .'.format(opt.replace('-', '_'))
+
+        # Compute logic
+        lines = [declare_option(opt) for opt in self._options]
+        logic = '\n'.join(lines)
+        connector.add_logic(logic)
+
+        lines = [enable_option(opt) for opt in self._options]
+        logic = '\n'.join(lines)
+        self.logger.info("Executing logic %s", logic)
+
+        # Execute relevant logic
+        connector.execute_logic(logic)
+
+    @property
+    def message(self):
+        return 'add user options'

@@ -39,3 +39,6 @@ type-back-propagation.logic, active
 
 // Common queries
 points-to-queries.logic, inactive
+
+// User options
+points-to-options.logic, active

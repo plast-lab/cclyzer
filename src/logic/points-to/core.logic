@@ -1,7 +1,3 @@
-// Temporarily mark all functions as reachable, since the reachability
-// filter is not yet enforced through all points-to relations
-// reachable_function(F) <- function(F).
-
 // Model null as a specific memory location
 constant_points_to[Constant] = NULL <-
    nullptr_constant(Constant),
