@@ -1,5 +1,5 @@
-#ifndef REFMODE_POLICY_HPP__
-#define REFMODE_POLICY_HPP__
+#ifndef REFMODE_ENGINE_HPP__
+#define REFMODE_ENGINE_HPP__
 
 #include <string>
 #include <llvm/IR/Function.h>
@@ -18,16 +18,16 @@ namespace cclyzer {
     }
 
     /* Forward Declartion */
-    class RefmodePolicy;
+    class RefmodeEngine;
 
     typedef refmode::refmode_t refmode_t;
 }
 
 
-class cclyzer::RefmodePolicy {
+class cclyzer::RefmodeEngine {
   public:
-    RefmodePolicy();
-    ~RefmodePolicy();
+    RefmodeEngine();
+    ~RefmodeEngine();
 
     // Simple value-based refmodes
     refmode_t refmodeOf(llvm::GlobalValue::LinkageTypes LT) const;
@@ -58,4 +58,4 @@ class cclyzer::RefmodePolicy {
     Impl *impl;
 };
 
-#endif /* REFMODE_POLICY_HPP__ */
+#endif /* REFMODE_ENGINE_HPP__ */

@@ -4,7 +4,7 @@
 #include <string>
 #include <llvm/IR/InstVisitor.h>
 #include "CsvGenerator.hpp"
-#include "RefmodePolicy.hpp"
+#include "RefmodeEngine.hpp"
 
 
 // Add to namespace

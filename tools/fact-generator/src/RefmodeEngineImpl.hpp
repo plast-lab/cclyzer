@@ -1,9 +1,9 @@
 #include <sstream>
 #include <llvm/IR/ModuleSlotTracker.h>
-#include "RefmodePolicy.hpp"
+#include "RefmodeEngine.hpp"
 
 // Refmode Policy implementation
-class cclyzer::RefmodePolicy::Impl
+class cclyzer::RefmodeEngine::Impl
 {
   public:
 

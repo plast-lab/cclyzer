@@ -3,10 +3,10 @@
 #include <boost/algorithm/string.hpp>
 #include <llvm/Support/raw_ostream.h>
 #include <llvm/IR/Metadata.h>
-#include "RefmodePolicyImpl.hpp"
+#include "RefmodeEngineImpl.hpp"
 #include "llvm_enums.hpp"
 
-using cclyzer::RefmodePolicy;
+using cclyzer::RefmodeEngine;
 
 using boost::algorithm::trim;
 using llvm::cast;
@@ -21,7 +21,7 @@ namespace enums = cclyzer::utils;
 // Refmode for LLVM Values
 
 cclyzer::refmode_t
-RefmodePolicy::Impl::refmodeOf(const llvm::Value * Val) const
+RefmodeEngine::Impl::refmodeOf(const llvm::Value * Val) const
 {
     string rv;
     raw_string_ostream rso(rv);
@@ -109,7 +109,7 @@ print:
 // Refmode for LLVM Functions
 
 cclyzer::refmode_t
-RefmodePolicy::Impl::refmodeOfFunction(const llvm::Function * func, bool prefix) const
+RefmodeEngine::Impl::refmodeOfFunction(const llvm::Function * func, bool prefix) const
 {
     string functionName = string(func->getName());
 
@@ -124,7 +124,7 @@ RefmodePolicy::Impl::refmodeOfFunction(const llvm::Function * func, bool prefix)
 
 
 cclyzer::refmode_t
-RefmodePolicy::Impl::refmodeOfBasicBlock(const llvm::BasicBlock *bb, bool prefix) const
+RefmodeEngine::Impl::refmodeOfBasicBlock(const llvm::BasicBlock *bb, bool prefix) const
 {
     string bbName = refmodeOf(bb);
 
@@ -139,7 +139,7 @@ RefmodePolicy::Impl::refmodeOfBasicBlock(const llvm::BasicBlock *bb, bool prefix
 
 
 cclyzer::refmode_t
-RefmodePolicy::Impl::refmodeOfInstruction(const llvm::Instruction *instr, unsigned index) const
+RefmodeEngine::Impl::refmodeOfInstruction(const llvm::Instruction *instr, unsigned index) const
 {
     std::ostringstream refmode;
 
@@ -152,7 +152,7 @@ RefmodePolicy::Impl::refmodeOfInstruction(const llvm::Instruction *instr, unsign
 
 
 cclyzer::refmode_t
-RefmodePolicy::Impl::refmodeOfConstant(const llvm::Constant *c)
+RefmodeEngine::Impl::refmodeOfConstant(const llvm::Constant *c)
 {
     std::ostringstream refmode;
 
@@ -164,7 +164,7 @@ RefmodePolicy::Impl::refmodeOfConstant(const llvm::Constant *c)
 
 
 cclyzer::refmode_t
-RefmodePolicy::Impl::refmodeOfLocalValue(const llvm::Value *val, bool prefix) const
+RefmodeEngine::Impl::refmodeOfLocalValue(const llvm::Value *val, bool prefix) const
 {
     if (const llvm::BasicBlock *bb = dyn_cast<llvm::BasicBlock>(val))
         return refmodeOfBasicBlock(bb, prefix);
@@ -182,7 +182,7 @@ RefmodePolicy::Impl::refmodeOfLocalValue(const llvm::Value *val, bool prefix) co
 
 
 cclyzer::refmode_t
-RefmodePolicy::Impl::refmodeOfGlobalValue(const llvm::GlobalValue *val, bool prefix) const
+RefmodeEngine::Impl::refmodeOfGlobalValue(const llvm::GlobalValue *val, bool prefix) const
 {
     string id = refmodeOf(val);
 
@@ -196,7 +196,7 @@ RefmodePolicy::Impl::refmodeOfGlobalValue(const llvm::GlobalValue *val, bool pre
 }
 
 
-void RefmodePolicy::Impl::computeNumbering(
+void RefmodeEngine::Impl::computeNumbering(
     const llvm::Function *func, std::map<const llvm::Value*,unsigned> &numbering)
 {
     unsigned counter = 0;
@@ -233,27 +233,27 @@ void RefmodePolicy::Impl::computeNumbering(
 // Refmodes for LLVM Enums
 
 cclyzer::refmode_t
-RefmodePolicy::Impl::refmodeOf(llvm::GlobalValue::LinkageTypes LT) const {
+RefmodeEngine::Impl::refmodeOf(llvm::GlobalValue::LinkageTypes LT) const {
     return enums::to_string(LT);
 }
 
 cclyzer::refmode_t
-RefmodePolicy::Impl::refmodeOf(llvm::GlobalValue::VisibilityTypes Vis) const {
+RefmodeEngine::Impl::refmodeOf(llvm::GlobalValue::VisibilityTypes Vis) const {
     return enums::to_string(Vis);
 }
 
 cclyzer::refmode_t
-RefmodePolicy::Impl::refmodeOf(llvm::GlobalVariable::ThreadLocalMode TLM) const {
+RefmodeEngine::Impl::refmodeOf(llvm::GlobalVariable::ThreadLocalMode TLM) const {
     return enums::to_string(TLM);
 }
 
 cclyzer::refmode_t
-RefmodePolicy::Impl::refmodeOf(llvm::CallingConv::ID CC) const {
+RefmodeEngine::Impl::refmodeOf(llvm::CallingConv::ID CC) const {
     return enums::to_string(CC);
 }
 
 cclyzer::refmode_t
-RefmodePolicy::Impl::refmodeOf(llvm::AtomicOrdering AO) const {
+RefmodeEngine::Impl::refmodeOf(llvm::AtomicOrdering AO) const {
     return enums::to_string(AO);
 }
 
@@ -261,7 +261,7 @@ RefmodePolicy::Impl::refmodeOf(llvm::AtomicOrdering AO) const {
 // Refmodes for LLVM Type
 
 cclyzer::refmode_t
-RefmodePolicy::Impl::refmodeOf(const llvm::Type *type) const
+RefmodeEngine::Impl::refmodeOf(const llvm::Type *type) const
 {
     string type_str;
     raw_string_ostream rso(type_str);

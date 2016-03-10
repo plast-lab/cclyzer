@@ -17,20 +17,20 @@
 #include "Demangler.hpp"
 #include "DebugInfoProcessor.hpp"
 #include "FactWriter.hpp"
-#include "RefmodePolicy.hpp"
+#include "RefmodeEngine.hpp"
 
 namespace cclyzer {
     class CsvGenerator;
 }
 
 class cclyzer::CsvGenerator
-    : private RefmodePolicy,
+    : private RefmodeEngine,
       private Demangler,
       private PredicateFactWriter
 {
     friend class InstructionVisitor;
     friend class TypeVisitor;
-    using RefmodePolicy::refmodeOf;
+    using RefmodeEngine::refmodeOf;
 
   protected:
 

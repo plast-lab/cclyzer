@@ -2,7 +2,7 @@
 #define PREDICATE_FACT_WRITER_HPP__
 
 #include "FactWriter.hpp"
-#include "RefmodePolicy.hpp"
+#include "RefmodeEngine.hpp"
 #include "predicate.hpp"
 
 namespace cclyzer {

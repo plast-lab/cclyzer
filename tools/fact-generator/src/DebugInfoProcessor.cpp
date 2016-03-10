@@ -3,7 +3,7 @@
 #include <llvm/IR/Module.h>
 #include <llvm/Support/raw_ostream.h>
 #include "DebugInfoProcessor.hpp"
-#include "RefmodePolicy.hpp"
+#include "RefmodeEngine.hpp"
 #include "predicate_groups.hpp"
 
 using cclyzer::DebugInfoProcessor;
