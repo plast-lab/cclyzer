@@ -14,6 +14,7 @@ using pred::pred_t;
 using pred::entity_pred_t;
 using pred::operand_pred_t;
 using llvm::dyn_cast;
+using llvm::isa;
 using std::string;
 
 
@@ -102,8 +103,7 @@ InstructionVisitor::writeInstrOperand(
     refmode_t refmode = recordValue(operand);
 
     // Predicate name
-    const pred_t &pred =
-        llvm::isa<llvm::Constant>(operand)
+    const pred_t &pred = isa<llvm::Constant>(operand)
         ? predicate.asConstant()
         : predicate.asVariable();
 
@@ -124,8 +124,7 @@ InstructionVisitor::writeInstrOperand(
     refmode_t refmode = recordValue(operand);
 
     // Predicate name
-    const pred_t &pred =
-        llvm::isa<llvm::Constant>(operand)
+    const pred_t &pred = isa<llvm::Constant>(operand)
         ? predicate.asConstant()
         : predicate.asVariable();
 
@@ -722,8 +721,14 @@ InstructionVisitor::visitDbgDeclareInst(const llvm::DbgDeclareInst &DDI)
     // Process debug info
     gen.debugInfoProcessor.processDeclare(module, &DDI);
 
+    const llvm::Value *address = DDI.getAddress();
+
+    // Skip undefined values
+    if (isa<llvm::UndefValue>(address))
+        return;
+
     // Obtain the refmode of the local variable
-    refmode_t refmode = gen.refmodeOfLocalValue(DDI.getAddress());
+    refmode_t refmode = gen.refmodeOfLocalValue(address);
 
     // Record source variable name
     if (const llvm::DILocalVariable *var = DDI.getVariable()) {
