@@ -563,6 +563,7 @@ namespace cclyzer
             static pred_t field_offset;
             static pred_t field_bit_offset;
             static pred_t field_name;
+            static pred_t inheritance;
             static pred_t nfields;
             static pred_t opaque;
         };
