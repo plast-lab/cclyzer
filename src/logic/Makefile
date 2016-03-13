@@ -34,7 +34,7 @@ clean:
 define project_template
 
 $1.proj   := $1/$1.project
-$1.src    := $(wildcard $1/*.logic)
+$1.src    := $(shell find $1/ -type f -name '*.logic')
 $1.outdir := $(OUTDIR)/$1
 $1.ph     := $$($1.outdir)/checksum
 $1.deps   := $1/deps.mk
@@ -124,6 +124,7 @@ export PATH := $(LEVEL)/bin:$(PATH)
 # Generate protobuf messages from schema
 .INTERMEDIATE: $(schema.pb)
 $(schema.pb): $(import.outdir)/%.pb: $(schema.ph) | $(import.outdir)
+	$(QUIET) $(MKDIR) $(@D)
 	gen-protobuf-message $(schema.outdir)/$*.lbb $@
 
 # Generate import sources; this will recreate $(import.src) files
