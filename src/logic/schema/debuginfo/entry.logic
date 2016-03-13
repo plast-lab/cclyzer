@@ -1,0 +1,13 @@
+di:entry(Entry), di:entry:id(Entry:Ref) -> string(Ref).
+
+//--------------------------------------------------------
+// Debug Information Entry - Type Hierarchy
+//--------------------------------------------------------
+
+di:scope(Entry) -> di:entry(Entry).
+di:global_variable(Entry) -> di:entry(Entry).
+di:typedef_entry(Entry)   -> di:entry(Entry).
+
+lang:entity(`di:scope).
+lang:entity(`di:global_variable).
+lang:entity(`di:typedef_entry).
