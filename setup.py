@@ -46,6 +46,7 @@ setup(
     package_data = {
         'resources.logic' : [
             '*/*.lbb',
+            '*/*/*.lbb',
             '*/*.lbp',
             '*/*.project',
             '*/checksum',

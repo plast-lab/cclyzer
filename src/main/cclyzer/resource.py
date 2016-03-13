@@ -2,7 +2,7 @@ import logging
 import shutil
 from itertools import izip_longest
 from os import chmod, path, makedirs, unlink
-from pkg_resources import resource_stream, resource_listdir
+from pkg_resources import resource_isdir, resource_listdir, resource_stream
 from . import runtime
 from . import settings
 
@@ -97,27 +97,39 @@ class unpacked_project(object):
 
         self.logger.info("Extracting project %s to %s", project, cached_proj_dir)
 
+        resource_dirs = [project]
+
         # Iterate over all project files
-        for resource in resource_listdir(self._pkg, project):
-            # Skip empty resource paths (apparently, that can happen!!)
-            if not resource:
-                continue
+        while resource_dirs:
+            # Pop next resource directory
+            res_dir = resource_dirs.pop(0)
 
-            # Compute path to resource
-            path_to_resource = path.join(project, resource)
-            path_to_file = path.join(cached_proj_dir, resource)
+            # Process its files
+            for resource in resource_listdir(self._pkg, res_dir):
+                # Skip empty resource paths (apparently, that can happen!!)
+                if not resource:
+                    continue
 
-            self.logger.debug("Extracting project file %s", path_to_resource)
+                # Compute path to resource
+                path_to_resource = path.join(res_dir, resource)
+                path_to_file = path.join(cached_logic_dir, path_to_resource)
 
-            # Create parent directory
-            parent_dir = path.dirname(path_to_file)
-            if not path.exists(parent_dir):
-                makedirs(parent_dir)
+                # Process resource directories recursively
+                if resource_isdir(self._pkg, path_to_resource):
+                    resource_dirs.append(path_to_resource)
+                    continue
 
-            with open(path_to_file, 'w') as f:
-                # Copy contents from resource stream
-                for byte in resource_stream(self._pkg, path_to_resource):
-                    f.write(byte)
+                self.logger.debug("Extracting project file %s", path_to_resource)
+
+                # Create parent directory
+                parent_dir = path.dirname(path_to_file)
+                if not path.exists(parent_dir):
+                    makedirs(parent_dir)
+
+                with open(path_to_file, 'w') as f:
+                    # Copy contents from resource stream
+                    for byte in resource_stream(self._pkg, path_to_resource):
+                        f.write(byte)
 
         return cached_proj_dir
 
