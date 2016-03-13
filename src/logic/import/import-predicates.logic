@@ -2881,7 +2881,7 @@ lang:physical:filePath[`_landingpad_instruction:clause:catch_tmp] = "facts/predi
 +instruction:id(e0:v0),
 +landingpad_instruction(e0),
 +constant:id(e1:v2),
-+global_variable(e1),
++constant(e1),
 +landingpad_instruction:clause:catch_tmp[e0,v1] = e1
 <-
    _landingpad_instruction:clause:catch_tmp(v0, v1, v2).

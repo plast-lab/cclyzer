@@ -146,7 +146,7 @@ lang:constructor(`clause:by_index).
 // Clause Predicates
 
 catch_clause:arg[Clause] = Arg ->
-   catch_clause(Clause), global_variable(Arg).
+   catch_clause(Clause), constant(Arg).
 
 filter_clause:arg[Clause] = Arg ->
    filter_clause(Clause), constant(Arg).
