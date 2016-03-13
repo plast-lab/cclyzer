@@ -13,14 +13,14 @@ shufflevector_instruction:mask[Insn] = Mask ->
    shufflevector_instruction(Insn), constant(Mask).
 
 // The type of the two input vectors.
-// !! Functional dependency violation encodes (1.i) constraint !!
 shufflevector_instruction:input_type[Insn] = Type <-
    shufflevector_instruction:first_vector[Insn] = Vector,
    operand:type[Vector] = Type.
 
-shufflevector_instruction:input_type[Insn] = Type <-
-   shufflevector_instruction:second_vector[Insn] = Vector,
-   operand:type[Vector] = Type.
+// The element type of the two input vectors
+shufflevector_instruction:element_type[Insn] = ElemType <-
+   shufflevector_instruction:input_type[Insn] = Type,
+   vector_type:component[Type] = ElemType.
 
 // The type of the shuffle mask.
 shufflevector_instruction:mask_type[Insn] = Type <-
@@ -45,6 +45,9 @@ shufflevector_instruction:mask_type[Insn] = Type <-
 //       two operands.
 //------------------------------------------------------------------------------
 
+
+// 1a. Required arguments
+
 schema:sanity()
  , shufflevector_instruction(Insn)
  ->
@@ -60,10 +63,26 @@ schema:sanity()
  ->
    shufflevector_instruction:mask[Insn] = _.
 
+
+// 1b. Constraints on the two input vectors
+
+schema:sanity()
+ , shufflevector_instruction:input_type[Insn] = InputType
+ , shufflevector_instruction:first_vector[Insn] = FirstVector
+ , shufflevector_instruction:second_vector[Insn] = SecondVector
+ , operand:type[FirstVector] = FirstType
+ , operand:type[SecondVector] = SecondType
+ ->
+   FirstType  = InputType,
+   SecondType = InputType.
+
 schema:sanity()
  , shufflevector_instruction:input_type[_] = Input
  ->
    vector_type(Input).
+
+
+// 2. Constraints on the suffle mask
 
 schema:sanity()
  , shufflevector_instruction:mask_type[_] = Mask
@@ -71,18 +90,16 @@ schema:sanity()
    vector_type:i32(Mask).
 
 
-// The type of the elements of the two input and one output vectors.
-// !! Functional dependency violation encodes (3.ii) constraint !!
-shufflevector_instruction:element_type[Insn] = Comp <-
-   shufflevector_instruction:input_type[Insn] = Type,
-   vector_type:component[Type] = Comp.
-
-shufflevector_instruction:element_type[Insn] = Comp <-
-   instruction:type[Insn] = Type,
-   vector_type:component[Type] = Comp.
+// 3. Constraints on the result
 
 schema:sanity()
- , instruction:type[Insn] = Result
+ , instruction:type[Insn] = OutputType
  , shufflevector_instruction:mask_type[Insn] = Mask
  ->
-   vector:compatible(Result, Mask).
+   vector:compatible(OutputType, Mask).          // constraint 3.i
+
+schema:sanity()
+ , shufflevector_instruction:element_type[Insn] = ElemType
+ , instruction:type[Insn] = OutputType
+ ->
+   vector_type:component[OutputType] = ElemType. // constaint 3.ii

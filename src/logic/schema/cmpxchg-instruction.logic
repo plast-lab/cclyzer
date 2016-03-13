@@ -1,5 +1,14 @@
 // http://llvm.org/docs/LangRef.html#cmpxchg-instruction
 // keywords: atomic; memory; instruction
+//
+// [Syntax]
+//
+// cmpxchg [weak] [volatile] <ty>* <pointer>,
+//                           <ty> <cmp>,
+//                           <ty> <new>
+//         [singlethread] <success ordering> <failure ordering>
+//    ; yields  { ty, i1 }
+//
 
 cmpxchg_instruction(Insn) -> instruction(Insn).
 
@@ -33,18 +42,29 @@ cmpxchg_instruction:new[Insn] = New ->
 
 
 // Auxiliary
-cmpxchg_instruction:type[Insn] = Type ->
-   cmpxchg_instruction(Insn), type(Type).
+
+cmpxchg_instruction:type[Insn] = Type <-
+   cmpxchg_instruction:cmp[Insn] = Operand,
+   operand:type[Operand] = Type.
+
+cmpxchg_instruction:ret_type[Insn] = RetType <-
+   cmpxchg_instruction(Insn),
+   instruction:type[Insn] = RetType.
 
 
 //------------------------------------------------------------------------------
 // [Constraints]
 //
-//  (i)   the type of ‘<cmp>’ must be an integer type
-//  (ii)  ‘<cmp>’ and ‘<new>’ must have the same type, and
-//  (iii) the type of ‘<pointer>’ must be a pointer to that type
-//  (iv)  the original value at the location is returned.
+//  1. the type of ‘<cmp>’ must be an integer type or pointer type
+//     whose bit width is a power of two greater than or equal to
+//     eight and less than or equal to a target-specific size limit
+//  2. ‘<cmp>’ and ‘<new>’ must have the same type
+//  3. the type of ‘<pointer>’ must be a pointer to that type
+//  4. the original value at the location is returned, together with a
+//     flag indicating success (true) or failure (false).
 //------------------------------------------------------------------------------
+
+// Required arguments
 
 schema:sanity()
  , cmpxchg_instruction(Insn)
@@ -67,33 +87,54 @@ schema:sanity()
    cmpxchg_instruction:new[Insn] = _.
 
 
-// !! We will encode the above constraints as
-// functional violations to our auxiliary
-// predicate !!
-
-cmpxchg_instruction:type[Insn] = Type <-
-   cmpxchg_instruction:cmp[Insn] = Operand,
-   operand:type[Operand] = Type.
-
-cmpxchg_instruction:type[Insn] = Type <-
-   cmpxchg_instruction:new[Insn] = Operand,
-   operand:type[Operand] = Type.
-
-cmpxchg_instruction:type[Insn] = Comp <-
-   cmpxchg_instruction:address[Insn] = Ptr,
-   operand:type[Ptr] = Type,
-   pointer_type:component[Type] = Comp.
-
-cmpxchg_instruction:type[Insn] = Type <-
-   cmpxchg_instruction(Insn),
-   instruction:type[Insn] = Type.
+// 1. Constraint on value type
 
 schema:sanity()
  , cmpxchg_instruction:type[_] = Type
  ->
-   integer_type(Type).
+   integer_type(Type)
+ ; pointer_type(Type).
+
+
+// 2. Type equality constaint on ‘<cmp>’ and ‘<new>’ arguments
 
 schema:sanity()
- , cmpxchg_instruction:address[_] = Ptr
+ , cmpxchg_instruction:type[Insn] = Type
+ , cmpxchg_instruction:cmp[Insn] = CmpOperand
+ , cmpxchg_instruction:new[Insn] = NewOperand
+ , operand:type[CmpOperand] = CmpType
+ , operand:type[NewOperand] = NewType
  ->
-   operand:pointer(Ptr).
+   CmpType = Type,
+   NewType = Type.
+
+
+// 3. Type constraint on ‘<pointer>’ argument
+
+schema:sanity()
+ , cmpxchg_instruction:type[Insn] = Type
+ , cmpxchg_instruction:address[Insn] = Ptr
+ , operand:type[Ptr] = PtrType
+ ->
+   pointer_type:component[PtrType] = Type.
+
+
+// 4. Return value
+
+schema:sanity()
+ , cmpxchg_instruction:ret_type[_] = RetType
+ ->
+   struct_type(RetType),
+   struct_type:nfields[RetType] = 2.
+
+schema:sanity()
+ , cmpxchg_instruction:type[Insn] = Type
+ , cmpxchg_instruction:ret_type[Insn] = RetType
+ ->
+   struct_type:field[RetType, 0] = Type.
+
+schema:sanity()
+ , int1_type[]  = i1
+ , cmpxchg_instruction:ret_type[_] = RetType
+ ->
+   struct_type:field[RetType, 1] = i1.
