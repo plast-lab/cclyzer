@@ -14,10 +14,6 @@ class cclyzer::PredicateFactWriter
   public:
     PredicateFactWriter(FactWriter &writer);
 
-    FactWriter &getWriter() {
-        return writer;
-    }
-
     /* Delegation to fact writer instance  */
 
     void writeFact(const Predicate &pred,

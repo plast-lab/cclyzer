@@ -1,4 +1,5 @@
 #include "predicate_groups.hpp"
+#include "debuginfo_predicate_groups.hpp"
 
 using namespace cclyzer::predicates;
 
@@ -429,3 +430,19 @@ entity_pred_t gep_constant_expr::id("getelementptr_constant_expression");
 pred_t gep_constant_expr::base("getelementptr_constant_expression:base");
 pred_t gep_constant_expr::index("getelementptr_constant_expression:index");
 pred_t gep_constant_expr::nindices("getelementptr_constant_expression:nindices");
+
+
+//------------------------------------------------------------------------------
+// DWARF-like Debug Information Predicates
+//------------------------------------------------------------------------------
+
+// Scope Entry
+entity_pred_t di_scope_entry::id("di:scope");
+
+// Typedef Entry
+entity_pred_t di_typedef_entry::id("di:typedef_entry");
+
+// Global Variable Entry
+entity_pred_t di_global_var::id("di:global_variable");
+pred_t di_global_var::name("di:global_variable:name");
+pred_t di_global_var::scope("di:global_variable:scope");
