@@ -4,18 +4,20 @@
 #include <map>
 #include <llvm/IR/DebugInfo.h>
 #include "Demangler.hpp"
-#include "PredicateFactWriter.hpp"
+#include "FactWriter.hpp"
+#include "ForwardingFactWriter.hpp"
 
 namespace cclyzer {
     class DebugInfoProcessor;
 }
 
 class cclyzer::DebugInfoProcessor
-    : private PredicateFactWriter, private Demangler
+    : private Demangler,
+      private ForwardingFactWriter
 {
   public:
     DebugInfoProcessor(FactWriter &writer)
-        : PredicateFactWriter(writer) {}
+        : ForwardingFactWriter(writer) {}
 
     /* Delegate to debug info finder */
 

@@ -372,7 +372,7 @@ pred_t struct_type::field_bit_offset("struct_type:field_bit_offset");
 pred_t struct_type::field_name("struct_type:field_name_at_offset");
 pred_t struct_type::inheritance("struct_type:inherits_at_offset");
 pred_t struct_type::nfields("struct_type:nfields");
-pred_t struct_type::opaque("opaque_struct_type");
+entity_pred_t struct_type::opaque("opaque_struct_type");
 
 pred_t type::alloc_size("type:size");
 pred_t type::store_size("type:unpadded_size");

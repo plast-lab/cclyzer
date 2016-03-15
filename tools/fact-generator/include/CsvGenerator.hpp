@@ -17,6 +17,7 @@
 #include "Demangler.hpp"
 #include "DebugInfoProcessor.hpp"
 #include "FactWriter.hpp"
+#include "ForwardingFactWriter.hpp"
 #include "RefmodeEngine.hpp"
 
 namespace cclyzer {
@@ -26,7 +27,7 @@ namespace cclyzer {
 class cclyzer::CsvGenerator
     : private RefmodeEngine,
       private Demangler,
-      private PredicateFactWriter
+      private ForwardingFactWriter
 {
     friend class InstructionVisitor;
     friend class TypeVisitor;
@@ -84,7 +85,9 @@ class cclyzer::CsvGenerator
   public:
     /* Constructor must initialize output file streams */
     CsvGenerator(FactWriter &writer)
-        : PredicateFactWriter(writer), debugInfoProcessor(writer) {}
+        : ForwardingFactWriter(writer)
+        , debugInfoProcessor(writer)
+    {}
 
     /* Global fact writing methods */
 

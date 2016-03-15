@@ -565,7 +565,7 @@ namespace cclyzer
             static pred_t field_name;
             static pred_t inheritance;
             static pred_t nfields;
-            static pred_t opaque;
+            static entity_pred_t opaque;
         };
 
         // Variables and constants

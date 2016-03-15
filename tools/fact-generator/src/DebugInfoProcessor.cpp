@@ -239,8 +239,8 @@ DebugInfoProcessor::postProcessType(const DICompositeType &type, const string &a
                 continue;
             }
 
-            PredicateFactWriter::writeFact(
-                pred::struct_type::field_name, refmode, bitOffset, fieldName);
+            writeFact(pred::struct_type::field_name,
+                      refmode, bitOffset, fieldName);
         }
     }
 }

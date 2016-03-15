@@ -64,6 +64,10 @@ class cclyzer::Predicate
 
     // Conversions
 
+    std::string getName() const {
+        return name;
+    }
+
     operator std::string() const {
         return name;
     }
@@ -87,11 +91,6 @@ class cclyzer::Predicate
     friend std::ostream& operator<<(std::ostream& stream, const Predicate&p);
 
     virtual ~Predicate() {}
-
-  protected:
-    std::string getName() const {
-        return name;
-    }
 
   private:
     const std::string name;

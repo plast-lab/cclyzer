@@ -23,7 +23,7 @@ void generateFacts(const std::vector<fs::path> &inputFiles,
     llvm::SMDiagnostic err;
 
     // Create fact writer
-    cclyzer::FactWriter writer(delim, outputDir);
+    cclyzer::FactWriter writer(outputDir, delim);
 
     // Create CSV generator
     cclyzer::CsvGenerator csvGen(writer);
