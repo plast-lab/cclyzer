@@ -5,6 +5,7 @@
 #include <vector>
 #include <cassert>
 #include <iostream>
+#include <boost/filesystem.hpp>
 
 #include "FilePredicateParts.h"
 
@@ -37,6 +38,8 @@ class PredicateArgument
     Argument argument;
 
   public:
+
+    using path = boost::filesystem::path;
 
     PredicateArgument(const std::string &primitive)
     {
@@ -72,6 +75,8 @@ class PredicateArgument
 
 class Predicate {
 public:
+
+    using path = boost::filesystem::path;
 
     enum PredicateType
     {
@@ -132,7 +137,8 @@ public:
         return *qualifiedName;
     }
 
-    virtual const std::string getFilePredicates(std::string &dirName, std::string &del) const
+    virtual const std::string
+    getFilePredicates(const path& dirName, const std::string& delim) const
     {
         std::ostringstream acc;
 
@@ -144,7 +150,8 @@ public:
             unsigned startVarIdx = 0, startEntityIdx = 0;
             getFilePredicateParts(startVarIdx, startEntityIdx, parts, true, false, i);
 
-            parts.getFilePredicate(acc, dirName, del) << "\n\n";
+            parts.writeFilePredicate(acc, dirName, delim);
+            acc << "\n\n";
         }
 
         return acc.str();
@@ -375,7 +382,8 @@ public:
     Constructor(const std::string &name, RefmodelessEntity *valueArgument);
 
 
-    const std::string getFilePredicates(std::string &dirName, std::string &del) const
+    const std::string
+    getFilePredicates(const path& dirName, const std::string& delim) const
     {
         return "";
     }

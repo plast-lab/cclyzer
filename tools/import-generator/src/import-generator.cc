@@ -6,11 +6,11 @@
 #include <string>
 
 #include <boost/filesystem.hpp>
+#include <boost/filesystem/fstream.hpp>
 
 #include "parse-protobuf.h"
 #include "Options.h"
 
-using namespace std;
 
 int main(int argc, char* argv[])
 {
@@ -18,77 +18,87 @@ int main(int argc, char* argv[])
     // compatible with the version of the headers we compiled against.
     GOOGLE_PROTOBUF_VERIFY_VERSION;
 
-    vector<const Constructor*> constructors;
-    map<const string, Predicate*> allPredicates;
+    namespace fs = boost::filesystem;
+    using std::string;
+
+    std::vector<const Constructor*> constructors;
+    std::map<const string, Predicate*> allpreds;
 
     try
     {
-        namespace fs = boost::filesystem;
-
         // Get program options instance
         Options& opt = Options::getInstance().init(argc, argv);
 
-        fs::path entitiesImports   = opt.getOutputDirectory() / "import-entities.logic";
-        fs::path predicatesImports = opt.getOutputDirectory() / "import-predicates.logic";
+        // Compute paths of logic files to be generated
+        fs::path outdir = opt.getOutputDirectory();
+        fs::path entitiesImports   = outdir / "import-entities.logic";
+        fs::path predicatesImports = outdir / "import-predicates.logic";
 
-        set<string> predicatesToIgnore;
+        // Create set of predicates to ignore
+        std::set<string> ignored_preds;
 
-        if(opt.mustIgnorePredicates())
+        if (opt.mustIgnorePredicates())
         {
-            ifstream predNamesToIgnore(opt.getPredicatesToIgnore().string().c_str());
-            string name;
+            fs::ifstream predlist(opt.getPredicatesToIgnore());
+            string predname;
 
-            while(predNamesToIgnore >> name)
-            {
-                predicatesToIgnore.insert(name);
-            }
+            while (predlist >> predname)
+                ignored_preds.insert(predname);
         }
 
-        ofstream entitiesStream(entitiesImports.string().c_str()),
-                 predicatesStream(predicatesImports.string().c_str());
+        // Create output file streams
+        fs::ofstream entitiesStream(entitiesImports);
+        fs::ofstream predicatesStream(predicatesImports);
 
-        vector<fs::path> proto = opt.getFiles();
+        // Parse input protobuf files
+        std::vector<fs::path> proto = opt.getFiles();
+        typedef std::vector<fs::path>::iterator proto_iterator;
 
-        for(vector<fs::path>::iterator it = proto.begin(); it != proto.end(); ++it)
+        for (proto_iterator it = proto.begin(), end = proto.end();
+             it != end; ++it)
         {
             string file = it->string();
 
-            if(parse(file.c_str(), constructors, allPredicates) == FAILURE)
+            // Parse next protobuf file
+            if (parse(file.c_str(), constructors, allpreds) == FAILURE)
                 return EXIT_FAILURE;
         }
 
-        string entitiesDir   = ( opt.getPredDirectory() / "entities/"   ).string();
-        string predicatesDir = ( opt.getPredDirectory() / "predicates/" ).string();
-        string delim = opt.getPredDelimiter();
+        const fs::path factsdir = opt.getPredDirectory();
+        const string delim = opt.getPredDelimiter();
 
-        set<string>::iterator ignoreEnd = predicatesToIgnore.end();
-        for(map<const string, Predicate*>::iterator it = allPredicates.begin(),
-                end = allPredicates.end(); it != end; ++it)
+        for(std::map<const string, Predicate*>::iterator
+                it = allpreds.begin(), end = allpreds.end();
+            it != end; ++it)
         {
-            Predicate *p = it->second;
+            Predicate &p = *(it->second);
 
-            if(predicatesToIgnore.find(p->getName()) == ignoreEnd)
+            // Skip ignored predicates
+            if (ignored_preds.find(p.getName()) != ignored_preds.end())
+                continue;
+
+            switch (p.getPredicateType())
             {
-                switch (p->getPredicateType())
-                {
-                case Predicate::REFMODE_ENTITY:
-                    entitiesStream << p->getFilePredicates(entitiesDir, delim) << "\n\n";
-                    break;
-                case Predicate::REFMODELESS_ENTITY:
-                    //we don't want to generate file predicates for refmodeless entities
-                    continue;
-                case Predicate::SIMPLE_PREDICATE:
-                case Predicate::FUNCTIONAL_PREDICATE:
-                    predicatesStream << p->getFilePredicates(predicatesDir, delim) << "\n\n";
-                    break;
-                }
+              case Predicate::REFMODE_ENTITY:
+                  entitiesStream << p.getFilePredicates(factsdir, delim)
+                                 << "\n\n";
+                  break;
+              case Predicate::REFMODELESS_ENTITY:
+                  // we don't want to generate file predicates for
+                  // refmodeless entities
+                  continue;
+              case Predicate::SIMPLE_PREDICATE:
+                  // Fallthrough
+              case Predicate::FUNCTIONAL_PREDICATE:
+                  predicatesStream << p.getFilePredicates(factsdir, delim)
+                                   << "\n\n";
+                  break;
             }
         }
     }
-    catch(exception& e)
-    {
-        cout << e.what() << "\n";
-        return 1;
+    catch (std::exception& e) {
+        std::cerr << e.what() << "\n";
+        return EXIT_FAILURE;
     }
 
     // Delete all global objects allocated by libprotobuf.

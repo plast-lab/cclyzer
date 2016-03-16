@@ -4,8 +4,11 @@
 #include <algorithm>
 #include <sstream>
 #include <vector>
+#include <boost/filesystem.hpp>
 
-class FilePredicateParts {
+class FilePredicateParts
+{
+    using path = boost::filesystem::path;
 
     std::ostringstream filePredName;
 
@@ -17,7 +20,7 @@ class FilePredicateParts {
 
     std::ostringstream head;
 
-    std::ostringstream acc;
+    std::stringstream contents;
 
     static const std::string VARIABLE_PREFIX;
 
@@ -39,41 +42,48 @@ class FilePredicateParts {
 
     static const std::string COMMA;
 
-    std::string getFileName(){
-
+    path getFilePath(const path& dir) const
+    {
         std::string rv = filePredName.str();
 
         std::replace(rv.begin(), rv.end(), ':', '-');
         std::replace(rv.begin(), rv.end(), '$', '-');
 
-        return rv + ".dlm";
+        path p(rv);
+        p += ".dlm";
+
+        return dir / p;
     }
 
-    std::ostringstream& getFilePredSignature(std::ostringstream &acc)
+    void writeNewline(size_t count = 1) {
+        for (size_t i = 0; i < count; i++)
+            contents << NEW_LINE;
+    }
+
+    void writeDeclaration()
     {
-        acc << "_" << filePredName.str() << "(" << vars.str() << ") -> " << types.str() << ".";
-
-        return acc;
+        contents << "_" << filePredName.str()
+                 << "(" << vars.str() << ") -> " << types.str() << ".";
     }
 
-    std::ostringstream& getLangDirectives(std::ostringstream &acc, std::string &dirName, std::string &del)
+    void writeLangDirectives(const path& dirName, const std::string& delim)
     {
         std::string filePredNameStr = filePredName.str();
-        acc << "lang:physical:delimiter[`_" << filePredNameStr << "] = \"" << del << "\".\n";
-        acc << "lang:physical:filePath[`_" << filePredNameStr << "] = \""
-            << dirName << getFileName() << "\".";
 
-        return acc;
+        contents << "lang:physical:delimiter[`_" << filePredNameStr << "] = \""
+                 << delim << "\".\n";
+
+        contents << "lang:physical:filePath[`_" << filePredNameStr << "] = "
+                 << getFilePath(dirName) << ".";
     }
 
-    std::ostringstream& getImportRule(std::ostringstream &acc)
+    void writeImportRule()
     {
-        acc << head.str() << NEW_LINE
-            << "<-" << NEW_LINE
-            << TAB << "_" << filePredName.str() << "(" << vars.str() << ")"
-            << body.str() << ".";
-
-        return acc;
+        contents << head.str() << NEW_LINE
+                 << "<-" << NEW_LINE
+                 << TAB << "_" << filePredName.str()
+                 << "(" << vars.str() << ")"
+                 << body.str() << ".";
     }
 
 public:
@@ -106,20 +116,23 @@ public:
         if(head.tellp() > 0)
             head << COMMA << NEW_LINE;
         head << "+" << refmodeName
-             << L_PAR << getEntityVar(entityIdx) << ":" << getSimpleVar(varIdx) << R_PAR << COMMA
-             << NEW_LINE << "+" << qualName << L_PAR << getEntityVar(entityIdx) << R_PAR;
+             << L_PAR << getEntityVar(entityIdx) << ":" << getSimpleVar(varIdx)
+             << R_PAR << COMMA << NEW_LINE << "+" << qualName
+             << L_PAR << getEntityVar(entityIdx) << R_PAR;
     }
 
     void addRefmodeToBody(const std::string &refmodeName, const std::string &qualName,
                           unsigned varIdx, unsigned entityIdx)
     {
         body << COMMA << NEW_LINE
-             << TAB << refmodeName << L_PAR << getEntityVar(entityIdx) << ":" << getSimpleVar(varIdx) << R_PAR
-             << COMMA << NEW_LINE
-             << TAB << qualName << L_PAR << getEntityVar(entityIdx) << R_PAR;
+             << TAB << refmodeName
+             << L_PAR << getEntityVar(entityIdx) << ":" << getSimpleVar(varIdx)
+             << R_PAR << COMMA << NEW_LINE
+             << TAB << qualName
+             << L_PAR << getEntityVar(entityIdx) << R_PAR;
     }
 
-    
+
     void addFunctionalPredicateToHead(const std::string &predName, std::vector<std::string> &args)
     {
         if(head.tellp() > 0)
@@ -184,13 +197,20 @@ public:
              << TAB << entityName << L_PAR << entityVar << R_PAR;
     }
 
-    std::ostringstream& getFilePredicate(std::ostringstream &acc, std::string &dirName, std::string &del)
+    void
+    writeFilePredicate(std::ostringstream &out,
+                       const path& dirName, const std::string& delim)
     {
-        getFilePredSignature(acc) << NEW_LINE << NEW_LINE;
-        getLangDirectives(acc, dirName, del) << NEW_LINE << NEW_LINE;
-        getImportRule(acc);
+        // Create logic segment
+        writeDeclaration();
+        writeNewline(2);
+        writeLangDirectives(dirName, delim);
+        writeNewline(2);
+        writeImportRule();
 
-        return acc;
+        // Copy contents to output stream
+        contents.flush();
+        out << contents.rdbuf();
     }
 
     static std::string getEntityVar(int index)
