@@ -25,7 +25,7 @@ Options& Options::init(int argc, char* argv[])
         ("delim,d", po::value<string>(&fpDelimiter)->default_value(","), "File predicate delimiter")
         ("dir,d", po::value<fs::path>(&fpDirectory)->required(), "File predicate directory")
         ("out-dir,o", po::value<fs::path>(&outDirectory), "Output directory for generated logic files")
-        ("ignore,i", po::value<fs::path>(&predicatesToIgnore), 
+        ("ignore,i", po::value<fs::path>(&predicatesToIgnore),
          "File containing predicate names that don't need a file predicate");
 
     // hidden options group - don't show in help
@@ -67,7 +67,9 @@ Options& Options::init(int argc, char* argv[])
     }
     catch(boost::program_options::required_option& e)
     {
-        cerr << e.what() << " from option: " << e.get_option_name() << endl;
+        cerr << e.what() << " from option: "
+             << e.get_option_name() << endl;
+
         exit(ERROR_IN_COMMAND_LINE);
     }
     catch(boost::program_options::error& e)
@@ -84,7 +86,9 @@ Options& Options::init(int argc, char* argv[])
     // Check if output directory exists
     if (vm.count("out-dir") && !fs::is_directory(outDirectory))
     {
-        cerr << "Output directory does not exist: " << outDirectory << endl;
+        cerr << "Output directory does not exist: "
+             << outDirectory << endl;
+
         exit(ERROR_IN_COMMAND_LINE);
     }
 
@@ -92,7 +96,8 @@ Options& Options::init(int argc, char* argv[])
     {
         if (!fs::is_regular_file(predicatesToIgnore))
         {
-            cerr << "File with predicate names to ignores does not exist: " << predicatesToIgnore;
+            cerr << "File with predicate names to ignores does not exist: "
+                 << predicatesToIgnore;
         }
         ignorePredicates = true;
     }

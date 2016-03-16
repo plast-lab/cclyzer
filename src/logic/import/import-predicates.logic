@@ -1,7 +1,7 @@
 _add_instruction:first_operand$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_add_instruction:first_operand$by_constant] = "\t".
-lang:physical:filePath[`_add_instruction:first_operand$by_constant] = "facts/predicates/add_instruction-first_operand-by_constant.dlm".
+lang:physical:filePath[`_add_instruction:first_operand$by_constant] = "facts/add_instruction-first_operand-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +add_instruction(e0),
@@ -16,7 +16,7 @@ lang:physical:filePath[`_add_instruction:first_operand$by_constant] = "facts/pre
 _add_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_add_instruction:first_operand$by_variable] = "\t".
-lang:physical:filePath[`_add_instruction:first_operand$by_variable] = "facts/predicates/add_instruction-first_operand-by_variable.dlm".
+lang:physical:filePath[`_add_instruction:first_operand$by_variable] = "facts/add_instruction-first_operand-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +add_instruction(e0),
@@ -33,7 +33,7 @@ lang:physical:filePath[`_add_instruction:first_operand$by_variable] = "facts/pre
 _add_instruction:second_operand$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_add_instruction:second_operand$by_constant] = "\t".
-lang:physical:filePath[`_add_instruction:second_operand$by_constant] = "facts/predicates/add_instruction-second_operand-by_constant.dlm".
+lang:physical:filePath[`_add_instruction:second_operand$by_constant] = "facts/add_instruction-second_operand-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +add_instruction(e0),
@@ -48,7 +48,7 @@ lang:physical:filePath[`_add_instruction:second_operand$by_constant] = "facts/pr
 _add_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_add_instruction:second_operand$by_variable] = "\t".
-lang:physical:filePath[`_add_instruction:second_operand$by_variable] = "facts/predicates/add_instruction-second_operand-by_variable.dlm".
+lang:physical:filePath[`_add_instruction:second_operand$by_variable] = "facts/add_instruction-second_operand-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +add_instruction(e0),
@@ -65,7 +65,7 @@ lang:physical:filePath[`_add_instruction:second_operand$by_variable] = "facts/pr
 _alias:aliasee(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_alias:aliasee] = "\t".
-lang:physical:filePath[`_alias:aliasee] = "facts/predicates/alias-aliasee.dlm".
+lang:physical:filePath[`_alias:aliasee] = "facts/alias-aliasee.dlm".
 
 +alias:value(e0:v0),
 +alias(e0),
@@ -78,7 +78,7 @@ lang:physical:filePath[`_alias:aliasee] = "facts/predicates/alias-aliasee.dlm".
 _alias:linkage_type(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_alias:linkage_type] = "\t".
-lang:physical:filePath[`_alias:linkage_type] = "facts/predicates/alias-linkage_type.dlm".
+lang:physical:filePath[`_alias:linkage_type] = "facts/alias-linkage_type.dlm".
 
 +alias:value(e0:v0),
 +alias(e0),
@@ -93,7 +93,7 @@ lang:physical:filePath[`_alias:linkage_type] = "facts/predicates/alias-linkage_t
 _alias:type(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_alias:type] = "\t".
-lang:physical:filePath[`_alias:type] = "facts/predicates/alias-type.dlm".
+lang:physical:filePath[`_alias:type] = "facts/alias-type.dlm".
 
 +alias:value(e0:v0),
 +alias(e0),
@@ -108,7 +108,7 @@ lang:physical:filePath[`_alias:type] = "facts/predicates/alias-type.dlm".
 _alias:visibility(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_alias:visibility] = "\t".
-lang:physical:filePath[`_alias:visibility] = "facts/predicates/alias-visibility.dlm".
+lang:physical:filePath[`_alias:visibility] = "facts/alias-visibility.dlm".
 
 +alias:value(e0:v0),
 +alias(e0),
@@ -123,7 +123,7 @@ lang:physical:filePath[`_alias:visibility] = "facts/predicates/alias-visibility.
 _alloca_instruction:alignment(v0, v1) -> string(v0), int[64](v1).
 
 lang:physical:delimiter[`_alloca_instruction:alignment] = "\t".
-lang:physical:filePath[`_alloca_instruction:alignment] = "facts/predicates/alloca_instruction-alignment.dlm".
+lang:physical:filePath[`_alloca_instruction:alignment] = "facts/alloca_instruction-alignment.dlm".
 
 +instruction:id(e0:v0),
 +alloca_instruction(e0),
@@ -136,7 +136,7 @@ lang:physical:filePath[`_alloca_instruction:alignment] = "facts/predicates/alloc
 _alloca_instruction:size$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_alloca_instruction:size$by_constant] = "\t".
-lang:physical:filePath[`_alloca_instruction:size$by_constant] = "facts/predicates/alloca_instruction-size-by_constant.dlm".
+lang:physical:filePath[`_alloca_instruction:size$by_constant] = "facts/alloca_instruction-size-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +alloca_instruction(e0),
@@ -151,7 +151,7 @@ lang:physical:filePath[`_alloca_instruction:size$by_constant] = "facts/predicate
 _alloca_instruction:size$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_alloca_instruction:size$by_variable] = "\t".
-lang:physical:filePath[`_alloca_instruction:size$by_variable] = "facts/predicates/alloca_instruction-size-by_variable.dlm".
+lang:physical:filePath[`_alloca_instruction:size$by_variable] = "facts/alloca_instruction-size-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +alloca_instruction(e0),
@@ -168,7 +168,7 @@ lang:physical:filePath[`_alloca_instruction:size$by_variable] = "facts/predicate
 _alloca_instruction:type(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_alloca_instruction:type] = "\t".
-lang:physical:filePath[`_alloca_instruction:type] = "facts/predicates/alloca_instruction-type.dlm".
+lang:physical:filePath[`_alloca_instruction:type] = "facts/alloca_instruction-type.dlm".
 
 +instruction:id(e0:v0),
 +alloca_instruction(e0),
@@ -183,7 +183,7 @@ lang:physical:filePath[`_alloca_instruction:type] = "facts/predicates/alloca_ins
 _and_instruction:first_operand$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_and_instruction:first_operand$by_constant] = "\t".
-lang:physical:filePath[`_and_instruction:first_operand$by_constant] = "facts/predicates/and_instruction-first_operand-by_constant.dlm".
+lang:physical:filePath[`_and_instruction:first_operand$by_constant] = "facts/and_instruction-first_operand-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +and_instruction(e0),
@@ -198,7 +198,7 @@ lang:physical:filePath[`_and_instruction:first_operand$by_constant] = "facts/pre
 _and_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_and_instruction:first_operand$by_variable] = "\t".
-lang:physical:filePath[`_and_instruction:first_operand$by_variable] = "facts/predicates/and_instruction-first_operand-by_variable.dlm".
+lang:physical:filePath[`_and_instruction:first_operand$by_variable] = "facts/and_instruction-first_operand-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +and_instruction(e0),
@@ -215,7 +215,7 @@ lang:physical:filePath[`_and_instruction:first_operand$by_variable] = "facts/pre
 _and_instruction:second_operand$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_and_instruction:second_operand$by_constant] = "\t".
-lang:physical:filePath[`_and_instruction:second_operand$by_constant] = "facts/predicates/and_instruction-second_operand-by_constant.dlm".
+lang:physical:filePath[`_and_instruction:second_operand$by_constant] = "facts/and_instruction-second_operand-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +and_instruction(e0),
@@ -230,7 +230,7 @@ lang:physical:filePath[`_and_instruction:second_operand$by_constant] = "facts/pr
 _and_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_and_instruction:second_operand$by_variable] = "\t".
-lang:physical:filePath[`_and_instruction:second_operand$by_variable] = "facts/predicates/and_instruction-second_operand-by_variable.dlm".
+lang:physical:filePath[`_and_instruction:second_operand$by_variable] = "facts/and_instruction-second_operand-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +and_instruction(e0),
@@ -247,7 +247,7 @@ lang:physical:filePath[`_and_instruction:second_operand$by_variable] = "facts/pr
 _array_type:component(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_array_type:component] = "\t".
-lang:physical:filePath[`_array_type:component] = "facts/predicates/array_type-component.dlm".
+lang:physical:filePath[`_array_type:component] = "facts/array_type-component.dlm".
 
 +type:id(e0:v0),
 +array_type(e0),
@@ -262,7 +262,7 @@ lang:physical:filePath[`_array_type:component] = "facts/predicates/array_type-co
 _array_type:size(v0, v1) -> string(v0), int[64](v1).
 
 lang:physical:delimiter[`_array_type:size] = "\t".
-lang:physical:filePath[`_array_type:size] = "facts/predicates/array_type-size.dlm".
+lang:physical:filePath[`_array_type:size] = "facts/array_type-size.dlm".
 
 +type:id(e0:v0),
 +array_type(e0),
@@ -275,7 +275,7 @@ lang:physical:filePath[`_array_type:size] = "facts/predicates/array_type-size.dl
 _ashr_instruction:first_operand$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_ashr_instruction:first_operand$by_constant] = "\t".
-lang:physical:filePath[`_ashr_instruction:first_operand$by_constant] = "facts/predicates/ashr_instruction-first_operand-by_constant.dlm".
+lang:physical:filePath[`_ashr_instruction:first_operand$by_constant] = "facts/ashr_instruction-first_operand-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +ashr_instruction(e0),
@@ -290,7 +290,7 @@ lang:physical:filePath[`_ashr_instruction:first_operand$by_constant] = "facts/pr
 _ashr_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_ashr_instruction:first_operand$by_variable] = "\t".
-lang:physical:filePath[`_ashr_instruction:first_operand$by_variable] = "facts/predicates/ashr_instruction-first_operand-by_variable.dlm".
+lang:physical:filePath[`_ashr_instruction:first_operand$by_variable] = "facts/ashr_instruction-first_operand-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +ashr_instruction(e0),
@@ -307,7 +307,7 @@ lang:physical:filePath[`_ashr_instruction:first_operand$by_variable] = "facts/pr
 _ashr_instruction:second_operand$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_ashr_instruction:second_operand$by_constant] = "\t".
-lang:physical:filePath[`_ashr_instruction:second_operand$by_constant] = "facts/predicates/ashr_instruction-second_operand-by_constant.dlm".
+lang:physical:filePath[`_ashr_instruction:second_operand$by_constant] = "facts/ashr_instruction-second_operand-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +ashr_instruction(e0),
@@ -322,7 +322,7 @@ lang:physical:filePath[`_ashr_instruction:second_operand$by_constant] = "facts/p
 _ashr_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_ashr_instruction:second_operand$by_variable] = "\t".
-lang:physical:filePath[`_ashr_instruction:second_operand$by_variable] = "facts/predicates/ashr_instruction-second_operand-by_variable.dlm".
+lang:physical:filePath[`_ashr_instruction:second_operand$by_variable] = "facts/ashr_instruction-second_operand-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +ashr_instruction(e0),
@@ -339,7 +339,7 @@ lang:physical:filePath[`_ashr_instruction:second_operand$by_variable] = "facts/p
 _atomicrmw_instruction:address$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_atomicrmw_instruction:address$by_constant] = "\t".
-lang:physical:filePath[`_atomicrmw_instruction:address$by_constant] = "facts/predicates/atomicrmw_instruction-address-by_constant.dlm".
+lang:physical:filePath[`_atomicrmw_instruction:address$by_constant] = "facts/atomicrmw_instruction-address-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +atomicrmw_instruction(e0),
@@ -354,7 +354,7 @@ lang:physical:filePath[`_atomicrmw_instruction:address$by_constant] = "facts/pre
 _atomicrmw_instruction:address$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_atomicrmw_instruction:address$by_variable] = "\t".
-lang:physical:filePath[`_atomicrmw_instruction:address$by_variable] = "facts/predicates/atomicrmw_instruction-address-by_variable.dlm".
+lang:physical:filePath[`_atomicrmw_instruction:address$by_variable] = "facts/atomicrmw_instruction-address-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +atomicrmw_instruction(e0),
@@ -371,7 +371,7 @@ lang:physical:filePath[`_atomicrmw_instruction:address$by_variable] = "facts/pre
 _atomicrmw_instruction:operation(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_atomicrmw_instruction:operation] = "\t".
-lang:physical:filePath[`_atomicrmw_instruction:operation] = "facts/predicates/atomicrmw_instruction-operation.dlm".
+lang:physical:filePath[`_atomicrmw_instruction:operation] = "facts/atomicrmw_instruction-operation.dlm".
 
 +instruction:id(e0:v0),
 +atomicrmw_instruction(e0),
@@ -386,7 +386,7 @@ lang:physical:filePath[`_atomicrmw_instruction:operation] = "facts/predicates/at
 _atomicrmw_instruction:ordering(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_atomicrmw_instruction:ordering] = "\t".
-lang:physical:filePath[`_atomicrmw_instruction:ordering] = "facts/predicates/atomicrmw_instruction-ordering.dlm".
+lang:physical:filePath[`_atomicrmw_instruction:ordering] = "facts/atomicrmw_instruction-ordering.dlm".
 
 +instruction:id(e0:v0),
 +atomicrmw_instruction(e0),
@@ -401,7 +401,7 @@ lang:physical:filePath[`_atomicrmw_instruction:ordering] = "facts/predicates/ato
 _atomicrmw_instruction:value$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_atomicrmw_instruction:value$by_constant] = "\t".
-lang:physical:filePath[`_atomicrmw_instruction:value$by_constant] = "facts/predicates/atomicrmw_instruction-value-by_constant.dlm".
+lang:physical:filePath[`_atomicrmw_instruction:value$by_constant] = "facts/atomicrmw_instruction-value-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +atomicrmw_instruction(e0),
@@ -416,7 +416,7 @@ lang:physical:filePath[`_atomicrmw_instruction:value$by_constant] = "facts/predi
 _atomicrmw_instruction:value$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_atomicrmw_instruction:value$by_variable] = "\t".
-lang:physical:filePath[`_atomicrmw_instruction:value$by_variable] = "facts/predicates/atomicrmw_instruction-value-by_variable.dlm".
+lang:physical:filePath[`_atomicrmw_instruction:value$by_variable] = "facts/atomicrmw_instruction-value-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +atomicrmw_instruction(e0),
@@ -433,7 +433,7 @@ lang:physical:filePath[`_atomicrmw_instruction:value$by_variable] = "facts/predi
 _atomicrmw_instruction:volatile(v0) -> string(v0).
 
 lang:physical:delimiter[`_atomicrmw_instruction:volatile] = "\t".
-lang:physical:filePath[`_atomicrmw_instruction:volatile] = "facts/predicates/atomicrmw_instruction-volatile.dlm".
+lang:physical:filePath[`_atomicrmw_instruction:volatile] = "facts/atomicrmw_instruction-volatile.dlm".
 
 +instruction:id(e0:v0),
 +atomicrmw_instruction(e0),
@@ -446,7 +446,7 @@ lang:physical:filePath[`_atomicrmw_instruction:volatile] = "facts/predicates/ato
 _basicblock:pred_aux(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_basicblock:pred_aux] = "\t".
-lang:physical:filePath[`_basicblock:pred_aux] = "facts/predicates/basicblock-pred_aux.dlm".
+lang:physical:filePath[`_basicblock:pred_aux] = "facts/basicblock-pred_aux.dlm".
 
 +variable:id(e0:v0),
 +variable(e0),
@@ -461,7 +461,7 @@ lang:physical:filePath[`_basicblock:pred_aux] = "facts/predicates/basicblock-pre
 _bitcast_constant_expression:from(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_bitcast_constant_expression:from] = "\t".
-lang:physical:filePath[`_bitcast_constant_expression:from] = "facts/predicates/bitcast_constant_expression-from.dlm".
+lang:physical:filePath[`_bitcast_constant_expression:from] = "facts/bitcast_constant_expression-from.dlm".
 
 +constant:id(e0:v0),
 +bitcast_constant_expression(e0),
@@ -476,7 +476,7 @@ lang:physical:filePath[`_bitcast_constant_expression:from] = "facts/predicates/b
 _bitcast_instruction:from$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_bitcast_instruction:from$by_constant] = "\t".
-lang:physical:filePath[`_bitcast_instruction:from$by_constant] = "facts/predicates/bitcast_instruction-from-by_constant.dlm".
+lang:physical:filePath[`_bitcast_instruction:from$by_constant] = "facts/bitcast_instruction-from-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +bitcast_instruction(e0),
@@ -491,7 +491,7 @@ lang:physical:filePath[`_bitcast_instruction:from$by_constant] = "facts/predicat
 _bitcast_instruction:from$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_bitcast_instruction:from$by_variable] = "\t".
-lang:physical:filePath[`_bitcast_instruction:from$by_variable] = "facts/predicates/bitcast_instruction-from-by_variable.dlm".
+lang:physical:filePath[`_bitcast_instruction:from$by_variable] = "facts/bitcast_instruction-from-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +bitcast_instruction(e0),
@@ -508,7 +508,7 @@ lang:physical:filePath[`_bitcast_instruction:from$by_variable] = "facts/predicat
 _bitcast_instruction:to_type(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_bitcast_instruction:to_type] = "\t".
-lang:physical:filePath[`_bitcast_instruction:to_type] = "facts/predicates/bitcast_instruction-to_type.dlm".
+lang:physical:filePath[`_bitcast_instruction:to_type] = "facts/bitcast_instruction-to_type.dlm".
 
 +instruction:id(e0:v0),
 +bitcast_instruction(e0),
@@ -523,7 +523,7 @@ lang:physical:filePath[`_bitcast_instruction:to_type] = "facts/predicates/bitcas
 _br_cond_instruction:condition$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_br_cond_instruction:condition$by_constant] = "\t".
-lang:physical:filePath[`_br_cond_instruction:condition$by_constant] = "facts/predicates/br_cond_instruction-condition-by_constant.dlm".
+lang:physical:filePath[`_br_cond_instruction:condition$by_constant] = "facts/br_cond_instruction-condition-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +br_cond_instruction(e0),
@@ -538,7 +538,7 @@ lang:physical:filePath[`_br_cond_instruction:condition$by_constant] = "facts/pre
 _br_cond_instruction:condition$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_br_cond_instruction:condition$by_variable] = "\t".
-lang:physical:filePath[`_br_cond_instruction:condition$by_variable] = "facts/predicates/br_cond_instruction-condition-by_variable.dlm".
+lang:physical:filePath[`_br_cond_instruction:condition$by_variable] = "facts/br_cond_instruction-condition-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +br_cond_instruction(e0),
@@ -555,7 +555,7 @@ lang:physical:filePath[`_br_cond_instruction:condition$by_variable] = "facts/pre
 _br_cond_instruction:iffalse(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_br_cond_instruction:iffalse] = "\t".
-lang:physical:filePath[`_br_cond_instruction:iffalse] = "facts/predicates/br_cond_instruction-iffalse.dlm".
+lang:physical:filePath[`_br_cond_instruction:iffalse] = "facts/br_cond_instruction-iffalse.dlm".
 
 +instruction:id(e0:v0),
 +br_cond_instruction(e0),
@@ -570,7 +570,7 @@ lang:physical:filePath[`_br_cond_instruction:iffalse] = "facts/predicates/br_con
 _br_cond_instruction:iftrue(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_br_cond_instruction:iftrue] = "\t".
-lang:physical:filePath[`_br_cond_instruction:iftrue] = "facts/predicates/br_cond_instruction-iftrue.dlm".
+lang:physical:filePath[`_br_cond_instruction:iftrue] = "facts/br_cond_instruction-iftrue.dlm".
 
 +instruction:id(e0:v0),
 +br_cond_instruction(e0),
@@ -585,7 +585,7 @@ lang:physical:filePath[`_br_cond_instruction:iftrue] = "facts/predicates/br_cond
 _br_uncond_instruction:dest(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_br_uncond_instruction:dest] = "\t".
-lang:physical:filePath[`_br_uncond_instruction:dest] = "facts/predicates/br_uncond_instruction-dest.dlm".
+lang:physical:filePath[`_br_uncond_instruction:dest] = "facts/br_uncond_instruction-dest.dlm".
 
 +instruction:id(e0:v0),
 +br_uncond_instruction(e0),
@@ -600,7 +600,7 @@ lang:physical:filePath[`_br_uncond_instruction:dest] = "facts/predicates/br_unco
 _call_instruction:arg$by_constant(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
 
 lang:physical:delimiter[`_call_instruction:arg$by_constant] = "\t".
-lang:physical:filePath[`_call_instruction:arg$by_constant] = "facts/predicates/call_instruction-arg-by_constant.dlm".
+lang:physical:filePath[`_call_instruction:arg$by_constant] = "facts/call_instruction-arg-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +call_instruction(e0),
@@ -615,7 +615,7 @@ lang:physical:filePath[`_call_instruction:arg$by_constant] = "facts/predicates/c
 _call_instruction:arg$by_variable(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
 
 lang:physical:delimiter[`_call_instruction:arg$by_variable] = "\t".
-lang:physical:filePath[`_call_instruction:arg$by_variable] = "facts/predicates/call_instruction-arg-by_variable.dlm".
+lang:physical:filePath[`_call_instruction:arg$by_variable] = "facts/call_instruction-arg-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +call_instruction(e0),
@@ -632,7 +632,7 @@ lang:physical:filePath[`_call_instruction:arg$by_variable] = "facts/predicates/c
 _call_instruction:calling_convention(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_call_instruction:calling_convention] = "\t".
-lang:physical:filePath[`_call_instruction:calling_convention] = "facts/predicates/call_instruction-calling_convention.dlm".
+lang:physical:filePath[`_call_instruction:calling_convention] = "facts/call_instruction-calling_convention.dlm".
 
 +instruction:id(e0:v0),
 +call_instruction(e0),
@@ -647,7 +647,7 @@ lang:physical:filePath[`_call_instruction:calling_convention] = "facts/predicate
 _call_instruction:fn_attribute(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_call_instruction:fn_attribute] = "\t".
-lang:physical:filePath[`_call_instruction:fn_attribute] = "facts/predicates/call_instruction-fn_attribute.dlm".
+lang:physical:filePath[`_call_instruction:fn_attribute] = "facts/call_instruction-fn_attribute.dlm".
 
 +instruction:id(e0:v0),
 +call_instruction(e0),
@@ -662,7 +662,7 @@ lang:physical:filePath[`_call_instruction:fn_attribute] = "facts/predicates/call
 _call_instruction:param_attribute(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
 
 lang:physical:delimiter[`_call_instruction:param_attribute] = "\t".
-lang:physical:filePath[`_call_instruction:param_attribute] = "facts/predicates/call_instruction-param_attribute.dlm".
+lang:physical:filePath[`_call_instruction:param_attribute] = "facts/call_instruction-param_attribute.dlm".
 
 +instruction:id(e0:v0),
 +call_instruction(e0),
@@ -677,7 +677,7 @@ lang:physical:filePath[`_call_instruction:param_attribute] = "facts/predicates/c
 _call_instruction:raw_function$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_call_instruction:raw_function$by_constant] = "\t".
-lang:physical:filePath[`_call_instruction:raw_function$by_constant] = "facts/predicates/call_instruction-raw_function-by_constant.dlm".
+lang:physical:filePath[`_call_instruction:raw_function$by_constant] = "facts/call_instruction-raw_function-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +call_instruction(e0),
@@ -692,7 +692,7 @@ lang:physical:filePath[`_call_instruction:raw_function$by_constant] = "facts/pre
 _call_instruction:raw_function$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_call_instruction:raw_function$by_variable] = "\t".
-lang:physical:filePath[`_call_instruction:raw_function$by_variable] = "facts/predicates/call_instruction-raw_function-by_variable.dlm".
+lang:physical:filePath[`_call_instruction:raw_function$by_variable] = "facts/call_instruction-raw_function-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +call_instruction(e0),
@@ -709,7 +709,7 @@ lang:physical:filePath[`_call_instruction:raw_function$by_variable] = "facts/pre
 _call_instruction:return_attribute(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_call_instruction:return_attribute] = "\t".
-lang:physical:filePath[`_call_instruction:return_attribute] = "facts/predicates/call_instruction-return_attribute.dlm".
+lang:physical:filePath[`_call_instruction:return_attribute] = "facts/call_instruction-return_attribute.dlm".
 
 +instruction:id(e0:v0),
 +call_instruction(e0),
@@ -724,7 +724,7 @@ lang:physical:filePath[`_call_instruction:return_attribute] = "facts/predicates/
 _call_instruction:tail(v0) -> string(v0).
 
 lang:physical:delimiter[`_call_instruction:tail] = "\t".
-lang:physical:filePath[`_call_instruction:tail] = "facts/predicates/call_instruction-tail.dlm".
+lang:physical:filePath[`_call_instruction:tail] = "facts/call_instruction-tail.dlm".
 
 +instruction:id(e0:v0),
 +call_instruction(e0),
@@ -739,7 +739,7 @@ lang:physical:filePath[`_call_instruction:tail] = "facts/predicates/call_instruc
 _cmpxchg_instruction:address$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_cmpxchg_instruction:address$by_constant] = "\t".
-lang:physical:filePath[`_cmpxchg_instruction:address$by_constant] = "facts/predicates/cmpxchg_instruction-address-by_constant.dlm".
+lang:physical:filePath[`_cmpxchg_instruction:address$by_constant] = "facts/cmpxchg_instruction-address-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +cmpxchg_instruction(e0),
@@ -754,7 +754,7 @@ lang:physical:filePath[`_cmpxchg_instruction:address$by_constant] = "facts/predi
 _cmpxchg_instruction:address$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_cmpxchg_instruction:address$by_variable] = "\t".
-lang:physical:filePath[`_cmpxchg_instruction:address$by_variable] = "facts/predicates/cmpxchg_instruction-address-by_variable.dlm".
+lang:physical:filePath[`_cmpxchg_instruction:address$by_variable] = "facts/cmpxchg_instruction-address-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +cmpxchg_instruction(e0),
@@ -771,7 +771,7 @@ lang:physical:filePath[`_cmpxchg_instruction:address$by_variable] = "facts/predi
 _cmpxchg_instruction:cmp$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_cmpxchg_instruction:cmp$by_constant] = "\t".
-lang:physical:filePath[`_cmpxchg_instruction:cmp$by_constant] = "facts/predicates/cmpxchg_instruction-cmp-by_constant.dlm".
+lang:physical:filePath[`_cmpxchg_instruction:cmp$by_constant] = "facts/cmpxchg_instruction-cmp-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +cmpxchg_instruction(e0),
@@ -786,7 +786,7 @@ lang:physical:filePath[`_cmpxchg_instruction:cmp$by_constant] = "facts/predicate
 _cmpxchg_instruction:cmp$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_cmpxchg_instruction:cmp$by_variable] = "\t".
-lang:physical:filePath[`_cmpxchg_instruction:cmp$by_variable] = "facts/predicates/cmpxchg_instruction-cmp-by_variable.dlm".
+lang:physical:filePath[`_cmpxchg_instruction:cmp$by_variable] = "facts/cmpxchg_instruction-cmp-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +cmpxchg_instruction(e0),
@@ -803,7 +803,7 @@ lang:physical:filePath[`_cmpxchg_instruction:cmp$by_variable] = "facts/predicate
 _cmpxchg_instruction:new$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_cmpxchg_instruction:new$by_constant] = "\t".
-lang:physical:filePath[`_cmpxchg_instruction:new$by_constant] = "facts/predicates/cmpxchg_instruction-new-by_constant.dlm".
+lang:physical:filePath[`_cmpxchg_instruction:new$by_constant] = "facts/cmpxchg_instruction-new-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +cmpxchg_instruction(e0),
@@ -818,7 +818,7 @@ lang:physical:filePath[`_cmpxchg_instruction:new$by_constant] = "facts/predicate
 _cmpxchg_instruction:new$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_cmpxchg_instruction:new$by_variable] = "\t".
-lang:physical:filePath[`_cmpxchg_instruction:new$by_variable] = "facts/predicates/cmpxchg_instruction-new-by_variable.dlm".
+lang:physical:filePath[`_cmpxchg_instruction:new$by_variable] = "facts/cmpxchg_instruction-new-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +cmpxchg_instruction(e0),
@@ -835,7 +835,7 @@ lang:physical:filePath[`_cmpxchg_instruction:new$by_variable] = "facts/predicate
 _cmpxchg_instruction:ordering(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_cmpxchg_instruction:ordering] = "\t".
-lang:physical:filePath[`_cmpxchg_instruction:ordering] = "facts/predicates/cmpxchg_instruction-ordering.dlm".
+lang:physical:filePath[`_cmpxchg_instruction:ordering] = "facts/cmpxchg_instruction-ordering.dlm".
 
 +instruction:id(e0:v0),
 +cmpxchg_instruction(e0),
@@ -850,7 +850,7 @@ lang:physical:filePath[`_cmpxchg_instruction:ordering] = "facts/predicates/cmpxc
 _cmpxchg_instruction:volatile(v0) -> string(v0).
 
 lang:physical:delimiter[`_cmpxchg_instruction:volatile] = "\t".
-lang:physical:filePath[`_cmpxchg_instruction:volatile] = "facts/predicates/cmpxchg_instruction-volatile.dlm".
+lang:physical:filePath[`_cmpxchg_instruction:volatile] = "facts/cmpxchg_instruction-volatile.dlm".
 
 +instruction:id(e0:v0),
 +cmpxchg_instruction(e0),
@@ -863,7 +863,7 @@ lang:physical:filePath[`_cmpxchg_instruction:volatile] = "facts/predicates/cmpxc
 _constant:to_int(v0, v1) -> string(v0), int[64](v1).
 
 lang:physical:delimiter[`_constant:to_int] = "\t".
-lang:physical:filePath[`_constant:to_int] = "facts/predicates/constant-to_int.dlm".
+lang:physical:filePath[`_constant:to_int] = "facts/constant-to_int.dlm".
 
 +constant:id(e0:v0),
 +constant(e0),
@@ -876,7 +876,7 @@ lang:physical:filePath[`_constant:to_int] = "facts/predicates/constant-to_int.dl
 _constant:type(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_constant:type] = "\t".
-lang:physical:filePath[`_constant:type] = "facts/predicates/constant-type.dlm".
+lang:physical:filePath[`_constant:type] = "facts/constant-type.dlm".
 
 +constant:id(e0:v0),
 +constant(e0),
@@ -891,7 +891,7 @@ lang:physical:filePath[`_constant:type] = "facts/predicates/constant-type.dlm".
 _constant_array:index(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
 
 lang:physical:delimiter[`_constant_array:index] = "\t".
-lang:physical:filePath[`_constant_array:index] = "facts/predicates/constant_array-index.dlm".
+lang:physical:filePath[`_constant_array:index] = "facts/constant_array-index.dlm".
 
 +constant:id(e0:v0),
 +constant_array(e0),
@@ -906,7 +906,7 @@ lang:physical:filePath[`_constant_array:index] = "facts/predicates/constant_arra
 _constant_array:size(v0, v1) -> string(v0), int[64](v1).
 
 lang:physical:delimiter[`_constant_array:size] = "\t".
-lang:physical:filePath[`_constant_array:size] = "facts/predicates/constant_array-size.dlm".
+lang:physical:filePath[`_constant_array:size] = "facts/constant_array-size.dlm".
 
 +constant:id(e0:v0),
 +constant_array(e0),
@@ -919,7 +919,7 @@ lang:physical:filePath[`_constant_array:size] = "facts/predicates/constant_array
 _constant_struct:index(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
 
 lang:physical:delimiter[`_constant_struct:index] = "\t".
-lang:physical:filePath[`_constant_struct:index] = "facts/predicates/constant_struct-index.dlm".
+lang:physical:filePath[`_constant_struct:index] = "facts/constant_struct-index.dlm".
 
 +constant:id(e0:v0),
 +constant_struct(e0),
@@ -934,7 +934,7 @@ lang:physical:filePath[`_constant_struct:index] = "facts/predicates/constant_str
 _constant_struct:size(v0, v1) -> string(v0), int[64](v1).
 
 lang:physical:delimiter[`_constant_struct:size] = "\t".
-lang:physical:filePath[`_constant_struct:size] = "facts/predicates/constant_struct-size.dlm".
+lang:physical:filePath[`_constant_struct:size] = "facts/constant_struct-size.dlm".
 
 +constant:id(e0:v0),
 +constant_struct(e0),
@@ -947,7 +947,7 @@ lang:physical:filePath[`_constant_struct:size] = "facts/predicates/constant_stru
 _constant_vector:index(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
 
 lang:physical:delimiter[`_constant_vector:index] = "\t".
-lang:physical:filePath[`_constant_vector:index] = "facts/predicates/constant_vector-index.dlm".
+lang:physical:filePath[`_constant_vector:index] = "facts/constant_vector-index.dlm".
 
 +constant:id(e0:v0),
 +constant_vector(e0),
@@ -962,7 +962,7 @@ lang:physical:filePath[`_constant_vector:index] = "facts/predicates/constant_vec
 _constant_vector:size(v0, v1) -> string(v0), int[64](v1).
 
 lang:physical:delimiter[`_constant_vector:size] = "\t".
-lang:physical:filePath[`_constant_vector:size] = "facts/predicates/constant_vector-size.dlm".
+lang:physical:filePath[`_constant_vector:size] = "facts/constant_vector-size.dlm".
 
 +constant:id(e0:v0),
 +constant_vector(e0),
@@ -975,7 +975,7 @@ lang:physical:filePath[`_constant_vector:size] = "facts/predicates/constant_vect
 _di:global_variable:name(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_di:global_variable:name] = "\t".
-lang:physical:filePath[`_di:global_variable:name] = "facts/predicates/di-global_variable-name.dlm".
+lang:physical:filePath[`_di:global_variable:name] = "facts/di-global_variable-name.dlm".
 
 +di:entry:id(e0:v0),
 +di:global_variable(e0),
@@ -988,7 +988,7 @@ lang:physical:filePath[`_di:global_variable:name] = "facts/predicates/di-global_
 _di:global_variable:scope(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_di:global_variable:scope] = "\t".
-lang:physical:filePath[`_di:global_variable:scope] = "facts/predicates/di-global_variable-scope.dlm".
+lang:physical:filePath[`_di:global_variable:scope] = "facts/di-global_variable-scope.dlm".
 
 +di:entry:id(e0:v0),
 +di:global_variable(e0),
@@ -1003,7 +1003,7 @@ lang:physical:filePath[`_di:global_variable:scope] = "facts/predicates/di-global
 _extractelement_instruction:base$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_extractelement_instruction:base$by_constant] = "\t".
-lang:physical:filePath[`_extractelement_instruction:base$by_constant] = "facts/predicates/extractelement_instruction-base-by_constant.dlm".
+lang:physical:filePath[`_extractelement_instruction:base$by_constant] = "facts/extractelement_instruction-base-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +extractelement_instruction(e0),
@@ -1018,7 +1018,7 @@ lang:physical:filePath[`_extractelement_instruction:base$by_constant] = "facts/p
 _extractelement_instruction:base$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_extractelement_instruction:base$by_variable] = "\t".
-lang:physical:filePath[`_extractelement_instruction:base$by_variable] = "facts/predicates/extractelement_instruction-base-by_variable.dlm".
+lang:physical:filePath[`_extractelement_instruction:base$by_variable] = "facts/extractelement_instruction-base-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +extractelement_instruction(e0),
@@ -1035,7 +1035,7 @@ lang:physical:filePath[`_extractelement_instruction:base$by_variable] = "facts/p
 _extractelement_instruction:index$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_extractelement_instruction:index$by_constant] = "\t".
-lang:physical:filePath[`_extractelement_instruction:index$by_constant] = "facts/predicates/extractelement_instruction-index-by_constant.dlm".
+lang:physical:filePath[`_extractelement_instruction:index$by_constant] = "facts/extractelement_instruction-index-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +extractelement_instruction(e0),
@@ -1050,7 +1050,7 @@ lang:physical:filePath[`_extractelement_instruction:index$by_constant] = "facts/
 _extractelement_instruction:index$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_extractelement_instruction:index$by_variable] = "\t".
-lang:physical:filePath[`_extractelement_instruction:index$by_variable] = "facts/predicates/extractelement_instruction-index-by_variable.dlm".
+lang:physical:filePath[`_extractelement_instruction:index$by_variable] = "facts/extractelement_instruction-index-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +extractelement_instruction(e0),
@@ -1067,7 +1067,7 @@ lang:physical:filePath[`_extractelement_instruction:index$by_variable] = "facts/
 _extractvalue_instruction:base$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_extractvalue_instruction:base$by_constant] = "\t".
-lang:physical:filePath[`_extractvalue_instruction:base$by_constant] = "facts/predicates/extractvalue_instruction-base-by_constant.dlm".
+lang:physical:filePath[`_extractvalue_instruction:base$by_constant] = "facts/extractvalue_instruction-base-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +extractvalue_instruction(e0),
@@ -1082,7 +1082,7 @@ lang:physical:filePath[`_extractvalue_instruction:base$by_constant] = "facts/pre
 _extractvalue_instruction:base$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_extractvalue_instruction:base$by_variable] = "\t".
-lang:physical:filePath[`_extractvalue_instruction:base$by_variable] = "facts/predicates/extractvalue_instruction-base-by_variable.dlm".
+lang:physical:filePath[`_extractvalue_instruction:base$by_variable] = "facts/extractvalue_instruction-base-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +extractvalue_instruction(e0),
@@ -1099,7 +1099,7 @@ lang:physical:filePath[`_extractvalue_instruction:base$by_variable] = "facts/pre
 _extractvalue_instruction:index(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
 
 lang:physical:delimiter[`_extractvalue_instruction:index] = "\t".
-lang:physical:filePath[`_extractvalue_instruction:index] = "facts/predicates/extractvalue_instruction-index.dlm".
+lang:physical:filePath[`_extractvalue_instruction:index] = "facts/extractvalue_instruction-index.dlm".
 
 +instruction:id(e0:v0),
 +extractvalue_instruction(e0),
@@ -1114,7 +1114,7 @@ lang:physical:filePath[`_extractvalue_instruction:index] = "facts/predicates/ext
 _extractvalue_instruction:nindices(v0, v1) -> string(v0), int[64](v1).
 
 lang:physical:delimiter[`_extractvalue_instruction:nindices] = "\t".
-lang:physical:filePath[`_extractvalue_instruction:nindices] = "facts/predicates/extractvalue_instruction-nindices.dlm".
+lang:physical:filePath[`_extractvalue_instruction:nindices] = "facts/extractvalue_instruction-nindices.dlm".
 
 +instruction:id(e0:v0),
 +extractvalue_instruction(e0),
@@ -1127,7 +1127,7 @@ lang:physical:filePath[`_extractvalue_instruction:nindices] = "facts/predicates/
 _fadd_instruction:first_operand$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_fadd_instruction:first_operand$by_constant] = "\t".
-lang:physical:filePath[`_fadd_instruction:first_operand$by_constant] = "facts/predicates/fadd_instruction-first_operand-by_constant.dlm".
+lang:physical:filePath[`_fadd_instruction:first_operand$by_constant] = "facts/fadd_instruction-first_operand-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +fadd_instruction(e0),
@@ -1142,7 +1142,7 @@ lang:physical:filePath[`_fadd_instruction:first_operand$by_constant] = "facts/pr
 _fadd_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_fadd_instruction:first_operand$by_variable] = "\t".
-lang:physical:filePath[`_fadd_instruction:first_operand$by_variable] = "facts/predicates/fadd_instruction-first_operand-by_variable.dlm".
+lang:physical:filePath[`_fadd_instruction:first_operand$by_variable] = "facts/fadd_instruction-first_operand-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +fadd_instruction(e0),
@@ -1159,7 +1159,7 @@ lang:physical:filePath[`_fadd_instruction:first_operand$by_variable] = "facts/pr
 _fadd_instruction:second_operand$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_fadd_instruction:second_operand$by_constant] = "\t".
-lang:physical:filePath[`_fadd_instruction:second_operand$by_constant] = "facts/predicates/fadd_instruction-second_operand-by_constant.dlm".
+lang:physical:filePath[`_fadd_instruction:second_operand$by_constant] = "facts/fadd_instruction-second_operand-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +fadd_instruction(e0),
@@ -1174,7 +1174,7 @@ lang:physical:filePath[`_fadd_instruction:second_operand$by_constant] = "facts/p
 _fadd_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_fadd_instruction:second_operand$by_variable] = "\t".
-lang:physical:filePath[`_fadd_instruction:second_operand$by_variable] = "facts/predicates/fadd_instruction-second_operand-by_variable.dlm".
+lang:physical:filePath[`_fadd_instruction:second_operand$by_variable] = "facts/fadd_instruction-second_operand-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +fadd_instruction(e0),
@@ -1191,7 +1191,7 @@ lang:physical:filePath[`_fadd_instruction:second_operand$by_variable] = "facts/p
 _fcmp_instruction:condition(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_fcmp_instruction:condition] = "\t".
-lang:physical:filePath[`_fcmp_instruction:condition] = "facts/predicates/fcmp_instruction-condition.dlm".
+lang:physical:filePath[`_fcmp_instruction:condition] = "facts/fcmp_instruction-condition.dlm".
 
 +instruction:id(e0:v0),
 +fcmp_instruction(e0),
@@ -1206,7 +1206,7 @@ lang:physical:filePath[`_fcmp_instruction:condition] = "facts/predicates/fcmp_in
 _fcmp_instruction:first_operand$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_fcmp_instruction:first_operand$by_constant] = "\t".
-lang:physical:filePath[`_fcmp_instruction:first_operand$by_constant] = "facts/predicates/fcmp_instruction-first_operand-by_constant.dlm".
+lang:physical:filePath[`_fcmp_instruction:first_operand$by_constant] = "facts/fcmp_instruction-first_operand-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +fcmp_instruction(e0),
@@ -1221,7 +1221,7 @@ lang:physical:filePath[`_fcmp_instruction:first_operand$by_constant] = "facts/pr
 _fcmp_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_fcmp_instruction:first_operand$by_variable] = "\t".
-lang:physical:filePath[`_fcmp_instruction:first_operand$by_variable] = "facts/predicates/fcmp_instruction-first_operand-by_variable.dlm".
+lang:physical:filePath[`_fcmp_instruction:first_operand$by_variable] = "facts/fcmp_instruction-first_operand-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +fcmp_instruction(e0),
@@ -1238,7 +1238,7 @@ lang:physical:filePath[`_fcmp_instruction:first_operand$by_variable] = "facts/pr
 _fcmp_instruction:second_operand$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_fcmp_instruction:second_operand$by_constant] = "\t".
-lang:physical:filePath[`_fcmp_instruction:second_operand$by_constant] = "facts/predicates/fcmp_instruction-second_operand-by_constant.dlm".
+lang:physical:filePath[`_fcmp_instruction:second_operand$by_constant] = "facts/fcmp_instruction-second_operand-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +fcmp_instruction(e0),
@@ -1253,7 +1253,7 @@ lang:physical:filePath[`_fcmp_instruction:second_operand$by_constant] = "facts/p
 _fcmp_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_fcmp_instruction:second_operand$by_variable] = "\t".
-lang:physical:filePath[`_fcmp_instruction:second_operand$by_variable] = "facts/predicates/fcmp_instruction-second_operand-by_variable.dlm".
+lang:physical:filePath[`_fcmp_instruction:second_operand$by_variable] = "facts/fcmp_instruction-second_operand-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +fcmp_instruction(e0),
@@ -1270,7 +1270,7 @@ lang:physical:filePath[`_fcmp_instruction:second_operand$by_variable] = "facts/p
 _fdiv_instruction:first_operand$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_fdiv_instruction:first_operand$by_constant] = "\t".
-lang:physical:filePath[`_fdiv_instruction:first_operand$by_constant] = "facts/predicates/fdiv_instruction-first_operand-by_constant.dlm".
+lang:physical:filePath[`_fdiv_instruction:first_operand$by_constant] = "facts/fdiv_instruction-first_operand-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +fdiv_instruction(e0),
@@ -1285,7 +1285,7 @@ lang:physical:filePath[`_fdiv_instruction:first_operand$by_constant] = "facts/pr
 _fdiv_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_fdiv_instruction:first_operand$by_variable] = "\t".
-lang:physical:filePath[`_fdiv_instruction:first_operand$by_variable] = "facts/predicates/fdiv_instruction-first_operand-by_variable.dlm".
+lang:physical:filePath[`_fdiv_instruction:first_operand$by_variable] = "facts/fdiv_instruction-first_operand-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +fdiv_instruction(e0),
@@ -1302,7 +1302,7 @@ lang:physical:filePath[`_fdiv_instruction:first_operand$by_variable] = "facts/pr
 _fdiv_instruction:second_operand$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_fdiv_instruction:second_operand$by_constant] = "\t".
-lang:physical:filePath[`_fdiv_instruction:second_operand$by_constant] = "facts/predicates/fdiv_instruction-second_operand-by_constant.dlm".
+lang:physical:filePath[`_fdiv_instruction:second_operand$by_constant] = "facts/fdiv_instruction-second_operand-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +fdiv_instruction(e0),
@@ -1317,7 +1317,7 @@ lang:physical:filePath[`_fdiv_instruction:second_operand$by_constant] = "facts/p
 _fdiv_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_fdiv_instruction:second_operand$by_variable] = "\t".
-lang:physical:filePath[`_fdiv_instruction:second_operand$by_variable] = "facts/predicates/fdiv_instruction-second_operand-by_variable.dlm".
+lang:physical:filePath[`_fdiv_instruction:second_operand$by_variable] = "facts/fdiv_instruction-second_operand-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +fdiv_instruction(e0),
@@ -1334,7 +1334,7 @@ lang:physical:filePath[`_fdiv_instruction:second_operand$by_variable] = "facts/p
 _fence_instruction:ordering(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_fence_instruction:ordering] = "\t".
-lang:physical:filePath[`_fence_instruction:ordering] = "facts/predicates/fence_instruction-ordering.dlm".
+lang:physical:filePath[`_fence_instruction:ordering] = "facts/fence_instruction-ordering.dlm".
 
 +instruction:id(e0:v0),
 +fence_instruction(e0),
@@ -1349,7 +1349,7 @@ lang:physical:filePath[`_fence_instruction:ordering] = "facts/predicates/fence_i
 _fmul_instruction:first_operand$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_fmul_instruction:first_operand$by_constant] = "\t".
-lang:physical:filePath[`_fmul_instruction:first_operand$by_constant] = "facts/predicates/fmul_instruction-first_operand-by_constant.dlm".
+lang:physical:filePath[`_fmul_instruction:first_operand$by_constant] = "facts/fmul_instruction-first_operand-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +fmul_instruction(e0),
@@ -1364,7 +1364,7 @@ lang:physical:filePath[`_fmul_instruction:first_operand$by_constant] = "facts/pr
 _fmul_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_fmul_instruction:first_operand$by_variable] = "\t".
-lang:physical:filePath[`_fmul_instruction:first_operand$by_variable] = "facts/predicates/fmul_instruction-first_operand-by_variable.dlm".
+lang:physical:filePath[`_fmul_instruction:first_operand$by_variable] = "facts/fmul_instruction-first_operand-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +fmul_instruction(e0),
@@ -1381,7 +1381,7 @@ lang:physical:filePath[`_fmul_instruction:first_operand$by_variable] = "facts/pr
 _fmul_instruction:second_operand$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_fmul_instruction:second_operand$by_constant] = "\t".
-lang:physical:filePath[`_fmul_instruction:second_operand$by_constant] = "facts/predicates/fmul_instruction-second_operand-by_constant.dlm".
+lang:physical:filePath[`_fmul_instruction:second_operand$by_constant] = "facts/fmul_instruction-second_operand-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +fmul_instruction(e0),
@@ -1396,7 +1396,7 @@ lang:physical:filePath[`_fmul_instruction:second_operand$by_constant] = "facts/p
 _fmul_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_fmul_instruction:second_operand$by_variable] = "\t".
-lang:physical:filePath[`_fmul_instruction:second_operand$by_variable] = "facts/predicates/fmul_instruction-second_operand-by_variable.dlm".
+lang:physical:filePath[`_fmul_instruction:second_operand$by_variable] = "facts/fmul_instruction-second_operand-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +fmul_instruction(e0),
@@ -1413,7 +1413,7 @@ lang:physical:filePath[`_fmul_instruction:second_operand$by_variable] = "facts/p
 _fpext_instruction:from$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_fpext_instruction:from$by_constant] = "\t".
-lang:physical:filePath[`_fpext_instruction:from$by_constant] = "facts/predicates/fpext_instruction-from-by_constant.dlm".
+lang:physical:filePath[`_fpext_instruction:from$by_constant] = "facts/fpext_instruction-from-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +fpext_instruction(e0),
@@ -1428,7 +1428,7 @@ lang:physical:filePath[`_fpext_instruction:from$by_constant] = "facts/predicates
 _fpext_instruction:from$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_fpext_instruction:from$by_variable] = "\t".
-lang:physical:filePath[`_fpext_instruction:from$by_variable] = "facts/predicates/fpext_instruction-from-by_variable.dlm".
+lang:physical:filePath[`_fpext_instruction:from$by_variable] = "facts/fpext_instruction-from-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +fpext_instruction(e0),
@@ -1445,7 +1445,7 @@ lang:physical:filePath[`_fpext_instruction:from$by_variable] = "facts/predicates
 _fpext_instruction:to_type(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_fpext_instruction:to_type] = "\t".
-lang:physical:filePath[`_fpext_instruction:to_type] = "facts/predicates/fpext_instruction-to_type.dlm".
+lang:physical:filePath[`_fpext_instruction:to_type] = "facts/fpext_instruction-to_type.dlm".
 
 +instruction:id(e0:v0),
 +fpext_instruction(e0),
@@ -1460,7 +1460,7 @@ lang:physical:filePath[`_fpext_instruction:to_type] = "facts/predicates/fpext_in
 _fptosi_instruction:from$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_fptosi_instruction:from$by_constant] = "\t".
-lang:physical:filePath[`_fptosi_instruction:from$by_constant] = "facts/predicates/fptosi_instruction-from-by_constant.dlm".
+lang:physical:filePath[`_fptosi_instruction:from$by_constant] = "facts/fptosi_instruction-from-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +fptosi_instruction(e0),
@@ -1475,7 +1475,7 @@ lang:physical:filePath[`_fptosi_instruction:from$by_constant] = "facts/predicate
 _fptosi_instruction:from$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_fptosi_instruction:from$by_variable] = "\t".
-lang:physical:filePath[`_fptosi_instruction:from$by_variable] = "facts/predicates/fptosi_instruction-from-by_variable.dlm".
+lang:physical:filePath[`_fptosi_instruction:from$by_variable] = "facts/fptosi_instruction-from-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +fptosi_instruction(e0),
@@ -1492,7 +1492,7 @@ lang:physical:filePath[`_fptosi_instruction:from$by_variable] = "facts/predicate
 _fptosi_instruction:to_type(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_fptosi_instruction:to_type] = "\t".
-lang:physical:filePath[`_fptosi_instruction:to_type] = "facts/predicates/fptosi_instruction-to_type.dlm".
+lang:physical:filePath[`_fptosi_instruction:to_type] = "facts/fptosi_instruction-to_type.dlm".
 
 +instruction:id(e0:v0),
 +fptosi_instruction(e0),
@@ -1507,7 +1507,7 @@ lang:physical:filePath[`_fptosi_instruction:to_type] = "facts/predicates/fptosi_
 _fptoui_instruction:from$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_fptoui_instruction:from$by_constant] = "\t".
-lang:physical:filePath[`_fptoui_instruction:from$by_constant] = "facts/predicates/fptoui_instruction-from-by_constant.dlm".
+lang:physical:filePath[`_fptoui_instruction:from$by_constant] = "facts/fptoui_instruction-from-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +fptoui_instruction(e0),
@@ -1522,7 +1522,7 @@ lang:physical:filePath[`_fptoui_instruction:from$by_constant] = "facts/predicate
 _fptoui_instruction:from$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_fptoui_instruction:from$by_variable] = "\t".
-lang:physical:filePath[`_fptoui_instruction:from$by_variable] = "facts/predicates/fptoui_instruction-from-by_variable.dlm".
+lang:physical:filePath[`_fptoui_instruction:from$by_variable] = "facts/fptoui_instruction-from-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +fptoui_instruction(e0),
@@ -1539,7 +1539,7 @@ lang:physical:filePath[`_fptoui_instruction:from$by_variable] = "facts/predicate
 _fptoui_instruction:to_type(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_fptoui_instruction:to_type] = "\t".
-lang:physical:filePath[`_fptoui_instruction:to_type] = "facts/predicates/fptoui_instruction-to_type.dlm".
+lang:physical:filePath[`_fptoui_instruction:to_type] = "facts/fptoui_instruction-to_type.dlm".
 
 +instruction:id(e0:v0),
 +fptoui_instruction(e0),
@@ -1554,7 +1554,7 @@ lang:physical:filePath[`_fptoui_instruction:to_type] = "facts/predicates/fptoui_
 _fptrunc_instruction:from$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_fptrunc_instruction:from$by_constant] = "\t".
-lang:physical:filePath[`_fptrunc_instruction:from$by_constant] = "facts/predicates/fptrunc_instruction-from-by_constant.dlm".
+lang:physical:filePath[`_fptrunc_instruction:from$by_constant] = "facts/fptrunc_instruction-from-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +fptrunc_instruction(e0),
@@ -1569,7 +1569,7 @@ lang:physical:filePath[`_fptrunc_instruction:from$by_constant] = "facts/predicat
 _fptrunc_instruction:from$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_fptrunc_instruction:from$by_variable] = "\t".
-lang:physical:filePath[`_fptrunc_instruction:from$by_variable] = "facts/predicates/fptrunc_instruction-from-by_variable.dlm".
+lang:physical:filePath[`_fptrunc_instruction:from$by_variable] = "facts/fptrunc_instruction-from-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +fptrunc_instruction(e0),
@@ -1586,7 +1586,7 @@ lang:physical:filePath[`_fptrunc_instruction:from$by_variable] = "facts/predicat
 _fptrunc_instruction:to_type(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_fptrunc_instruction:to_type] = "\t".
-lang:physical:filePath[`_fptrunc_instruction:to_type] = "facts/predicates/fptrunc_instruction-to_type.dlm".
+lang:physical:filePath[`_fptrunc_instruction:to_type] = "facts/fptrunc_instruction-to_type.dlm".
 
 +instruction:id(e0:v0),
 +fptrunc_instruction(e0),
@@ -1601,7 +1601,7 @@ lang:physical:filePath[`_fptrunc_instruction:to_type] = "facts/predicates/fptrun
 _frem_instruction:first_operand$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_frem_instruction:first_operand$by_constant] = "\t".
-lang:physical:filePath[`_frem_instruction:first_operand$by_constant] = "facts/predicates/frem_instruction-first_operand-by_constant.dlm".
+lang:physical:filePath[`_frem_instruction:first_operand$by_constant] = "facts/frem_instruction-first_operand-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +frem_instruction(e0),
@@ -1616,7 +1616,7 @@ lang:physical:filePath[`_frem_instruction:first_operand$by_constant] = "facts/pr
 _frem_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_frem_instruction:first_operand$by_variable] = "\t".
-lang:physical:filePath[`_frem_instruction:first_operand$by_variable] = "facts/predicates/frem_instruction-first_operand-by_variable.dlm".
+lang:physical:filePath[`_frem_instruction:first_operand$by_variable] = "facts/frem_instruction-first_operand-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +frem_instruction(e0),
@@ -1633,7 +1633,7 @@ lang:physical:filePath[`_frem_instruction:first_operand$by_variable] = "facts/pr
 _frem_instruction:second_operand$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_frem_instruction:second_operand$by_constant] = "\t".
-lang:physical:filePath[`_frem_instruction:second_operand$by_constant] = "facts/predicates/frem_instruction-second_operand-by_constant.dlm".
+lang:physical:filePath[`_frem_instruction:second_operand$by_constant] = "facts/frem_instruction-second_operand-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +frem_instruction(e0),
@@ -1648,7 +1648,7 @@ lang:physical:filePath[`_frem_instruction:second_operand$by_constant] = "facts/p
 _frem_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_frem_instruction:second_operand$by_variable] = "\t".
-lang:physical:filePath[`_frem_instruction:second_operand$by_variable] = "facts/predicates/frem_instruction-second_operand-by_variable.dlm".
+lang:physical:filePath[`_frem_instruction:second_operand$by_variable] = "facts/frem_instruction-second_operand-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +frem_instruction(e0),
@@ -1665,7 +1665,7 @@ lang:physical:filePath[`_frem_instruction:second_operand$by_variable] = "facts/p
 _fsub_instruction:first_operand$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_fsub_instruction:first_operand$by_constant] = "\t".
-lang:physical:filePath[`_fsub_instruction:first_operand$by_constant] = "facts/predicates/fsub_instruction-first_operand-by_constant.dlm".
+lang:physical:filePath[`_fsub_instruction:first_operand$by_constant] = "facts/fsub_instruction-first_operand-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +fsub_instruction(e0),
@@ -1680,7 +1680,7 @@ lang:physical:filePath[`_fsub_instruction:first_operand$by_constant] = "facts/pr
 _fsub_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_fsub_instruction:first_operand$by_variable] = "\t".
-lang:physical:filePath[`_fsub_instruction:first_operand$by_variable] = "facts/predicates/fsub_instruction-first_operand-by_variable.dlm".
+lang:physical:filePath[`_fsub_instruction:first_operand$by_variable] = "facts/fsub_instruction-first_operand-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +fsub_instruction(e0),
@@ -1697,7 +1697,7 @@ lang:physical:filePath[`_fsub_instruction:first_operand$by_variable] = "facts/pr
 _fsub_instruction:second_operand$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_fsub_instruction:second_operand$by_constant] = "\t".
-lang:physical:filePath[`_fsub_instruction:second_operand$by_constant] = "facts/predicates/fsub_instruction-second_operand-by_constant.dlm".
+lang:physical:filePath[`_fsub_instruction:second_operand$by_constant] = "facts/fsub_instruction-second_operand-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +fsub_instruction(e0),
@@ -1712,7 +1712,7 @@ lang:physical:filePath[`_fsub_instruction:second_operand$by_constant] = "facts/p
 _fsub_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_fsub_instruction:second_operand$by_variable] = "\t".
-lang:physical:filePath[`_fsub_instruction:second_operand$by_variable] = "facts/predicates/fsub_instruction-second_operand-by_variable.dlm".
+lang:physical:filePath[`_fsub_instruction:second_operand$by_variable] = "facts/fsub_instruction-second_operand-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +fsub_instruction(e0),
@@ -1729,7 +1729,7 @@ lang:physical:filePath[`_fsub_instruction:second_operand$by_variable] = "facts/p
 _function:alignment(v0, v1) -> string(v0), int[64](v1).
 
 lang:physical:delimiter[`_function:alignment] = "\t".
-lang:physical:filePath[`_function:alignment] = "facts/predicates/function-alignment.dlm".
+lang:physical:filePath[`_function:alignment] = "facts/function-alignment.dlm".
 
 +function_decl:id(e0:v0),
 +function_decl(e0),
@@ -1742,7 +1742,7 @@ lang:physical:filePath[`_function:alignment] = "facts/predicates/function-alignm
 _function:attribute(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_function:attribute] = "\t".
-lang:physical:filePath[`_function:attribute] = "facts/predicates/function-attribute.dlm".
+lang:physical:filePath[`_function:attribute] = "facts/function-attribute.dlm".
 
 +function_decl:id(e0:v0),
 +function_decl(e0),
@@ -1757,7 +1757,7 @@ lang:physical:filePath[`_function:attribute] = "facts/predicates/function-attrib
 _function:calling_convention(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_function:calling_convention] = "\t".
-lang:physical:filePath[`_function:calling_convention] = "facts/predicates/function-calling_convention.dlm".
+lang:physical:filePath[`_function:calling_convention] = "facts/function-calling_convention.dlm".
 
 +function_decl:id(e0:v0),
 +function_decl(e0),
@@ -1772,7 +1772,7 @@ lang:physical:filePath[`_function:calling_convention] = "facts/predicates/functi
 _function:gc(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_function:gc] = "\t".
-lang:physical:filePath[`_function:gc] = "facts/predicates/function-gc.dlm".
+lang:physical:filePath[`_function:gc] = "facts/function-gc.dlm".
 
 +function_decl:id(e0:v0),
 +function_decl(e0),
@@ -1785,7 +1785,7 @@ lang:physical:filePath[`_function:gc] = "facts/predicates/function-gc.dlm".
 _function:linkage_type(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_function:linkage_type] = "\t".
-lang:physical:filePath[`_function:linkage_type] = "facts/predicates/function-linkage_type.dlm".
+lang:physical:filePath[`_function:linkage_type] = "facts/function-linkage_type.dlm".
 
 +function_decl:id(e0:v0),
 +function_decl(e0),
@@ -1800,7 +1800,7 @@ lang:physical:filePath[`_function:linkage_type] = "facts/predicates/function-lin
 _function:name(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_function:name] = "\t".
-lang:physical:filePath[`_function:name] = "facts/predicates/function-name.dlm".
+lang:physical:filePath[`_function:name] = "facts/function-name.dlm".
 
 +function_decl:id(e0:v0),
 +function_decl(e0),
@@ -1813,7 +1813,7 @@ lang:physical:filePath[`_function:name] = "facts/predicates/function-name.dlm".
 _function:param(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
 
 lang:physical:delimiter[`_function:param] = "\t".
-lang:physical:filePath[`_function:param] = "facts/predicates/function-param.dlm".
+lang:physical:filePath[`_function:param] = "facts/function-param.dlm".
 
 +function_decl:id(e0:v0),
 +function(e0),
@@ -1828,7 +1828,7 @@ lang:physical:filePath[`_function:param] = "facts/predicates/function-param.dlm"
 _function:param_attribute(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
 
 lang:physical:delimiter[`_function:param_attribute] = "\t".
-lang:physical:filePath[`_function:param_attribute] = "facts/predicates/function-param_attribute.dlm".
+lang:physical:filePath[`_function:param_attribute] = "facts/function-param_attribute.dlm".
 
 +function_decl:id(e0:v0),
 +function_decl(e0),
@@ -1843,7 +1843,7 @@ lang:physical:filePath[`_function:param_attribute] = "facts/predicates/function-
 _function:pers_fn(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_function:pers_fn] = "\t".
-lang:physical:filePath[`_function:pers_fn] = "facts/predicates/function-pers_fn.dlm".
+lang:physical:filePath[`_function:pers_fn] = "facts/function-pers_fn.dlm".
 
 +function_decl:id(e0:v0),
 +function_decl(e0),
@@ -1858,7 +1858,7 @@ lang:physical:filePath[`_function:pers_fn] = "facts/predicates/function-pers_fn.
 _function:return_attribute(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_function:return_attribute] = "\t".
-lang:physical:filePath[`_function:return_attribute] = "facts/predicates/function-return_attribute.dlm".
+lang:physical:filePath[`_function:return_attribute] = "facts/function-return_attribute.dlm".
 
 +function_decl:id(e0:v0),
 +function_decl(e0),
@@ -1873,7 +1873,7 @@ lang:physical:filePath[`_function:return_attribute] = "facts/predicates/function
 _function:section(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_function:section] = "\t".
-lang:physical:filePath[`_function:section] = "facts/predicates/function-section.dlm".
+lang:physical:filePath[`_function:section] = "facts/function-section.dlm".
 
 +function_decl:id(e0:v0),
 +function(e0),
@@ -1886,7 +1886,7 @@ lang:physical:filePath[`_function:section] = "facts/predicates/function-section.
 _function:signature(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_function:signature] = "\t".
-lang:physical:filePath[`_function:signature] = "facts/predicates/function-signature.dlm".
+lang:physical:filePath[`_function:signature] = "facts/function-signature.dlm".
 
 +function_decl:id(e0:v0),
 +function_decl(e0),
@@ -1899,7 +1899,7 @@ lang:physical:filePath[`_function:signature] = "facts/predicates/function-signat
 _function:type(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_function:type] = "\t".
-lang:physical:filePath[`_function:type] = "facts/predicates/function-type.dlm".
+lang:physical:filePath[`_function:type] = "facts/function-type.dlm".
 
 +function_decl:id(e0:v0),
 +function_decl(e0),
@@ -1914,7 +1914,7 @@ lang:physical:filePath[`_function:type] = "facts/predicates/function-type.dlm".
 _function:unnamed_addr(v0) -> string(v0).
 
 lang:physical:delimiter[`_function:unnamed_addr] = "\t".
-lang:physical:filePath[`_function:unnamed_addr] = "facts/predicates/function-unnamed_addr.dlm".
+lang:physical:filePath[`_function:unnamed_addr] = "facts/function-unnamed_addr.dlm".
 
 +function_decl:id(e0:v0),
 +function_decl(e0),
@@ -1927,7 +1927,7 @@ lang:physical:filePath[`_function:unnamed_addr] = "facts/predicates/function-unn
 _function:visibility(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_function:visibility] = "\t".
-lang:physical:filePath[`_function:visibility] = "facts/predicates/function-visibility.dlm".
+lang:physical:filePath[`_function:visibility] = "facts/function-visibility.dlm".
 
 +function_decl:id(e0:v0),
 +function_decl(e0),
@@ -1942,7 +1942,7 @@ lang:physical:filePath[`_function:visibility] = "facts/predicates/function-visib
 _function_constant:function_name(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_function_constant:function_name] = "\t".
-lang:physical:filePath[`_function_constant:function_name] = "facts/predicates/function_constant-function_name.dlm".
+lang:physical:filePath[`_function_constant:function_name] = "facts/function_constant-function_name.dlm".
 
 +constant:id(e0:v0),
 +function_constant(e0),
@@ -1955,7 +1955,7 @@ lang:physical:filePath[`_function_constant:function_name] = "facts/predicates/fu
 _function_type:nparams(v0, v1) -> string(v0), int[64](v1).
 
 lang:physical:delimiter[`_function_type:nparams] = "\t".
-lang:physical:filePath[`_function_type:nparams] = "facts/predicates/function_type-nparams.dlm".
+lang:physical:filePath[`_function_type:nparams] = "facts/function_type-nparams.dlm".
 
 +type:id(e0:v0),
 +function_type(e0),
@@ -1968,7 +1968,7 @@ lang:physical:filePath[`_function_type:nparams] = "facts/predicates/function_typ
 _function_type:param(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
 
 lang:physical:delimiter[`_function_type:param] = "\t".
-lang:physical:filePath[`_function_type:param] = "facts/predicates/function_type-param.dlm".
+lang:physical:filePath[`_function_type:param] = "facts/function_type-param.dlm".
 
 +type:id(e0:v0),
 +function_type(e0),
@@ -1983,7 +1983,7 @@ lang:physical:filePath[`_function_type:param] = "facts/predicates/function_type-
 _function_type:return(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_function_type:return] = "\t".
-lang:physical:filePath[`_function_type:return] = "facts/predicates/function_type-return.dlm".
+lang:physical:filePath[`_function_type:return] = "facts/function_type-return.dlm".
 
 +type:id(e0:v0),
 +function_type(e0),
@@ -1998,7 +1998,7 @@ lang:physical:filePath[`_function_type:return] = "facts/predicates/function_type
 _function_type:varargs(v0) -> string(v0).
 
 lang:physical:delimiter[`_function_type:varargs] = "\t".
-lang:physical:filePath[`_function_type:varargs] = "facts/predicates/function_type-varargs.dlm".
+lang:physical:filePath[`_function_type:varargs] = "facts/function_type-varargs.dlm".
 
 +type:id(e0:v0),
 +function_type(e0),
@@ -2011,7 +2011,7 @@ lang:physical:filePath[`_function_type:varargs] = "facts/predicates/function_typ
 _getelementptr_constant_expression:base(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_getelementptr_constant_expression:base] = "\t".
-lang:physical:filePath[`_getelementptr_constant_expression:base] = "facts/predicates/getelementptr_constant_expression-base.dlm".
+lang:physical:filePath[`_getelementptr_constant_expression:base] = "facts/getelementptr_constant_expression-base.dlm".
 
 +constant:id(e0:v0),
 +getelementptr_constant_expression(e0),
@@ -2026,7 +2026,7 @@ lang:physical:filePath[`_getelementptr_constant_expression:base] = "facts/predic
 _getelementptr_constant_expression:index(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
 
 lang:physical:delimiter[`_getelementptr_constant_expression:index] = "\t".
-lang:physical:filePath[`_getelementptr_constant_expression:index] = "facts/predicates/getelementptr_constant_expression-index.dlm".
+lang:physical:filePath[`_getelementptr_constant_expression:index] = "facts/getelementptr_constant_expression-index.dlm".
 
 +constant:id(e0:v0),
 +getelementptr_constant_expression(e0),
@@ -2041,7 +2041,7 @@ lang:physical:filePath[`_getelementptr_constant_expression:index] = "facts/predi
 _getelementptr_constant_expression:nindices(v0, v1) -> string(v0), int[64](v1).
 
 lang:physical:delimiter[`_getelementptr_constant_expression:nindices] = "\t".
-lang:physical:filePath[`_getelementptr_constant_expression:nindices] = "facts/predicates/getelementptr_constant_expression-nindices.dlm".
+lang:physical:filePath[`_getelementptr_constant_expression:nindices] = "facts/getelementptr_constant_expression-nindices.dlm".
 
 +constant:id(e0:v0),
 +getelementptr_constant_expression(e0),
@@ -2054,7 +2054,7 @@ lang:physical:filePath[`_getelementptr_constant_expression:nindices] = "facts/pr
 _getelementptr_instruction:base$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_getelementptr_instruction:base$by_constant] = "\t".
-lang:physical:filePath[`_getelementptr_instruction:base$by_constant] = "facts/predicates/getelementptr_instruction-base-by_constant.dlm".
+lang:physical:filePath[`_getelementptr_instruction:base$by_constant] = "facts/getelementptr_instruction-base-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +getelementptr_instruction(e0),
@@ -2069,7 +2069,7 @@ lang:physical:filePath[`_getelementptr_instruction:base$by_constant] = "facts/pr
 _getelementptr_instruction:base$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_getelementptr_instruction:base$by_variable] = "\t".
-lang:physical:filePath[`_getelementptr_instruction:base$by_variable] = "facts/predicates/getelementptr_instruction-base-by_variable.dlm".
+lang:physical:filePath[`_getelementptr_instruction:base$by_variable] = "facts/getelementptr_instruction-base-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +getelementptr_instruction(e0),
@@ -2086,7 +2086,7 @@ lang:physical:filePath[`_getelementptr_instruction:base$by_variable] = "facts/pr
 _getelementptr_instruction:inbounds(v0) -> string(v0).
 
 lang:physical:delimiter[`_getelementptr_instruction:inbounds] = "\t".
-lang:physical:filePath[`_getelementptr_instruction:inbounds] = "facts/predicates/getelementptr_instruction-inbounds.dlm".
+lang:physical:filePath[`_getelementptr_instruction:inbounds] = "facts/getelementptr_instruction-inbounds.dlm".
 
 +instruction:id(e0:v0),
 +getelementptr_instruction(e0),
@@ -2099,7 +2099,7 @@ lang:physical:filePath[`_getelementptr_instruction:inbounds] = "facts/predicates
 _getelementptr_instruction:index$by_constant(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
 
 lang:physical:delimiter[`_getelementptr_instruction:index$by_constant] = "\t".
-lang:physical:filePath[`_getelementptr_instruction:index$by_constant] = "facts/predicates/getelementptr_instruction-index-by_constant.dlm".
+lang:physical:filePath[`_getelementptr_instruction:index$by_constant] = "facts/getelementptr_instruction-index-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +getelementptr_instruction(e0),
@@ -2114,7 +2114,7 @@ lang:physical:filePath[`_getelementptr_instruction:index$by_constant] = "facts/p
 _getelementptr_instruction:index$by_variable(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
 
 lang:physical:delimiter[`_getelementptr_instruction:index$by_variable] = "\t".
-lang:physical:filePath[`_getelementptr_instruction:index$by_variable] = "facts/predicates/getelementptr_instruction-index-by_variable.dlm".
+lang:physical:filePath[`_getelementptr_instruction:index$by_variable] = "facts/getelementptr_instruction-index-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +getelementptr_instruction(e0),
@@ -2131,7 +2131,7 @@ lang:physical:filePath[`_getelementptr_instruction:index$by_variable] = "facts/p
 _getelementptr_instruction:nindices(v0, v1) -> string(v0), int[64](v1).
 
 lang:physical:delimiter[`_getelementptr_instruction:nindices] = "\t".
-lang:physical:filePath[`_getelementptr_instruction:nindices] = "facts/predicates/getelementptr_instruction-nindices.dlm".
+lang:physical:filePath[`_getelementptr_instruction:nindices] = "facts/getelementptr_instruction-nindices.dlm".
 
 +instruction:id(e0:v0),
 +getelementptr_instruction(e0),
@@ -2144,7 +2144,7 @@ lang:physical:filePath[`_getelementptr_instruction:nindices] = "facts/predicates
 _global_variable:align(v0, v1) -> string(v0), int[64](v1).
 
 lang:physical:delimiter[`_global_variable:align] = "\t".
-lang:physical:filePath[`_global_variable:align] = "facts/predicates/global_variable-align.dlm".
+lang:physical:filePath[`_global_variable:align] = "facts/global_variable-align.dlm".
 
 +constant:id(e0:v0),
 +global_variable(e0),
@@ -2157,7 +2157,7 @@ lang:physical:filePath[`_global_variable:align] = "facts/predicates/global_varia
 _global_variable:flag(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_global_variable:flag] = "\t".
-lang:physical:filePath[`_global_variable:flag] = "facts/predicates/global_variable-flag.dlm".
+lang:physical:filePath[`_global_variable:flag] = "facts/global_variable-flag.dlm".
 
 +constant:id(e0:v0),
 +global_variable(e0),
@@ -2172,7 +2172,7 @@ lang:physical:filePath[`_global_variable:flag] = "facts/predicates/global_variab
 _global_variable:initializer(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_global_variable:initializer] = "\t".
-lang:physical:filePath[`_global_variable:initializer] = "facts/predicates/global_variable-initializer.dlm".
+lang:physical:filePath[`_global_variable:initializer] = "facts/global_variable-initializer.dlm".
 
 +constant:id(e0:v0),
 +global_variable(e0),
@@ -2187,7 +2187,7 @@ lang:physical:filePath[`_global_variable:initializer] = "facts/predicates/global
 _global_variable:linkage_type(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_global_variable:linkage_type] = "\t".
-lang:physical:filePath[`_global_variable:linkage_type] = "facts/predicates/global_variable-linkage_type.dlm".
+lang:physical:filePath[`_global_variable:linkage_type] = "facts/global_variable-linkage_type.dlm".
 
 +constant:id(e0:v0),
 +global_variable(e0),
@@ -2202,7 +2202,7 @@ lang:physical:filePath[`_global_variable:linkage_type] = "facts/predicates/globa
 _global_variable:section(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_global_variable:section] = "\t".
-lang:physical:filePath[`_global_variable:section] = "facts/predicates/global_variable-section.dlm".
+lang:physical:filePath[`_global_variable:section] = "facts/global_variable-section.dlm".
 
 +constant:id(e0:v0),
 +global_variable(e0),
@@ -2215,7 +2215,7 @@ lang:physical:filePath[`_global_variable:section] = "facts/predicates/global_var
 _global_variable:threadlocal_mode(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_global_variable:threadlocal_mode] = "\t".
-lang:physical:filePath[`_global_variable:threadlocal_mode] = "facts/predicates/global_variable-threadlocal_mode.dlm".
+lang:physical:filePath[`_global_variable:threadlocal_mode] = "facts/global_variable-threadlocal_mode.dlm".
 
 +constant:id(e0:v0),
 +global_variable(e0),
@@ -2230,7 +2230,7 @@ lang:physical:filePath[`_global_variable:threadlocal_mode] = "facts/predicates/g
 _global_variable:type(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_global_variable:type] = "\t".
-lang:physical:filePath[`_global_variable:type] = "facts/predicates/global_variable-type.dlm".
+lang:physical:filePath[`_global_variable:type] = "facts/global_variable-type.dlm".
 
 +constant:id(e0:v0),
 +global_variable(e0),
@@ -2245,7 +2245,7 @@ lang:physical:filePath[`_global_variable:type] = "facts/predicates/global_variab
 _global_variable:visibility(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_global_variable:visibility] = "\t".
-lang:physical:filePath[`_global_variable:visibility] = "facts/predicates/global_variable-visibility.dlm".
+lang:physical:filePath[`_global_variable:visibility] = "facts/global_variable-visibility.dlm".
 
 +constant:id(e0:v0),
 +global_variable(e0),
@@ -2260,7 +2260,7 @@ lang:physical:filePath[`_global_variable:visibility] = "facts/predicates/global_
 _global_variable_constant:name(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_global_variable_constant:name] = "\t".
-lang:physical:filePath[`_global_variable_constant:name] = "facts/predicates/global_variable_constant-name.dlm".
+lang:physical:filePath[`_global_variable_constant:name] = "facts/global_variable_constant-name.dlm".
 
 +constant:id(e0:v0),
 +global_variable_constant(e0),
@@ -2273,7 +2273,7 @@ lang:physical:filePath[`_global_variable_constant:name] = "facts/predicates/glob
 _icmp_instruction:condition(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_icmp_instruction:condition] = "\t".
-lang:physical:filePath[`_icmp_instruction:condition] = "facts/predicates/icmp_instruction-condition.dlm".
+lang:physical:filePath[`_icmp_instruction:condition] = "facts/icmp_instruction-condition.dlm".
 
 +instruction:id(e0:v0),
 +icmp_instruction(e0),
@@ -2288,7 +2288,7 @@ lang:physical:filePath[`_icmp_instruction:condition] = "facts/predicates/icmp_in
 _icmp_instruction:first_operand$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_icmp_instruction:first_operand$by_constant] = "\t".
-lang:physical:filePath[`_icmp_instruction:first_operand$by_constant] = "facts/predicates/icmp_instruction-first_operand-by_constant.dlm".
+lang:physical:filePath[`_icmp_instruction:first_operand$by_constant] = "facts/icmp_instruction-first_operand-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +icmp_instruction(e0),
@@ -2303,7 +2303,7 @@ lang:physical:filePath[`_icmp_instruction:first_operand$by_constant] = "facts/pr
 _icmp_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_icmp_instruction:first_operand$by_variable] = "\t".
-lang:physical:filePath[`_icmp_instruction:first_operand$by_variable] = "facts/predicates/icmp_instruction-first_operand-by_variable.dlm".
+lang:physical:filePath[`_icmp_instruction:first_operand$by_variable] = "facts/icmp_instruction-first_operand-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +icmp_instruction(e0),
@@ -2320,7 +2320,7 @@ lang:physical:filePath[`_icmp_instruction:first_operand$by_variable] = "facts/pr
 _icmp_instruction:second_operand$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_icmp_instruction:second_operand$by_constant] = "\t".
-lang:physical:filePath[`_icmp_instruction:second_operand$by_constant] = "facts/predicates/icmp_instruction-second_operand-by_constant.dlm".
+lang:physical:filePath[`_icmp_instruction:second_operand$by_constant] = "facts/icmp_instruction-second_operand-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +icmp_instruction(e0),
@@ -2335,7 +2335,7 @@ lang:physical:filePath[`_icmp_instruction:second_operand$by_constant] = "facts/p
 _icmp_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_icmp_instruction:second_operand$by_variable] = "\t".
-lang:physical:filePath[`_icmp_instruction:second_operand$by_variable] = "facts/predicates/icmp_instruction-second_operand-by_variable.dlm".
+lang:physical:filePath[`_icmp_instruction:second_operand$by_variable] = "facts/icmp_instruction-second_operand-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +icmp_instruction(e0),
@@ -2352,7 +2352,7 @@ lang:physical:filePath[`_icmp_instruction:second_operand$by_variable] = "facts/p
 _indirectbr_instruction:address$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_indirectbr_instruction:address$by_constant] = "\t".
-lang:physical:filePath[`_indirectbr_instruction:address$by_constant] = "facts/predicates/indirectbr_instruction-address-by_constant.dlm".
+lang:physical:filePath[`_indirectbr_instruction:address$by_constant] = "facts/indirectbr_instruction-address-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +indirectbr_instruction(e0),
@@ -2367,7 +2367,7 @@ lang:physical:filePath[`_indirectbr_instruction:address$by_constant] = "facts/pr
 _indirectbr_instruction:address$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_indirectbr_instruction:address$by_variable] = "\t".
-lang:physical:filePath[`_indirectbr_instruction:address$by_variable] = "facts/predicates/indirectbr_instruction-address-by_variable.dlm".
+lang:physical:filePath[`_indirectbr_instruction:address$by_variable] = "facts/indirectbr_instruction-address-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +indirectbr_instruction(e0),
@@ -2384,7 +2384,7 @@ lang:physical:filePath[`_indirectbr_instruction:address$by_variable] = "facts/pr
 _indirectbr_instruction:label(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
 
 lang:physical:delimiter[`_indirectbr_instruction:label] = "\t".
-lang:physical:filePath[`_indirectbr_instruction:label] = "facts/predicates/indirectbr_instruction-label.dlm".
+lang:physical:filePath[`_indirectbr_instruction:label] = "facts/indirectbr_instruction-label.dlm".
 
 +instruction:id(e0:v0),
 +indirectbr_instruction(e0),
@@ -2399,7 +2399,7 @@ lang:physical:filePath[`_indirectbr_instruction:label] = "facts/predicates/indir
 _indirectbr_instruction:nlabels(v0, v1) -> string(v0), int[64](v1).
 
 lang:physical:delimiter[`_indirectbr_instruction:nlabels] = "\t".
-lang:physical:filePath[`_indirectbr_instruction:nlabels] = "facts/predicates/indirectbr_instruction-nlabels.dlm".
+lang:physical:filePath[`_indirectbr_instruction:nlabels] = "facts/indirectbr_instruction-nlabels.dlm".
 
 +instruction:id(e0:v0),
 +indirectbr_instruction(e0),
@@ -2412,7 +2412,7 @@ lang:physical:filePath[`_indirectbr_instruction:nlabels] = "facts/predicates/ind
 _insertelement_instruction:base$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_insertelement_instruction:base$by_constant] = "\t".
-lang:physical:filePath[`_insertelement_instruction:base$by_constant] = "facts/predicates/insertelement_instruction-base-by_constant.dlm".
+lang:physical:filePath[`_insertelement_instruction:base$by_constant] = "facts/insertelement_instruction-base-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +insertelement_instruction(e0),
@@ -2427,7 +2427,7 @@ lang:physical:filePath[`_insertelement_instruction:base$by_constant] = "facts/pr
 _insertelement_instruction:base$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_insertelement_instruction:base$by_variable] = "\t".
-lang:physical:filePath[`_insertelement_instruction:base$by_variable] = "facts/predicates/insertelement_instruction-base-by_variable.dlm".
+lang:physical:filePath[`_insertelement_instruction:base$by_variable] = "facts/insertelement_instruction-base-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +insertelement_instruction(e0),
@@ -2444,7 +2444,7 @@ lang:physical:filePath[`_insertelement_instruction:base$by_variable] = "facts/pr
 _insertelement_instruction:index$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_insertelement_instruction:index$by_constant] = "\t".
-lang:physical:filePath[`_insertelement_instruction:index$by_constant] = "facts/predicates/insertelement_instruction-index-by_constant.dlm".
+lang:physical:filePath[`_insertelement_instruction:index$by_constant] = "facts/insertelement_instruction-index-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +insertelement_instruction(e0),
@@ -2459,7 +2459,7 @@ lang:physical:filePath[`_insertelement_instruction:index$by_constant] = "facts/p
 _insertelement_instruction:index$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_insertelement_instruction:index$by_variable] = "\t".
-lang:physical:filePath[`_insertelement_instruction:index$by_variable] = "facts/predicates/insertelement_instruction-index-by_variable.dlm".
+lang:physical:filePath[`_insertelement_instruction:index$by_variable] = "facts/insertelement_instruction-index-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +insertelement_instruction(e0),
@@ -2476,7 +2476,7 @@ lang:physical:filePath[`_insertelement_instruction:index$by_variable] = "facts/p
 _insertelement_instruction:value$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_insertelement_instruction:value$by_constant] = "\t".
-lang:physical:filePath[`_insertelement_instruction:value$by_constant] = "facts/predicates/insertelement_instruction-value-by_constant.dlm".
+lang:physical:filePath[`_insertelement_instruction:value$by_constant] = "facts/insertelement_instruction-value-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +insertelement_instruction(e0),
@@ -2491,7 +2491,7 @@ lang:physical:filePath[`_insertelement_instruction:value$by_constant] = "facts/p
 _insertelement_instruction:value$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_insertelement_instruction:value$by_variable] = "\t".
-lang:physical:filePath[`_insertelement_instruction:value$by_variable] = "facts/predicates/insertelement_instruction-value-by_variable.dlm".
+lang:physical:filePath[`_insertelement_instruction:value$by_variable] = "facts/insertelement_instruction-value-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +insertelement_instruction(e0),
@@ -2508,7 +2508,7 @@ lang:physical:filePath[`_insertelement_instruction:value$by_variable] = "facts/p
 _insertvalue_instruction:base$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_insertvalue_instruction:base$by_constant] = "\t".
-lang:physical:filePath[`_insertvalue_instruction:base$by_constant] = "facts/predicates/insertvalue_instruction-base-by_constant.dlm".
+lang:physical:filePath[`_insertvalue_instruction:base$by_constant] = "facts/insertvalue_instruction-base-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +insertvalue_instruction(e0),
@@ -2523,7 +2523,7 @@ lang:physical:filePath[`_insertvalue_instruction:base$by_constant] = "facts/pred
 _insertvalue_instruction:base$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_insertvalue_instruction:base$by_variable] = "\t".
-lang:physical:filePath[`_insertvalue_instruction:base$by_variable] = "facts/predicates/insertvalue_instruction-base-by_variable.dlm".
+lang:physical:filePath[`_insertvalue_instruction:base$by_variable] = "facts/insertvalue_instruction-base-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +insertvalue_instruction(e0),
@@ -2540,7 +2540,7 @@ lang:physical:filePath[`_insertvalue_instruction:base$by_variable] = "facts/pred
 _insertvalue_instruction:index(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
 
 lang:physical:delimiter[`_insertvalue_instruction:index] = "\t".
-lang:physical:filePath[`_insertvalue_instruction:index] = "facts/predicates/insertvalue_instruction-index.dlm".
+lang:physical:filePath[`_insertvalue_instruction:index] = "facts/insertvalue_instruction-index.dlm".
 
 +instruction:id(e0:v0),
 +insertvalue_instruction(e0),
@@ -2555,7 +2555,7 @@ lang:physical:filePath[`_insertvalue_instruction:index] = "facts/predicates/inse
 _insertvalue_instruction:nindices(v0, v1) -> string(v0), int[64](v1).
 
 lang:physical:delimiter[`_insertvalue_instruction:nindices] = "\t".
-lang:physical:filePath[`_insertvalue_instruction:nindices] = "facts/predicates/insertvalue_instruction-nindices.dlm".
+lang:physical:filePath[`_insertvalue_instruction:nindices] = "facts/insertvalue_instruction-nindices.dlm".
 
 +instruction:id(e0:v0),
 +insertvalue_instruction(e0),
@@ -2568,7 +2568,7 @@ lang:physical:filePath[`_insertvalue_instruction:nindices] = "facts/predicates/i
 _insertvalue_instruction:value$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_insertvalue_instruction:value$by_constant] = "\t".
-lang:physical:filePath[`_insertvalue_instruction:value$by_constant] = "facts/predicates/insertvalue_instruction-value-by_constant.dlm".
+lang:physical:filePath[`_insertvalue_instruction:value$by_constant] = "facts/insertvalue_instruction-value-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +insertvalue_instruction(e0),
@@ -2583,7 +2583,7 @@ lang:physical:filePath[`_insertvalue_instruction:value$by_constant] = "facts/pre
 _insertvalue_instruction:value$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_insertvalue_instruction:value$by_variable] = "\t".
-lang:physical:filePath[`_insertvalue_instruction:value$by_variable] = "facts/predicates/insertvalue_instruction-value-by_variable.dlm".
+lang:physical:filePath[`_insertvalue_instruction:value$by_variable] = "facts/insertvalue_instruction-value-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +insertvalue_instruction(e0),
@@ -2600,7 +2600,7 @@ lang:physical:filePath[`_insertvalue_instruction:value$by_variable] = "facts/pre
 _instruction:bb_entry(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_instruction:bb_entry] = "\t".
-lang:physical:filePath[`_instruction:bb_entry] = "facts/predicates/instruction-bb_entry.dlm".
+lang:physical:filePath[`_instruction:bb_entry] = "facts/instruction-bb_entry.dlm".
 
 +instruction:id(e0:v0),
 +instruction(e0),
@@ -2615,7 +2615,7 @@ lang:physical:filePath[`_instruction:bb_entry] = "facts/predicates/instruction-b
 _instruction:flag(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_instruction:flag] = "\t".
-lang:physical:filePath[`_instruction:flag] = "facts/predicates/instruction-flag.dlm".
+lang:physical:filePath[`_instruction:flag] = "facts/instruction-flag.dlm".
 
 +instruction:id(e0:v0),
 +instruction(e0),
@@ -2630,7 +2630,7 @@ lang:physical:filePath[`_instruction:flag] = "facts/predicates/instruction-flag.
 _instruction:function(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_instruction:function] = "\t".
-lang:physical:filePath[`_instruction:function] = "facts/predicates/instruction-function.dlm".
+lang:physical:filePath[`_instruction:function] = "facts/instruction-function.dlm".
 
 +instruction:id(e0:v0),
 +instruction(e0),
@@ -2645,7 +2645,7 @@ lang:physical:filePath[`_instruction:function] = "facts/predicates/instruction-f
 _instruction:next(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_instruction:next] = "\t".
-lang:physical:filePath[`_instruction:next] = "facts/predicates/instruction-next.dlm".
+lang:physical:filePath[`_instruction:next] = "facts/instruction-next.dlm".
 
 +instruction:id(e0:v0),
 +instruction(e0),
@@ -2660,7 +2660,7 @@ lang:physical:filePath[`_instruction:next] = "facts/predicates/instruction-next.
 _instruction:pos(v0, v1, v2) -> string(v0), int[64](v1), int[64](v2).
 
 lang:physical:delimiter[`_instruction:pos] = "\t".
-lang:physical:filePath[`_instruction:pos] = "facts/predicates/instruction-pos.dlm".
+lang:physical:filePath[`_instruction:pos] = "facts/instruction-pos.dlm".
 
 +instruction:id(e0:v0),
 +instruction(e0),
@@ -2673,7 +2673,7 @@ lang:physical:filePath[`_instruction:pos] = "facts/predicates/instruction-pos.dl
 _instruction:to(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_instruction:to] = "\t".
-lang:physical:filePath[`_instruction:to] = "facts/predicates/instruction-to.dlm".
+lang:physical:filePath[`_instruction:to] = "facts/instruction-to.dlm".
 
 +instruction:id(e0:v0),
 +instruction(e0),
@@ -2688,7 +2688,7 @@ lang:physical:filePath[`_instruction:to] = "facts/predicates/instruction-to.dlm"
 _inttoptr_constant_expression:from(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_inttoptr_constant_expression:from] = "\t".
-lang:physical:filePath[`_inttoptr_constant_expression:from] = "facts/predicates/inttoptr_constant_expression-from.dlm".
+lang:physical:filePath[`_inttoptr_constant_expression:from] = "facts/inttoptr_constant_expression-from.dlm".
 
 +constant:id(e0:v0),
 +inttoptr_constant_expression(e0),
@@ -2703,7 +2703,7 @@ lang:physical:filePath[`_inttoptr_constant_expression:from] = "facts/predicates/
 _inttoptr_instruction:from$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_inttoptr_instruction:from$by_constant] = "\t".
-lang:physical:filePath[`_inttoptr_instruction:from$by_constant] = "facts/predicates/inttoptr_instruction-from-by_constant.dlm".
+lang:physical:filePath[`_inttoptr_instruction:from$by_constant] = "facts/inttoptr_instruction-from-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +inttoptr_instruction(e0),
@@ -2718,7 +2718,7 @@ lang:physical:filePath[`_inttoptr_instruction:from$by_constant] = "facts/predica
 _inttoptr_instruction:from$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_inttoptr_instruction:from$by_variable] = "\t".
-lang:physical:filePath[`_inttoptr_instruction:from$by_variable] = "facts/predicates/inttoptr_instruction-from-by_variable.dlm".
+lang:physical:filePath[`_inttoptr_instruction:from$by_variable] = "facts/inttoptr_instruction-from-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +inttoptr_instruction(e0),
@@ -2735,7 +2735,7 @@ lang:physical:filePath[`_inttoptr_instruction:from$by_variable] = "facts/predica
 _inttoptr_instruction:to_type(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_inttoptr_instruction:to_type] = "\t".
-lang:physical:filePath[`_inttoptr_instruction:to_type] = "facts/predicates/inttoptr_instruction-to_type.dlm".
+lang:physical:filePath[`_inttoptr_instruction:to_type] = "facts/inttoptr_instruction-to_type.dlm".
 
 +instruction:id(e0:v0),
 +inttoptr_instruction(e0),
@@ -2750,7 +2750,7 @@ lang:physical:filePath[`_inttoptr_instruction:to_type] = "facts/predicates/intto
 _invoke_instruction:arg$by_constant(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
 
 lang:physical:delimiter[`_invoke_instruction:arg$by_constant] = "\t".
-lang:physical:filePath[`_invoke_instruction:arg$by_constant] = "facts/predicates/invoke_instruction-arg-by_constant.dlm".
+lang:physical:filePath[`_invoke_instruction:arg$by_constant] = "facts/invoke_instruction-arg-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +invoke_instruction(e0),
@@ -2765,7 +2765,7 @@ lang:physical:filePath[`_invoke_instruction:arg$by_constant] = "facts/predicates
 _invoke_instruction:arg$by_variable(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
 
 lang:physical:delimiter[`_invoke_instruction:arg$by_variable] = "\t".
-lang:physical:filePath[`_invoke_instruction:arg$by_variable] = "facts/predicates/invoke_instruction-arg-by_variable.dlm".
+lang:physical:filePath[`_invoke_instruction:arg$by_variable] = "facts/invoke_instruction-arg-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +invoke_instruction(e0),
@@ -2782,7 +2782,7 @@ lang:physical:filePath[`_invoke_instruction:arg$by_variable] = "facts/predicates
 _invoke_instruction:calling_convention(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_invoke_instruction:calling_convention] = "\t".
-lang:physical:filePath[`_invoke_instruction:calling_convention] = "facts/predicates/invoke_instruction-calling_convention.dlm".
+lang:physical:filePath[`_invoke_instruction:calling_convention] = "facts/invoke_instruction-calling_convention.dlm".
 
 +instruction:id(e0:v0),
 +invoke_instruction(e0),
@@ -2797,7 +2797,7 @@ lang:physical:filePath[`_invoke_instruction:calling_convention] = "facts/predica
 _invoke_instruction:exception_label(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_invoke_instruction:exception_label] = "\t".
-lang:physical:filePath[`_invoke_instruction:exception_label] = "facts/predicates/invoke_instruction-exception_label.dlm".
+lang:physical:filePath[`_invoke_instruction:exception_label] = "facts/invoke_instruction-exception_label.dlm".
 
 +instruction:id(e0:v0),
 +invoke_instruction(e0),
@@ -2812,7 +2812,7 @@ lang:physical:filePath[`_invoke_instruction:exception_label] = "facts/predicates
 _invoke_instruction:fn_attribute(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_invoke_instruction:fn_attribute] = "\t".
-lang:physical:filePath[`_invoke_instruction:fn_attribute] = "facts/predicates/invoke_instruction-fn_attribute.dlm".
+lang:physical:filePath[`_invoke_instruction:fn_attribute] = "facts/invoke_instruction-fn_attribute.dlm".
 
 +instruction:id(e0:v0),
 +invoke_instruction(e0),
@@ -2827,7 +2827,7 @@ lang:physical:filePath[`_invoke_instruction:fn_attribute] = "facts/predicates/in
 _invoke_instruction:function$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_invoke_instruction:function$by_constant] = "\t".
-lang:physical:filePath[`_invoke_instruction:function$by_constant] = "facts/predicates/invoke_instruction-function-by_constant.dlm".
+lang:physical:filePath[`_invoke_instruction:function$by_constant] = "facts/invoke_instruction-function-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +invoke_instruction(e0),
@@ -2842,7 +2842,7 @@ lang:physical:filePath[`_invoke_instruction:function$by_constant] = "facts/predi
 _invoke_instruction:function$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_invoke_instruction:function$by_variable] = "\t".
-lang:physical:filePath[`_invoke_instruction:function$by_variable] = "facts/predicates/invoke_instruction-function-by_variable.dlm".
+lang:physical:filePath[`_invoke_instruction:function$by_variable] = "facts/invoke_instruction-function-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +invoke_instruction(e0),
@@ -2859,7 +2859,7 @@ lang:physical:filePath[`_invoke_instruction:function$by_variable] = "facts/predi
 _invoke_instruction:normal_label(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_invoke_instruction:normal_label] = "\t".
-lang:physical:filePath[`_invoke_instruction:normal_label] = "facts/predicates/invoke_instruction-normal_label.dlm".
+lang:physical:filePath[`_invoke_instruction:normal_label] = "facts/invoke_instruction-normal_label.dlm".
 
 +instruction:id(e0:v0),
 +invoke_instruction(e0),
@@ -2874,7 +2874,7 @@ lang:physical:filePath[`_invoke_instruction:normal_label] = "facts/predicates/in
 _invoke_instruction:param_attribute(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
 
 lang:physical:delimiter[`_invoke_instruction:param_attribute] = "\t".
-lang:physical:filePath[`_invoke_instruction:param_attribute] = "facts/predicates/invoke_instruction-param_attribute.dlm".
+lang:physical:filePath[`_invoke_instruction:param_attribute] = "facts/invoke_instruction-param_attribute.dlm".
 
 +instruction:id(e0:v0),
 +invoke_instruction(e0),
@@ -2889,7 +2889,7 @@ lang:physical:filePath[`_invoke_instruction:param_attribute] = "facts/predicates
 _invoke_instruction:return_attribute(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_invoke_instruction:return_attribute] = "\t".
-lang:physical:filePath[`_invoke_instruction:return_attribute] = "facts/predicates/invoke_instruction-return_attribute.dlm".
+lang:physical:filePath[`_invoke_instruction:return_attribute] = "facts/invoke_instruction-return_attribute.dlm".
 
 +instruction:id(e0:v0),
 +invoke_instruction(e0),
@@ -2904,7 +2904,7 @@ lang:physical:filePath[`_invoke_instruction:return_attribute] = "facts/predicate
 _landingpad_instruction:clause:catch_tmp(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
 
 lang:physical:delimiter[`_landingpad_instruction:clause:catch_tmp] = "\t".
-lang:physical:filePath[`_landingpad_instruction:clause:catch_tmp] = "facts/predicates/landingpad_instruction-clause-catch_tmp.dlm".
+lang:physical:filePath[`_landingpad_instruction:clause:catch_tmp] = "facts/landingpad_instruction-clause-catch_tmp.dlm".
 
 +instruction:id(e0:v0),
 +landingpad_instruction(e0),
@@ -2919,7 +2919,7 @@ lang:physical:filePath[`_landingpad_instruction:clause:catch_tmp] = "facts/predi
 _landingpad_instruction:clause:filter_tmp(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
 
 lang:physical:delimiter[`_landingpad_instruction:clause:filter_tmp] = "\t".
-lang:physical:filePath[`_landingpad_instruction:clause:filter_tmp] = "facts/predicates/landingpad_instruction-clause-filter_tmp.dlm".
+lang:physical:filePath[`_landingpad_instruction:clause:filter_tmp] = "facts/landingpad_instruction-clause-filter_tmp.dlm".
 
 +instruction:id(e0:v0),
 +landingpad_instruction(e0),
@@ -2934,7 +2934,7 @@ lang:physical:filePath[`_landingpad_instruction:clause:filter_tmp] = "facts/pred
 _landingpad_instruction:cleanup(v0) -> string(v0).
 
 lang:physical:delimiter[`_landingpad_instruction:cleanup] = "\t".
-lang:physical:filePath[`_landingpad_instruction:cleanup] = "facts/predicates/landingpad_instruction-cleanup.dlm".
+lang:physical:filePath[`_landingpad_instruction:cleanup] = "facts/landingpad_instruction-cleanup.dlm".
 
 +instruction:id(e0:v0),
 +landingpad_instruction(e0),
@@ -2947,7 +2947,7 @@ lang:physical:filePath[`_landingpad_instruction:cleanup] = "facts/predicates/lan
 _landingpad_instruction:nclauses(v0, v1) -> string(v0), int[64](v1).
 
 lang:physical:delimiter[`_landingpad_instruction:nclauses] = "\t".
-lang:physical:filePath[`_landingpad_instruction:nclauses] = "facts/predicates/landingpad_instruction-nclauses.dlm".
+lang:physical:filePath[`_landingpad_instruction:nclauses] = "facts/landingpad_instruction-nclauses.dlm".
 
 +instruction:id(e0:v0),
 +landingpad_instruction(e0),
@@ -2960,7 +2960,7 @@ lang:physical:filePath[`_landingpad_instruction:nclauses] = "facts/predicates/la
 _landingpad_instruction:type(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_landingpad_instruction:type] = "\t".
-lang:physical:filePath[`_landingpad_instruction:type] = "facts/predicates/landingpad_instruction-type.dlm".
+lang:physical:filePath[`_landingpad_instruction:type] = "facts/landingpad_instruction-type.dlm".
 
 +instruction:id(e0:v0),
 +landingpad_instruction(e0),
@@ -2975,7 +2975,7 @@ lang:physical:filePath[`_landingpad_instruction:type] = "facts/predicates/landin
 _load_instruction:address$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_load_instruction:address$by_constant] = "\t".
-lang:physical:filePath[`_load_instruction:address$by_constant] = "facts/predicates/load_instruction-address-by_constant.dlm".
+lang:physical:filePath[`_load_instruction:address$by_constant] = "facts/load_instruction-address-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +load_instruction(e0),
@@ -2990,7 +2990,7 @@ lang:physical:filePath[`_load_instruction:address$by_constant] = "facts/predicat
 _load_instruction:address$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_load_instruction:address$by_variable] = "\t".
-lang:physical:filePath[`_load_instruction:address$by_variable] = "facts/predicates/load_instruction-address-by_variable.dlm".
+lang:physical:filePath[`_load_instruction:address$by_variable] = "facts/load_instruction-address-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +load_instruction(e0),
@@ -3007,7 +3007,7 @@ lang:physical:filePath[`_load_instruction:address$by_variable] = "facts/predicat
 _load_instruction:alignment(v0, v1) -> string(v0), int[64](v1).
 
 lang:physical:delimiter[`_load_instruction:alignment] = "\t".
-lang:physical:filePath[`_load_instruction:alignment] = "facts/predicates/load_instruction-alignment.dlm".
+lang:physical:filePath[`_load_instruction:alignment] = "facts/load_instruction-alignment.dlm".
 
 +instruction:id(e0:v0),
 +load_instruction(e0),
@@ -3020,7 +3020,7 @@ lang:physical:filePath[`_load_instruction:alignment] = "facts/predicates/load_in
 _load_instruction:ordering(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_load_instruction:ordering] = "\t".
-lang:physical:filePath[`_load_instruction:ordering] = "facts/predicates/load_instruction-ordering.dlm".
+lang:physical:filePath[`_load_instruction:ordering] = "facts/load_instruction-ordering.dlm".
 
 +instruction:id(e0:v0),
 +load_instruction(e0),
@@ -3035,7 +3035,7 @@ lang:physical:filePath[`_load_instruction:ordering] = "facts/predicates/load_ins
 _load_instruction:volatile(v0) -> string(v0).
 
 lang:physical:delimiter[`_load_instruction:volatile] = "\t".
-lang:physical:filePath[`_load_instruction:volatile] = "facts/predicates/load_instruction-volatile.dlm".
+lang:physical:filePath[`_load_instruction:volatile] = "facts/load_instruction-volatile.dlm".
 
 +instruction:id(e0:v0),
 +load_instruction(e0),
@@ -3048,7 +3048,7 @@ lang:physical:filePath[`_load_instruction:volatile] = "facts/predicates/load_ins
 _lshr_instruction:first_operand$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_lshr_instruction:first_operand$by_constant] = "\t".
-lang:physical:filePath[`_lshr_instruction:first_operand$by_constant] = "facts/predicates/lshr_instruction-first_operand-by_constant.dlm".
+lang:physical:filePath[`_lshr_instruction:first_operand$by_constant] = "facts/lshr_instruction-first_operand-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +lshr_instruction(e0),
@@ -3063,7 +3063,7 @@ lang:physical:filePath[`_lshr_instruction:first_operand$by_constant] = "facts/pr
 _lshr_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_lshr_instruction:first_operand$by_variable] = "\t".
-lang:physical:filePath[`_lshr_instruction:first_operand$by_variable] = "facts/predicates/lshr_instruction-first_operand-by_variable.dlm".
+lang:physical:filePath[`_lshr_instruction:first_operand$by_variable] = "facts/lshr_instruction-first_operand-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +lshr_instruction(e0),
@@ -3080,7 +3080,7 @@ lang:physical:filePath[`_lshr_instruction:first_operand$by_variable] = "facts/pr
 _lshr_instruction:second_operand$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_lshr_instruction:second_operand$by_constant] = "\t".
-lang:physical:filePath[`_lshr_instruction:second_operand$by_constant] = "facts/predicates/lshr_instruction-second_operand-by_constant.dlm".
+lang:physical:filePath[`_lshr_instruction:second_operand$by_constant] = "facts/lshr_instruction-second_operand-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +lshr_instruction(e0),
@@ -3095,7 +3095,7 @@ lang:physical:filePath[`_lshr_instruction:second_operand$by_constant] = "facts/p
 _lshr_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_lshr_instruction:second_operand$by_variable] = "\t".
-lang:physical:filePath[`_lshr_instruction:second_operand$by_variable] = "facts/predicates/lshr_instruction-second_operand-by_variable.dlm".
+lang:physical:filePath[`_lshr_instruction:second_operand$by_variable] = "facts/lshr_instruction-second_operand-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +lshr_instruction(e0),
@@ -3112,7 +3112,7 @@ lang:physical:filePath[`_lshr_instruction:second_operand$by_variable] = "facts/p
 _mul_instruction:first_operand$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_mul_instruction:first_operand$by_constant] = "\t".
-lang:physical:filePath[`_mul_instruction:first_operand$by_constant] = "facts/predicates/mul_instruction-first_operand-by_constant.dlm".
+lang:physical:filePath[`_mul_instruction:first_operand$by_constant] = "facts/mul_instruction-first_operand-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +mul_instruction(e0),
@@ -3127,7 +3127,7 @@ lang:physical:filePath[`_mul_instruction:first_operand$by_constant] = "facts/pre
 _mul_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_mul_instruction:first_operand$by_variable] = "\t".
-lang:physical:filePath[`_mul_instruction:first_operand$by_variable] = "facts/predicates/mul_instruction-first_operand-by_variable.dlm".
+lang:physical:filePath[`_mul_instruction:first_operand$by_variable] = "facts/mul_instruction-first_operand-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +mul_instruction(e0),
@@ -3144,7 +3144,7 @@ lang:physical:filePath[`_mul_instruction:first_operand$by_variable] = "facts/pre
 _mul_instruction:second_operand$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_mul_instruction:second_operand$by_constant] = "\t".
-lang:physical:filePath[`_mul_instruction:second_operand$by_constant] = "facts/predicates/mul_instruction-second_operand-by_constant.dlm".
+lang:physical:filePath[`_mul_instruction:second_operand$by_constant] = "facts/mul_instruction-second_operand-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +mul_instruction(e0),
@@ -3159,7 +3159,7 @@ lang:physical:filePath[`_mul_instruction:second_operand$by_constant] = "facts/pr
 _mul_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_mul_instruction:second_operand$by_variable] = "\t".
-lang:physical:filePath[`_mul_instruction:second_operand$by_variable] = "facts/predicates/mul_instruction-second_operand-by_variable.dlm".
+lang:physical:filePath[`_mul_instruction:second_operand$by_variable] = "facts/mul_instruction-second_operand-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +mul_instruction(e0),
@@ -3180,7 +3180,7 @@ lang:physical:filePath[`_mul_instruction:second_operand$by_variable] = "facts/pr
 _or_instruction:first_operand$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_or_instruction:first_operand$by_constant] = "\t".
-lang:physical:filePath[`_or_instruction:first_operand$by_constant] = "facts/predicates/or_instruction-first_operand-by_constant.dlm".
+lang:physical:filePath[`_or_instruction:first_operand$by_constant] = "facts/or_instruction-first_operand-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +or_instruction(e0),
@@ -3195,7 +3195,7 @@ lang:physical:filePath[`_or_instruction:first_operand$by_constant] = "facts/pred
 _or_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_or_instruction:first_operand$by_variable] = "\t".
-lang:physical:filePath[`_or_instruction:first_operand$by_variable] = "facts/predicates/or_instruction-first_operand-by_variable.dlm".
+lang:physical:filePath[`_or_instruction:first_operand$by_variable] = "facts/or_instruction-first_operand-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +or_instruction(e0),
@@ -3212,7 +3212,7 @@ lang:physical:filePath[`_or_instruction:first_operand$by_variable] = "facts/pred
 _or_instruction:second_operand$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_or_instruction:second_operand$by_constant] = "\t".
-lang:physical:filePath[`_or_instruction:second_operand$by_constant] = "facts/predicates/or_instruction-second_operand-by_constant.dlm".
+lang:physical:filePath[`_or_instruction:second_operand$by_constant] = "facts/or_instruction-second_operand-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +or_instruction(e0),
@@ -3227,7 +3227,7 @@ lang:physical:filePath[`_or_instruction:second_operand$by_constant] = "facts/pre
 _or_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_or_instruction:second_operand$by_variable] = "\t".
-lang:physical:filePath[`_or_instruction:second_operand$by_variable] = "facts/predicates/or_instruction-second_operand-by_variable.dlm".
+lang:physical:filePath[`_or_instruction:second_operand$by_variable] = "facts/or_instruction-second_operand-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +or_instruction(e0),
@@ -3244,7 +3244,7 @@ lang:physical:filePath[`_or_instruction:second_operand$by_variable] = "facts/pre
 _phi_instruction:npairs(v0, v1) -> string(v0), int[64](v1).
 
 lang:physical:delimiter[`_phi_instruction:npairs] = "\t".
-lang:physical:filePath[`_phi_instruction:npairs] = "facts/predicates/phi_instruction-npairs.dlm".
+lang:physical:filePath[`_phi_instruction:npairs] = "facts/phi_instruction-npairs.dlm".
 
 +instruction:id(e0:v0),
 +phi_instruction(e0),
@@ -3257,7 +3257,7 @@ lang:physical:filePath[`_phi_instruction:npairs] = "facts/predicates/phi_instruc
 _phi_instruction:pair:label(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
 
 lang:physical:delimiter[`_phi_instruction:pair:label] = "\t".
-lang:physical:filePath[`_phi_instruction:pair:label] = "facts/predicates/phi_instruction-pair-label.dlm".
+lang:physical:filePath[`_phi_instruction:pair:label] = "facts/phi_instruction-pair-label.dlm".
 
 +instruction:id(e0:v0),
 +phi_instruction(e0),
@@ -3272,7 +3272,7 @@ lang:physical:filePath[`_phi_instruction:pair:label] = "facts/predicates/phi_ins
 _phi_instruction:pair:value$by_constant(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
 
 lang:physical:delimiter[`_phi_instruction:pair:value$by_constant] = "\t".
-lang:physical:filePath[`_phi_instruction:pair:value$by_constant] = "facts/predicates/phi_instruction-pair-value-by_constant.dlm".
+lang:physical:filePath[`_phi_instruction:pair:value$by_constant] = "facts/phi_instruction-pair-value-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +phi_instruction(e0),
@@ -3287,7 +3287,7 @@ lang:physical:filePath[`_phi_instruction:pair:value$by_constant] = "facts/predic
 _phi_instruction:pair:value$by_variable(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
 
 lang:physical:delimiter[`_phi_instruction:pair:value$by_variable] = "\t".
-lang:physical:filePath[`_phi_instruction:pair:value$by_variable] = "facts/predicates/phi_instruction-pair-value-by_variable.dlm".
+lang:physical:filePath[`_phi_instruction:pair:value$by_variable] = "facts/phi_instruction-pair-value-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +phi_instruction(e0),
@@ -3304,7 +3304,7 @@ lang:physical:filePath[`_phi_instruction:pair:value$by_variable] = "facts/predic
 _phi_instruction:type(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_phi_instruction:type] = "\t".
-lang:physical:filePath[`_phi_instruction:type] = "facts/predicates/phi_instruction-type.dlm".
+lang:physical:filePath[`_phi_instruction:type] = "facts/phi_instruction-type.dlm".
 
 +instruction:id(e0:v0),
 +phi_instruction(e0),
@@ -3319,7 +3319,7 @@ lang:physical:filePath[`_phi_instruction:type] = "facts/predicates/phi_instructi
 _pointer_type:addr_space(v0, v1) -> string(v0), int[64](v1).
 
 lang:physical:delimiter[`_pointer_type:addr_space] = "\t".
-lang:physical:filePath[`_pointer_type:addr_space] = "facts/predicates/pointer_type-addr_space.dlm".
+lang:physical:filePath[`_pointer_type:addr_space] = "facts/pointer_type-addr_space.dlm".
 
 +type:id(e0:v0),
 +pointer_type(e0),
@@ -3332,7 +3332,7 @@ lang:physical:filePath[`_pointer_type:addr_space] = "facts/predicates/pointer_ty
 _pointer_type:component(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_pointer_type:component] = "\t".
-lang:physical:filePath[`_pointer_type:component] = "facts/predicates/pointer_type-component.dlm".
+lang:physical:filePath[`_pointer_type:component] = "facts/pointer_type-component.dlm".
 
 +type:id(e0:v0),
 +pointer_type(e0),
@@ -3347,7 +3347,7 @@ lang:physical:filePath[`_pointer_type:component] = "facts/predicates/pointer_typ
 _ptrtoint_constant_expression:from(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_ptrtoint_constant_expression:from] = "\t".
-lang:physical:filePath[`_ptrtoint_constant_expression:from] = "facts/predicates/ptrtoint_constant_expression-from.dlm".
+lang:physical:filePath[`_ptrtoint_constant_expression:from] = "facts/ptrtoint_constant_expression-from.dlm".
 
 +constant:id(e0:v0),
 +ptrtoint_constant_expression(e0),
@@ -3362,7 +3362,7 @@ lang:physical:filePath[`_ptrtoint_constant_expression:from] = "facts/predicates/
 _ptrtoint_instruction:from$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_ptrtoint_instruction:from$by_constant] = "\t".
-lang:physical:filePath[`_ptrtoint_instruction:from$by_constant] = "facts/predicates/ptrtoint_instruction-from-by_constant.dlm".
+lang:physical:filePath[`_ptrtoint_instruction:from$by_constant] = "facts/ptrtoint_instruction-from-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +ptrtoint_instruction(e0),
@@ -3377,7 +3377,7 @@ lang:physical:filePath[`_ptrtoint_instruction:from$by_constant] = "facts/predica
 _ptrtoint_instruction:from$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_ptrtoint_instruction:from$by_variable] = "\t".
-lang:physical:filePath[`_ptrtoint_instruction:from$by_variable] = "facts/predicates/ptrtoint_instruction-from-by_variable.dlm".
+lang:physical:filePath[`_ptrtoint_instruction:from$by_variable] = "facts/ptrtoint_instruction-from-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +ptrtoint_instruction(e0),
@@ -3394,7 +3394,7 @@ lang:physical:filePath[`_ptrtoint_instruction:from$by_variable] = "facts/predica
 _ptrtoint_instruction:to_type(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_ptrtoint_instruction:to_type] = "\t".
-lang:physical:filePath[`_ptrtoint_instruction:to_type] = "facts/predicates/ptrtoint_instruction-to_type.dlm".
+lang:physical:filePath[`_ptrtoint_instruction:to_type] = "facts/ptrtoint_instruction-to_type.dlm".
 
 +instruction:id(e0:v0),
 +ptrtoint_instruction(e0),
@@ -3409,7 +3409,7 @@ lang:physical:filePath[`_ptrtoint_instruction:to_type] = "facts/predicates/ptrto
 _resume_instruction:operand$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_resume_instruction:operand$by_constant] = "\t".
-lang:physical:filePath[`_resume_instruction:operand$by_constant] = "facts/predicates/resume_instruction-operand-by_constant.dlm".
+lang:physical:filePath[`_resume_instruction:operand$by_constant] = "facts/resume_instruction-operand-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +resume_instruction(e0),
@@ -3424,7 +3424,7 @@ lang:physical:filePath[`_resume_instruction:operand$by_constant] = "facts/predic
 _resume_instruction:operand$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_resume_instruction:operand$by_variable] = "\t".
-lang:physical:filePath[`_resume_instruction:operand$by_variable] = "facts/predicates/resume_instruction-operand-by_variable.dlm".
+lang:physical:filePath[`_resume_instruction:operand$by_variable] = "facts/resume_instruction-operand-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +resume_instruction(e0),
@@ -3441,7 +3441,7 @@ lang:physical:filePath[`_resume_instruction:operand$by_variable] = "facts/predic
 _ret_instruction:value$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_ret_instruction:value$by_constant] = "\t".
-lang:physical:filePath[`_ret_instruction:value$by_constant] = "facts/predicates/ret_instruction-value-by_constant.dlm".
+lang:physical:filePath[`_ret_instruction:value$by_constant] = "facts/ret_instruction-value-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +ret_instruction(e0),
@@ -3456,7 +3456,7 @@ lang:physical:filePath[`_ret_instruction:value$by_constant] = "facts/predicates/
 _ret_instruction:value$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_ret_instruction:value$by_variable] = "\t".
-lang:physical:filePath[`_ret_instruction:value$by_variable] = "facts/predicates/ret_instruction-value-by_variable.dlm".
+lang:physical:filePath[`_ret_instruction:value$by_variable] = "facts/ret_instruction-value-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +ret_instruction(e0),
@@ -3473,7 +3473,7 @@ lang:physical:filePath[`_ret_instruction:value$by_variable] = "facts/predicates/
 _ret_instruction:void(v0) -> string(v0).
 
 lang:physical:delimiter[`_ret_instruction:void] = "\t".
-lang:physical:filePath[`_ret_instruction:void] = "facts/predicates/ret_instruction-void.dlm".
+lang:physical:filePath[`_ret_instruction:void] = "facts/ret_instruction-void.dlm".
 
 +instruction:id(e0:v0),
 +ret_instruction(e0),
@@ -3486,7 +3486,7 @@ lang:physical:filePath[`_ret_instruction:void] = "facts/predicates/ret_instructi
 _sdiv_instruction:first_operand$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_sdiv_instruction:first_operand$by_constant] = "\t".
-lang:physical:filePath[`_sdiv_instruction:first_operand$by_constant] = "facts/predicates/sdiv_instruction-first_operand-by_constant.dlm".
+lang:physical:filePath[`_sdiv_instruction:first_operand$by_constant] = "facts/sdiv_instruction-first_operand-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +sdiv_instruction(e0),
@@ -3501,7 +3501,7 @@ lang:physical:filePath[`_sdiv_instruction:first_operand$by_constant] = "facts/pr
 _sdiv_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_sdiv_instruction:first_operand$by_variable] = "\t".
-lang:physical:filePath[`_sdiv_instruction:first_operand$by_variable] = "facts/predicates/sdiv_instruction-first_operand-by_variable.dlm".
+lang:physical:filePath[`_sdiv_instruction:first_operand$by_variable] = "facts/sdiv_instruction-first_operand-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +sdiv_instruction(e0),
@@ -3518,7 +3518,7 @@ lang:physical:filePath[`_sdiv_instruction:first_operand$by_variable] = "facts/pr
 _sdiv_instruction:second_operand$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_sdiv_instruction:second_operand$by_constant] = "\t".
-lang:physical:filePath[`_sdiv_instruction:second_operand$by_constant] = "facts/predicates/sdiv_instruction-second_operand-by_constant.dlm".
+lang:physical:filePath[`_sdiv_instruction:second_operand$by_constant] = "facts/sdiv_instruction-second_operand-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +sdiv_instruction(e0),
@@ -3533,7 +3533,7 @@ lang:physical:filePath[`_sdiv_instruction:second_operand$by_constant] = "facts/p
 _sdiv_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_sdiv_instruction:second_operand$by_variable] = "\t".
-lang:physical:filePath[`_sdiv_instruction:second_operand$by_variable] = "facts/predicates/sdiv_instruction-second_operand-by_variable.dlm".
+lang:physical:filePath[`_sdiv_instruction:second_operand$by_variable] = "facts/sdiv_instruction-second_operand-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +sdiv_instruction(e0),
@@ -3550,7 +3550,7 @@ lang:physical:filePath[`_sdiv_instruction:second_operand$by_variable] = "facts/p
 _select_instruction:condition$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_select_instruction:condition$by_constant] = "\t".
-lang:physical:filePath[`_select_instruction:condition$by_constant] = "facts/predicates/select_instruction-condition-by_constant.dlm".
+lang:physical:filePath[`_select_instruction:condition$by_constant] = "facts/select_instruction-condition-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +select_instruction(e0),
@@ -3565,7 +3565,7 @@ lang:physical:filePath[`_select_instruction:condition$by_constant] = "facts/pred
 _select_instruction:condition$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_select_instruction:condition$by_variable] = "\t".
-lang:physical:filePath[`_select_instruction:condition$by_variable] = "facts/predicates/select_instruction-condition-by_variable.dlm".
+lang:physical:filePath[`_select_instruction:condition$by_variable] = "facts/select_instruction-condition-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +select_instruction(e0),
@@ -3582,7 +3582,7 @@ lang:physical:filePath[`_select_instruction:condition$by_variable] = "facts/pred
 _select_instruction:first_operand$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_select_instruction:first_operand$by_constant] = "\t".
-lang:physical:filePath[`_select_instruction:first_operand$by_constant] = "facts/predicates/select_instruction-first_operand-by_constant.dlm".
+lang:physical:filePath[`_select_instruction:first_operand$by_constant] = "facts/select_instruction-first_operand-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +select_instruction(e0),
@@ -3597,7 +3597,7 @@ lang:physical:filePath[`_select_instruction:first_operand$by_constant] = "facts/
 _select_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_select_instruction:first_operand$by_variable] = "\t".
-lang:physical:filePath[`_select_instruction:first_operand$by_variable] = "facts/predicates/select_instruction-first_operand-by_variable.dlm".
+lang:physical:filePath[`_select_instruction:first_operand$by_variable] = "facts/select_instruction-first_operand-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +select_instruction(e0),
@@ -3614,7 +3614,7 @@ lang:physical:filePath[`_select_instruction:first_operand$by_variable] = "facts/
 _select_instruction:second_operand$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_select_instruction:second_operand$by_constant] = "\t".
-lang:physical:filePath[`_select_instruction:second_operand$by_constant] = "facts/predicates/select_instruction-second_operand-by_constant.dlm".
+lang:physical:filePath[`_select_instruction:second_operand$by_constant] = "facts/select_instruction-second_operand-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +select_instruction(e0),
@@ -3629,7 +3629,7 @@ lang:physical:filePath[`_select_instruction:second_operand$by_constant] = "facts
 _select_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_select_instruction:second_operand$by_variable] = "\t".
-lang:physical:filePath[`_select_instruction:second_operand$by_variable] = "facts/predicates/select_instruction-second_operand-by_variable.dlm".
+lang:physical:filePath[`_select_instruction:second_operand$by_variable] = "facts/select_instruction-second_operand-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +select_instruction(e0),
@@ -3646,7 +3646,7 @@ lang:physical:filePath[`_select_instruction:second_operand$by_variable] = "facts
 _sext_instruction:from$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_sext_instruction:from$by_constant] = "\t".
-lang:physical:filePath[`_sext_instruction:from$by_constant] = "facts/predicates/sext_instruction-from-by_constant.dlm".
+lang:physical:filePath[`_sext_instruction:from$by_constant] = "facts/sext_instruction-from-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +sext_instruction(e0),
@@ -3661,7 +3661,7 @@ lang:physical:filePath[`_sext_instruction:from$by_constant] = "facts/predicates/
 _sext_instruction:from$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_sext_instruction:from$by_variable] = "\t".
-lang:physical:filePath[`_sext_instruction:from$by_variable] = "facts/predicates/sext_instruction-from-by_variable.dlm".
+lang:physical:filePath[`_sext_instruction:from$by_variable] = "facts/sext_instruction-from-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +sext_instruction(e0),
@@ -3678,7 +3678,7 @@ lang:physical:filePath[`_sext_instruction:from$by_variable] = "facts/predicates/
 _sext_instruction:to_type(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_sext_instruction:to_type] = "\t".
-lang:physical:filePath[`_sext_instruction:to_type] = "facts/predicates/sext_instruction-to_type.dlm".
+lang:physical:filePath[`_sext_instruction:to_type] = "facts/sext_instruction-to_type.dlm".
 
 +instruction:id(e0:v0),
 +sext_instruction(e0),
@@ -3693,7 +3693,7 @@ lang:physical:filePath[`_sext_instruction:to_type] = "facts/predicates/sext_inst
 _shl_instruction:first_operand$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_shl_instruction:first_operand$by_constant] = "\t".
-lang:physical:filePath[`_shl_instruction:first_operand$by_constant] = "facts/predicates/shl_instruction-first_operand-by_constant.dlm".
+lang:physical:filePath[`_shl_instruction:first_operand$by_constant] = "facts/shl_instruction-first_operand-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +shl_instruction(e0),
@@ -3708,7 +3708,7 @@ lang:physical:filePath[`_shl_instruction:first_operand$by_constant] = "facts/pre
 _shl_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_shl_instruction:first_operand$by_variable] = "\t".
-lang:physical:filePath[`_shl_instruction:first_operand$by_variable] = "facts/predicates/shl_instruction-first_operand-by_variable.dlm".
+lang:physical:filePath[`_shl_instruction:first_operand$by_variable] = "facts/shl_instruction-first_operand-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +shl_instruction(e0),
@@ -3725,7 +3725,7 @@ lang:physical:filePath[`_shl_instruction:first_operand$by_variable] = "facts/pre
 _shl_instruction:second_operand$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_shl_instruction:second_operand$by_constant] = "\t".
-lang:physical:filePath[`_shl_instruction:second_operand$by_constant] = "facts/predicates/shl_instruction-second_operand-by_constant.dlm".
+lang:physical:filePath[`_shl_instruction:second_operand$by_constant] = "facts/shl_instruction-second_operand-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +shl_instruction(e0),
@@ -3740,7 +3740,7 @@ lang:physical:filePath[`_shl_instruction:second_operand$by_constant] = "facts/pr
 _shl_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_shl_instruction:second_operand$by_variable] = "\t".
-lang:physical:filePath[`_shl_instruction:second_operand$by_variable] = "facts/predicates/shl_instruction-second_operand-by_variable.dlm".
+lang:physical:filePath[`_shl_instruction:second_operand$by_variable] = "facts/shl_instruction-second_operand-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +shl_instruction(e0),
@@ -3757,7 +3757,7 @@ lang:physical:filePath[`_shl_instruction:second_operand$by_variable] = "facts/pr
 _shufflevector_instruction:first_vector$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_shufflevector_instruction:first_vector$by_constant] = "\t".
-lang:physical:filePath[`_shufflevector_instruction:first_vector$by_constant] = "facts/predicates/shufflevector_instruction-first_vector-by_constant.dlm".
+lang:physical:filePath[`_shufflevector_instruction:first_vector$by_constant] = "facts/shufflevector_instruction-first_vector-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +shufflevector_instruction(e0),
@@ -3772,7 +3772,7 @@ lang:physical:filePath[`_shufflevector_instruction:first_vector$by_constant] = "
 _shufflevector_instruction:first_vector$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_shufflevector_instruction:first_vector$by_variable] = "\t".
-lang:physical:filePath[`_shufflevector_instruction:first_vector$by_variable] = "facts/predicates/shufflevector_instruction-first_vector-by_variable.dlm".
+lang:physical:filePath[`_shufflevector_instruction:first_vector$by_variable] = "facts/shufflevector_instruction-first_vector-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +shufflevector_instruction(e0),
@@ -3789,7 +3789,7 @@ lang:physical:filePath[`_shufflevector_instruction:first_vector$by_variable] = "
 _shufflevector_instruction:mask(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_shufflevector_instruction:mask] = "\t".
-lang:physical:filePath[`_shufflevector_instruction:mask] = "facts/predicates/shufflevector_instruction-mask.dlm".
+lang:physical:filePath[`_shufflevector_instruction:mask] = "facts/shufflevector_instruction-mask.dlm".
 
 +instruction:id(e0:v0),
 +shufflevector_instruction(e0),
@@ -3804,7 +3804,7 @@ lang:physical:filePath[`_shufflevector_instruction:mask] = "facts/predicates/shu
 _shufflevector_instruction:second_vector$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_shufflevector_instruction:second_vector$by_constant] = "\t".
-lang:physical:filePath[`_shufflevector_instruction:second_vector$by_constant] = "facts/predicates/shufflevector_instruction-second_vector-by_constant.dlm".
+lang:physical:filePath[`_shufflevector_instruction:second_vector$by_constant] = "facts/shufflevector_instruction-second_vector-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +shufflevector_instruction(e0),
@@ -3819,7 +3819,7 @@ lang:physical:filePath[`_shufflevector_instruction:second_vector$by_constant] = 
 _shufflevector_instruction:second_vector$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_shufflevector_instruction:second_vector$by_variable] = "\t".
-lang:physical:filePath[`_shufflevector_instruction:second_vector$by_variable] = "facts/predicates/shufflevector_instruction-second_vector-by_variable.dlm".
+lang:physical:filePath[`_shufflevector_instruction:second_vector$by_variable] = "facts/shufflevector_instruction-second_vector-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +shufflevector_instruction(e0),
@@ -3836,7 +3836,7 @@ lang:physical:filePath[`_shufflevector_instruction:second_vector$by_variable] = 
 _sitofp_instruction:from$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_sitofp_instruction:from$by_constant] = "\t".
-lang:physical:filePath[`_sitofp_instruction:from$by_constant] = "facts/predicates/sitofp_instruction-from-by_constant.dlm".
+lang:physical:filePath[`_sitofp_instruction:from$by_constant] = "facts/sitofp_instruction-from-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +sitofp_instruction(e0),
@@ -3851,7 +3851,7 @@ lang:physical:filePath[`_sitofp_instruction:from$by_constant] = "facts/predicate
 _sitofp_instruction:from$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_sitofp_instruction:from$by_variable] = "\t".
-lang:physical:filePath[`_sitofp_instruction:from$by_variable] = "facts/predicates/sitofp_instruction-from-by_variable.dlm".
+lang:physical:filePath[`_sitofp_instruction:from$by_variable] = "facts/sitofp_instruction-from-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +sitofp_instruction(e0),
@@ -3868,7 +3868,7 @@ lang:physical:filePath[`_sitofp_instruction:from$by_variable] = "facts/predicate
 _sitofp_instruction:to_type(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_sitofp_instruction:to_type] = "\t".
-lang:physical:filePath[`_sitofp_instruction:to_type] = "facts/predicates/sitofp_instruction-to_type.dlm".
+lang:physical:filePath[`_sitofp_instruction:to_type] = "facts/sitofp_instruction-to_type.dlm".
 
 +instruction:id(e0:v0),
 +sitofp_instruction(e0),
@@ -3883,7 +3883,7 @@ lang:physical:filePath[`_sitofp_instruction:to_type] = "facts/predicates/sitofp_
 _srem_instruction:first_operand$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_srem_instruction:first_operand$by_constant] = "\t".
-lang:physical:filePath[`_srem_instruction:first_operand$by_constant] = "facts/predicates/srem_instruction-first_operand-by_constant.dlm".
+lang:physical:filePath[`_srem_instruction:first_operand$by_constant] = "facts/srem_instruction-first_operand-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +srem_instruction(e0),
@@ -3898,7 +3898,7 @@ lang:physical:filePath[`_srem_instruction:first_operand$by_constant] = "facts/pr
 _srem_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_srem_instruction:first_operand$by_variable] = "\t".
-lang:physical:filePath[`_srem_instruction:first_operand$by_variable] = "facts/predicates/srem_instruction-first_operand-by_variable.dlm".
+lang:physical:filePath[`_srem_instruction:first_operand$by_variable] = "facts/srem_instruction-first_operand-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +srem_instruction(e0),
@@ -3915,7 +3915,7 @@ lang:physical:filePath[`_srem_instruction:first_operand$by_variable] = "facts/pr
 _srem_instruction:second_operand$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_srem_instruction:second_operand$by_constant] = "\t".
-lang:physical:filePath[`_srem_instruction:second_operand$by_constant] = "facts/predicates/srem_instruction-second_operand-by_constant.dlm".
+lang:physical:filePath[`_srem_instruction:second_operand$by_constant] = "facts/srem_instruction-second_operand-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +srem_instruction(e0),
@@ -3930,7 +3930,7 @@ lang:physical:filePath[`_srem_instruction:second_operand$by_constant] = "facts/p
 _srem_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_srem_instruction:second_operand$by_variable] = "\t".
-lang:physical:filePath[`_srem_instruction:second_operand$by_variable] = "facts/predicates/srem_instruction-second_operand-by_variable.dlm".
+lang:physical:filePath[`_srem_instruction:second_operand$by_variable] = "facts/srem_instruction-second_operand-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +srem_instruction(e0),
@@ -3947,7 +3947,7 @@ lang:physical:filePath[`_srem_instruction:second_operand$by_variable] = "facts/p
 _store_instruction:address$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_store_instruction:address$by_constant] = "\t".
-lang:physical:filePath[`_store_instruction:address$by_constant] = "facts/predicates/store_instruction-address-by_constant.dlm".
+lang:physical:filePath[`_store_instruction:address$by_constant] = "facts/store_instruction-address-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +store_instruction(e0),
@@ -3962,7 +3962,7 @@ lang:physical:filePath[`_store_instruction:address$by_constant] = "facts/predica
 _store_instruction:address$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_store_instruction:address$by_variable] = "\t".
-lang:physical:filePath[`_store_instruction:address$by_variable] = "facts/predicates/store_instruction-address-by_variable.dlm".
+lang:physical:filePath[`_store_instruction:address$by_variable] = "facts/store_instruction-address-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +store_instruction(e0),
@@ -3979,7 +3979,7 @@ lang:physical:filePath[`_store_instruction:address$by_variable] = "facts/predica
 _store_instruction:alignment(v0, v1) -> string(v0), int[64](v1).
 
 lang:physical:delimiter[`_store_instruction:alignment] = "\t".
-lang:physical:filePath[`_store_instruction:alignment] = "facts/predicates/store_instruction-alignment.dlm".
+lang:physical:filePath[`_store_instruction:alignment] = "facts/store_instruction-alignment.dlm".
 
 +instruction:id(e0:v0),
 +store_instruction(e0),
@@ -3992,7 +3992,7 @@ lang:physical:filePath[`_store_instruction:alignment] = "facts/predicates/store_
 _store_instruction:ordering(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_store_instruction:ordering] = "\t".
-lang:physical:filePath[`_store_instruction:ordering] = "facts/predicates/store_instruction-ordering.dlm".
+lang:physical:filePath[`_store_instruction:ordering] = "facts/store_instruction-ordering.dlm".
 
 +instruction:id(e0:v0),
 +store_instruction(e0),
@@ -4007,7 +4007,7 @@ lang:physical:filePath[`_store_instruction:ordering] = "facts/predicates/store_i
 _store_instruction:value$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_store_instruction:value$by_constant] = "\t".
-lang:physical:filePath[`_store_instruction:value$by_constant] = "facts/predicates/store_instruction-value-by_constant.dlm".
+lang:physical:filePath[`_store_instruction:value$by_constant] = "facts/store_instruction-value-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +store_instruction(e0),
@@ -4022,7 +4022,7 @@ lang:physical:filePath[`_store_instruction:value$by_constant] = "facts/predicate
 _store_instruction:value$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_store_instruction:value$by_variable] = "\t".
-lang:physical:filePath[`_store_instruction:value$by_variable] = "facts/predicates/store_instruction-value-by_variable.dlm".
+lang:physical:filePath[`_store_instruction:value$by_variable] = "facts/store_instruction-value-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +store_instruction(e0),
@@ -4039,7 +4039,7 @@ lang:physical:filePath[`_store_instruction:value$by_variable] = "facts/predicate
 _store_instruction:volatile(v0) -> string(v0).
 
 lang:physical:delimiter[`_store_instruction:volatile] = "\t".
-lang:physical:filePath[`_store_instruction:volatile] = "facts/predicates/store_instruction-volatile.dlm".
+lang:physical:filePath[`_store_instruction:volatile] = "facts/store_instruction-volatile.dlm".
 
 +instruction:id(e0:v0),
 +store_instruction(e0),
@@ -4052,7 +4052,7 @@ lang:physical:filePath[`_store_instruction:volatile] = "facts/predicates/store_i
 _struct_type:field(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
 
 lang:physical:delimiter[`_struct_type:field] = "\t".
-lang:physical:filePath[`_struct_type:field] = "facts/predicates/struct_type-field.dlm".
+lang:physical:filePath[`_struct_type:field] = "facts/struct_type-field.dlm".
 
 +type:id(e0:v0),
 +struct_type(e0),
@@ -4067,7 +4067,7 @@ lang:physical:filePath[`_struct_type:field] = "facts/predicates/struct_type-fiel
 _struct_type:field_bit_offset(v0, v1, v2) -> string(v0), int[64](v1), int[64](v2).
 
 lang:physical:delimiter[`_struct_type:field_bit_offset] = "\t".
-lang:physical:filePath[`_struct_type:field_bit_offset] = "facts/predicates/struct_type-field_bit_offset.dlm".
+lang:physical:filePath[`_struct_type:field_bit_offset] = "facts/struct_type-field_bit_offset.dlm".
 
 +type:id(e0:v0),
 +struct_type(e0),
@@ -4080,7 +4080,7 @@ lang:physical:filePath[`_struct_type:field_bit_offset] = "facts/predicates/struc
 _struct_type:field_name_at_offset(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
 
 lang:physical:delimiter[`_struct_type:field_name_at_offset] = "\t".
-lang:physical:filePath[`_struct_type:field_name_at_offset] = "facts/predicates/struct_type-field_name_at_offset.dlm".
+lang:physical:filePath[`_struct_type:field_name_at_offset] = "facts/struct_type-field_name_at_offset.dlm".
 
 +type:id(e0:v0),
 +struct_type(e0),
@@ -4093,7 +4093,7 @@ lang:physical:filePath[`_struct_type:field_name_at_offset] = "facts/predicates/s
 _struct_type:field_offset(v0, v1, v2) -> string(v0), int[64](v1), int[64](v2).
 
 lang:physical:delimiter[`_struct_type:field_offset] = "\t".
-lang:physical:filePath[`_struct_type:field_offset] = "facts/predicates/struct_type-field_offset.dlm".
+lang:physical:filePath[`_struct_type:field_offset] = "facts/struct_type-field_offset.dlm".
 
 +type:id(e0:v0),
 +struct_type(e0),
@@ -4106,7 +4106,7 @@ lang:physical:filePath[`_struct_type:field_offset] = "facts/predicates/struct_ty
 _struct_type:inherits_at_offset(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
 
 lang:physical:delimiter[`_struct_type:inherits_at_offset] = "\t".
-lang:physical:filePath[`_struct_type:inherits_at_offset] = "facts/predicates/struct_type-inherits_at_offset.dlm".
+lang:physical:filePath[`_struct_type:inherits_at_offset] = "facts/struct_type-inherits_at_offset.dlm".
 
 +type:id(e0:v0),
 +struct_type(e0),
@@ -4119,7 +4119,7 @@ lang:physical:filePath[`_struct_type:inherits_at_offset] = "facts/predicates/str
 _struct_type:nfields(v0, v1) -> string(v0), int[64](v1).
 
 lang:physical:delimiter[`_struct_type:nfields] = "\t".
-lang:physical:filePath[`_struct_type:nfields] = "facts/predicates/struct_type-nfields.dlm".
+lang:physical:filePath[`_struct_type:nfields] = "facts/struct_type-nfields.dlm".
 
 +type:id(e0:v0),
 +struct_type(e0),
@@ -4132,7 +4132,7 @@ lang:physical:filePath[`_struct_type:nfields] = "facts/predicates/struct_type-nf
 _sub_instruction:first_operand$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_sub_instruction:first_operand$by_constant] = "\t".
-lang:physical:filePath[`_sub_instruction:first_operand$by_constant] = "facts/predicates/sub_instruction-first_operand-by_constant.dlm".
+lang:physical:filePath[`_sub_instruction:first_operand$by_constant] = "facts/sub_instruction-first_operand-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +sub_instruction(e0),
@@ -4147,7 +4147,7 @@ lang:physical:filePath[`_sub_instruction:first_operand$by_constant] = "facts/pre
 _sub_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_sub_instruction:first_operand$by_variable] = "\t".
-lang:physical:filePath[`_sub_instruction:first_operand$by_variable] = "facts/predicates/sub_instruction-first_operand-by_variable.dlm".
+lang:physical:filePath[`_sub_instruction:first_operand$by_variable] = "facts/sub_instruction-first_operand-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +sub_instruction(e0),
@@ -4164,7 +4164,7 @@ lang:physical:filePath[`_sub_instruction:first_operand$by_variable] = "facts/pre
 _sub_instruction:second_operand$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_sub_instruction:second_operand$by_constant] = "\t".
-lang:physical:filePath[`_sub_instruction:second_operand$by_constant] = "facts/predicates/sub_instruction-second_operand-by_constant.dlm".
+lang:physical:filePath[`_sub_instruction:second_operand$by_constant] = "facts/sub_instruction-second_operand-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +sub_instruction(e0),
@@ -4179,7 +4179,7 @@ lang:physical:filePath[`_sub_instruction:second_operand$by_constant] = "facts/pr
 _sub_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_sub_instruction:second_operand$by_variable] = "\t".
-lang:physical:filePath[`_sub_instruction:second_operand$by_variable] = "facts/predicates/sub_instruction-second_operand-by_variable.dlm".
+lang:physical:filePath[`_sub_instruction:second_operand$by_variable] = "facts/sub_instruction-second_operand-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +sub_instruction(e0),
@@ -4196,7 +4196,7 @@ lang:physical:filePath[`_sub_instruction:second_operand$by_variable] = "facts/pr
 _switch_instruction:case:label(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
 
 lang:physical:delimiter[`_switch_instruction:case:label] = "\t".
-lang:physical:filePath[`_switch_instruction:case:label] = "facts/predicates/switch_instruction-case-label.dlm".
+lang:physical:filePath[`_switch_instruction:case:label] = "facts/switch_instruction-case-label.dlm".
 
 +instruction:id(e0:v0),
 +switch_instruction(e0),
@@ -4211,7 +4211,7 @@ lang:physical:filePath[`_switch_instruction:case:label] = "facts/predicates/swit
 _switch_instruction:case:value(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
 
 lang:physical:delimiter[`_switch_instruction:case:value] = "\t".
-lang:physical:filePath[`_switch_instruction:case:value] = "facts/predicates/switch_instruction-case-value.dlm".
+lang:physical:filePath[`_switch_instruction:case:value] = "facts/switch_instruction-case-value.dlm".
 
 +instruction:id(e0:v0),
 +switch_instruction(e0),
@@ -4226,7 +4226,7 @@ lang:physical:filePath[`_switch_instruction:case:value] = "facts/predicates/swit
 _switch_instruction:default_label(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_switch_instruction:default_label] = "\t".
-lang:physical:filePath[`_switch_instruction:default_label] = "facts/predicates/switch_instruction-default_label.dlm".
+lang:physical:filePath[`_switch_instruction:default_label] = "facts/switch_instruction-default_label.dlm".
 
 +instruction:id(e0:v0),
 +switch_instruction(e0),
@@ -4241,7 +4241,7 @@ lang:physical:filePath[`_switch_instruction:default_label] = "facts/predicates/s
 _switch_instruction:ncases(v0, v1) -> string(v0), int[64](v1).
 
 lang:physical:delimiter[`_switch_instruction:ncases] = "\t".
-lang:physical:filePath[`_switch_instruction:ncases] = "facts/predicates/switch_instruction-ncases.dlm".
+lang:physical:filePath[`_switch_instruction:ncases] = "facts/switch_instruction-ncases.dlm".
 
 +instruction:id(e0:v0),
 +switch_instruction(e0),
@@ -4254,7 +4254,7 @@ lang:physical:filePath[`_switch_instruction:ncases] = "facts/predicates/switch_i
 _switch_instruction:operand$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_switch_instruction:operand$by_constant] = "\t".
-lang:physical:filePath[`_switch_instruction:operand$by_constant] = "facts/predicates/switch_instruction-operand-by_constant.dlm".
+lang:physical:filePath[`_switch_instruction:operand$by_constant] = "facts/switch_instruction-operand-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +switch_instruction(e0),
@@ -4269,7 +4269,7 @@ lang:physical:filePath[`_switch_instruction:operand$by_constant] = "facts/predic
 _switch_instruction:operand$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_switch_instruction:operand$by_variable] = "\t".
-lang:physical:filePath[`_switch_instruction:operand$by_variable] = "facts/predicates/switch_instruction-operand-by_variable.dlm".
+lang:physical:filePath[`_switch_instruction:operand$by_variable] = "facts/switch_instruction-operand-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +switch_instruction(e0),
@@ -4286,7 +4286,7 @@ lang:physical:filePath[`_switch_instruction:operand$by_variable] = "facts/predic
 _trunc_instruction:from$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_trunc_instruction:from$by_constant] = "\t".
-lang:physical:filePath[`_trunc_instruction:from$by_constant] = "facts/predicates/trunc_instruction-from-by_constant.dlm".
+lang:physical:filePath[`_trunc_instruction:from$by_constant] = "facts/trunc_instruction-from-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +trunc_instruction(e0),
@@ -4301,7 +4301,7 @@ lang:physical:filePath[`_trunc_instruction:from$by_constant] = "facts/predicates
 _trunc_instruction:from$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_trunc_instruction:from$by_variable] = "\t".
-lang:physical:filePath[`_trunc_instruction:from$by_variable] = "facts/predicates/trunc_instruction-from-by_variable.dlm".
+lang:physical:filePath[`_trunc_instruction:from$by_variable] = "facts/trunc_instruction-from-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +trunc_instruction(e0),
@@ -4318,7 +4318,7 @@ lang:physical:filePath[`_trunc_instruction:from$by_variable] = "facts/predicates
 _trunc_instruction:to_type(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_trunc_instruction:to_type] = "\t".
-lang:physical:filePath[`_trunc_instruction:to_type] = "facts/predicates/trunc_instruction-to_type.dlm".
+lang:physical:filePath[`_trunc_instruction:to_type] = "facts/trunc_instruction-to_type.dlm".
 
 +instruction:id(e0:v0),
 +trunc_instruction(e0),
@@ -4333,7 +4333,7 @@ lang:physical:filePath[`_trunc_instruction:to_type] = "facts/predicates/trunc_in
 _type:size(v0, v1) -> string(v0), int[64](v1).
 
 lang:physical:delimiter[`_type:size] = "\t".
-lang:physical:filePath[`_type:size] = "facts/predicates/type-size.dlm".
+lang:physical:filePath[`_type:size] = "facts/type-size.dlm".
 
 +type:id(e0:v0),
 +type(e0),
@@ -4346,7 +4346,7 @@ lang:physical:filePath[`_type:size] = "facts/predicates/type-size.dlm".
 _type:unpadded_size(v0, v1) -> string(v0), int[64](v1).
 
 lang:physical:delimiter[`_type:unpadded_size] = "\t".
-lang:physical:filePath[`_type:unpadded_size] = "facts/predicates/type-unpadded_size.dlm".
+lang:physical:filePath[`_type:unpadded_size] = "facts/type-unpadded_size.dlm".
 
 +type:id(e0:v0),
 +type(e0),
@@ -4359,7 +4359,7 @@ lang:physical:filePath[`_type:unpadded_size] = "facts/predicates/type-unpadded_s
 _udiv_instruction:first_operand$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_udiv_instruction:first_operand$by_constant] = "\t".
-lang:physical:filePath[`_udiv_instruction:first_operand$by_constant] = "facts/predicates/udiv_instruction-first_operand-by_constant.dlm".
+lang:physical:filePath[`_udiv_instruction:first_operand$by_constant] = "facts/udiv_instruction-first_operand-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +udiv_instruction(e0),
@@ -4374,7 +4374,7 @@ lang:physical:filePath[`_udiv_instruction:first_operand$by_constant] = "facts/pr
 _udiv_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_udiv_instruction:first_operand$by_variable] = "\t".
-lang:physical:filePath[`_udiv_instruction:first_operand$by_variable] = "facts/predicates/udiv_instruction-first_operand-by_variable.dlm".
+lang:physical:filePath[`_udiv_instruction:first_operand$by_variable] = "facts/udiv_instruction-first_operand-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +udiv_instruction(e0),
@@ -4391,7 +4391,7 @@ lang:physical:filePath[`_udiv_instruction:first_operand$by_variable] = "facts/pr
 _udiv_instruction:second_operand$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_udiv_instruction:second_operand$by_constant] = "\t".
-lang:physical:filePath[`_udiv_instruction:second_operand$by_constant] = "facts/predicates/udiv_instruction-second_operand-by_constant.dlm".
+lang:physical:filePath[`_udiv_instruction:second_operand$by_constant] = "facts/udiv_instruction-second_operand-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +udiv_instruction(e0),
@@ -4406,7 +4406,7 @@ lang:physical:filePath[`_udiv_instruction:second_operand$by_constant] = "facts/p
 _udiv_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_udiv_instruction:second_operand$by_variable] = "\t".
-lang:physical:filePath[`_udiv_instruction:second_operand$by_variable] = "facts/predicates/udiv_instruction-second_operand-by_variable.dlm".
+lang:physical:filePath[`_udiv_instruction:second_operand$by_variable] = "facts/udiv_instruction-second_operand-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +udiv_instruction(e0),
@@ -4423,7 +4423,7 @@ lang:physical:filePath[`_udiv_instruction:second_operand$by_variable] = "facts/p
 _uitofp_instruction:from$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_uitofp_instruction:from$by_constant] = "\t".
-lang:physical:filePath[`_uitofp_instruction:from$by_constant] = "facts/predicates/uitofp_instruction-from-by_constant.dlm".
+lang:physical:filePath[`_uitofp_instruction:from$by_constant] = "facts/uitofp_instruction-from-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +uitofp_instruction(e0),
@@ -4438,7 +4438,7 @@ lang:physical:filePath[`_uitofp_instruction:from$by_constant] = "facts/predicate
 _uitofp_instruction:from$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_uitofp_instruction:from$by_variable] = "\t".
-lang:physical:filePath[`_uitofp_instruction:from$by_variable] = "facts/predicates/uitofp_instruction-from-by_variable.dlm".
+lang:physical:filePath[`_uitofp_instruction:from$by_variable] = "facts/uitofp_instruction-from-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +uitofp_instruction(e0),
@@ -4455,7 +4455,7 @@ lang:physical:filePath[`_uitofp_instruction:from$by_variable] = "facts/predicate
 _uitofp_instruction:to_type(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_uitofp_instruction:to_type] = "\t".
-lang:physical:filePath[`_uitofp_instruction:to_type] = "facts/predicates/uitofp_instruction-to_type.dlm".
+lang:physical:filePath[`_uitofp_instruction:to_type] = "facts/uitofp_instruction-to_type.dlm".
 
 +instruction:id(e0:v0),
 +uitofp_instruction(e0),
@@ -4470,7 +4470,7 @@ lang:physical:filePath[`_uitofp_instruction:to_type] = "facts/predicates/uitofp_
 _urem_instruction:first_operand$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_urem_instruction:first_operand$by_constant] = "\t".
-lang:physical:filePath[`_urem_instruction:first_operand$by_constant] = "facts/predicates/urem_instruction-first_operand-by_constant.dlm".
+lang:physical:filePath[`_urem_instruction:first_operand$by_constant] = "facts/urem_instruction-first_operand-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +urem_instruction(e0),
@@ -4485,7 +4485,7 @@ lang:physical:filePath[`_urem_instruction:first_operand$by_constant] = "facts/pr
 _urem_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_urem_instruction:first_operand$by_variable] = "\t".
-lang:physical:filePath[`_urem_instruction:first_operand$by_variable] = "facts/predicates/urem_instruction-first_operand-by_variable.dlm".
+lang:physical:filePath[`_urem_instruction:first_operand$by_variable] = "facts/urem_instruction-first_operand-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +urem_instruction(e0),
@@ -4502,7 +4502,7 @@ lang:physical:filePath[`_urem_instruction:first_operand$by_variable] = "facts/pr
 _urem_instruction:second_operand$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_urem_instruction:second_operand$by_constant] = "\t".
-lang:physical:filePath[`_urem_instruction:second_operand$by_constant] = "facts/predicates/urem_instruction-second_operand-by_constant.dlm".
+lang:physical:filePath[`_urem_instruction:second_operand$by_constant] = "facts/urem_instruction-second_operand-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +urem_instruction(e0),
@@ -4517,7 +4517,7 @@ lang:physical:filePath[`_urem_instruction:second_operand$by_constant] = "facts/p
 _urem_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_urem_instruction:second_operand$by_variable] = "\t".
-lang:physical:filePath[`_urem_instruction:second_operand$by_variable] = "facts/predicates/urem_instruction-second_operand-by_variable.dlm".
+lang:physical:filePath[`_urem_instruction:second_operand$by_variable] = "facts/urem_instruction-second_operand-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +urem_instruction(e0),
@@ -4534,7 +4534,7 @@ lang:physical:filePath[`_urem_instruction:second_operand$by_variable] = "facts/p
 _va_arg_instruction:type(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_va_arg_instruction:type] = "\t".
-lang:physical:filePath[`_va_arg_instruction:type] = "facts/predicates/va_arg_instruction-type.dlm".
+lang:physical:filePath[`_va_arg_instruction:type] = "facts/va_arg_instruction-type.dlm".
 
 +instruction:id(e0:v0),
 +va_arg_instruction(e0),
@@ -4549,7 +4549,7 @@ lang:physical:filePath[`_va_arg_instruction:type] = "facts/predicates/va_arg_ins
 _va_arg_instruction:va_list$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_va_arg_instruction:va_list$by_constant] = "\t".
-lang:physical:filePath[`_va_arg_instruction:va_list$by_constant] = "facts/predicates/va_arg_instruction-va_list-by_constant.dlm".
+lang:physical:filePath[`_va_arg_instruction:va_list$by_constant] = "facts/va_arg_instruction-va_list-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +va_arg_instruction(e0),
@@ -4564,7 +4564,7 @@ lang:physical:filePath[`_va_arg_instruction:va_list$by_constant] = "facts/predic
 _va_arg_instruction:va_list$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_va_arg_instruction:va_list$by_variable] = "\t".
-lang:physical:filePath[`_va_arg_instruction:va_list$by_variable] = "facts/predicates/va_arg_instruction-va_list-by_variable.dlm".
+lang:physical:filePath[`_va_arg_instruction:va_list$by_variable] = "facts/va_arg_instruction-va_list-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +va_arg_instruction(e0),
@@ -4581,7 +4581,7 @@ lang:physical:filePath[`_va_arg_instruction:va_list$by_variable] = "facts/predic
 _variable:debug:decl_pos(v0, v1, v2) -> string(v0), int[64](v1), int[64](v2).
 
 lang:physical:delimiter[`_variable:debug:decl_pos] = "\t".
-lang:physical:filePath[`_variable:debug:decl_pos] = "facts/predicates/variable-debug-decl_pos.dlm".
+lang:physical:filePath[`_variable:debug:decl_pos] = "facts/variable-debug-decl_pos.dlm".
 
 +variable:id(e0:v0),
 +variable(e0),
@@ -4594,7 +4594,7 @@ lang:physical:filePath[`_variable:debug:decl_pos] = "facts/predicates/variable-d
 _variable:debug:source_name(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_variable:debug:source_name] = "\t".
-lang:physical:filePath[`_variable:debug:source_name] = "facts/predicates/variable-debug-source_name.dlm".
+lang:physical:filePath[`_variable:debug:source_name] = "facts/variable-debug-source_name.dlm".
 
 +variable:id(e0:v0),
 +variable(e0),
@@ -4607,7 +4607,7 @@ lang:physical:filePath[`_variable:debug:source_name] = "facts/predicates/variabl
 _variable:type(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_variable:type] = "\t".
-lang:physical:filePath[`_variable:type] = "facts/predicates/variable-type.dlm".
+lang:physical:filePath[`_variable:type] = "facts/variable-type.dlm".
 
 +variable:id(e0:v0),
 +variable(e0),
@@ -4622,7 +4622,7 @@ lang:physical:filePath[`_variable:type] = "facts/predicates/variable-type.dlm".
 _vector_type:component(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_vector_type:component] = "\t".
-lang:physical:filePath[`_vector_type:component] = "facts/predicates/vector_type-component.dlm".
+lang:physical:filePath[`_vector_type:component] = "facts/vector_type-component.dlm".
 
 +type:id(e0:v0),
 +vector_type(e0),
@@ -4637,7 +4637,7 @@ lang:physical:filePath[`_vector_type:component] = "facts/predicates/vector_type-
 _vector_type:size(v0, v1) -> string(v0), int[64](v1).
 
 lang:physical:delimiter[`_vector_type:size] = "\t".
-lang:physical:filePath[`_vector_type:size] = "facts/predicates/vector_type-size.dlm".
+lang:physical:filePath[`_vector_type:size] = "facts/vector_type-size.dlm".
 
 +type:id(e0:v0),
 +vector_type(e0),
@@ -4650,7 +4650,7 @@ lang:physical:filePath[`_vector_type:size] = "facts/predicates/vector_type-size.
 _xor_instruction:first_operand$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_xor_instruction:first_operand$by_constant] = "\t".
-lang:physical:filePath[`_xor_instruction:first_operand$by_constant] = "facts/predicates/xor_instruction-first_operand-by_constant.dlm".
+lang:physical:filePath[`_xor_instruction:first_operand$by_constant] = "facts/xor_instruction-first_operand-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +xor_instruction(e0),
@@ -4665,7 +4665,7 @@ lang:physical:filePath[`_xor_instruction:first_operand$by_constant] = "facts/pre
 _xor_instruction:first_operand$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_xor_instruction:first_operand$by_variable] = "\t".
-lang:physical:filePath[`_xor_instruction:first_operand$by_variable] = "facts/predicates/xor_instruction-first_operand-by_variable.dlm".
+lang:physical:filePath[`_xor_instruction:first_operand$by_variable] = "facts/xor_instruction-first_operand-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +xor_instruction(e0),
@@ -4682,7 +4682,7 @@ lang:physical:filePath[`_xor_instruction:first_operand$by_variable] = "facts/pre
 _xor_instruction:second_operand$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_xor_instruction:second_operand$by_constant] = "\t".
-lang:physical:filePath[`_xor_instruction:second_operand$by_constant] = "facts/predicates/xor_instruction-second_operand-by_constant.dlm".
+lang:physical:filePath[`_xor_instruction:second_operand$by_constant] = "facts/xor_instruction-second_operand-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +xor_instruction(e0),
@@ -4697,7 +4697,7 @@ lang:physical:filePath[`_xor_instruction:second_operand$by_constant] = "facts/pr
 _xor_instruction:second_operand$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_xor_instruction:second_operand$by_variable] = "\t".
-lang:physical:filePath[`_xor_instruction:second_operand$by_variable] = "facts/predicates/xor_instruction-second_operand-by_variable.dlm".
+lang:physical:filePath[`_xor_instruction:second_operand$by_variable] = "facts/xor_instruction-second_operand-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +xor_instruction(e0),
@@ -4714,7 +4714,7 @@ lang:physical:filePath[`_xor_instruction:second_operand$by_variable] = "facts/pr
 _zext_instruction:from$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_zext_instruction:from$by_constant] = "\t".
-lang:physical:filePath[`_zext_instruction:from$by_constant] = "facts/predicates/zext_instruction-from-by_constant.dlm".
+lang:physical:filePath[`_zext_instruction:from$by_constant] = "facts/zext_instruction-from-by_constant.dlm".
 
 +instruction:id(e0:v0),
 +zext_instruction(e0),
@@ -4729,7 +4729,7 @@ lang:physical:filePath[`_zext_instruction:from$by_constant] = "facts/predicates/
 _zext_instruction:from$by_variable(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_zext_instruction:from$by_variable] = "\t".
-lang:physical:filePath[`_zext_instruction:from$by_variable] = "facts/predicates/zext_instruction-from-by_variable.dlm".
+lang:physical:filePath[`_zext_instruction:from$by_variable] = "facts/zext_instruction-from-by_variable.dlm".
 
 +instruction:id(e0:v0),
 +zext_instruction(e0),
@@ -4746,7 +4746,7 @@ lang:physical:filePath[`_zext_instruction:from$by_variable] = "facts/predicates/
 _zext_instruction:to_type(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_zext_instruction:to_type] = "\t".
-lang:physical:filePath[`_zext_instruction:to_type] = "facts/predicates/zext_instruction-to_type.dlm".
+lang:physical:filePath[`_zext_instruction:to_type] = "facts/zext_instruction-to_type.dlm".
 
 +instruction:id(e0:v0),
 +zext_instruction(e0),

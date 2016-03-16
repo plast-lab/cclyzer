@@ -1,4 +1,3 @@
-
 #ifndef __PREDICATE_HPP__
 #define __PREDICATE_HPP__
 
@@ -19,9 +18,9 @@ class Predicate;
  * or a user defined predicate. For the time being we repesent primitive types
  * as strings.
  */
-class PredicateArgument {
-
-    enum ArgumentType {
+class PredicateArgument
+{
+    enum Kind {
         PRIMITIVE,
         USER_DEFINED
     };
@@ -34,11 +33,10 @@ class PredicateArgument {
 
     };
 
-    ArgumentType argType;
-
+    Kind argType;
     Argument argument;
 
-public:
+  public:
 
     PredicateArgument(const std::string &primitive)
     {
@@ -52,23 +50,19 @@ public:
         argument.userDefPred = predicate;
     }
 
-    bool isPrimitive() const
-    {
+    bool isPrimitive() const {
         return argType == PRIMITIVE;
     }
 
-    bool isUserDefined() const
-    {
+    bool isUserDefined() const {
         return argType == USER_DEFINED;
     }
 
-    std::string* getPrimitive() const
-    {
+    std::string* getPrimitive() const {
         return argument.primitive;
     }
 
-    Predicate* getUserDefinedPredicate() const
-    {
+    Predicate* getUserDefinedPredicate() const {
         return argument.userDefPred;
     }
 
@@ -480,7 +474,7 @@ class SimplePredicate : public Predicate {
             }
         }
         else
-        {    
+        {
             consCombinations.push_back(combination);
         }
     }
@@ -491,7 +485,7 @@ class SimplePredicate : public Predicate {
         genConsCombinations(comb, 0);
 
         assert(consCombinations.size() == getFilePredNum());
-    }    
+    }
 
 protected:
 

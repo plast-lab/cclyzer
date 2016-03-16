@@ -9,7 +9,9 @@
 namespace fs = boost::filesystem;
 namespace py = boost::python;
 
-void pyfactgen(py::list inputFiles, std::string outputDir, std::string delim = "\t")
+
+void
+pyfactgen(py::list inputFiles, std::string outputDir, std::string delim = "\t")
 {
     int length = py::extract<int>(inputFiles.attr("__len__")());
     std::vector<fs::path> files(length);
@@ -89,6 +91,7 @@ struct path_to_python_str
             boost::python::object(p.string()).ptr());
     }
 };
+
 
 // Declare boost python module
 

@@ -24,6 +24,7 @@ include_dirs := include
 # Search in directories
 #-----------------------------------
 
+CXXFLAGS += -fPIC -g -std=c++11
 CPPFLAGS += $(addprefix -I ,$(include_dirs))
 LDLIBS   += -lboost_program_options
 LDLIBS   += -lboost_system -lboost_filesystem

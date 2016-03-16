@@ -74,10 +74,6 @@ class cclyzer::FactWriter
     /* CSV file extension */
     static const std::string FILE_EXTENSION;
 
-    /* Entities and predicates go to different directories */
-    static const path ENTITIES_DIR;
-    static const path PREDICATES_DIR;
-
     /* Non-copyable */
     FactWriter( const FactWriter& other ) = delete;
     FactWriter& operator=( const FactWriter& ) = delete;

@@ -18,8 +18,6 @@ using pred::operand_pred_t;
 //-------------------------------------------------------------------
 
 const std::string  FactWriter::FILE_EXTENSION = ".dlm";
-const fs::path     FactWriter::ENTITIES_DIR   = "entities";
-const fs::path     FactWriter::PREDICATES_DIR = "predicates";
 
 
 //-------------------------------------------------------------------
@@ -96,10 +94,7 @@ FactWriter::getPath(const pred_t& pred)
     std::replace(basename.begin(), basename.end(), ':', '-');
 
     // Add directory and extension
-    fs::path subdir = dynamic_cast<const entity_pred_t*>(&pred) != 0
-        ? ENTITIES_DIR : PREDICATES_DIR;
-
-    fs::path path = outdir / subdir / basename;
+    fs::path path = outdir / basename;
     path += FILE_EXTENSION;
 
     return path;

@@ -7,9 +7,8 @@
 class Options
 {
 
-public:
-    static Options& getInstance()
-    {
+  public:
+    static Options& getInstance() {
         static Options instance;
         return instance;
     }
@@ -40,12 +39,13 @@ public:
 
     Options& init(int argc, char* argv[]);
 
-private:
+  private:
 
     Options() {};
 
-    Options(Options const&);
-    void operator=(Options const&);
+    /* Non-copyable */
+    Options(Options const&) = delete;
+    void operator=(Options const&) = delete;
 
     /* Parsing failure exit code */
     const static int ERROR_IN_COMMAND_LINE = 1;
