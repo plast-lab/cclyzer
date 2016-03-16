@@ -3,7 +3,7 @@
 
 #include <string>
 #include <llvm/IR/InstVisitor.h>
-#include "CsvGenerator.hpp"
+#include "FactGenerator.hpp"
 #include "RefmodeEngine.hpp"
 
 
@@ -15,11 +15,11 @@ namespace cclyzer { class InstructionVisitor; }
 class cclyzer::InstructionVisitor
     : public llvm::InstVisitor<InstructionVisitor>
 {
-    friend class CsvGenerator;
+    friend class FactGenerator;
 
   public:
 
-    InstructionVisitor(CsvGenerator &generator, const llvm::Module &M)
+    InstructionVisitor(FactGenerator &generator, const llvm::Module &M)
         : gen(generator) , module(M)
     {}
 
@@ -215,7 +215,7 @@ class cclyzer::InstructionVisitor
 
   private:
     /* Instance of outer fact-generator */
-    CsvGenerator &gen;
+    FactGenerator &gen;
 
     /* Associated LLVM module */
     const llvm::Module &module;

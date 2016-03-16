@@ -5,7 +5,7 @@
 namespace cclyzer
 {
     // Forward declaration
-    class CsvGenerator;
+    class FactGenerator;
 
 
     // Processor of type entities
@@ -13,7 +13,7 @@ namespace cclyzer
     {
       public:
 
-        TypeVisitor(CsvGenerator &generator, const llvm::DataLayout &DL)
+        TypeVisitor(FactGenerator &generator, const llvm::DataLayout &DL)
             : gen(generator), layout(DL) {}
 
         /* Type visitor methods */
@@ -27,7 +27,7 @@ namespace cclyzer
 
       private:
         /* Instance of outer CSV generator */
-        CsvGenerator &gen;
+        FactGenerator &gen;
 
         /**
          * Data layout. To compute the byte size of each type, we need a

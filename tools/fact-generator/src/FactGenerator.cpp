@@ -8,7 +8,7 @@
 #include <llvm/IR/Operator.h>
 #include <llvm/IR/CFG.h>
 #include "predicate_groups.hpp"
-#include "CsvGenerator.hpp"
+#include "FactGenerator.hpp"
 #include "InstructionVisitor.hpp"
 #include "TypeVisitor.hpp"
 #include "TypeAccumulator.hpp"
@@ -16,7 +16,7 @@
 #define foreach BOOST_FOREACH
 
 
-using cclyzer::CsvGenerator;
+using cclyzer::FactGenerator;
 using namespace llvm;
 using namespace std;
 using namespace boost;
@@ -24,7 +24,8 @@ namespace fs = boost::filesystem;
 namespace pred = cclyzer::predicates;
 
 
-void CsvGenerator::processModule(const Module &Mod, const string& path)
+void
+FactGenerator::processModule(const Module &Mod, const string& path)
 {
     InstructionVisitor IV(*this, Mod);
     ModuleContext MC(*this, Mod, path);
@@ -237,7 +238,8 @@ void CsvGenerator::processModule(const Module &Mod, const string& path)
 }
 
 
-void CsvGenerator::visitGlobalAlias(const GlobalAlias *ga, const refmode_t &refmode)
+void
+FactGenerator::visitGlobalAlias(const GlobalAlias *ga, const refmode_t &refmode)
 {
     //------------------------------------------------------------------
     // A global alias introduces a /second name/ for the aliasee value
@@ -280,7 +282,8 @@ void CsvGenerator::visitGlobalAlias(const GlobalAlias *ga, const refmode_t &refm
 }
 
 
-void CsvGenerator::visitGlobalVar(const GlobalVariable *gv, const refmode_t &refmode)
+void
+FactGenerator::visitGlobalVar(const GlobalVariable *gv, const refmode_t &refmode)
 {
     // Record global variable entity
     writeFact(pred::global_var::id, refmode);
@@ -336,7 +339,7 @@ void CsvGenerator::visitGlobalVar(const GlobalVariable *gv, const refmode_t &ref
 
 
 template<typename PredGroup>
-void CsvGenerator::writeFnAttributes(
+void FactGenerator::writeFnAttributes(
     const refmode_t &refmode,
     const AttributeSet allAttrs)
 {
@@ -369,20 +372,21 @@ void CsvGenerator::writeFnAttributes(
 
 // Instantiate template method
 
-template void CsvGenerator::writeFnAttributes<pred::function>(
+template void FactGenerator::writeFnAttributes<pred::function>(
     const refmode_t &refmode,
     const llvm::AttributeSet Attrs);
 
-template void CsvGenerator::writeFnAttributes<pred::call>(
+template void FactGenerator::writeFnAttributes<pred::call>(
     const refmode_t &refmode,
     const llvm::AttributeSet Attrs);
 
-template void CsvGenerator::writeFnAttributes<pred::invoke>(
+template void FactGenerator::writeFnAttributes<pred::invoke>(
     const refmode_t &refmode,
     const llvm::AttributeSet Attrs);
 
 
-void CsvGenerator::writeVarsTypesAndConstants(const llvm::DataLayout &layout)
+void
+FactGenerator::writeVarsTypesAndConstants(const llvm::DataLayout &layout)
 {
     using llvm_utils::TypeAccumulator;
 
@@ -433,19 +437,23 @@ void CsvGenerator::writeVarsTypesAndConstants(const llvm::DataLayout &layout)
     }
 }
 
-void CsvGenerator::writeConstantArray(const ConstantArray &array, const refmode_t &refmode) {
+void
+FactGenerator::writeConstantArray(const ConstantArray &array, const refmode_t &refmode) {
     writeConstantWithOperands<pred::constant_array>(array, refmode);
 }
 
-void CsvGenerator::writeConstantStruct(const ConstantStruct &st, const refmode_t &refmode) {
+void
+FactGenerator::writeConstantStruct(const ConstantStruct &st, const refmode_t &refmode) {
     writeConstantWithOperands<pred::constant_struct>(st, refmode);
 }
 
-void CsvGenerator::writeConstantVector(const ConstantVector &v, const refmode_t &refmode) {
+void
+FactGenerator::writeConstantVector(const ConstantVector &v, const refmode_t &refmode) {
     writeConstantWithOperands<pred::constant_vector>(v, refmode);
 }
 
-void CsvGenerator::writeConstantExpr(const ConstantExpr &expr, const refmode_t &refmode)
+void
+FactGenerator::writeConstantExpr(const ConstantExpr &expr, const refmode_t &refmode)
 {
     writeFact(pred::constant_expr::id, refmode);
 
@@ -496,7 +504,8 @@ void CsvGenerator::writeConstantExpr(const ConstantExpr &expr, const refmode_t &
     }
 }
 
-cclyzer::refmode_t CsvGenerator::writeConstant(const Constant &c)
+cclyzer::refmode_t
+FactGenerator::writeConstant(const Constant &c)
 {
     refmode_t refmode = refmodeOfConstant(&c);
 
@@ -552,7 +561,8 @@ cclyzer::refmode_t CsvGenerator::writeConstant(const Constant &c)
 }
 
 
-void CsvGenerator::visitNamedMDNode(const NamedMDNode *NMD)
+void
+FactGenerator::visitNamedMDNode(const NamedMDNode *NMD)
 {
     for (unsigned i = 0, e = NMD->getNumOperands(); i != e; ++i) {
         // TODO

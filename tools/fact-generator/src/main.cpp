@@ -6,7 +6,7 @@
 #include <llvm/IRReader/IRReader.h>
 #include <llvm/Support/SourceMgr.h>
 #include "factgen.hpp"
-#include "CsvGenerator.hpp"
+#include "FactGenerator.hpp"
 #include "FactWriter.hpp"
 #include "ParseException.hpp"
 #include "Options.hpp"
@@ -30,7 +30,7 @@ cclyzer::factgen(FileIt firstFile, FileIt endFile,
     cclyzer::FactWriter writer(outputDir, delim);
 
     // Create CSV generator
-    cclyzer::CsvGenerator csvGen(writer);
+    cclyzer::FactGenerator gen(writer);
 
     // Loop over each input file
     for(FileIt it = firstFile; it != endFile; ++it)
@@ -49,13 +49,13 @@ cclyzer::factgen(FileIt firstFile, FileIt endFile,
         std::string realPath = fs::canonical(inputFile).string();
 
         // Generate facts for this module
-        csvGen.processModule(*module, realPath);
+        gen.processModule(*module, realPath);
 
         // Get data layout of this module
         const llvm::DataLayout &layout = module->getDataLayout();
 
         // Write types
-        csvGen.writeVarsTypesAndConstants(layout);
+        gen.writeVarsTypesAndConstants(layout);
     }
 }
 

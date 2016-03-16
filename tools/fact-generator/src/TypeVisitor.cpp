@@ -1,4 +1,4 @@
-#include "CsvGenerator.hpp"
+#include "FactGenerator.hpp"
 #include "predicate_groups.hpp"
 #include "TypeVisitor.hpp"
 

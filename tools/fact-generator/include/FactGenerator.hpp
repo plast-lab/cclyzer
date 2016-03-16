@@ -21,10 +21,10 @@
 #include "RefmodeEngine.hpp"
 
 namespace cclyzer {
-    class CsvGenerator;
+    class FactGenerator;
 }
 
-class cclyzer::CsvGenerator
+class cclyzer::FactGenerator
     : private RefmodeEngine,
       private Demangler,
       private ForwardingFactWriter
@@ -84,7 +84,7 @@ class cclyzer::CsvGenerator
 
   public:
     /* Constructor must initialize output file streams */
-    CsvGenerator(FactWriter &writer)
+    FactGenerator(FactWriter &writer)
         : ForwardingFactWriter(writer)
         , debugInfoProcessor(writer)
     {}
@@ -117,7 +117,7 @@ class cclyzer::CsvGenerator
 
     /* A RAII object for recording the current context. */
     struct Context {
-        Context(CsvGenerator &generator, const llvm::Value &v)
+        Context(FactGenerator &generator, const llvm::Value &v)
             : gen(generator) {
             gen.enterContext(&v);
         }
@@ -127,11 +127,11 @@ class cclyzer::CsvGenerator
         }
 
       private:
-        CsvGenerator &gen;
+        FactGenerator &gen;
     };
 
     struct ModuleContext {
-        ModuleContext(CsvGenerator &generator, const llvm::Module &m, const std::string &path)
+        ModuleContext(FactGenerator &generator, const llvm::Module &m, const std::string &path)
             : gen(generator)
         {
             gen.enterModule(&m, path);
@@ -144,7 +144,7 @@ class cclyzer::CsvGenerator
         }
 
       private:
-        CsvGenerator &gen;
+        FactGenerator &gen;
     };
 };
 
