@@ -11,37 +11,25 @@ class FilePredicateParts
     using path = boost::filesystem::path;
 
     std::ostringstream filePredName;
-
     std::ostringstream vars;
-
     std::ostringstream types;
-
     std::ostringstream body;
-
     std::ostringstream head;
-
     std::stringstream contents;
 
+    /* Constant Tokens */
     static const std::string VARIABLE_PREFIX;
-
     static const std::string ENTITY_PREFIX;
-
     static const std::string TAB;
-
     static const std::string NEW_LINE;
-
     static const std::string L_PAR;
-
     static const std::string R_PAR;
-
     static const std::string L_BRAC;
-
     static const std::string R_BRAC;
-
     static const std::string EQUALS;
-
     static const std::string COMMA;
 
+    /* Compute filesystem path */
     path getFilePath(const path& dir) const
     {
         std::string rv = filePredName.str();
@@ -93,7 +81,7 @@ public:
         filePredName << predName;
     }
 
-    void addVar(unsigned int index, const std::string &type)
+    void addVar(unsigned int index, const std::string& type)
     {
         if(index != 0)
         {
