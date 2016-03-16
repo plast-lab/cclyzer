@@ -66,21 +66,7 @@ class cclyzer::FactGenerator
     refmode_t writeConstant(const llvm::Constant&);
 
     template<typename PredGroup, class ConstantType>
-    void writeConstantWithOperands(const ConstantType &base, const refmode_t &refmode)
-    {
-        unsigned nOperands = base.getNumOperands();
-
-        for (unsigned i = 0; i < nOperands; i++)
-        {
-            const llvm::Constant *c = base.getOperand(i);
-
-            refmode_t index_ref = writeConstant(*c);
-            writeFact(PredGroup::index, refmode, i, index_ref);
-        }
-
-        writeFact(PredGroup::size, refmode, nOperands);
-        writeFact(PredGroup::id, refmode);
-    }
+    void writeConstantWithOperands(const ConstantType&, const refmode_t&);
 
   public:
     /* Constructor must initialize output file streams */

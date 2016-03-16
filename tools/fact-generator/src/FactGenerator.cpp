@@ -1,9 +1,7 @@
 #include <algorithm>
-#include <cxxabi.h>
-#include <list>
+#include <string>
 #include <boost/foreach.hpp>
 #include <llvm/IR/Constants.h>
-#include <llvm/IR/DebugInfo.h>
 #include <llvm/IR/Module.h>
 #include <llvm/IR/Operator.h>
 #include <llvm/IR/CFG.h>
@@ -17,23 +15,21 @@
 
 
 using cclyzer::FactGenerator;
-using namespace llvm;
-using namespace std;
-using namespace boost;
-namespace fs = boost::filesystem;
+using llvm::cast;
+using llvm::isa;
 namespace pred = cclyzer::predicates;
 
 
 void
-FactGenerator::processModule(const Module &Mod, const string& path)
+FactGenerator::processModule(const llvm::Module &Mod, const std::string& path)
 {
     InstructionVisitor IV(*this, Mod);
     ModuleContext MC(*this, Mod, path);
 
-    SmallVector<std::pair<unsigned, MDNode*>, 4> MDForInst;
+    llvm::SmallVector<std::pair<unsigned, llvm::MDNode*>, 4> MDForInst;
 
     // iterate over named metadata
-    for (Module::const_named_metadata_iterator
+    for (llvm::Module::const_named_metadata_iterator
              it  = Mod.named_metadata_begin(),
              end = Mod.named_metadata_end(); it != end; ++it)
     {
@@ -41,7 +37,7 @@ FactGenerator::processModule(const Module &Mod, const string& path)
     }
 
     // iterating over global variables in a module
-    for (Module::const_global_iterator
+    for (llvm::Module::const_global_iterator
              it = Mod.global_begin(), end = Mod.global_end(); it != end; ++it)
     {
         refmode_t refmode = refmodeOfGlobalValue(it);
@@ -50,7 +46,7 @@ FactGenerator::processModule(const Module &Mod, const string& path)
     }
 
     // iterating over global alias in a module
-    for (Module::const_alias_iterator
+    for (llvm::Module::const_alias_iterator
              it = Mod.alias_begin(), end = Mod.alias_end(); it != end; ++it)
     {
         refmode_t refmode = refmodeOfGlobalValue(it);
@@ -59,10 +55,10 @@ FactGenerator::processModule(const Module &Mod, const string& path)
     }
 
     // iterating over functions in a module
-    for (Module::const_iterator
+    for (llvm::Module::const_iterator
              it = Mod.begin(), end = Mod.end(); it != end; ++it)
     {
-        const Function &func = *it;
+        const llvm::Function &func = *it;
 
         Context C(*this, func);
         refmode_t funcref = refmodeOfFunction(it);
@@ -96,19 +92,19 @@ FactGenerator::processModule(const Module &Mod, const string& path)
             writeFact(pred::function::gc, funcref, func.getGC());
 
         if (func.hasPersonalityFn()) {
-            Constant *pers_fn = func.getPersonalityFn();
+            llvm::Constant *pers_fn = func.getPersonalityFn();
             refmode_t pers_fn_ref = writeConstant(*pers_fn);
 
             writeFact(pred::function::pers_fn, funcref, pers_fn_ref);
         }
 
         // Record calling convection if it not defaults to C
-        if (func.getCallingConv() != CallingConv::C) {
+        if (func.getCallingConv() != llvm::CallingConv::C) {
             refmode_t cconv = refmodeOf(func.getCallingConv());
             writeFact(pred::function::calling_conv, funcref, cconv);
         }
 
-        // Record function name
+        // Record function name TODO
         writeFact(pred::function::name, funcref, "@" + func.getName().str());
 
         // Address not significant
@@ -116,11 +112,11 @@ FactGenerator::processModule(const Module &Mod, const string& path)
             writeFact(pred::function::unnamed_addr, funcref);
 
         // Record function attributes TODO
-        const AttributeSet &Attrs = func.getAttributes();
+        const llvm::AttributeSet &Attrs = func.getAttributes();
 
-        if (Attrs.hasAttributes(AttributeSet::ReturnIndex))
+        if (Attrs.hasAttributes(llvm::AttributeSet::ReturnIndex))
             writeFact(pred::function::ret_attr, funcref,
-                      Attrs.getAsString(AttributeSet::ReturnIndex));
+                      Attrs.getAsString(llvm::AttributeSet::ReturnIndex));
 
         writeFnAttributes<pred::function>(funcref, Attrs);
 
@@ -141,7 +137,7 @@ FactGenerator::processModule(const Module &Mod, const string& path)
         {
             int index = 0;
 
-            for (Function::const_arg_iterator
+            for (llvm::Function::const_arg_iterator
                      arg = func.arg_begin(), arg_end = func.arg_end();
                  arg != arg_end; arg++)
             {
@@ -165,9 +161,10 @@ FactGenerator::processModule(const Module &Mod, const string& path)
             writeFact(pred::variable::type, bbRef, "label");
 
             // Record basic block predecessors
-            BasicBlock *tmpBB = const_cast<BasicBlock *>(&bb);
+            llvm::BasicBlock *tmpBB = const_cast<llvm::BasicBlock *>(&bb);
 
-            for (pred_iterator pi = pred_begin(tmpBB), pi_end = pred_end(tmpBB);
+            for (llvm::pred_iterator
+                     pi = pred_begin(tmpBB), pi_end = pred_end(tmpBB);
                  pi != pi_end; ++pi)
             {
                 refmode_t predBB = refmodeOfBasicBlock(*pi);
@@ -215,11 +212,11 @@ FactGenerator::processModule(const Module &Mod, const string& path)
                 // Process metadata attached with this instruction.
                 instr.getAllMetadata(MDForInst);
                 for (unsigned i = 0, e = MDForInst.size(); i != e; ++i) {
-                    const MDNode &mdNode = *MDForInst[i].second;
+                    const llvm::MDNode &mdNode = *MDForInst[i].second;
 
                     // TODO process metadata node
                     // Get debug location if available
-                    if (const DebugLoc &location = instr.getDebugLoc()) {
+                    if (const llvm::DebugLoc &location = instr.getDebugLoc()) {
                         unsigned line = location.getLine();
                         unsigned column = location.getCol();
 
@@ -238,111 +235,13 @@ FactGenerator::processModule(const Module &Mod, const string& path)
 }
 
 
-void
-FactGenerator::visitGlobalAlias(const GlobalAlias *ga, const refmode_t &refmode)
-{
-    //------------------------------------------------------------------
-    // A global alias introduces a /second name/ for the aliasee value
-    // (which can be either function, global variable, another alias
-    // or bitcast of global value). It has the following form:
-    //
-    // @<Name> = alias [Linkage] [Visibility] <AliaseeTy> @<Aliasee>
-    //------------------------------------------------------------------
-
-    // Get aliasee value as llvm constant
-    const llvm::Constant *Aliasee = ga->getAliasee();
-
-    // Record alias entity
-    writeFact(pred::alias::id, refmode);
-
-    // Serialize alias properties
-    refmode_t visibility = refmodeOf(ga->getVisibility());
-    refmode_t linkage    = refmodeOf(ga->getLinkage());
-    refmode_t aliasType  = refmodeOf(ga->getType());
-
-    // Record visibility
-    if (!visibility.empty())
-        writeFact(pred::alias::visibility, refmode, visibility);
-
-    // Record linkage
-    if (!linkage.empty())
-        writeFact(pred::alias::linkage, refmode, linkage);
-
-    // Record type
-    writeFact(pred::alias::type, refmode, aliasType);
-
-    // Record aliasee
-    if (Aliasee) {
-        // Record aliasee constant and generate refmode for it
-        refmode_t aliasee = writeConstant(*Aliasee);
-
-        // Record aliasee
-        writeFact(pred::alias::aliasee, refmode, aliasee);
-    }
-}
-
-
-void
-FactGenerator::visitGlobalVar(const GlobalVariable *gv, const refmode_t &refmode)
-{
-    // Record global variable entity
-    writeFact(pred::global_var::id, refmode);
-
-    // Serialize global variable properties
-    refmode_t visibility = refmodeOf(gv->getVisibility());
-    refmode_t linkage    = refmodeOf(gv->getLinkage());
-    refmode_t varType    = refmodeOf(gv->getType()->getElementType());
-    refmode_t thrLocMode = refmodeOf(gv->getThreadLocalMode());
-
-    // Record external linkage
-    if (!gv->hasInitializer() && gv->hasExternalLinkage())
-        writeFact(pred::global_var::linkage, refmode, "external");
-
-    // Record linkage
-    if (!linkage.empty())
-        writeFact(pred::global_var::linkage, refmode, linkage);
-
-    // Record visibility
-    if (!visibility.empty())
-        writeFact(pred::global_var::visibility, refmode, visibility);
-
-    // Record thread local mode
-    if (!thrLocMode.empty())
-        writeFact(pred::global_var::threadlocal_mode, refmode, thrLocMode);
-
-    // TODO: in lb schema - AddressSpace & hasUnnamedAddr properties
-    if (gv->isExternallyInitialized())
-        writeFact(pred::global_var::flag, refmode, "externally_initialized");
-
-    // Record flags and type
-    const char * flag = gv->isConstant() ? "constant": "global";
-
-    writeFact(pred::global_var::flag, refmode, flag);
-    writeFact(pred::global_var::type, refmode, varType);
-
-    // Record initializer
-    if (gv->hasInitializer()) {
-        const Constant *initializer = gv->getInitializer();
-
-        refmode_t init_ref = writeConstant(*initializer);
-        writeFact(pred::global_var::initializer, refmode, init_ref);
-    }
-
-    // Record section
-    if (gv->hasSection())
-        writeFact(pred::global_var::section, refmode, gv->getSection());
-
-    // Record alignment
-    if (gv->getAlignment())
-        writeFact(pred::global_var::align, refmode, gv->getAlignment());
-}
-
-
 template<typename PredGroup>
 void FactGenerator::writeFnAttributes(
     const refmode_t &refmode,
-    const AttributeSet allAttrs)
+    const llvm::AttributeSet allAttrs)
 {
+    using llvm::AttributeSet;
+
     for (unsigned i = 0; i < allAttrs.getNumSlots(); ++i)
     {
         unsigned index = allAttrs.getSlotIndex(i);
@@ -352,7 +251,7 @@ void FactGenerator::writeFnAttributes(
                  it = allAttrs.begin(i), end = allAttrs.end(i);
              it != end; ++it)
         {
-            string attr = it->getAsString();
+            std::string attr = it->getAsString();
             attr.erase (std::remove(attr.begin(), attr.end(), '"'), attr.end());
 
             switch (index) {
@@ -392,8 +291,8 @@ FactGenerator::writeVarsTypesAndConstants(const llvm::DataLayout &layout)
 
     // Record every constant encountered so far
     foreach (type_cache_t::value_type kv, constantTypes) {
-        string refmode = kv.first;
-        const Type *type = kv.second;
+        refmode_t refmode = kv.first;
+        const llvm::Type *type = kv.second;
 
         // Record constant entity with its type
         writeFact(pred::constant::id, refmode);
@@ -404,8 +303,8 @@ FactGenerator::writeVarsTypesAndConstants(const llvm::DataLayout &layout)
 
     // Record every variable encountered so far
     foreach (type_cache_t::value_type kv, variableTypes) {
-        string refmode = kv.first;
-        const Type *type = kv.second;
+        refmode_t refmode = kv.first;
+        const llvm::Type *type = kv.second;
 
         // Record variable entity with its type
         writeFact(pred::variable::id, refmode);
@@ -437,132 +336,9 @@ FactGenerator::writeVarsTypesAndConstants(const llvm::DataLayout &layout)
     }
 }
 
-void
-FactGenerator::writeConstantArray(const ConstantArray &array, const refmode_t &refmode) {
-    writeConstantWithOperands<pred::constant_array>(array, refmode);
-}
 
 void
-FactGenerator::writeConstantStruct(const ConstantStruct &st, const refmode_t &refmode) {
-    writeConstantWithOperands<pred::constant_struct>(st, refmode);
-}
-
-void
-FactGenerator::writeConstantVector(const ConstantVector &v, const refmode_t &refmode) {
-    writeConstantWithOperands<pred::constant_vector>(v, refmode);
-}
-
-void
-FactGenerator::writeConstantExpr(const ConstantExpr &expr, const refmode_t &refmode)
-{
-    writeFact(pred::constant_expr::id, refmode);
-
-    if (expr.isCast()) {
-        refmode_t opref;
-
-        switch (expr.getOpcode()) {
-          case Instruction::BitCast:
-              opref = writeConstant(*expr.getOperand(0));
-
-              writeFact(pred::bitcast_constant_expr::id, refmode);
-              writeFact(pred::bitcast_constant_expr::from_constant, refmode, opref);
-              break;
-          case Instruction::IntToPtr:
-              opref = writeConstant(*expr.getOperand(0));
-
-              writeFact(pred::inttoptr_constant_expr::id, refmode);
-              writeFact(pred::inttoptr_constant_expr::from_int_constant, refmode, opref);
-              break;
-          case Instruction::PtrToInt:
-              opref = writeConstant(*expr.getOperand(0));
-
-              writeFact(pred::ptrtoint_constant_expr::id, refmode);
-              writeFact(pred::ptrtoint_constant_expr::from_ptr_constant, refmode, opref);
-              break;
-        }
-    }
-    else if (expr.isGEPWithNoNotionalOverIndexing()) {
-        unsigned nOperands = expr.getNumOperands();
-
-        for (unsigned i = 0; i < nOperands; i++)
-        {
-            const Constant *c = cast<Constant>(expr.getOperand(i));
-
-            refmode_t index_ref = writeConstant(*c);
-
-            if (i > 0)
-                writeFact(pred::gep_constant_expr::index, refmode, i - 1, index_ref);
-            else
-                writeFact(pred::gep_constant_expr::base, refmode, index_ref);
-        }
-
-        writeFact(pred::gep_constant_expr::nindices, refmode, nOperands - 1);
-        writeFact(pred::gep_constant_expr::id, refmode);
-    }
-    else {
-        // TODO
-    }
-}
-
-cclyzer::refmode_t
-FactGenerator::writeConstant(const Constant &c)
-{
-    refmode_t refmode = refmodeOfConstant(&c);
-
-    // Record constant entity with its type
-    writeFact(pred::constant::id, refmode);
-    writeFact(pred::constant::type, refmode, refmodeOf(c.getType()));
-    types.insert(c.getType());
-
-    if (isa<ConstantPointerNull>(c)) {
-        writeFact(pred::nullptr_constant::id, refmode);
-    }
-    else if (isa<ConstantInt>(c)) {
-        writeFact(pred::integer_constant::id, refmode);
-
-        // Compute integer string representation
-        string int_value = c.getUniqueInteger().toString(10, true);
-
-        // Write constant to integer fact
-        writeFact(pred::constant::to_integer, refmode, int_value);
-    }
-    else if (isa<ConstantFP>(c)) {
-        writeFact(pred::fp_constant::id, refmode);
-    }
-    else if (isa<Function>(c)) {
-        const Function &func = cast<Function>(c);
-
-        // TODO get value from refmode itself
-        writeFact(pred::function_constant::id, refmode);
-        writeFact(pred::function_constant::name, refmode, "@" + func.getName().str());
-    }
-    else if (isa<GlobalVariable>(c)) {
-        const GlobalVariable &global_var = cast<GlobalVariable>(c);
-        const string value = "@" + global_var.getName().str();
-
-        // TODO get value from refmode itself
-        writeFact(pred::global_variable_constant::id, refmode);
-        writeFact(pred::global_variable_constant::name, refmode, value);
-    }
-    else if (isa<ConstantExpr>(c)) {
-        writeConstantExpr(cast<ConstantExpr>(c), refmode);
-    }
-    else if (isa<ConstantArray>(c)) {
-        writeConstantArray(cast<ConstantArray>(c), refmode);
-    }
-    else if (isa<ConstantStruct>(c)) {
-        writeConstantStruct(cast<ConstantStruct>(c), refmode);
-    }
-    else if (isa<ConstantVector>(c)) {
-        writeConstantVector(cast<ConstantVector>(c), refmode);
-    }
-
-    return refmode;
-}
-
-
-void
-FactGenerator::visitNamedMDNode(const NamedMDNode *NMD)
+FactGenerator::visitNamedMDNode(const llvm::NamedMDNode *NMD)
 {
     for (unsigned i = 0, e = NMD->getNumOperands(); i != e; ++i) {
         // TODO
