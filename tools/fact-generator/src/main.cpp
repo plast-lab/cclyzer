@@ -1,23 +1,27 @@
 #include <iostream>
 #include <string>
 #include <boost/filesystem.hpp>
-#include <boost/foreach.hpp>
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Module.h>
 #include <llvm/IRReader/IRReader.h>
 #include <llvm/Support/SourceMgr.h>
+#include "factgen.hpp"
 #include "CsvGenerator.hpp"
 #include "FactWriter.hpp"
 #include "ParseException.hpp"
 #include "Options.hpp"
 
-#define foreach BOOST_FOREACH
 
+// Type aliases
 namespace fs = boost::filesystem;
 
-void generateFacts(const std::vector<fs::path> &inputFiles,
-                   fs::path outputDir,
-                   std::string delim = "\t")
+//--------------------------------------------------------------------------
+// Driver Fact-Generation Routine
+//--------------------------------------------------------------------------
+
+template<typename FileIt> void
+cclyzer::factgen(FileIt firstFile, FileIt endFile,
+                 fs::path outputDir, std::string delim)
 {
     llvm::LLVMContext &context = llvm::getGlobalContext();
     llvm::SMDiagnostic err;
@@ -29,8 +33,10 @@ void generateFacts(const std::vector<fs::path> &inputFiles,
     cclyzer::CsvGenerator csvGen(writer);
 
     // Loop over each input file
-    foreach(fs::path inputFile, inputFiles)
+    for(FileIt it = firstFile; it != endFile; ++it)
     {
+        fs::path inputFile = *it;
+
         // Parse input file
         std::unique_ptr<llvm::Module> module =
             llvm::parseIRFile(inputFile.string(), err, context);
@@ -56,19 +62,32 @@ void generateFacts(const std::vector<fs::path> &inputFiles,
 
 int main(int argc, char *argv[])
 {
+    using cclyzer::Options;
+
     // Parse command line
-    cclyzer::Options options(argc, argv);
+    Options options(argc, argv);
 
     // Get analysis options
-    std::string delim = options.getDelimiter();
-    fs::path outputDir = options.getOutputDirectory();
+    const std::string delim = options.delimiter();
+    const fs::path outdir = options.output_dir();
+
+    // Get input file iterators
+    Options::input_file_iterator input_begin = options.input_file_begin();
+    Options::input_file_iterator input_end = options.input_file_end();
 
     try {
-        generateFacts(options.getInputFiles(), outputDir, delim);
+        cclyzer::factgen(input_begin, input_end, outdir, delim);
     }
     catch (const ParseException &error) {
         std::cerr << error.what() << std::endl;
         return EXIT_FAILURE;
     }
     return EXIT_SUCCESS;
+}
+
+
+// Alternate version that doesn't use templates so that the python bindings work
+
+void factgen2(std::vector<fs::path> files, fs::path outputDir, std::string delim) {
+    cclyzer::factgen(files.begin(), files.end(), outputDir, delim);
 }

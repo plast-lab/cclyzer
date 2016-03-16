@@ -2,7 +2,6 @@
 #include <iostream>
 
 #include <boost/filesystem.hpp>
-#include <boost/foreach.hpp>
 #include <boost/program_options.hpp>
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/parsers.hpp>
@@ -10,25 +9,25 @@
 
 #include "Options.hpp"
 
-#define foreach BOOST_FOREACH
-
 namespace fs = boost::filesystem;
 namespace po = boost::program_options;
 
 using cclyzer::Options;
 
+
 Options::Options(int argc, char* argv[])
 {
     const std::string appName = fs::basename(argv[0]);
+    fs::path outdir;
 
     // Define and parse the program options
     po::options_description genericOpts("Options");
 
     genericOpts.add_options()
         ("help,h", "Print help message")
-        ("delim,d", po::value<std::string>(&delimiter)->default_value("\t"),
+        ("delim,d", po::value<std::string>(&delim)->default_value("\t"),
          "CSV file delimiter (default \\t)")
-        ("out-dir,o", po::value<fs::path>(&outDirectory)->required(),
+        ("out-dir,o", po::value<fs::path>(&outdir)->required(),
          "Output directory for generated facts")
         ("recursive,r", "Recurse into input directories")
         ("force,f", "Remove existing contents of output directory");
@@ -84,19 +83,22 @@ Options::Options(int argc, char* argv[])
 
     // Compute input files and create output directories
     std::vector<fs::path> paths = vm["input-files"].as<std::vector<fs::path> >();
-    setOutputDirectory(outDirectory, vm.count("force"));
-    setInputFiles(paths, vm.count("recursive"));
+    set_output_dir(outdir, vm.count("force"));
+    set_input_files(paths.begin(), paths.end(), vm.count("recursive"));
 }
 
 
-void Options::setInputFiles(std::vector<fs::path> &paths, bool shouldRecurse)
+template<typename FileIt> void
+Options::set_input_files(FileIt file_begin, FileIt file_end, bool shouldRecurse)
 {
     // Delete old contents
     inputFiles.clear();
 
     // Iterate over every given path
-    foreach(fs::path path, paths)
+    for (FileIt it = file_begin; it != file_end; ++it)
     {
+        fs::path path = *it;
+
         // Check for existence
         if (!fs::exists(path)) {
             std::cerr << "Path does not exist: " << path << std::endl;
@@ -126,7 +128,8 @@ void Options::setInputFiles(std::vector<fs::path> &paths, bool shouldRecurse)
 }
 
 
-void Options::setOutputDirectory(fs::path path, bool shouldForce)
+void
+Options::set_output_dir(fs::path path, bool shouldForce)
 {
     // Create non-existing directory
     if (!fs::exists(path))
@@ -150,5 +153,5 @@ void Options::setOutputDirectory(fs::path path, bool shouldForce)
     }
 
     // Store output directory (CHECK: should we canonicalize path)
-    outDirectory = path;
+    outdir = path;
 }

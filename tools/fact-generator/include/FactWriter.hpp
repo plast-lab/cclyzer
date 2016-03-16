@@ -72,7 +72,7 @@ class cclyzer::FactWriter
     map<string, csv_writer*> writers;
 
     /* CSV file extension */
-    static const std::string FILE_EXTENSION;
+    static const string FILE_EXTENSION;
 
     /* Non-copyable */
     FactWriter( const FactWriter& other ) = delete;

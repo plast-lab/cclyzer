@@ -56,11 +56,10 @@ pyfactgen(py::list inputFiles, std::string outputDir, std::string delim = "\t")
         return;
     }
 
-    void generateFacts(const std::vector<fs::path> &inputFiles,
-                       fs::path outputDir, std::string delim);
+    void factgen2(std::vector<fs::path> files, fs::path outputDir, std::string delim);
 
     // Run fact generation
-    generateFacts(files, outputDir, delim);
+    factgen2(files, outputDir, delim);
 }
 
 

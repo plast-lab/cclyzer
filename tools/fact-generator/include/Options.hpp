@@ -11,37 +11,46 @@ namespace cclyzer {
 class cclyzer::Options
 {
   public:
+    using path = boost::filesystem::path;
+    typedef std::vector<path> InputFileCollection;
+    typedef InputFileCollection::const_iterator input_file_iterator;
+
     /* Constructor given command-line options */
     Options(int argc, char* argv[]);
 
-    const std::string& getDelimiter() const {
-        return delimiter;
+    const std::string& delimiter() const {
+        return delim;
     }
 
-    boost::filesystem::path getOutputDirectory() const {
-        return outDirectory;
+    const path& output_dir() const {
+        return outdir;
     }
 
-    const std::vector<boost::filesystem::path>& getInputFiles() const {
-        return inputFiles;
+    input_file_iterator input_file_begin() const {
+        return inputFiles.begin();
+    }
+
+    input_file_iterator input_file_end() const {
+        return inputFiles.end();
     }
 
   protected:
     /* Set input files */
-    void setInputFiles(std::vector<boost::filesystem::path>& paths, bool shouldRecurse);
+    template<typename FileIt> void
+    set_input_files(FileIt file_begin, FileIt file_end, bool shouldRecurse);
 
     /* Set output directory */
-    void setOutputDirectory(boost::filesystem::path path, bool shouldForce);
+    void set_output_dir(path path, bool shouldForce);
 
   private:
     /* Parsing failure exit code */
     const static int ERROR_IN_COMMAND_LINE = 1;
 
     /* CSV Delimiter */
-    std::string delimiter;
+    std::string delim;
 
     /* Output Directory for generated facts */
-    boost::filesystem::path outDirectory;
+    boost::filesystem::path outdir;
 
     /* LLVM Bitcode IR Input Files */
     std::vector<boost::filesystem::path> inputFiles;
