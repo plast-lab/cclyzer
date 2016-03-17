@@ -83,7 +83,7 @@ FactGenerator::visitGlobalVar(const llvm::GlobalVariable *gv, const refmode_t &r
         writeFact(pred::global_var::flag, refmode, "externally_initialized");
 
     // Record flags and type
-    const char * flag = gv->isConstant() ? "constant": "global";
+    const char *flag = gv->isConstant() ? "constant": "global";
 
     writeFact(pred::global_var::flag, refmode, flag);
     writeFact(pred::global_var::type, refmode, varType);
@@ -91,8 +91,8 @@ FactGenerator::visitGlobalVar(const llvm::GlobalVariable *gv, const refmode_t &r
     // Record initializer
     if (gv->hasInitializer()) {
         const llvm::Constant *initializer = gv->getInitializer();
-
         refmode_t init_ref = writeConstant(*initializer);
+
         writeFact(pred::global_var::initializer, refmode, init_ref);
     }
 

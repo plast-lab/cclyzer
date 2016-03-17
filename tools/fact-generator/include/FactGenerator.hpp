@@ -59,10 +59,11 @@ class cclyzer::FactGenerator
     template<typename PredGroup>
     void writeFnAttributes(const refmode_t &refmode, const llvm::AttributeSet Attrs);
 
-    void writeConstantArray(const llvm::ConstantArray&, const refmode_t &);
-    void writeConstantStruct(const llvm::ConstantStruct&, const refmode_t &);
-    void writeConstantVector(const llvm::ConstantVector&, const refmode_t &);
-    void writeConstantExpr(const llvm::ConstantExpr&, const refmode_t &);
+    void writeFunction(const llvm::Function&, const refmode_t&);
+    void writeConstantArray(const llvm::ConstantArray&, const refmode_t&);
+    void writeConstantStruct(const llvm::ConstantStruct&, const refmode_t&);
+    void writeConstantVector(const llvm::ConstantVector&, const refmode_t&);
+    void writeConstantExpr(const llvm::ConstantExpr&, const refmode_t&);
     refmode_t writeConstant(const llvm::Constant&);
 
     template<typename PredGroup, class ConstantType>
