@@ -80,10 +80,8 @@ FactGenerator::processModule(const llvm::Module &Mod, const std::string& path)
             writeFact(pred::variable::type, bbRef, "label");
 
             // Record basic block predecessors
-            llvm::BasicBlock *tmpBB = const_cast<llvm::BasicBlock *>(&bb);
-
-            for (llvm::pred_iterator
-                     pi = pred_begin(tmpBB), pi_end = pred_end(tmpBB);
+            for (llvm::const_pred_iterator
+                     pi = pred_begin(&bb), pi_end = pred_end(&bb);
                  pi != pi_end; ++pi)
             {
                 refmode_t predBB = refmodeOfBasicBlock(*pi);
