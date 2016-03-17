@@ -46,10 +46,6 @@ cclyzer::refmode_t RefmodeEngine::refmodeOfBasicBlock(const llvm::BasicBlock *bb
     return impl->refmodeOfBasicBlock(bb);
 }
 
-cclyzer::refmode_t RefmodeEngine::refmodeOfInstruction(const llvm::Instruction *instr, unsigned index) const {
-    return impl->refmodeOfInstruction(instr, index);
-}
-
 cclyzer::refmode_t RefmodeEngine::refmodeOfInstruction(const llvm::Instruction *instr) const {
     return impl->refmodeOfInstruction(instr);
 }

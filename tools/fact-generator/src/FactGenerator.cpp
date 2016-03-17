@@ -67,7 +67,9 @@ FactGenerator::processModule(const llvm::Module &Mod, const std::string& path)
         // not examine its body
         writeFunction(func, funcref);
 
-        int counter = 0;
+        // Previous instruction
+        const llvm::Instruction *prev_instr = nullptr;
+        refmode_t prev_iref;
 
         // iterating over basic blocks in a function
         foreach (const llvm::BasicBlock &bb, func)
@@ -88,40 +90,36 @@ FactGenerator::processModule(const llvm::Module &Mod, const std::string& path)
                 writeFact(pred::basic_block::predecessor, bbRef, predBB);
             }
 
-            // Store last instruction
-            const llvm::Instruction &lastInstr = bb.back();
-
             // iterating over basic block instructions
             foreach (const llvm::Instruction &instr, bb)
             {
                 Context C(*this, instr);
 
                 // Compute instruction refmode
-                refmode_t instrRef = refmodeOfInstruction(&instr, counter++);
+                const refmode_t iref = refmodeOfInstruction(&instr);
 
                 // Record instruction target variable if such exists
                 if (!instr.getType()->isVoidTy()) {
                     refmode_t targetVar = refmodeOfLocalValue(&instr);
 
-                    writeFact(pred::instruction::to, instrRef, targetVar);
+                    writeFact(pred::instruction::to, iref, targetVar);
                     recordVariable(targetVar, instr.getType());
                 }
 
                 // Record successor instruction
-                if (&instr != &lastInstr) {
-                    // Compute refmode of next instruction
-                    refmode_t nextInstrRef = refmodeOfInstruction(nullptr, counter);
+                if (prev_instr)
+                    writeFact(pred::instruction::next, prev_iref, iref);
 
-                    // Record the instruction succession
-                    writeFact(pred::instruction::next, instrRef, nextInstrRef);
-                }
+                // Store the refmode of this instruction for next iteration
+                prev_iref = iref;
+                prev_instr = &instr;
 
                 // Record instruction's container function
-                writeFact(pred::instruction::function, instrRef, funcref);
+                writeFact(pred::instruction::function, iref, funcref);
 
                 // Record instruction's basic block entry (label)
                 refmode_t bbEntry = refmodeOfBasicBlock(instr.getParent());
-                writeFact(pred::instruction::bb_entry, instrRef, bbEntry);
+                writeFact(pred::instruction::bb_entry, iref, bbEntry);
 
                 // Visit instruction
                 IV.visit(const_cast<llvm::Instruction &>(instr));
@@ -137,7 +135,7 @@ FactGenerator::processModule(const llvm::Module &Mod, const std::string& path)
                         unsigned line = location.getLine();
                         unsigned column = location.getCol();
 
-                        writeFact(pred::instruction::pos, instrRef, line, column);
+                        writeFact(pred::instruction::pos, iref, line, column);
                     }
                 }
 
