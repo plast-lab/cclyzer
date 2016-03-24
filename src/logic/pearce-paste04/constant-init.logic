@@ -1,0 +1,40 @@
+// Track the constant that initializes an allocation
+
+initialized_by_constant(Alloc, Constant) ->
+   allocation(Alloc), constant(Constant).
+
+initialized_by_constant(Alloc, Init) <-
+   global_variable:initializer[Var] = Init,
+   global_allocation:by_variable[Var] = Alloc.
+
+alloc_subregion(Alloc)
+ , alloc_subregion:at_field[BaseAlloc, Field] = Alloc
+ , allocation:depth[Alloc] = NewDepth
+ , initialized_by_constant(Alloc, InnerConstant)
+ <-
+   initialized_by_constant(BaseAlloc, Constant),
+   constant_struct(Constant),
+   constant_struct:index[Constant, Field] = InnerConstant,
+   constant:type[Constant] = ConstantType,
+   struct_type(ConstantType),
+   alloc_may_expand_field(BaseAlloc, Field, NewDepth).
+
+alloc_subregion(Alloc)
+ , alloc_subregion:at_any_array_index[BaseAlloc] = Alloc
+ , allocation:depth[Alloc] = NewDepth
+ , initialized_by_constant(Alloc, InnerConstant)
+ <-
+   initialized_by_constant(BaseAlloc, Constant),
+   constant_array(Constant),
+   constant_array:index[Constant, _] = InnerConstant,
+   constant:type[Constant] = ConstantType,
+   array_type(ConstantType),
+   alloc_may_expand_array(BaseAlloc, NewDepth).
+
+// A constant may point to a global allocation, so if used to
+// initialize another global allocation, we have to track the
+// resulting dereference edge.
+
+ptr_points_to(SomeAlloc, Alloc) <-
+   initialized_by_constant(Alloc, Constant),
+   constant_points_to[Constant] = SomeAlloc.

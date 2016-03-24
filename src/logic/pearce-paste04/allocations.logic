@@ -1,0 +1,189 @@
+//----------------------------------------------------------------------
+// [Creation of Allocations]
+//
+// Every named variable of the original source code will have a
+// corresponsing `alloca_instruction` that allocates space for it in
+// the stack. Hence, we can use these instructions to track stack
+// allocations. Additionally, we have to create stack allocations for
+// parameters with pass-by-value semantics.
+//
+// Heap allocations on the other side will be created primarily by
+// calling `@malloc` or other similar memory allocating
+// functions. More heap allocation functions could be added in the
+// future.
+//----------------------------------------------------------------------
+
+
+//---------------------------------------------------------------------
+// [Stack Allocations]
+//
+// Note that the type of a stack allocation is always noted locally at
+// either the allocation site, or by the parameter's type.
+//---------------------------------------------------------------------
+
+/// 1. Alloca Instructions
+
+stack_allocation(StackAlloc),
+stack_allocation:by_instruction[Insn] = StackAlloc,
+var_points_to(StackAlloc, Var)
+ <-
+   alloca_instruction(Insn),
+   reachable_instruction(Insn),
+   instruction:to[Insn] = Var.
+
+/// 2. Parameters with pass-by-value semantics
+
+stack_allocation(StackAlloc),
+stack_allocation:by_parameter[Func, Index] = StackAlloc,
+var_points_to(StackAlloc, Param)
+ <-
+   function:param_by_value(Func, Index),
+   function:param[Func, Index] = Param,
+   reachable_function(Func).
+
+
+//---------------------------------------------------------------------
+// [Heap Allocations]
+//
+// In contrast to the other types of allocations, an allocation on the
+// heap is not always associated with a type (at least locally).
+//---------------------------------------------------------------------
+
+heap_allocation(HeapAlloc),
+heap_allocation:by_instruction[Insn] = HeapAlloc,
+var_points_to(HeapAlloc, Var)
+ <-
+   heap_alloc_function(Func),
+   call_instruction:function[Insn] = Func,
+   reachable_instruction(Insn),
+   instruction:to[Insn] = Var.
+
+// Functions that allocate memory on heap
+heap_alloc_function(Func) -> function_decl(Func).
+
+heap_alloc_function(Func) <-
+   function:by_name["@malloc"]  = Func
+ ; function:by_name["@calloc"]  = Func
+ ; function:by_name["@realloc"] = Func.
+
+
+// Heap allocations by type of function
+
+heap_allocation:by_malloc[Insn] = HeapAlloc <-
+   function:name[Func] = "@malloc",
+   call_instruction:function[Insn] = Func,
+   heap_allocation:by_instruction[Insn] = HeapAlloc.
+
+heap_allocation:by_calloc[Insn] = HeapAlloc <-
+   function:name[Func] = "@calloc",
+   call_instruction:function[Insn] = Func,
+   heap_allocation:by_instruction[Insn] = HeapAlloc.
+
+heap_allocation:by_realloc[Insn] = HeapAlloc <-
+   function:name[Func] = "@realloc",
+   call_instruction:function[Insn] = Func,
+   heap_allocation:by_instruction[Insn] = HeapAlloc.
+
+
+//---------------------------------------------------------------------
+// [Global Allocations]
+//
+// Note that the type of a global allocation is readily available at
+// any case.
+//---------------------------------------------------------------------
+
+/// 1. Global variable allocations
+
+global_allocation(Alloc),
+global_allocation:by_variable[GVar] = Alloc
+ <-
+   global_variable(GVar).
+
+
+/// 2. Function Allocations
+
+global_allocation(Alloc),
+global_allocation:by_function[Func] = Alloc
+ <-
+   function(Func).
+
+global_allocation(Alloc),
+global_allocation:by_function[Func] = Alloc
+ <-
+   function_decl(Func),
+   !function:definition[Func] = _.
+
+
+//----------------------------------
+// [Additional pseudo-allocations]
+//----------------------------------
+
+/// 1. Unknown Memory Special Object (may point to anything)
+
+unknown_location[] = Unknown
+ , non_allocation(Unknown)
+ , allocation:to_string[Unknown] = "*unknown*"
+ <- .
+
+// An unknown location points to an unknown location
+
+ptr_points_to(Unknown, Unknown) <-
+   unknown_location[] = Unknown.
+
+unknown_location[] = Unknown, ptr_points_to(To, Unknown) -> To = Unknown.
+
+
+/// 2. Null Special Object
+
+null_location[] = Null
+ , non_allocation(Null)
+ , allocation:to_string[Null] = "*null*"
+ <- .
+
+// Null cannot point to anything
+
+null_location[] = Null -> !ptr_points_to(_, Null).
+
+
+//------------------------------------------------
+// [Allocation String Representation Protocol]
+//------------------------------------------------
+
+// Every allocation must have a string representation
+allocation(Alloc) -> allocation:to_string[Alloc] = _.
+
+// Human readable representation for stack allocations
+
+allocation:to_string[Alloc] = Str <-
+   stack_allocation:by_instruction[Insn] = Alloc,
+   instruction:to[Insn] = Var,
+   variable:descriptor(Var, _, Func, Type, Name),
+   Str = "*stack_alloc" + Func + "[" + Type + " " + Name + "]".
+
+allocation:to_string[Alloc] = Str <-
+   stack_allocation:by_parameter[Func, Index] = Alloc,
+   function:param[Func, Index] = Param,
+   variable:descriptor(Param, _, FuncSign, Type, Name),
+   Str = "*stack_alloc" + FuncSign + "[" + Type + " " + Name + "]".
+
+// Human readable representation for heap allocations
+
+allocation:to_string[Alloc] = Str <-
+   heap_allocation:by_instruction[Insn] = Alloc,
+   instruction:to[Insn] = Var,
+   variable:descriptor(Var, _, Func, Type, Name),
+   Str = "*heap_alloc" + Func + "[" + Type + " " + Name + "]".
+
+// Human readable representation for global variable allocations
+
+allocation:to_string[Alloc] = Str <-
+   global_allocation:by_variable[GVar] = Alloc,
+   global_variable:name[GVar] = Name,
+   Str = "*global_alloc" + Name.
+
+// Human readable representation for function allocations
+
+allocation:to_string[Alloc] = Str <-
+   global_allocation:by_function[Func] = Alloc,
+   function:name[Func] = Name,
+   Str = "*global_alloc" + Name.

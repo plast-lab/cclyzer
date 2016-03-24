@@ -1,0 +1,103 @@
+// Model null as a specific memory location
+constant_points_to[Constant] = NULL <-
+   nullptr_constant(Constant),
+   null_location[] = NULL.
+
+// Global variable and function references is a common type of
+// constants. They should be matched to the corresponding global
+// allocation.
+
+constant_points_to[Constant] = Alloc <-
+   global_variable_constant:name[Constant] = Name,
+   global_allocation:by_variable[GVar] = Alloc,
+   global_variable:by_name[Name] = GVar.
+
+constant_points_to[Constant] = Alloc <-
+   function_constant:function_name[Constant] = FName,
+   function:by_name[FName] = Func,
+   global_allocation:by_function[Func] = Alloc.
+
+
+//----------------------------------------------------------------------
+// [Assignment Instructions]
+//
+// There are many types of instructions that essentially copy the
+// points-to set of a variable to another.
+//
+// Cast instructions such as `bitcast` fall to this category. Often
+// the returned type of a `@malloc` function call is different than
+// the declared type of the target variable. The LLVM IR adds a
+// temporary variable of type `i8*` to hold the result and then an
+// intermediate `bitcast` instruction that casts this temporary
+// variable to the right type.
+//
+// Another class of assignment instructions are the interprocedural
+// assignments. This way we can model the implicit flow from (i) the
+// actual arguments to the formal parameters, and from (ii) the return
+// value of the called function to the variable that is assigned the
+// result of the `call instruction`.
+//----------------------------------------------------------------------
+
+assign_instruction(To, Value) ->
+   variable(To), operand(Value).
+
+var_points_to(Alloc, ToVar) <-
+   assign_instruction(ToVar, Value),
+   operand_points_to(Alloc, Value).
+
+// `bitcast` instructions
+assign_instruction(ToVar, Value) <-
+   reachable_instruction(Insn),
+   bitcast_instruction:from[Insn] = Value,
+   instruction:to[Insn] = ToVar.
+
+// `ptrtoint` instructions
+assign_instruction(ToVar, Value) <-
+   reachable_instruction(Insn),
+   ptrtoint_instruction:from[Insn] = Value,
+   instruction:to[Insn] = ToVar.
+
+// `inttoptr` instructions
+var_points_to(Unknown, ToVar) <-
+   unknown_location[] = Unknown,
+   reachable_instruction(Insn),
+   inttoptr_instruction(Insn),
+   instruction:to[Insn] = ToVar.
+
+// `phi` instructions: treat every possible pair value as a potential
+// assignment to the target variable
+assign_instruction(ToVar, Value) <-
+   reachable_instruction(Insn),
+   phi_instruction:pair:value[Insn, _] = Value,
+   instruction:to[Insn] = ToVar.
+
+
+// `select` instructions; similar to `phi` instructions
+assign_instruction(ToVar, Value) <-
+   reachable_instruction(Insn),
+   select_instruction(Insn),
+   ( select_instruction:first_operand[Insn]  = Value
+   ; select_instruction:second_operand[Insn] = Value ),
+   instruction:to[Insn] = ToVar,
+   instruction:type[Insn] = Type,
+   !vector_type(Type).
+
+
+//----------------------------------------------------------------------
+// [Load/Store Instructions]
+//----------------------------------------------------------------------
+
+ptr_points_to(Alloc, BaseAlloc) <-
+   reachable_instruction(Insn),
+   store_instruction:value[Insn] = Op,
+   store_instruction:address[Insn] = PtrOp,
+   operand_points_to(Alloc, Op),
+   operand_points_to(BaseAlloc, PtrOp),
+   ptr_compatible_allocation(BaseAlloc).
+
+var_points_to(Alloc, ToVar) <-
+   reachable_instruction(Insn),
+   instruction:to[Insn] = ToVar,
+   load_instruction:address[Insn] = PtrOp,
+   operand_points_to(BaseAlloc, PtrOp),
+   ptr_points_to(Alloc, BaseAlloc).

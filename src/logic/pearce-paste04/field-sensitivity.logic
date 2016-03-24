@@ -1,0 +1,184 @@
+//------------------------------------------------------------------------------
+// [Field Sensitive treatment of `getelementptr` instructions]
+//
+// We create subregions on the fly to act as destinations of
+// instructions that may point to an allocation at some
+// *offset*. Essentially, we create complex allocations paired with
+// access paths in a demand-driven way, according to the given indices
+// of some GEP instruction where an existing allocation is used as the
+// base operand.
+
+// Note that a subregion allocation created at some GEP instruction
+// will be identified and used by other instructions too that happen
+// to reference the same base allocation with the same offset.
+//
+// We filter null and other pseudo-allocations without depth by
+// requiring that the base of the new region should itself have a
+// depth.
+//------------------------------------------------------------------------------
+
+
+// Compute intermediate points to for `getelementptr` instruction up
+// to some index
+
+gep_points_to(Insn, Index, Alloc) ->
+   getelementptr_instruction(Insn),
+   int[64](Index),
+   allocation(Alloc).
+
+gep_points_to(Insn, Index, Alloc) <-
+   gep_points_to(Insn, Index, SomeAlloc),
+   alloc_aliases(Alloc, SomeAlloc).
+
+gep_points_to(Insn, 0, Alloc) <-
+   !gep:vector_based(Insn),
+   getelementptr_instruction:base[Insn] = Base,
+   operand_points_to(Alloc, Base).
+
+//----------------------------------------------------------
+// For the first index of the GEP instruction
+//----------------------------------------------------------
+
+// First zero index is ignored when address operand points-to non-base
+// object.
+
+gep_points_to(Insn, 1, Alloc)
+ <-
+   gep_points_to(Insn, 0, Alloc),
+   alloc_subregion(Alloc),
+   getelementptr_instruction:index[Insn, 0] = IndexOp,
+   operand:to_int[IndexOp] = 0.
+
+// First index is also ignored when address points-to non-base object
+// with variable array index, since adding the new first index will
+// not change anything. Thus, it suffices to propagate the existing
+// allocation
+
+gep_points_to(Insn, 1, Alloc)
+ <-
+   gep_points_to(Insn, 0, Alloc),
+   alloc_subregion:at_any_array_index[Base] = Alloc,
+   alloc_subregion:base[Alloc] = Base. // OPT: redundant clause
+
+
+// When address points-to base object, and first index is a variable
+// we must point to both star index and base
+
+gep_points_to(Insn, 1, Alloc)
+ <-
+   gep_points_to(Insn, 0, Alloc),
+   // base object
+   basic_allocation(Alloc),
+   // first index is a variable
+   getelementptr_instruction:index[Insn, 0] = IndexOp,
+   !operand:to_int[IndexOp] = _.
+
+alloc_subregion(NewAlloc)
+ , alloc_subregion:at_any_array_index[Alloc] = NewAlloc
+ , allocation:depth[NewAlloc] = NewDepth
+ , gep_points_to(Insn, 1, NewAlloc)
+ <-
+   gep_points_to(Insn, 0, Alloc),
+   // base object
+   basic_allocation(Alloc),
+   // first index is a variable
+   getelementptr_instruction:index[Insn, 0] = IndexOp,
+   !operand:to_int[IndexOp] = _,
+   // check if subobject can be created
+   alloc_may_expand_array(Alloc, NewDepth).
+
+
+// When address points-to base object, and first index is a constant
+// we must point to either star index or base, depending of whether
+// the constant index is zero
+
+gep_points_to(Insn, 1, Alloc)
+ <-
+   gep_points_to(Insn, 0, Alloc),
+   // base object
+   basic_allocation(Alloc),
+   // first index is a variable
+   getelementptr_instruction:index[Insn, 0] = IndexOp,
+   operand:to_int[IndexOp] = 0.
+
+alloc_subregion(NewAlloc)
+ , alloc_subregion:at_any_array_index[Alloc] = NewAlloc
+ , allocation:depth[NewAlloc] = NewDepth
+ , gep_points_to(Insn, 1, NewAlloc)
+ <-
+   gep_points_to(Insn, 0, Alloc),
+   // base object
+   basic_allocation(Alloc),
+   // first index is a variable
+   getelementptr_instruction:index[Insn, 0] = IndexOp,
+   operand:to_int[IndexOp] = Index,
+   Index != 0,
+   // check if subobject can be created
+   alloc_may_expand_array(Alloc, NewDepth).
+
+
+// It also possible that a struct type is treated as an array of
+// bytes, in which case we must match the byte offset to any field
+
+gep_points_to(Insn, 1, Region)
+ <-
+   gep_points_to(Insn, 0, Alloc),
+   // Base type of GEP is pointer to i8
+   getelementptr_instruction:base_type[Insn] = PtrType,
+   pointer_type:component[PtrType] = i8,
+   int8_type[] = i8,
+   // first index is a constant
+   getelementptr_instruction:index[Insn, 0] = IndexOp,
+   operand:to_int[IndexOp] = _,
+   // get subobject of this field
+   alloc_subregion:at_field[Alloc, _] = Region.
+
+
+//----------------------------------------------------------
+// For the rest of the indices of the GEP instruction
+//----------------------------------------------------------
+
+// Case of array access
+
+alloc_subregion(NewAlloc)
+ , alloc_subregion:at_any_array_index[Alloc] = NewAlloc
+ , allocation:depth[NewAlloc] = NewDepth
+ , gep_points_to(Insn, NextIndex, NewAlloc)
+ <-
+   gep_points_to(Insn, Index, Alloc),
+   getelementptr_instruction:interm_type[Insn, Index] = DeclaredType,
+   // check for type compatibility
+   array_type(DeclaredType),
+   alloc_subregion(Alloc),
+   // NextIndex = Index + 1
+   instruction:next_index[Insn, Index] = NextIndex,
+   // check if subobject can be created
+   alloc_may_expand_array(Alloc, NewDepth).
+
+// Case of field access
+
+alloc_subregion(NewAlloc)
+ , alloc_subregion:at_field[Alloc, Field] = NewAlloc
+ , allocation:depth[NewAlloc] = NewDepth
+ , gep_points_to(Insn, NextIndex, NewAlloc)
+ <-
+   gep_points_to(Insn, Index, Alloc),
+   getelementptr_instruction:interm_type[Insn, Index] = DeclaredType,
+   struct_type(DeclaredType),
+   // get field (as integer constant)
+   getelementptr_instruction:index[Insn, Index] = IndexOp,
+   operand:to_int[IndexOp] = Field,
+   // NextIndex = Index + 1
+   instruction:next_index[Insn, Index] = NextIndex,
+   // check if subobject can be created
+   alloc_may_expand_field(Alloc, Field, NewDepth).
+
+
+
+// The destination variable holds the allocation pointed by the last
+// index of the associated `getelementptr` instruction
+
+var_points_to(Alloc, ToVar) <-
+   getelementptr_instruction:nindices[Insn] = Total,
+   gep_points_to(Insn, Total, Alloc),
+   instruction:to[Insn] = ToVar.

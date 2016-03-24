@@ -1,0 +1,214 @@
+//------------------------------------------------------------------------------
+// [Type Depth]
+//
+// We define the depth of type T as follows:
+//
+// 1. the depth of a non-aggregate type (e.g., primitives, pointers,
+//    etc) is 1
+//
+// 2. the depth of an aggregate type is the maximum depth of any of its
+//    fields, plus one
+//------------------------------------------------------------------------------
+
+
+// We also record the succession of depth numbers to eliminate
+// compiler warnings later on
+
+next_depth(i,j) ->
+   int[64](i), int[64](j).
+
+type_depth(Type, 1), next_depth(0, 1)
+ <-
+   type(Type),
+   !aggregate_type(Type).
+
+type_depth(Type, E), next_depth(D, E)
+ <-
+   struct_type:field[Type, _] = FieldType,
+   type_depth(FieldType, D),
+   E = D + 1.
+
+type_depth(Type, E), next_depth(D, E)
+ <-
+   array_type:component[Type] = ComponentType,
+   type_depth(ComponentType, D),
+   E = D + 1.
+
+type_maxdepth[Type] = m
+ <-
+   agg<<m = max(D)>>
+   type_depth(Type, D).
+
+//------------------------------------------------------------------------------
+// [Filters]
+//
+// We define the depth of an abstract allocation inductively as
+// follows:
+//
+// 1. the depth of a base allocation is 0
+//
+// 2. the depth of a field component or array index is one plus the
+//    depth of its base
+//
+// Thus, we can now define filters that do now allow the creation of
+// allocations of infinite depth. Suppose that our program contains a
+// single aggregate type, the struct type S that contains only
+// primitive fields.
+//
+// The depth of S will be two; the depth of any of its fields will be
+// one. The most complex abstract allocation that the analysis should
+// allow would be S[*].f with a depth of 2, since the program could
+// dynamically allocate an array of S objects.
+//------------------------------------------------------------------------------
+
+// Depth of allocation
+
+allocation:depth[Alloc] = Depth ->
+   allocation(Alloc), int[64](Depth).
+
+// Base allocations have zero depth
+
+allocation:depth[Alloc] = 0 <-
+   basic_allocation(Alloc).
+
+alloc_may_expand_field(Alloc, FieldIndex, NewDepth) <-
+   field_index(FieldIndex),
+   allocation:depth[Alloc] = Depth,
+   next_depth(Depth, NewDepth).
+
+alloc_may_expand_array(Alloc, NewDepth) <-
+   allocation:depth[Alloc] = Depth,
+   next_depth(Depth, NewDepth).
+
+
+//---------------------------------------------------------------
+// [Abstract Subobjects]
+//---------------------------------------------------------------
+
+alloc_subregion(Region) -> allocation(Region).
+lang:entity(`alloc_subregion).
+
+ptr_compatible_allocation(Alloc) <-
+   alloc_subregion(Alloc).
+
+//---------------------------------------------------------------
+// [Field Selections]
+//---------------------------------------------------------------
+
+
+// Consider the largest struct on the program when creating field
+// subobjects
+
+field_index(Index) -> int[64](Index).
+
+field_index(Index) <-
+   struct_type:field[_, Index] = _,
+   Index > 0.
+
+// Single constructor for field selections
+
+alloc_subregion:at_field[Alloc, Index] = Region ->
+   allocation(Alloc), int[64](Index), alloc_subregion(Region).
+
+lang:constructor(`alloc_subregion:at_field).
+
+// // Create every field sub-expression, once type for base object is
+// // established
+
+// alloc_subregion(NewAlloc)
+//  , alloc_subregion:at_field[Alloc, Field] = NewAlloc
+//  <-
+//    field_index(Field),
+//    // filter base allocations
+//    alloc_subregion(Alloc).
+
+
+//---------------------------------------------------------------
+// [Array Element Selections: unknown *star* index]
+//---------------------------------------------------------------
+
+// Constructor for unknown array/pointer index
+
+alloc_subregion:at_any_array_index[Alloc] = Region ->
+   allocation(Alloc), alloc_subregion(Region).
+
+lang:constructor(`alloc_subregion:at_any_array_index).
+
+
+// // Create star pointer index expression, once type for base object is
+// // established
+
+// alloc_subregion(NewAlloc)
+//  , alloc_subregion:at_any_array_index[Alloc] = NewAlloc
+//  , allocation:type[NewAlloc] = Type
+//  <-
+//    allocation:type[Alloc] = Type,
+//    // base object
+//    basic_allocation(Alloc).
+
+// // Create star array index expression, once type for base object is
+// // established
+
+// alloc_subregion(NewAlloc)
+//  , alloc_subregion:at_any_array_index[Alloc] = NewAlloc
+//  , allocation:type[NewAlloc] = ElementType
+//  <-
+//    allocation:type[Alloc] = Type,
+//    // filter base allocations
+//    alloc_subregion(Alloc),
+//    // determine type
+//    array_type(Type),
+//    array_type:component[Type] = ElementType.
+
+//-------------------------------------------------------------------
+// Subobject properties
+//-------------------------------------------------------------------
+
+// Region base: unified predicate that applies to all types of
+// subobjects
+
+alloc_subregion:base[Region] = Base ->
+   alloc_subregion(Region), allocation(Base).
+
+alloc_subregion:base[Region] = Base <-
+   alloc_subregion:at_field[Base, _] = Region.
+
+alloc_subregion:base[Region] = Base <-
+   alloc_subregion:at_any_array_index[Base] = Region.
+
+//-------------------------------------
+// String Representation Protocol
+//-------------------------------------
+
+allocation:to_string[Region] = RegionStr <-
+   alloc_subregion:at_any_array_index[Alloc] = Region,
+   allocation:to_string[Alloc] = AllocStr,
+   RegionStr = AllocStr + "[*]".
+
+allocation:to_string[Region] = RegionStr <-
+   alloc_subregion:at_field[Alloc, Index] = Region,
+   allocation:to_string[Alloc] = AllocStr,
+   int64:string:convert[Index] = IndexStr,
+   RegionStr = AllocStr + ".?/" + IndexStr.
+
+//------------------------------------
+// Region containment
+//------------------------------------
+
+region_contains(Outer, Inner) ->
+   alloc_subregion(Inner), allocation(Outer).
+
+region_contains(Outer, Inner) <-
+   alloc_subregion:at_any_array_index[Outer] = Inner.
+
+region_contains(Outer, Inner) <-
+   alloc_subregion:at_field[Outer, _] = Inner.
+
+region_contains(Outer, Inner) <-
+   region_contains(Interm, Inner),
+   region_contains(Outer, Interm).
+
+// Non-allocations (e.g., *null*) cannot contain anything
+
+non_allocation(NonAlloc) ->
+   !region_contains(NonAlloc, _).

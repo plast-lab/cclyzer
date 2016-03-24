@@ -1,0 +1,89 @@
+//-------------------------------------------------------------------
+// [Memcpy instructions]
+//
+//  We must treat `memcpy` instructions in such a way as to ensure
+//  that it may change the points-to set of any subregion of memory
+//  that is being copied.
+//-------------------------------------------------------------------
+
+// Overloaded `memcpy` predicates that will trigger the deep copy
+// semantics for the corresponding allocations they point to
+
+memcpy$to_operand(Insn, To, From) ->
+   instruction(Insn), operand(To), operand(From).
+
+memcpy$to_var(Insn, To, From) ->
+   instruction(Insn), variable(To), operand(From).
+
+// Bitwise copy semantics that respect type information
+
+memcpy(Insn, To, From) ->
+   instruction(Insn), allocation(To), allocation(From).
+
+// Copy points-to set of copied objects
+
+ptr_points_to(Alloc, To) <-
+   memcpy(_, To, From),
+   ptr_compatible_allocation(To),
+   ptr_points_to(Alloc, From).
+
+// Base case of `memcpy` call instructions It should handle syntactic
+// aliases. For instance `memcpy(to,from)` is equivalent to
+// `memcpy(to, &from[0])`. We consider all possible aliases of the
+// base objects that flow to the operands of the @memcpy instruction,
+// but only keep type compatible pairs.
+
+memcpy$to_operand(CallInsn, To, From) <-
+   function:name[Callee] = Name,
+   ( string:like(Name, "@memcpy%")
+   ; string:like(Name, "@llvm.memcpy%") ),
+   callgraph:edge(Callee, CallInsn),
+   call_instruction:arg[CallInsn, 0] = To,
+   call_instruction:arg[CallInsn, 1] = From.
+
+memcpy(CallInsn, AliasedTo, AliasedFrom) <-
+   memcpy$to_operand(CallInsn, To, From),
+   operand_points_to(FromAlloc, From),
+   operand_points_to(ToAlloc, To),
+   // consider any possible aliases
+   alloc_aliases(AliasedTo, ToAlloc),
+   alloc_aliases(AliasedFrom, FromAlloc).
+
+memcpy(CallInsn, AliasedTo, AliasedFrom) <-
+   memcpy$to_var(CallInsn, To, From),
+   operand_points_to(FromAlloc, From),
+   var_points_to(ToAlloc, To),
+   // consider any possible aliases
+   alloc_aliases(AliasedTo, ToAlloc),
+   alloc_aliases(AliasedFrom, FromAlloc).
+
+
+// Recursive case for `memcpy` call instructions
+//
+// !! Note that in the following cases we have to create the
+// destination subobject if it does not exist already, since we cannot
+// afford to miss its points-to set because it may be copied to more
+// generic objects that contain star expressions !!
+
+alloc_subregion(DestSubobject)
+ , alloc_subregion:at_field[DestObject, Field] = DestSubobject
+ , allocation:depth[DestSubobject] = NewDepth
+ , memcpy(Insn, DestSubobject, SrcSubobject)
+ <-
+   memcpy(Insn, DestObject, SrcObject),
+   // get source subobject for given field
+   alloc_subregion:at_field[SrcObject, Field] = SrcSubobject,
+   // check if subobject can be created
+   alloc_may_expand_field(DestObject, Field, NewDepth).
+
+
+alloc_subregion(DestSubobject)
+ , alloc_subregion:at_any_array_index[DestObject] = DestSubobject
+ , allocation:depth[DestSubobject] = NewDepth
+ , memcpy(Insn, DestSubobject, SrcSubobject)
+ <-
+   memcpy(Insn, DestObject, SrcObject),
+   // get source and destination subobjects for star index
+   alloc_subregion:at_any_array_index[SrcObject] = SrcSubobject,
+   // check if subobject can be created
+   alloc_may_expand_array(DestObject, NewDepth).

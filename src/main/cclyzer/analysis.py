@@ -79,7 +79,7 @@ class Analysis(object):
             .count('global_allocation')
             .count('allocation:size')
             .count('allocation:type')
-            .count('array_allocation')
+            .count('type_compatible')
             .build()
         )
 

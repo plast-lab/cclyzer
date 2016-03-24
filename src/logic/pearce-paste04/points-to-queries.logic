@@ -1,0 +1,76 @@
+// We only need to add declarations and file associations for the
+// queries we are interested in exporting
+
+//---------------------------
+// Pointer dereferences
+//---------------------------
+
+lang:physical:delimiter[`_dereferences] = "\t".
+lang:physical:filePath[`_dereferences] = "pointer-dereferences.tsv".
+
+_dereferences(SrcAllocStr, DestAllocStr) <-
+   ptr_points_to(DestAlloc, SrcAlloc),
+   allocation:to_string[SrcAlloc] = SrcAllocStr,
+   allocation:to_string[DestAlloc] = DestAllocStr.
+
+//---------------------------
+// Call-graph
+//---------------------------
+
+lang:physical:delimiter[`_cg] = "\t".
+lang:physical:filePath[`_cg] = "call-graph.tsv".
+
+_cg(CallerSign, CalleeSign) <-
+   callgraph:fn_edge(Callee, Caller),
+   function:signature[Callee] = CalleeSign,
+   function:signature[Caller] = CallerSign.
+
+
+
+//------------------------------------------------------------------------------
+// The following queries are not exported
+//------------------------------------------------------------------------------
+
+
+_var_points_to(FuncSign, VarName, AllocStr) <-
+   var_points_to(Alloc, Var),
+   variable:descriptor(Var, _, FuncSign, _, VarName),
+   allocation:to_string[Alloc] = AllocStr.
+
+_constant_points_to(Constant, ConstantValue, ConstantType, AllocStr)
+ <-
+   constant_points_to[Constant] = Alloc,
+   constant:value[Constant] = ConstantValue,
+   constant:type[Constant] = ConstantType,
+   allocation:to_string[Alloc] = AllocStr.
+
+_gep_expr_points_to(Val, Index, AllocStr) <-
+   gep_constant_expr_points_to[CExpr, Index] = Alloc,
+   constant:value[CExpr] = Val,
+   allocation:to_string[Alloc] = AllocStr.
+
+
+_init_by_constant(AllocStr, ConstantValue)
+ <-
+   initialized_by_constant(Alloc, Constant),
+   constant:value[Constant] = ConstantValue,
+   allocation:to_string[Alloc] = AllocStr.
+
+_tp_gep_points_to(Func, Var, Index, DeclaredType, AllocStr)
+ <-
+   gep_points_to(Insn, Index, Alloc),
+   getelementptr_instruction:interm_type[Insn, Index] = DeclaredType,
+   instruction:to[Insn] = To,
+   allocation:to_string[Alloc] = AllocStr,
+   variable:descriptor(To, _, Func, _, Var).
+
+_gep_points_to(Func, Var, Index, AllocStr) <-
+   gep_points_to(Insn, Index, Alloc),
+   instruction:to[Insn] = To,
+   allocation:to_string[Alloc] = AllocStr,
+   variable:descriptor(To, _, Func, _, Var).
+
+_memcpy(Insn, ToStr, FromStr) <-
+   memcpy(Insn, To, From),
+   allocation:to_string[From] = FromStr,
+   allocation:to_string[To] = ToStr.

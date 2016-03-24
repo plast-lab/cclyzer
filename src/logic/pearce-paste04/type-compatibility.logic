@@ -1,0 +1,115 @@
+//------------------------------------------------------------------------------
+// [Type compatibility]
+//
+// Two types are type compatible if and only if they produce the same
+// offset, when the same field or array index expression is appended
+// to them.
+//
+// This concept is essential for field sensitivity, since we need a
+// type filter that prohibits the creation of unrealizable sub-object
+// expressions.
+//------------------------------------------------------------------------------
+
+type_compatible(From, To) ->
+   type(From), type(To).
+
+
+// Reflexivity: a type is assign-compatible to itself
+
+type_compatible(Type, Type) <-
+   type(Type).
+
+// // Any type can be seen as an array of bytes
+
+// type_compatible(From, To) <-
+//    pointer_type:integer(To),
+//    type(From).
+
+// type_compatible(From, To) <-
+//    pointer_type:integer(From),
+//    type(To).
+
+// Struct types
+
+type_compatible:up_to_field(Type1, Type2, Field) ->
+   struct_type(Type1), struct_type(Type2), int[64](Field).
+
+type_compatible:up_to_field(Type1, Type2, 0) <-
+   struct_type:field[Type1, 0] = Field1,
+   struct_type:field[Type2, 0] = Field2,
+   type_compatible(Field1, Field2).
+
+type_compatible:up_to_field(Type1, Type2, i + 1) <-
+   type_compatible:up_to_field(Type1, Type2, i),
+   struct_type:field[Type1, i + 1] = Field1,
+   struct_type:field[Type2, i + 1] = Field2,
+   type_compatible(Field1, Field2).
+
+type_compatible(Type1, Type2) <-
+   struct_type:nfields[Type1] = NFields,
+   struct_type:nfields[Type2] = NFields,
+   type_compatible:up_to_field(Type1, Type2, NFields - 1).
+
+
+// Function types
+
+type_compatible:up_to_arg(From, To, Arg) ->
+   function_type(From), function_type(To), int[64](Arg).
+
+type_compatible:up_to_arg(From, To, 0) <-
+   function_type:return[From] = ReturnType1,
+   function_type:return[To] = ReturnType2,
+   type_compatible(ReturnType1, ReturnType2).
+
+type_compatible:up_to_arg(From, To, i + 1) <-
+   type_compatible:up_to_arg(From, To, i),
+   function_type:param[From, i] = Param1,
+   function_type:param[To, i] = Param2,
+   type_compatible(Param1, Param2).
+
+type_compatible(From, To) <-
+   function_type:nparams[From] = NParams,
+   function_type:nparams[To] = NParams,
+   type_compatible:up_to_arg(From, To, NParams).
+
+type_compatible(From, To) <-
+   function_type:nparams[To] = NParams,
+   function_type:varargs(To),
+   type_compatible:up_to_arg(From, To, NParams).
+
+
+// Array types
+
+type_compatible(Type1, Type2) <-
+   array_type:component[Type1] = Comp1,
+   array_type:component[Type2] = Comp2,
+   ( (!array_type:size[Type1] = _ )
+   ; (!array_type:size[Type2] = _ )),
+   type_compatible(Comp1, Comp2).
+
+type_compatible(Type1, Type2) <-
+   array_type:component[Type1] = Comp1,
+   array_type:component[Type2] = Comp2,
+   array_type:size[Type1] = Size,
+   array_type:size[Type2] = Size,
+   type_compatible(Comp1, Comp2).
+
+
+// Pointer types
+
+type_compatible(PtrType1, PtrType2) <-
+   pointer_type:component[PtrType1] = Type1,
+   pointer_type:component[PtrType2] = Type2,
+   type_compatible(Type1, Type2).
+
+// Any pointer type can be seen as an array of bytes
+
+type_compatible(From, To) <-
+   pointer_type:component[To] = i8,
+   int8_type[] = i8,
+   pointer_type(From).
+
+type_compatible(From, To) <-
+   pointer_type:component[From] = i8,
+   int8_type[] = i8,
+   pointer_type(To).

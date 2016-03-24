@@ -1,0 +1,53 @@
+//------------------------------------------------------------------------
+// [Implicit Pointer Aliases]
+//
+// In C, the expression `ptr[0]` and `*ptr` is the same. The 0 index
+// is often omitted from some instructions, but we must ensure that
+// such expressions are treated as aliases by the analysis and have
+// the same points-to sets.
+//
+// Note that this relation denotes *definite* (must) aliases. This
+// does not include possible aliases, like when a variable array index
+// may be equal to some constant c, and so X[*] *may* be aliased to
+// X[c]. For the latter concept, see the alloc_matches relation.
+//------------------------------------------------------------------------
+
+alloc_aliases(Alloc1, Alloc2) ->
+   allocation(Alloc1), allocation(Alloc2).
+
+// Reflexivity
+
+alloc_aliases(Alloc, Alloc) <-
+   allocation(Alloc).
+
+// Transitivity
+
+alloc_aliases(Alloc1, Alloc2) <-
+   alloc_aliases(Alloc1, IntermAlloc),
+   alloc_aliases(Alloc2, IntermAlloc).
+
+// Symmetricitity
+
+alloc_aliases(Alloc1, Alloc2) <-
+   alloc_aliases(Alloc2, Alloc1).
+
+// Aliases have the same points-to sets
+
+ptr_points_to(Alloc, BaseAlloc1) <-
+   ptr_points_to(Alloc, BaseAlloc2),
+   alloc_aliases(BaseAlloc1, BaseAlloc2).
+
+// When a pointer points to an allocation, it must also point to all
+// of its aliases
+
+ptr_points_to(Alloc1, BaseAlloc) <-
+   ptr_points_to(Alloc2, BaseAlloc),
+   alloc_aliases(Alloc1, Alloc2).
+
+
+// A base allocation with zero index is an alias to base. The first
+// field is also and alias to base, as it too points to the exact same
+// memory location.
+
+alloc_aliases(Base, FirstField) <-
+   alloc_subregion:at_field[Base, 0] = FirstField.
