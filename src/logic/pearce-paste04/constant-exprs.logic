@@ -88,7 +88,6 @@ alloc_subregion(NewAlloc)
    gep_constant_expr_points_to[CExpr, Index] = Alloc,
    getelementptr_constant_expression:interm_type[CExpr, Index] = DeclaredType,
    array_type(DeclaredType),
-   alloc_subregion(Alloc),
    // get constant array index (as integer)
    getelementptr_constant_expression:index[CExpr, Index] = _,
    // NextIndex = Index + 1
