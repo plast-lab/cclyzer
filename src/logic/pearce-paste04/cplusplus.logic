@@ -108,6 +108,8 @@ secondary_superclass(Supertype, Type) ->
 primary_superclass[Type] = Supertype <-
    class_instance:constructor[Alloc] = Ctor,
    constructor:class_type[Ctor] = Type,
+   // basic_allocation(Alloc),
+   _init_by_ctor(Type, Ctor, _, Alloc), // optional
    _init_by_ctor(Supertype, _, Ctor, Alloc),
    struct_type:field[Type, 0] = UnpaddedType,
    struct_type:nfields[UnpaddedType] = NFields,

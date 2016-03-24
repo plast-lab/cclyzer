@@ -21,6 +21,8 @@
 // either the allocation site, or by the parameter's type.
 //---------------------------------------------------------------------
 
+stack_allocation(Alloc) -> allocation:type[Alloc] = _.
+
 /// 1. Alloca Instructions
 
 stack_allocation(StackAlloc),
@@ -31,6 +33,13 @@ var_points_to(StackAlloc, Var)
    reachable_instruction(Insn),
    instruction:to[Insn] = Var.
 
+
+allocation:type[StackAlloc] = Type <-
+   alloca_instruction(Insn),
+   alloca_instruction:type[Insn] = Type,
+   stack_allocation:by_instruction[Insn] = StackAlloc.
+
+
 /// 2. Parameters with pass-by-value semantics
 
 stack_allocation(StackAlloc),
@@ -40,6 +49,12 @@ var_points_to(StackAlloc, Param)
    function:param_by_value(Func, Index),
    function:param[Func, Index] = Param,
    reachable_function(Func).
+
+allocation:type[StackAlloc] = Type <-
+   stack_allocation:by_parameter[Func, Index] = StackAlloc,
+   function:type[Func] = FuncType,
+   function_type:param[FuncType, Index] = ParamType,
+   pointer_type:component[ParamType] = Type.
 
 
 //---------------------------------------------------------------------
@@ -92,12 +107,18 @@ heap_allocation:by_realloc[Insn] = HeapAlloc <-
 // any case.
 //---------------------------------------------------------------------
 
+global_allocation(Alloc) -> allocation:type[Alloc] = _.
+
 /// 1. Global variable allocations
 
 global_allocation(Alloc),
 global_allocation:by_variable[GVar] = Alloc
  <-
    global_variable(GVar).
+
+allocation:type[Alloc] = Type <-
+   global_allocation:by_variable[GVar] = Alloc,
+   global_variable:type[GVar] = Type.
 
 
 /// 2. Function Allocations
@@ -112,6 +133,10 @@ global_allocation:by_function[Func] = Alloc
  <-
    function_decl(Func),
    !function:definition[Func] = _.
+
+allocation:type[Alloc] = Type <-
+   global_allocation:by_function[Func] = Alloc,
+   function:type[Func] = Type.
 
 
 //----------------------------------

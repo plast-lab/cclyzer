@@ -112,16 +112,6 @@ alloc_subregion:at_field[Alloc, Index] = Region ->
 
 lang:constructor(`alloc_subregion:at_field).
 
-// // Create every field sub-expression, once type for base object is
-// // established
-
-// alloc_subregion(NewAlloc)
-//  , alloc_subregion:at_field[Alloc, Field] = NewAlloc
-//  <-
-//    field_index(Field),
-//    // filter base allocations
-//    alloc_subregion(Alloc).
-
 
 //---------------------------------------------------------------
 // [Array Element Selections: unknown *star* index]
@@ -133,32 +123,6 @@ alloc_subregion:at_any_array_index[Alloc] = Region ->
    allocation(Alloc), alloc_subregion(Region).
 
 lang:constructor(`alloc_subregion:at_any_array_index).
-
-
-// // Create star pointer index expression, once type for base object is
-// // established
-
-// alloc_subregion(NewAlloc)
-//  , alloc_subregion:at_any_array_index[Alloc] = NewAlloc
-//  , allocation:type[NewAlloc] = Type
-//  <-
-//    allocation:type[Alloc] = Type,
-//    // base object
-//    basic_allocation(Alloc).
-
-// // Create star array index expression, once type for base object is
-// // established
-
-// alloc_subregion(NewAlloc)
-//  , alloc_subregion:at_any_array_index[Alloc] = NewAlloc
-//  , allocation:type[NewAlloc] = ElementType
-//  <-
-//    allocation:type[Alloc] = Type,
-//    // filter base allocations
-//    alloc_subregion(Alloc),
-//    // determine type
-//    array_type(Type),
-//    array_type:component[Type] = ElementType.
 
 //-------------------------------------------------------------------
 // Subobject properties

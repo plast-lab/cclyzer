@@ -104,6 +104,12 @@ null_location[] = Null ->
 allocation:to_string[Alloc] = Str ->
    allocation(Alloc), string(Str).
 
+// Allocation type
+
+allocation:type[Alloc] = Type ->
+   allocation(Alloc), type(Type).
+
+
 //--------------------------------
 // Constructor declarations
 //--------------------------------
