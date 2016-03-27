@@ -1,15 +1,12 @@
-#include <algorithm>
 #include <string>
 #include <boost/foreach.hpp>
 #include <llvm/IR/Constants.h>
+#include <llvm/IR/CFG.h>
 #include <llvm/IR/Module.h>
 #include <llvm/IR/Operator.h>
-#include <llvm/IR/CFG.h>
 #include "predicate_groups.hpp"
 #include "FactGenerator.hpp"
 #include "InstructionVisitor.hpp"
-#include "TypeVisitor.hpp"
-#include "TypeAccumulator.hpp"
 
 #define foreach BOOST_FOREACH
 
@@ -41,7 +38,8 @@ FactGenerator::processModule(const llvm::Module &Mod, const std::string& path)
              it = Mod.global_begin(), end = Mod.global_end(); it != end; ++it)
     {
         refmode_t refmode = refmodeOfGlobalValue(it);
-        visitGlobalVar(it, refmode);
+
+        writeGlobalVar(*it, refmode);
         types.insert(it->getType());
     }
 
@@ -50,7 +48,8 @@ FactGenerator::processModule(const llvm::Module &Mod, const std::string& path)
              it = Mod.alias_begin(), end = Mod.alias_end(); it != end; ++it)
     {
         refmode_t refmode = refmodeOfGlobalValue(it);
-        visitGlobalAlias(it, refmode);
+
+        writeGlobalAlias(*it, refmode);
         types.insert(it->getType());
     }
 
@@ -147,59 +146,6 @@ FactGenerator::processModule(const llvm::Module &Mod, const std::string& path)
 
     // Process any existing debug information
     debugInfoProcessor.postProcess(Mod, path);
-}
-
-
-void
-FactGenerator::writeVarsTypesAndConstants(const llvm::DataLayout &layout)
-{
-    using llvm_utils::TypeAccumulator;
-
-    // Record every constant encountered so far
-    foreach (type_cache_t::value_type kv, constantTypes) {
-        refmode_t refmode = kv.first;
-        const llvm::Type *type = kv.second;
-
-        // Record constant entity with its type
-        writeFact(pred::constant::id, refmode);
-        writeFact(pred::constant::type, refmode, refmodeOf(type));
-
-        types.insert(type);
-    }
-
-    // Record every variable encountered so far
-    foreach (type_cache_t::value_type kv, variableTypes) {
-        refmode_t refmode = kv.first;
-        const llvm::Type *type = kv.second;
-
-        // Record variable entity with its type
-        writeFact(pred::variable::id, refmode);
-        writeFact(pred::variable::type, refmode, refmodeOf(type));
-
-        types.insert(type);
-    }
-
-    // Add basic primitive types
-    writeFact(pred::primitive_type::id, "void");
-    writeFact(pred::primitive_type::id, "label");
-    writeFact(pred::primitive_type::id, "metadata");
-    writeFact(pred::primitive_type::id, "x86mmx");
-
-    // Find types contained in the types encountered so far, but not
-    // referenced directly
-
-    TypeAccumulator alltypes;
-    alltypes.accumulate(types.begin(), types.end());
-
-    // Create type visitor
-    TypeVisitor TV(*this, layout);
-
-    // Record each type encountered
-    for(TypeAccumulator::const_iterator
-            it = alltypes.begin(), end = alltypes.end(); it != end; ++it)
-    {
-        TV.visitType(*it);
-    }
 }
 
 

@@ -57,7 +57,7 @@ class cclyzer::FactGenerator
     /* Fact writing methods */
 
     template<typename PredGroup>
-    void writeFnAttributes(const refmode_t &refmode, const llvm::AttributeSet Attrs);
+    void writeFnAttributes(const refmode_t&, const llvm::AttributeSet);
 
     void writeFunction(const llvm::Function&, const refmode_t&);
     void writeConstantArray(const llvm::ConstantArray&, const refmode_t&);
@@ -78,14 +78,13 @@ class cclyzer::FactGenerator
 
     /* Global fact writing methods */
 
-    void visitGlobalAlias(const llvm::GlobalAlias *, const refmode_t &);
-    void visitGlobalVar(const llvm::GlobalVariable *, const refmode_t &);
-    void visitNamedMDNode(const llvm::NamedMDNode *NMD);
+    void writeGlobalAlias(const llvm::GlobalAlias&, const refmode_t &);
+    void writeGlobalVar(const llvm::GlobalVariable&, const refmode_t &);
+    void visitNamedMDNode(const llvm::NamedMDNode *);
 
 
     void processModule(const llvm::Module &Mod, const std::string& path);
-    void writeVarsTypesAndConstants(const llvm::DataLayout &layout);
-
+    void writeOperands(const llvm::DataLayout &layout);
 
   private:
     /* Initialize output file streams */

@@ -58,8 +58,9 @@ FactGenerator::writeFunction(
         writeFact(pred::function::calling_conv, funcref, cconv);
     }
 
-    // Record function name TODO
-    writeFact(pred::function::name, funcref, "@" + func.getName().str());
+    // Record function name
+    const std::string funcname = "@" + func.getName().str();
+    writeFact(pred::function::name, funcref, funcname);
 
     // Address not significant
     if (func.hasUnnamedAddr())

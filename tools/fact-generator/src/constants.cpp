@@ -43,18 +43,17 @@ FactGenerator::writeConstant(const llvm::Constant &c)
     }
     else if (isa<Function>(c)) {
         const Function &func = cast<Function>(c);
+        const std::string funcname = "@" + func.getName().str();
 
-        // TODO get value from refmode itself
         writeFact(pred::function_constant::id, refmode);
-        writeFact(pred::function_constant::name, refmode, "@" + func.getName().str());
+        writeFact(pred::function_constant::name, refmode, funcname);
     }
     else if (isa<GlobalVariable>(c)) {
         const GlobalVariable &global_var = cast<GlobalVariable>(c);
-        const std::string value = "@" + global_var.getName().str();
+        const std::string varname = "@" + global_var.getName().str();
 
-        // TODO get value from refmode itself
         writeFact(pred::global_variable_constant::id, refmode);
-        writeFact(pred::global_variable_constant::name, refmode, value);
+        writeFact(pred::global_variable_constant::name, refmode, varname);
     }
     else if (isa<ConstantExpr>(c)) {
         writeConstantExpr(cast<ConstantExpr>(c), refmode);
