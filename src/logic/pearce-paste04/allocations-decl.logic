@@ -69,13 +69,30 @@ global_allocation:by_function[Func] = GlobalAlloc ->
    function_decl(Func), global_allocation(GlobalAlloc).
 
 
-// Pointer-compatible allocations
+//---------------------------------------------------------------------------
+// [Pointer-compatible allocations]
+//
+// Allocations that may be used as pointers (e.g., can be dereferenced
+// to get another memory location).
+//---------------------------------------------------------------------------
 
 ptr_compatible_allocation(Alloc) -> allocation(Alloc).
 lang:isEntity[`ptr_compatible_allocation] = false.
 
+
+// We consider all stack and heap allocations as pointer-compatible
+
 ptr_compatible_allocation(Alloc) <-
-   basic_allocation(Alloc).
+   stack_allocation(Alloc)
+ ; heap_allocation(Alloc).
+
+
+// Global constants cannot point-to anything, since storing to them
+// would change their contents
+
+ptr_compatible_allocation(Alloc) <-
+   global_allocation:by_variable[GVar] = Alloc,
+   !global_variable:constant(GVar).
 
 
 //-------------------------------------

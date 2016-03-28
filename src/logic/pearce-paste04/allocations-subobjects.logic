@@ -89,7 +89,9 @@ alloc_subregion(Region) -> allocation(Region).
 lang:entity(`alloc_subregion).
 
 ptr_compatible_allocation(Alloc) <-
-   alloc_subregion(Alloc).
+   ptr_compatible_allocation(BaseAlloc),
+   alloc_subobjects(Alloc, BaseAlloc), // OPT CLAUSE
+   alloc_subregion:base[Alloc] = BaseAlloc.
 
 //---------------------------------------------------------------
 // [Field Selections]
@@ -139,6 +141,11 @@ alloc_subregion:base[Region] = Base <-
 
 alloc_subregion:base[Region] = Base <-
    alloc_subregion:at_any_array_index[Base] = Region.
+
+// Index Optimization predicate
+
+alloc_subobjects(Alloc, BaseAlloc) <-
+   alloc_subregion:base[Alloc] = BaseAlloc.
 
 //-------------------------------------
 // String Representation Protocol
