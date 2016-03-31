@@ -26,6 +26,35 @@ _cg(CallerSign, CalleeSign) <-
    function:signature[Caller] = CallerSign.
 
 
+//---------------------------
+// Monomorphicity
+//---------------------------
+
+_var_counts[FuncSign, VarName] = N <-
+   agg<<N = count()>>
+   var_points_to(_, Var),
+   variable:descriptor(Var, _, FuncSign, _, VarName).
+
+_var_counts$inv(N, FuncSign, VarName) <-
+   _var_counts[FuncSign, VarName] = N.
+
+_var_count_stats[NVars] = Counts <-
+   agg<<Counts = count()>>
+   _var_counts$inv(NVars, _, _).
+
+
+_ptr_counts[AllocStr] = N <-
+   agg<<N = count()>>
+   ptr_points_to$no_zero_aliases(_, Alloc),
+   allocation:to_string[Alloc] = AllocStr.
+
+_ptr_counts$inv(N, AllocStr) <-
+   _ptr_counts[AllocStr] = N.
+
+_ptr_count_stats[NPtrs] = Counts <-
+   agg<<Counts = count()>>
+   _ptr_counts$inv(NPtrs, _).
+
 
 //------------------------------------------------------------------------------
 // The following queries are not exported
