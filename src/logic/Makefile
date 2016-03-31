@@ -33,7 +33,7 @@ clean:
 
 define project_template
 
-$1.proj   := $1/$1.project
+$1.proj   := $(wildcard $1/*.project)
 $1.src    := $(shell find $1/ -type f -name '*.logic')
 $1.outdir := $(OUTDIR)/$1
 $1.ph     := $$($1.outdir)/checksum
