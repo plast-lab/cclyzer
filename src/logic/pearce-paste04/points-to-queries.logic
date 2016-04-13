@@ -78,12 +78,12 @@ _gep_expr_points_to(Val, Index, AllocStr) <-
    constant:value[CExpr] = Val,
    allocation:to_string[Alloc] = AllocStr.
 
-
-_init_by_constant(AllocStr, ConstantValue)
- <-
-   initialized_by_constant(Alloc, Constant),
-   constant:value[Constant] = ConstantValue,
-   allocation:to_string[Alloc] = AllocStr.
+// Key too large
+// _init_by_constant(AllocStr, ConstantValue)
+//  <-
+//    initialized_by_constant(Alloc, Constant),
+//    constant:value[Constant] = ConstantValue,
+//    allocation:to_string[Alloc] = AllocStr.
 
 _tp_gep_points_to(Func, Var, Index, DeclaredType, AllocStr)
  <-
