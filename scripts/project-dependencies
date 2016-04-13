@@ -11,7 +11,7 @@ $target: $prerequisites
 '''
 
 def project_base(projectfile):
-    return os.path.splitext(os.path.basename(projectfile))[0]
+    return os.path.basename(os.path.dirname(projectfile))
 
 def project_property(projectfile, propname):
     with open(projectfile) as proj:
