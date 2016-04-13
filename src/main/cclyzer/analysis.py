@@ -17,7 +17,7 @@ class Analysis(object):
             SanityCheckStep(projects.SCHEMA),
             LoadProjectStep(projects.SYMBOL_LOOKUP),
             LoadProjectStep(projects.CALLGRAPH),
-            LoadProjectStep(projects.POINTS_TO),
+            LoadProjectStep(config.points_to),
         ]
 
 

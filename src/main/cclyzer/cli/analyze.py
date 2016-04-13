@@ -20,6 +20,8 @@ class AnalyzeCommand(CliCommand):
         parser.add_argument('-q', '--no-config-file', dest='read_config', action='store_false')
         parser.add_argument('--no-exports', dest='run_exports', action='store_false',
                             help='disable result query exports')
+        parser.add_argument('--pearce', dest='pearce', action='store_true',
+                            help='run Pearce points-to analysis')
         parser.set_defaults(read_config=True)
 
     def __init__(self, args):
