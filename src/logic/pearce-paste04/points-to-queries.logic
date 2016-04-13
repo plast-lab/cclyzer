@@ -30,31 +30,17 @@ _cg(CallerSign, CalleeSign) <-
 // Monomorphicity
 //---------------------------
 
-_var_counts[FuncSign, VarName] = N <-
-   agg<<N = count()>>
-   var_points_to(_, Var),
-   variable:descriptor(Var, _, FuncSign, _, VarName).
+lang:physical:delimiter[`_nvars_per_pt_size] = "\t".
+lang:physical:filePath[`_nvars_per_pt_size] = "nvars-per-pt-size.tsv".
 
-_var_counts$inv(N, FuncSign, VarName) <-
-   _var_counts[FuncSign, VarName] = N.
+_nvars_per_pt_size[NAllocs] = NVars <-
+   nvars_by_pt_size[NAllocs] = NVars.
 
-_var_count_stats[NVars] = Counts <-
-   agg<<Counts = count()>>
-   _var_counts$inv(NVars, _, _).
+lang:physical:delimiter[`_nallocs_per_pt_size] = "\t".
+lang:physical:filePath[`_nallocs_per_pt_size] = "nallocs-per-pt-size.tsv".
 
-
-_ptr_counts[AllocStr] = N <-
-   agg<<N = count()>>
-   ptr_points_to(_, Alloc),
-   allocation:to_string[Alloc] = AllocStr.
-
-_ptr_counts$inv(N, AllocStr) <-
-   _ptr_counts[AllocStr] = N.
-
-_ptr_count_stats[NPtrs] = Counts <-
-   agg<<Counts = count()>>
-   _ptr_counts$inv(NPtrs, _).
-
+_nallocs_per_pt_size[NAllocs] = NPtrs <-
+   nallocs_by_pt_size[NAllocs] = NPtrs.
 
 
 //------------------------------------------------------------------------------

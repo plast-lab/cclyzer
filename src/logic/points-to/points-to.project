@@ -38,6 +38,7 @@ type-back-propagation.logic, active
 
 
 // Common queries
+points-to-statistics.logic, active
 points-to-queries.logic, inactive
 
 // User options

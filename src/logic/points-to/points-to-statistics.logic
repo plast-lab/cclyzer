@@ -1,0 +1,104 @@
+// The containing function of a variable
+
+variable:in_function[Var] = Func <-
+   variable:descriptor(Var, _, FuncSign, _, _),
+   function:by_name[FuncSign] = Func.
+
+
+// Compute variables defined in reachable functions
+
+reachable_var(Var) <-
+   variable:in_function[Var] = Func,
+   reachable_function(Func).
+
+reachable_vars[] = NVars <-
+   agg<<NVars = count()>>
+   reachable_var(_).
+
+
+
+//------------------------------------------------------------------------------
+// Variable Points-to Sets Statistics
+//------------------------------------------------------------------------------
+
+
+// Compute variables with non-empty points-to sets
+
+nonempty_var(Var) <-
+   var_points_to(_, Var).
+
+nonempty_vars[] = NVars <-
+   agg<<NVars = count()>>
+   nonempty_var(_).
+
+
+// Compute variable points-to sets sizes
+
+var_points_to:sizes[Var] = NAllocs <-
+   agg<<NAllocs = count()>>
+   var_points_to(_, Var).
+
+_var_pt_size(NAllocs, Var) <-
+   var_points_to:sizes[Var] = NAllocs.
+
+
+// Number of variables that point to `NAllocs` number of allocations
+
+nvars_by_pt_size[NAllocs] = NVars <-
+   agg<<NVars = count()>>
+   _var_pt_size(NAllocs, _).
+
+
+// Sanity check: all non-empty variables should point-to some number
+// of allocations
+
+_nvars_by_pt_total[] = NVars <-
+   agg<<NVars = total(N)>>
+   nvars_by_pt_size[_] = N.
+
+_nvars_by_pt_total[] = NVars
+ -> nonempty_vars[] = NVars.
+
+
+//------------------------------------------------------------------------------
+// Pointer Dereference Statistics
+//------------------------------------------------------------------------------
+
+
+// Compute pointer objects with non-empty points-to sets
+
+nonempty_ptr(Ptr) <-
+   ptr_points_to(_, Ptr).
+
+nonempty_ptrs[] = NPtrs <-
+   agg<<NPtrs = count()>>
+   nonempty_ptr(_).
+
+
+// Compute pointer points-to sets sizes
+
+alloc_points_to:sizes[Alloc] = NAllocs <-
+   agg<<NAllocs = count()>>
+   ptr_points_to(_, Alloc).
+
+_alloc_pt_size(NAllocs, Alloc) <-
+   alloc_points_to:sizes[Alloc] = NAllocs.
+
+
+// Number of pointer objects that point to `NAllocs` number of
+// allocations
+
+nallocs_by_pt_size[NAllocs] = NPtrs <-
+   agg<<NPtrs = count()>>
+   _alloc_pt_size(NAllocs, _).
+
+
+// Sanity check: all non-empty pointers should point-to some number of
+// allocations
+
+_nallocs_by_pt_total[] = NPtrs <-
+   agg<<NPtrs = total(N)>>
+   nallocs_by_pt_size[_] = N.
+
+_nallocs_by_pt_total[] = NVars
+ -> nonempty_ptrs[] = NVars.
