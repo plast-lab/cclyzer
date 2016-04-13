@@ -34,13 +34,26 @@ lang:physical:delimiter[`_nvars_per_pt_size] = "\t".
 lang:physical:filePath[`_nvars_per_pt_size] = "nvars-per-pt-size.tsv".
 
 _nvars_per_pt_size[NAllocs] = NVars <-
+   _nvars_per_pt_size$tmp[NAllocs] = NVars.
+
+_nvars_per_pt_size$tmp[NAllocs] = NVars <-
    nvars_by_pt_size[NAllocs] = NVars.
+
+_nvars_per_pt_size$tmp[0] = NVars <-
+   empty_vars[] = NVars.
+
 
 lang:physical:delimiter[`_nallocs_per_pt_size] = "\t".
 lang:physical:filePath[`_nallocs_per_pt_size] = "nallocs-per-pt-size.tsv".
 
 _nallocs_per_pt_size[NAllocs] = NPtrs <-
+   _nallocs_per_pt_size$tmp[NAllocs] = NPtrs.
+
+_nallocs_per_pt_size$tmp[NAllocs] = NPtrs <-
    nallocs_by_pt_size[NAllocs] = NPtrs.
+
+_nallocs_per_pt_size$tmp[0] = NPtrs <-
+   empty_ptrs[] = NPtrs.
 
 
 //------------------------------------------------------------------------------

@@ -24,6 +24,14 @@ reachable_vars[] = NVars <-
 
 // Compute variables with non-empty points-to sets
 
+empty_var(Var) <-
+   variable(Var),
+   !var_points_to(_, Var).
+
+empty_vars[] = NVars <-
+   agg<<NVars = count()>>
+   empty_var(_).
+
 nonempty_var(Var) <-
    var_points_to(_, Var).
 
@@ -66,6 +74,14 @@ _nvars_by_pt_total[] = NVars
 
 
 // Compute pointer objects with non-empty points-to sets
+
+empty_ptr(Ptr) <-
+   allocation(Ptr),
+   !ptr_points_to(_, Ptr).
+
+empty_ptrs[] = NPtrs <-
+   agg<<NPtrs = count()>>
+   empty_ptr(_).
 
 nonempty_ptr(Ptr) <-
    ptr_points_to(_, Ptr).
