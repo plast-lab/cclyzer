@@ -132,31 +132,29 @@ gep_points_to(Insn, 0, ZeroAliasAlloc)
 // When address operand points-to base object, then we must record the
 // index accordingly
 
-gep_points_to(Insn, 1, Region)
- <-
+_gep_addr_points_to_baseobj(Alloc, Insn) <-
    gep_points_to(Insn, 0, Alloc),
    getelementptr_instruction:interm_type[Insn, 1] = DeclaredType,
    // check for type compatibility
    allocation:type[Alloc] = Type,
    type_compatible(Type, DeclaredType),
    // base object
-   basic_allocation(Alloc),
+   basic_allocation(Alloc).
+
+gep_points_to(Insn, 1, Region)
+ <-
+   // GEP instruction points to base allocation
+   _gep_addr_points_to_baseobj(Alloc, Insn),
    // first index is a constant
    getelementptr_instruction:index[Insn, 0] = IndexOp,
    operand:to_int[IndexOp] = Index,
    // get subojbect at this array index
    alloc_subregion:at_array_index[Alloc, Index] = Region.
 
-
 gep_points_to(Insn, 1, Region)
  <-
-   gep_points_to(Insn, 0, Alloc),
-   getelementptr_instruction:interm_type[Insn, 1] = DeclaredType,
-   // check for type compatibility
-   allocation:type[Alloc] = Type,
-   type_compatible(Type, DeclaredType),
-   // base object
-   basic_allocation(Alloc),
+   // GEP instruction points to base allocation
+   _gep_addr_points_to_baseobj(Alloc, Insn),
    // first index is a variable
    getelementptr_instruction:index[Insn, 0] = IndexOp,
    !operand:to_int[IndexOp] = _,
