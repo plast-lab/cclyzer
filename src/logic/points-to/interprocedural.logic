@@ -48,10 +48,12 @@ memcpy$to_var(Insn, Param, Argument) <-
 assign_instruction(ToVar, RetValue) <-
    call_instruction(CallInsn),  // do not model `invoke` instructions yet
    callgraph:edge(Callee, CallInsn),
-   ret_instruction:value[RetInsn] = RetValue,
-   instruction:function[RetInsn] = Callee,
+   function_returns_value(RetValue, Callee),
    instruction:to[CallInsn] = ToVar.
 
+function_returns_value(RetValue, InFunction) <-
+   ret_instruction:value[RetInsn] = RetValue,
+   instruction:function[RetInsn] = InFunction.
 
 // `va_arg` instruction
 //
