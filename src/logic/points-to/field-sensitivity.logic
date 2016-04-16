@@ -54,14 +54,17 @@ gep_points_to(Insn, 1, Alloc)
 // The first non-zero index must be added to the previous index of the
 // allocation to produce a new offset
 
+_gep_with_nonzero_base_offset[Insn] = Index <-
+   getelementptr_instruction:index[Insn, 0] = IndexOp,
+   operand:to_int[IndexOp] = Index,
+   Index != 0.
+
 gep_points_to(Insn, 1, NewAlloc)
  <-
    gep_points_to(Insn, 0, Alloc),
    getelementptr_instruction:interm_type[Insn, 1] = DeclaredType,
    // constant non-zero first index
-   getelementptr_instruction:index[Insn, 0] = IndexOp,
-   operand:to_int[IndexOp] = Index,
-   Index != 0,
+   _gep_with_nonzero_base_offset[Insn] = Index,
    // get existing allocation at new index
    _array_index_subobject:at_offset[Alloc, Index] = NewAlloc,
    // check for type compatibility
@@ -70,7 +73,6 @@ gep_points_to(Insn, 1, NewAlloc)
 
 // Fetch an array index subobject given another array index subobject
 // as a base, plus some offset to its index.
-
 _array_index_subobject:at_offset[Alloc, Offset] = NewAlloc <-
    alloc_subregion:at_array_index[Base, Index] = Alloc,
    alloc_subregion:at_array_index[Base, Index + Offset] = NewAlloc.
