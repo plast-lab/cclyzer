@@ -84,16 +84,19 @@ _array_index_subobject:at_offset[Alloc, Offset] = NewAlloc <-
 // The first index, if unknown, must be used to generate a new
 // star-index allocation that replaces the older constant index
 
+_gep_with_unknown_base_offset(Insn) <-
+   getelementptr_instruction:index[Insn, 0] = IndexOp,
+   !operand:to_int[IndexOp] = _.
+
 gep_points_to(Insn, 1, NewAlloc)
  <-
    gep_points_to(Insn, 0, Alloc),
    getelementptr_instruction:interm_type[Insn, 1] = DeclaredType,
+   // variable first index
+   _gep_with_unknown_base_offset(Insn),
    // check for type compatibility
    allocation:type[Alloc] = Type,
    type_compatible(Type, DeclaredType),
-   // variable first index
-   getelementptr_instruction:index[Insn, 0] = IndexOp,
-   !operand:to_int[IndexOp] = _,
    // allocation pointed to some specific (known) element
    alloc_subregion:at_array_index[Base, _] = Alloc,
    alloc_subregion:at_any_array_index[Base] = NewAlloc,
