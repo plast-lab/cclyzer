@@ -54,6 +54,9 @@ instruction:prev[Insn] = Prev <-
 instruction:function[Insn] = Func ->
    instruction(Insn), function(Func).
 
+function_contains(Insn, Func) <-
+   instruction:function[Insn] = Func.
+
 // The instruction's basic block
 instruction:basicblock[Insn] = BB ->
    instruction(Insn), basicblock(BB).

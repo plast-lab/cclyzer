@@ -120,10 +120,8 @@ alloc_matches(Alloc1, Alloc2) <-
 // specific matching allocations and merge their points-to sets also.
 
 var_points_to(Alloc, ToVar) <-
-   reachable_instruction(Insn),
-   instruction:to[Insn] = ToVar,
-   load_instruction:address[Insn] = PtrOp,
-   operand_points_to(OrigAlloc, PtrOp),
+   reachable_load(ToVar, FromAddress),
+   operand_points_to(OrigAlloc, FromAddress),
    alloc_matches(LessGenericAlloc, OrigAlloc),
    ptr_points_to(Alloc, LessGenericAlloc).
 

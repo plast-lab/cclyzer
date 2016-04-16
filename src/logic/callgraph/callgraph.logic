@@ -10,10 +10,11 @@ lang:isEntity[`reachable_function] = false.
 reachable_instruction(Insn) -> instruction(Insn).
 
 reachable_instruction(Insn) <-
-   reachable_function(Func), instruction:function[Insn] = Func.
+   reachable_function(Func),
+   function_contains(Insn, Func).
 
 lang:isEntity[`reachable_instruction] = false.
-lang:derivationType[`reachable_instruction] = "Derived".
+// lang:derivationType[`reachable_instruction] = "Derived".
 
 
 // Entry points; functions reachable by definition (call-graph roots)

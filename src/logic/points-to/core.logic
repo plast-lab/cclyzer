@@ -98,17 +98,29 @@ assign_instruction(ToVar, Value) <-
 // [Load/Store Instructions]
 //----------------------------------------------------------------------
 
-ptr_points_to(Alloc, BaseAlloc) <-
+reachable_store(ToAddress, Value) ->
+   operand(Value), operand(ToAddress).
+
+reachable_store(ToAddress, Value) <-
    reachable_instruction(Insn),
-   store_instruction:value[Insn] = Op,
-   store_instruction:address[Insn] = PtrOp,
-   operand_points_to(Alloc, Op),
-   operand_points_to(BaseAlloc, PtrOp),
+   store_instruction:value[Insn] = Value,
+   store_instruction:address[Insn] = ToAddress.
+
+ptr_points_to(Alloc, BaseAlloc) <-
+   reachable_store(ToAddress, Value),
+   operand_points_to(Alloc, Value),
+   operand_points_to(BaseAlloc, ToAddress),
    ptr_compatible_allocation(BaseAlloc).
 
-var_points_to(Alloc, ToVar) <-
+reachable_load(ToVar, FromAddres) ->
+   variable(ToVar), operand(FromAddres).
+
+reachable_load(ToVar, FromAddress) <-
    reachable_instruction(Insn),
    instruction:to[Insn] = ToVar,
-   load_instruction:address[Insn] = PtrOp,
-   operand_points_to(BaseAlloc, PtrOp),
+   load_instruction:address[Insn] = FromAddress.
+
+var_points_to(Alloc, ToVar) <-
+   reachable_load(ToVar, FromAddress),
+   operand_points_to(BaseAlloc, FromAddress),
    ptr_points_to(Alloc, BaseAlloc). // TODO: consider adding type check
