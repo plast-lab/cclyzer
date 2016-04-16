@@ -43,12 +43,15 @@ gep_points_to(Insn, 0, Alloc) <-
 // First zero index is ignored when address operand points-to non-base
 // object.
 
-gep_points_to(Insn, 1, Alloc)
- <-
-   gep_points_to(Insn, 0, Alloc),
-   alloc_subregion(Alloc),
+_gep_with_zero_base_offset(Insn) <-
    getelementptr_instruction:index[Insn, 0] = IndexOp,
    operand:to_int[IndexOp] = 0.
+
+gep_points_to(Insn, 1, Alloc)
+ <-
+   _gep_with_zero_base_offset(Insn),
+   gep_points_to(Insn, 0, Alloc),
+   alloc_subregion(Alloc).
 
 
 // The first non-zero index must be added to the previous index of the
