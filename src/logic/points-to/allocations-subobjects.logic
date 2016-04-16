@@ -297,16 +297,10 @@ region_contains(Outer, Inner) ->
    alloc_subregion(Inner), allocation(Outer).
 
 region_contains(Outer, Inner) <-
-   alloc_subregion:at_any_array_index[Outer] = Inner.
+   alloc_subregion:base[Inner] = Outer.
 
 region_contains(Outer, Inner) <-
-   alloc_subregion:at_array_index[Outer, _] = Inner.
-
-region_contains(Outer, Inner) <-
-   alloc_subregion:at_field[Outer, _] = Inner.
-
-region_contains(Outer, Inner) <-
-   region_contains(Interm, Inner),
+   alloc_subobjects(Inner, Interm),
    region_contains(Outer, Interm).
 
 // Non-allocations (e.g., *null*) cannot contain anything
