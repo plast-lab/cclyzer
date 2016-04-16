@@ -183,9 +183,7 @@ gep_points_to(Insn, 1, Region)
 // For the rest of the indices of the GEP instruction
 //----------------------------------------------------------
 
-// Case of unknown index
-
-gep_points_to(Insn, NextIndex, Region)
+gep_interm_points_to_array(Insn, Index, Alloc)
  <-
    gep_points_to(Insn, Index, Alloc),
    getelementptr_instruction:interm_type[Insn, Index] = DeclaredType,
@@ -194,7 +192,13 @@ gep_points_to(Insn, NextIndex, Region)
    array_type(Type),
    array_type(DeclaredType),
    type_compatible(Type, DeclaredType),
-   alloc_subregion(Alloc),
+   alloc_subregion(Alloc).
+
+// Case of unknown index
+
+gep_points_to(Insn, NextIndex, Region)
+ <-
+   gep_interm_points_to_array(Insn, Index, Alloc),
    // variable array index
    getelementptr_instruction:index[Insn, Index] = IndexOp,
    !operand:to_int[IndexOp] = _,
@@ -208,14 +212,7 @@ gep_points_to(Insn, NextIndex, Region)
 
 gep_points_to(Insn, NextIndex, Region)
  <-
-   gep_points_to(Insn, Index, Alloc),
-   getelementptr_instruction:interm_type[Insn, Index] = DeclaredType,
-   // check for type compatibility
-   allocation:type[Alloc] = Type,
-   array_type(Type),
-   array_type(DeclaredType),
-   type_compatible(Type, DeclaredType),
-   alloc_subregion(Alloc),
+   gep_interm_points_to_array(Insn, Index, Alloc),
    // get constant array index (as integer)
    getelementptr_instruction:index[Insn, Index] = IndexOp,
    operand:to_int[IndexOp] = ConstantIndex,
