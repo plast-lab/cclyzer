@@ -20,11 +20,17 @@ memcpy$to_var(Insn, To, From) ->
 memcpy(Insn, To, From) ->
    instruction(Insn), allocation(To), allocation(From).
 
+_inv_memcpy(From, To) <-
+   memcpy(_, To, From).
+
+_memcpy_to_ptr(To, From) <-
+   _inv_memcpy(From, To),
+   ptr_compatible_allocation(To).
+
 // Copy points-to set of copied objects
 
 ptr_points_to(Alloc, To) <-
-   memcpy(_, To, From),
-   ptr_compatible_allocation(To),
+   _memcpy_to_ptr(To, From),
    ptr_points_to(Alloc, From).
 
 // Base case of `memcpy` call instructions It should handle syntactic
