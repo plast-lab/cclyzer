@@ -106,9 +106,16 @@ callgraph:edge(Callee, CallerInsn), reachable_function(Callee)
 // registered to run at program exit, so that it also works with
 // function pointers.
 
-reachable_function(Callback) <-
+callgraph:inv_edge(Insn, Func) <-
+   callgraph:edge(Func, Insn).
+
+registers_atexit(Operand) <-
+   function:by_name["@atexit"] = AtExit,
    callgraph:edge(AtExit, Insn),
-   function:name[AtExit] = "@atexit",
-   call_instruction:arg[Insn, 0] = Operand,
+   callgraph:inv_edge(Insn, AtExit), // redundant OPT clause
+   call_instruction:arg[Insn, 0] = Operand.
+
+reachable_function(Callback) <-
+   registers_atexit(Operand),
    operand_points_to(Alloc, Operand),
    function:by_location[Alloc] = Callback.
