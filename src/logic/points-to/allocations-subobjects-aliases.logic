@@ -82,7 +82,9 @@ alloc_aliases(Base, FirstField) <-
 // allocations, we define a relation (actually a partial-order)
 // between allocations a1 and a2 that detects when a2 can pattern
 // match a1 by replacing any or all of its star expressions with some
-// constant indices.
+// constant indices. For better performance, we compute only the
+// non-reflexive part of the partial order. The RHS must always
+// include some star.
 //------------------------------------------------------------------------
 
 
@@ -92,18 +94,19 @@ alloc_aliases(Base, FirstField) <-
 alloc_matches(Alloc, StarredAlloc) ->
    allocation(Alloc), allocation(StarredAlloc).
 
-alloc_matches(Alloc, Alloc) <-
-   allocation(Alloc).
-
 alloc_matches(Alloc, StarredAlloc) <-
    alloc_matches(Base1, Base2),
    alloc_subregion:at_array_index[Base1, _] = Alloc,
    alloc_subregion:at_any_array_index[Base2] = StarredAlloc.
 
-// TODO check with aliases
-alloc_matches(Base1, StarredAlloc) <-
+alloc_matches(Alloc, StarredAlloc) <-
+   alloc_subregion:at_array_index[Base, _] = Alloc,
+   alloc_subregion:at_any_array_index[Base] = StarredAlloc.
+
+alloc_matches(Alloc1, Alloc2) <-
    alloc_matches(Base1, Base2),
-   alloc_subregion:at_any_array_index[Base2] = StarredAlloc.
+   alloc_subregion:at_any_array_index[Base1] = Alloc1,
+   alloc_subregion:at_any_array_index[Base2] = Alloc2.
 
 alloc_matches(Alloc1, Alloc2) <-
    alloc_matches(Base1, Base2),
