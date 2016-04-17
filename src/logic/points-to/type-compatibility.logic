@@ -34,9 +34,14 @@ type_compatible(Type, Type) <-
 type_compatible:up_to_field(Type1, Type2, Field) ->
    struct_type(Type1), struct_type(Type2), int[64](Field).
 
+_first_field_of_struct(Field, Type) <-
+   struct_type:field[Type, 0] = Field.
+
 type_compatible:up_to_field(Type1, Type2, 0) <-
    struct_type:field[Type1, 0] = Field1,
    struct_type:field[Type2, 0] = Field2,
+   _first_field_of_struct(Field1, Type1), // redundant OPT clause
+   _first_field_of_struct(Field2, Type2), // redundant OPT clause
    type_compatible(Field1, Field2).
 
 type_compatible:up_to_field(Type1, Type2, i + 1) <-
