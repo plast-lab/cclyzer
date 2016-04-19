@@ -7,6 +7,7 @@
 
 lang:physical:delimiter[`_dereferences] = "\t".
 lang:physical:filePath[`_dereferences] = "pointer-dereferences.tsv".
+lang:physical:columnNames[`_dereferences] = "SourcePointer	Target".
 
 _dereferences(SrcAllocStr, DestAllocStr) <-
    ptr_points_to$no_zero_aliases(DestAlloc, SrcAlloc),
@@ -19,6 +20,7 @@ _dereferences(SrcAllocStr, DestAllocStr) <-
 
 lang:physical:delimiter[`_cg] = "\t".
 lang:physical:filePath[`_cg] = "call-graph.tsv".
+lang:physical:columnNames[`_cg] = "Caller	Callee".
 
 _cg(CallerSign, CalleeSign) <-
    callgraph:fn_edge(Callee, Caller),
@@ -32,6 +34,7 @@ _cg(CallerSign, CalleeSign) <-
 
 lang:physical:delimiter[`_nvars_per_pt_size] = "\t".
 lang:physical:filePath[`_nvars_per_pt_size] = "nvars-per-pt-size.tsv".
+lang:physical:columnNames[`_nvars_per_pt_size] = "PointsToSize	NumVars".
 
 _nvars_per_pt_size[NAllocs] = NVars <-
    _nvars_per_pt_size$tmp[NAllocs] = NVars.
@@ -45,6 +48,7 @@ _nvars_per_pt_size$tmp[0] = NVars <-
 
 lang:physical:delimiter[`_nallocs_per_pt_size] = "\t".
 lang:physical:filePath[`_nallocs_per_pt_size] = "nallocs-per-pt-size.tsv".
+lang:physical:columnNames[`_nallocs_per_pt_size] = "PointsToSize	NumPointers".
 
 _nallocs_per_pt_size[NAllocs] = NPtrs <-
    _nallocs_per_pt_size$tmp[NAllocs] = NPtrs.
