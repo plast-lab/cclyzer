@@ -9,10 +9,10 @@
 // Overloaded `memcpy` predicates that will trigger the deep copy
 // semantics for the corresponding allocations they point to
 
-memcpy$to_operand(Insn, To, From) ->
+memcpy:to_operand(Insn, To, From) ->
    instruction(Insn), operand(To), operand(From).
 
-memcpy$to_var(Insn, To, From) ->
+memcpy:to_var(Insn, To, From) ->
    instruction(Insn), variable(To), operand(From).
 
 // Bitwise copy semantics that respect type information
@@ -20,11 +20,12 @@ memcpy$to_var(Insn, To, From) ->
 memcpy(Insn, To, From) ->
    instruction(Insn), allocation(To), allocation(From).
 
-_inv_memcpy(From, To) <-
+// Lose instruction and invert FROM and TO for optimal indexing
+_memcpy_without_insn(From, To) <-
    memcpy(_, To, From).
 
 _memcpy_to_ptr(To, From) <-
-   _inv_memcpy(From, To),
+   _memcpy_without_insn(From, To),
    ptr_compatible_allocation(To).
 
 // Copy points-to set of copied objects
@@ -39,7 +40,7 @@ ptr_points_to(Alloc, To) <-
 // base objects that flow to the operands of the @memcpy instruction,
 // but only keep type compatible pairs.
 
-memcpy$to_operand(CallInsn, To, From) <-
+memcpy:to_operand(CallInsn, To, From) <-
    function:name[Callee] = Name,
    ( string:like(Name, "@memcpy%")
    ; string:like(Name, "@llvm.memcpy%") ),
@@ -48,7 +49,7 @@ memcpy$to_operand(CallInsn, To, From) <-
    call_instruction:arg[CallInsn, 1] = From.
 
 memcpy(CallInsn, AliasedTo, AliasedFrom) <-
-   memcpy$to_operand(CallInsn, To, From),
+   memcpy:to_operand(CallInsn, To, From),
    operand_points_to(FromAlloc, From),
    operand_points_to(ToAlloc, To),
    // consider any possible aliases
@@ -60,7 +61,7 @@ memcpy(CallInsn, AliasedTo, AliasedFrom) <-
    type_compatible(FromType, ToType).
 
 memcpy(CallInsn, AliasedTo, AliasedFrom) <-
-   memcpy$to_var(CallInsn, To, From),
+   memcpy:to_var(CallInsn, To, From),
    operand_points_to(FromAlloc, From),
    var_points_to(ToAlloc, To),
    // consider any possible aliases

@@ -25,7 +25,7 @@ function:va_actual_arg(Callee, Index, Argument) <-
    Index >= N.
 
 // Forward reference
-memcpy$to_var(Insn, To, From) ->
+memcpy:to_var(Insn, To, From) ->
    instruction(Insn), variable(To), operand(From).
 
 // actual arg to formal parameter
@@ -36,7 +36,7 @@ assign_instruction(Param, Argument) <-
    !function:param_by_value(Callee, Index).
 
 // same with pass-by-value semantics: model it as a memcpy instruction
-memcpy$to_var(Insn, Param, Argument) <-
+memcpy:to_var(Insn, Param, Argument) <-
    ( call_instruction:arg[Insn, Index] = Argument
    ; invoke_instruction:arg[Insn, Index] = Argument ),
    callgraph:edge(Callee, Insn),
