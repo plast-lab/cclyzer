@@ -34,7 +34,7 @@ _cg(CallerSign, CalleeSign) <-
 
 lang:physical:delimiter[`_nvars_per_pt_size] = "\t".
 lang:physical:filePath[`_nvars_per_pt_size] = "nvars-per-pt-size.tsv".
-lang:physical:columnNames[`_nvars_per_pt_size] = "PointsToSize	NumVars".
+lang:physical:columnNames[`_nvars_per_pt_size] = "Value	Cardinality".
 
 _nvars_per_pt_size[NAllocs] = NVars <-
    _nvars_per_pt_size$tmp[NAllocs] = NVars.
@@ -48,7 +48,7 @@ _nvars_per_pt_size$tmp[0] = NVars <-
 
 lang:physical:delimiter[`_nallocs_per_pt_size] = "\t".
 lang:physical:filePath[`_nallocs_per_pt_size] = "nallocs-per-pt-size.tsv".
-lang:physical:columnNames[`_nallocs_per_pt_size] = "PointsToSize	NumPointers".
+lang:physical:columnNames[`_nallocs_per_pt_size] = "Value	Cardinality".
 
 _nallocs_per_pt_size[NAllocs] = NPtrs <-
    _nallocs_per_pt_size$tmp[NAllocs] = NPtrs.
