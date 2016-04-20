@@ -22,7 +22,7 @@ class CliCommandMeta(ABCMeta):
             assert name.endswith('Command')
 
             # this is a derived class.  Add cls to the registry
-            subcommand_id = name[:len('Command')].lower()
+            subcommand_id = name[:-len('Command')].lower()
             cls.registry[subcommand_id] = cls
 
             # Create and initialize subparser
