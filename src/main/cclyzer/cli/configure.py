@@ -86,7 +86,8 @@ class ConfigCommand(CliCommand):
         of the tool.
 
         """
-        print 'Writing to configuration file', self.configfile
+        self.logger.info('Writing to configuration file %s', self.configfile)
+
         with open(self.configfile, 'w') as config:
             config.write("[Analysis]\n")
             for option, value in self.options.iteritems():
