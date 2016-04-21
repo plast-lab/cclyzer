@@ -14,9 +14,9 @@ class Analysis(object):
             CleaningStep(),
             FactGenerationStep(),
             DatabaseCreationStep(),
-            SanityCheckStep(projects.SCHEMA),
-            LoadProjectStep(projects.SYMBOL_LOOKUP),
-            LoadProjectStep(projects.CALLGRAPH),
+            SanityCheckStep(projects.schema),
+            LoadProjectStep(projects.symbol_lookup),
+            LoadProjectStep(projects.callgraph),
             LoadProjectStep(config.points_to),
         ]
 
@@ -84,4 +84,4 @@ class Analysis(object):
         )
 
     def enable_exports(self):
-        self._pipeline.append(RunOutputQueriesStep(self._projects.POINTS_TO))
+        self._pipeline.append(RunOutputQueriesStep(self._projects.points_to))

@@ -121,7 +121,7 @@ class ProjectManager(object):
             p = Project(project, *[metadata[d].project for d in deps])
             p.internal_name = i
             self._projects[project] = p
-            setattr(self, project.replace('-', '_').upper(), p)
+            setattr(self, project.replace('-', '_'), p)
             self.logger.info("Found project %s that depends on: %s", project, p.dependencies)
 
     def __extract_metadata(self, filename):

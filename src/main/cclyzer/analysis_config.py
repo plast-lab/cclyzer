@@ -1,9 +1,12 @@
 from .project import ProjectManager
 
 class AnalysisConfig(object):
-    def __init__(self, input_files, output_dir):
-        self._input_files = input_files
-        self._output_dir = output_dir
+    def __init__(self, *inputfiles, **kwargs):
+        self._projects = ProjectManager()
+        self._input_files = list(inputfiles)
+        self._output_dir = kwargs.pop('output_dir')
+        self._points_to = 'points_to'
+        self._options = kwargs
 
     @property
     def input_files(self):
@@ -14,17 +17,21 @@ class AnalysisConfig(object):
         return self._output_dir
 
     @property
-    def points_to(self, projects=ProjectManager()):
-        if not hasattr(self, '_points_to'):
-            self._points_to = projects.POINTS_TO
-        return self._points_to
+    def points_to(self):
+        return getattr(self._projects, self._points_to)
 
     @classmethod
-    def from_cli_options(cls, options, projects=ProjectManager()):
-        config = cls(options.input_files, options.output_dir)
+    def from_cli_options(cls, clioptions):
+        # Get basic options
+        options = vars(clioptions)
+        inputfiles = options.pop('input_files')
+        runpearce = options.pop('pearce', False)
+
+        # Create configuration
+        config = cls(*inputfiles, **options)
 
         # Run Pearce points-to analysis
-        if options.pearce:
-            config._points_to = projects.PEARCE_PASTE04
+        if runpearce:
+            config._points_to = 'pearce_paste04'
 
         return config
