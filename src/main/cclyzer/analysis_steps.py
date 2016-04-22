@@ -120,6 +120,10 @@ class LoadProjectStep(AnalysisStep):
                 return self.extract_then_apply(analysis, project, unpacked_deps, libpath)
 
     @property
+    def project(self):
+        return self._project
+
+    @property
     def message(self):
         return 'installed %s project' % self._project.name
 
@@ -158,6 +162,10 @@ class RunOutputQueriesStep(AnalysisStep):
         self._project = project
 
     def apply(self, analysis):
+        # Do nothing if project is not loaded
+        if self._project not in analysis.loaded_projects:
+            return
+
         # Create database connector
         connector = blox.connect.Connector(analysis.database_directory)
 

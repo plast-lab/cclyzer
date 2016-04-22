@@ -42,7 +42,11 @@ class AnalysisStatisticsBuilder(object):
     def analysis(self):
         return self._analysis
 
-    def count(self, predicate, columnHeader=None):
+    def count(self, predicate, columnHeader=None, project=None):
+        # Ensure required project was loaded
+        if project and (project not in self._analysis.loaded_projects):
+            return self
+
         # Make generic column header based on predicate name
         if columnHeader is None:
             columnHeader = predicate.replace(':', ' ').replace('_', ' ') + 's'

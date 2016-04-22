@@ -9,6 +9,7 @@ class Analysis(object):
         self.logger = logging.getLogger(__name__)
         self._config = config
         self._stats = None
+        self._loaded_projects = []
         self._projects = projects
         self._pipeline = [
             CleaningStep(),
@@ -20,6 +21,9 @@ class Analysis(object):
             LoadProjectStep(config.points_to),
         ]
 
+    @property
+    def loaded_projects(self):
+        return self._loaded_projects
 
     @property
     def pipeline(self):
@@ -58,6 +62,9 @@ class Analysis(object):
     def run(self):
         # Run each step of pipeline
         for step in self.pipeline:
+            # Record loaded project
+            if isinstance(step, LoadProjectStep):
+                self._loaded_projects.append(step.project)
             step.apply(self)
 
         # Compute stats
@@ -83,5 +90,7 @@ class Analysis(object):
             .build()
         )
 
-    def enable_exports(self):
-        self._pipeline.append(RunOutputQueriesStep(self._projects.points_to))
+    def enable_exports(self, project=None):
+        if project is None:
+            project = self._config.points_to
+        self._pipeline.append(RunOutputQueriesStep(project))
