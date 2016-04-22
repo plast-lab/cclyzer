@@ -25,7 +25,7 @@ class AnalysisConfig(object):
             configfiles.append(self._env.user_config_file)
 
         # Initialize configurations
-        self.configure(kwargs.pop('config'), configfiles)
+        self.configure(kwargs.pop('config', []), configfiles)
         self._options = kwargs
 
     @property
