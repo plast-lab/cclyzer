@@ -81,7 +81,11 @@ class Environment():
 
     @property
     def user_config_file(self):
-        return os.path.join(self.user_config_dir, "config.yaml")
+        return os.path.join(self.user_config_dir, "config")
+
+    @property
+    def local_config_file(self):
+        return os.path.join(".{}".format(self._app), "config")
 
     @property
     def user_log_file(self):

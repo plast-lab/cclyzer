@@ -17,12 +17,18 @@ class AnalyzeCommand(CliCommand):
                             help='LLVM bitcode file to be analyzed')
         parser.add_argument('-o', '--output-dir', metavar='DIRECTORY', required=True,
                             help='output directory')
-        parser.add_argument('-q', '--no-config-file', dest='read_config', action='store_false')
+        parser.add_argument('-q', '--no-config-file', dest='read_local_config',
+                            action='store_false', help='disable local configuration')
+        parser.add_argument('--no-user-config-file', dest='read_user_config',
+                            action='store_false', help='disable user configuration')
         parser.add_argument('--no-exports', dest='run_exports', action='store_false',
                             help='disable result query exports')
         parser.add_argument('--pearce', dest='pearce', action='store_true',
                             help='run Pearce points-to analysis')
-        parser.set_defaults(read_config=True)
+        parser.add_argument('--config', nargs=2, metavar=('OPTION', 'VALUE'),
+                            action='append', help='override configuration variable')
+        # Set default values
+        parser.set_defaults(read_local_config=True, read_user_config=True)
 
     def __init__(self, args):
         CliCommand.__init__(self, args)
@@ -30,18 +36,6 @@ class AnalyzeCommand(CliCommand):
         # Initialize analysis
         config = AnalysisConfig.from_cli_options(args)
         analysis = Analysis(config)
-
-        # Try loading yaml
-        try:
-            import yaml
-        except ImportError:
-            self.logger.warning('Cannot load yaml')
-            args.read_config = False
-
-        # Customized analysis
-        if args.read_config:
-            from ..config import CustomAnalysis
-            analysis = CustomAnalysis(config)
 
         # Add query exporting steps
         if args.run_exports:
