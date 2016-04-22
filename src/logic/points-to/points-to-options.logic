@@ -7,7 +7,7 @@
 // entry points.
 //------------------------------------------------------------------------------
 
-user_options:all_functions_reachable() -> .
+user_options:entrypoints[] = value -> string(value).
 
 reachable_function(F) <-
-   user_options:all_functions_reachable(), function(F).
+   user_options:entrypoints[] = "library", function(F).

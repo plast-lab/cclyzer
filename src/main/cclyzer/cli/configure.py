@@ -20,7 +20,7 @@ class Option(object):
 class EntryPointsOption(Option):
     __label__ = "entrypoints"
 
-    everything = 'All functions considered entry points'
+    library = 'All functions considered entry points'
     user = 'User supplied entry point'
     main = 'Main function entry point. Default'
 
