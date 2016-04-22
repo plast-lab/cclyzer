@@ -10,26 +10,27 @@ class Environment():
 
     def __init__(self):
         """XDG compliant system environment abstraction."""
+        self._app = settings.APP_NAME
 
         # Create XDG compliant cache directory
         default_cachedir = os.path.join(os.environ['HOME'], '.cache')
         xdg_cachedir = os.getenv('XDG_CACHE_HOME', default_cachedir)
-        app_cachedir = os.path.join(xdg_cachedir, settings.APP_NAME)
+        app_cachedir = os.path.join(xdg_cachedir, self._app)
 
         # Create XDG compliant data directory
         default_datadir = os.path.expanduser('~/.local/share')
         xdg_datadir = os.getenv('XDG_DATA_HOME', default_datadir)
-        app_datadir = os.path.join(xdg_datadir, settings.APP_NAME)
+        app_datadir = os.path.join(xdg_datadir, self._app)
 
         # Create XDG compliant config directory
         default_configdir = os.path.join(os.environ['HOME'], '.config')
         xdg_configdir = os.getenv('XDG_CONFIG_HOME', default_configdir)
-        app_configdir = os.path.join(xdg_configdir, settings.APP_NAME)
+        app_configdir = os.path.join(xdg_configdir, self._app)
 
         # Create XDG compliant runtime directory
         default_runtimedir = tempfile.gettempdir()
         xdg_runtimedir = os.getenv('XDG_RUNTIME_DIR', default_runtimedir)
-        app_runtimedir = os.path.join(xdg_runtimedir, settings.APP_NAME)
+        app_runtimedir = os.path.join(xdg_runtimedir, self._app)
 
         self._cache_dir = app_cachedir
         self._data_dir = app_datadir
@@ -81,6 +82,11 @@ class Environment():
     @property
     def user_config_file(self):
         return os.path.join(self.user_config_dir, "config.yaml")
+
+    @property
+    def user_log_file(self):
+        logfile = "{}.log".format(self._app)
+        return os.path.join(self.user_cache_dir, logfile)
 
     @property
     def logicblox_home(self):
