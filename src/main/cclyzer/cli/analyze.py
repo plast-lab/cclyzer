@@ -28,7 +28,7 @@ class AnalyzeCommand(CliCommand):
         parser.add_argument('--config', nargs=2, metavar=('OPTION', 'VALUE'),
                             action='append', help='override configuration variable')
         # Set default values
-        parser.set_defaults(read_local_config=True, read_user_config=True)
+        parser.set_defaults(read_local_config=True, read_user_config=True, config=[])
 
     def __init__(self, args):
         CliCommand.__init__(self, args)
