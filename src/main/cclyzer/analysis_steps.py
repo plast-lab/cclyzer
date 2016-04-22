@@ -217,6 +217,9 @@ class UserOptionsStep(AnalysisStep):
         return '{0}() -> .'.format(predicate)
 
     def apply(self, analysis):
+        # Do nothing when no options are given
+        if not self._options: return
+
         # Create database connector
         connector = blox.connect.Connector(analysis.database_directory)
 
