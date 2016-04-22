@@ -181,28 +181,54 @@ class RunOutputQueriesStep(AnalysisStep):
 class UserOptionsStep(AnalysisStep):
     def __init__(self, options):
         AnalysisStep.__init__(self)
-        self._options = options
+        self._options = list(options)
+        self._prefix = 'user_options'
+
+    @staticmethod
+    def canonical_option(option):
+        return option.replace('-', '_')
+
+    def enable_option(self, option, value=None):
+        """Return predicate initialization."""
+        # Canonicalize option
+        option = self.canonical_option(option)
+
+        # Compute predicate name
+        predicate = ':'.join([self._prefix, option])
+
+        # Functional predicate case
+        if value is not None:
+            return '+{0}[] = "{1}".'.format(predicate, value)
+
+        return '+{0}().'.format(predicate)
+
+    def declare_option(self, option, value=None):
+        """Return predicate declaration."""
+        # Canonicalize option
+        option = self.canonical_option(option)
+
+        # Compute predicate name
+        predicate = ':'.join([self._prefix, option])
+
+        # Functional predicate case
+        if value is not None:
+            return '{0}[] = value -> string(value).'.format(predicate)
+
+        return '{0}() -> .'.format(predicate)
 
     def apply(self, analysis):
         # Create database connector
         connector = blox.connect.Connector(analysis.database_directory)
 
-        # Function that declares the given option
-        def enable_option(opt):
-            return '+user_options:{0}().'.format(opt.replace('-', '_'))
-
-        # Function that returns a line which enables the given option
-        def declare_option(opt):
-            return 'user_options:{0}() -> .'.format(opt.replace('-', '_'))
-
         # Compute logic
-        lines = [declare_option(opt) for opt in self._options]
+        lines = [self.declare_option(opt, val) for (opt, val) in self._options]
         logic = '\n'.join(lines)
+        self.logger.info("Adding logic:\n%s", logic)
         connector.add_logic(logic)
 
-        lines = [enable_option(opt) for opt in self._options]
+        lines = [self.enable_option(opt, val) for (opt, val) in self._options]
         logic = '\n'.join(lines)
-        self.logger.info("Executing logic %s", logic)
+        self.logger.info("Executing logic:\n%s", logic)
 
         # Execute relevant logic
         connector.execute_logic(logic)

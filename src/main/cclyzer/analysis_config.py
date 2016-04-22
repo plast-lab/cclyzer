@@ -65,7 +65,7 @@ class AnalysisConfig(object):
         return self._confopt.get(section, {}).get(option, None)
 
     def config_options(self, section):
-        return self._confopt.get(setion, {}).iteritems()
+        return self._confopt.get(section, {}).iteritems()
 
     def configure(self, overrides, files):
         # Read overriden configurations
