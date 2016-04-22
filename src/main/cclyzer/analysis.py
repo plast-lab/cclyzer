@@ -16,6 +16,7 @@ class Analysis(object):
             FactGenerationStep(),
             DatabaseCreationStep(),
             SanityCheckStep(projects.schema),
+            UserOptionsStep(config.config_options('analysis')),
             LoadProjectStep(projects.symbol_lookup),
             LoadProjectStep(projects.callgraph),
             LoadProjectStep(config.points_to),
