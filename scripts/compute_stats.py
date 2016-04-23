@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!python
 import csv
 import sys
 
@@ -12,30 +12,30 @@ def compute_stats(path):
     with open(path) as csvfile:
         csvreader = csv.reader(csvfile, delimiter='\t')
         for row in csvreader:
-            nallocs, nptrs = map(int, row)
-            values.append((nallocs, nptrs))
+            value, cardinality = map(int, row)
+            values.append((value, cardinality))
 
     # Skip potentially non-pointer objects
-    pvalues = filter(lambda (na,np): na > 0, values)
+    pvalues = filter(lambda (val,n): val > 0, values)
 
     # Compute mean
-    rsum, totalptrs = 0, 0
-    for nallocs, nptrs in pvalues:
-        rsum += nallocs * nptrs
-        totalptrs += nptrs
+    wsum, total = 0, 0
+    for value, n in pvalues:
+        wsum  += value * n
+        total += n
 
-    mean = rsum / float(totalptrs)
+    mean = wsum / float(total)
 
     # Compute median
-    vals, arities = zip(*values)
-    intervals = [
-        (avg(prev, cur), avg(cur, after)) for (prev, cur, after)
-        in zip(vals, vals[1:], vals[2:])
-    ]
+    vals, cardinalities = zip(*values)
+    bounds = []
+    for (prev, cur, after) in zip(vals, vals[1:], vals[2:]):
+        lower, upper = avg(prev, cur), avg(cur, after)
+        bounds.append((lower, upper))
 
     rsum = 0
-    threshold = float(totalptrs) / 2
-    for (lower, upper), n in zip(intervals, arities[1:]):
+    threshold = float(total) / 2
+    for (lower, upper), n in zip(bounds, cardinalities[1:]):
         if rsum + n >= threshold:
             interval = upper - lower
             below = threshold - rsum
