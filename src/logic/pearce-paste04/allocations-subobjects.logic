@@ -74,10 +74,13 @@ allocation:depth[Alloc] = 0 <-
 alloc_may_expand_field(Alloc, FieldIndex, NewDepth) <-
    field_index(FieldIndex),
    allocation:depth[Alloc] = Depth,
+   FieldIndex < 3,
+   NewDepth < 4,
    next_depth(Depth, NewDepth).
 
 alloc_may_expand_array(Alloc, NewDepth) <-
    allocation:depth[Alloc] = Depth,
+   NewDepth < 4,
    next_depth(Depth, NewDepth).
 
 
@@ -104,8 +107,7 @@ ptr_compatible_allocation(Alloc) <-
 field_index(Index) -> int[64](Index).
 
 field_index(Index) <-
-   struct_type:field[_, Index] = _,
-   Index > 0.
+   struct_type:field[_, Index] = _.
 
 // Single constructor for field selections
 
@@ -146,6 +148,22 @@ alloc_subregion:base[Region] = Base <-
 
 alloc_subobjects(Alloc, BaseAlloc) <-
    alloc_subregion:base[Alloc] = BaseAlloc.
+
+
+// Region root: unified predicate that applies to all types of
+// subobjects
+
+alloc_subregion:root[Region] = Base ->
+   alloc_subregion(Region), basic_allocation(Base).
+
+alloc_subregion:root[Region] = Base <-
+   alloc_subregion:base[Region] = Base,
+   basic_allocation(Base).
+
+alloc_subregion:root[Region] = Base <-
+   alloc_subregion:base[Region] = Interm,
+   alloc_subregion:root[Interm] = Base.
+
 
 //-------------------------------------
 // String Representation Protocol
