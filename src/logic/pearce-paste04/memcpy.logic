@@ -41,21 +41,23 @@ memcpy$to_operand(CallInsn, To, From) <-
    call_instruction:arg[CallInsn, 0] = To,
    call_instruction:arg[CallInsn, 1] = From.
 
-memcpy(CallInsn, AliasedTo, AliasedFrom) <-
+memcpy(CallInsn, ToAlloc, FromAlloc) <-
    memcpy$to_operand(CallInsn, To, From),
    operand_points_to(FromAlloc, From),
    operand_points_to(ToAlloc, To),
-   // consider any possible aliases
-   alloc_aliases(AliasedTo, ToAlloc),
-   alloc_aliases(AliasedFrom, FromAlloc).
+   // TODO not exactly sound
+   alloc_subregion:root[ToAlloc] = ToBase,
+   alloc_subregion:root[FromAlloc] = FromBase,
+   ToBase != FromBase.
 
-memcpy(CallInsn, AliasedTo, AliasedFrom) <-
+memcpy(CallInsn, ToAlloc, FromAlloc) <-
    memcpy$to_var(CallInsn, To, From),
    operand_points_to(FromAlloc, From),
    var_points_to(ToAlloc, To),
-   // consider any possible aliases
-   alloc_aliases(AliasedTo, ToAlloc),
-   alloc_aliases(AliasedFrom, FromAlloc).
+   // TODO not exactly sound
+   alloc_subregion:root[ToAlloc] = ToBase,
+   alloc_subregion:root[FromAlloc] = FromBase,
+   ToBase != FromBase.
 
 
 // Recursive case for `memcpy` call instructions
