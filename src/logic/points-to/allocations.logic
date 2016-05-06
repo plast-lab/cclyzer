@@ -232,3 +232,31 @@ allocation:to_string[Alloc] = Str <-
    global_allocation:by_function[Func] = Alloc,
    function:name[Func] = Name,
    Str = "*global_alloc" + Name.
+
+
+//------------------------------------------------
+// [Allocation Position Info]
+//------------------------------------------------
+
+allocation:pos(Alloc, Line, Column) <-
+   stack_allocation:by_instruction[Insn] = Alloc,
+   instruction:pos(Insn, Line, Column).
+
+allocation:pos(Alloc, Line, Column) <-
+   stack_allocation:by_parameter[Func, Index] = Alloc,
+   function:param[Func, Index] = Param,
+   variable:debug:decl_pos(Param, Line, Column).
+
+allocation:pos(Alloc, Line, Column) <-
+   heap_allocation:by_instruction[Insn] = Alloc,
+   instruction:pos(Insn, Line, Column).
+
+// TODO: retrieve global variable position info
+//
+// allocation:pos(Alloc, Line, Column) <-
+//    global_allocation:by_variable[GVar] = Alloc,
+//    .
+
+// allocation:pos(Alloc, Line, Column) <-
+//    global_allocation:by_function[Func] = Alloc,
+//    .

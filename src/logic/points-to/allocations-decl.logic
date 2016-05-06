@@ -136,6 +136,10 @@ allocation:size[Alloc] = Size ->
 array_allocation(Alloc) -> allocation(Alloc).
 lang:isEntity[`array_allocation] = false.
 
+// Allocation position on source code (requires debug info)
+allocation:pos(Alloc, Line, Column) ->
+   allocation(Alloc), int[64](Line), int[64](Column).
+
 //--------------------------------
 // Constructor declarations
 //--------------------------------

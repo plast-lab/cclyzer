@@ -45,3 +45,7 @@ allocation:to_string[Alloc] = Str <-
    instruction:to[Insn] = Var,
    variable:descriptor(Var, _, Func, _, Name),
    Str = "*typed_heap_alloc" + Func + "[" + Type + " " + Name + "]".
+
+allocation:pos(Alloc, Line, Column) <-
+   heap_allocation:by_type_instruction[_, Insn] = Alloc,
+   instruction:pos(Insn, Line, Column).
