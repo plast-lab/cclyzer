@@ -1,6 +1,45 @@
 // We only need to add declarations and file associations for the
 // queries we are interested in exporting
 
+
+//---------------------------
+// Abstract objects
+//---------------------------
+
+lang:physical:delimiter[`_heap_allocs] = "\t".
+lang:physical:filePath[`_heap_allocs] = "heap-allocations.tsv".
+lang:physical:columnNames[`_heap_allocs] = "Alloc".
+
+_heap_allocs(AllocStr) <-
+   heap_allocation(Alloc),
+   allocation:to_string[Alloc] = AllocStr.
+
+lang:physical:delimiter[`_stack_allocs] = "\t".
+lang:physical:filePath[`_stack_allocs] = "stack-allocations.tsv".
+lang:physical:columnNames[`_stack_allocs] = "Alloc".
+
+_stack_allocs(AllocStr) <-
+   stack_allocation(Alloc),
+   allocation:to_string[Alloc] = AllocStr.
+
+lang:physical:delimiter[`_global_allocs] = "\t".
+lang:physical:filePath[`_global_allocs] = "global-allocations.tsv".
+lang:physical:columnNames[`_global_allocs] = "Alloc".
+
+_global_allocs(AllocStr) <-
+   global_allocation(Alloc),
+   allocation:to_string[Alloc] = AllocStr.
+
+
+lang:physical:delimiter[`_alloc_pos] = "\t".
+lang:physical:filePath[`_alloc_pos] = "allocation-positions.tsv".
+lang:physical:columnNames[`_alloc_pos] = "Alloc	Line	Column".
+
+_alloc_pos(AllocStr, Line, Column) <-
+   allocation:pos(Alloc, Line, Column),
+   allocation:to_string[Alloc] = AllocStr.
+
+
 //---------------------------
 // Pointer dereferences
 //---------------------------
