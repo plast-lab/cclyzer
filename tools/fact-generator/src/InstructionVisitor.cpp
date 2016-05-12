@@ -678,6 +678,20 @@ InstructionVisitor::visitLandingPadInst(const llvm::LandingPadInst &LI)
 void
 InstructionVisitor::visitCallInst(const llvm::CallInst &CI)
 {
+    // TODO: somehow handle inline ASM call instructions
+    //
+    // Call instructions are now divided into direct call instructions
+    // (which have a statically known function as target) and indirect
+    // ones (via function pointers). ASM calls cannot be represented
+    // as indirect ones, since their function operand is not a
+    // variable; neither can they be represented as direct
+    // instructions due to the constraint that all direct calls must
+    // be able to determine the function to be called.
+
+    if (CI.isInlineAsm()) {
+        return;
+    }
+
     refmode_t iref = recordInstruction(pred::call::instr, CI);
 
     gen.writeFact(CI.getCalledFunction()
