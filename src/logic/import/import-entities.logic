@@ -562,6 +562,18 @@ lang:physical:filePath[`_indirectbr_instruction] = "facts/indirectbr_instruction
 
 
 
+_inline_asm(v0) -> string(v0).
+
+lang:physical:delimiter[`_inline_asm] = "\t".
+lang:physical:filePath[`_inline_asm] = "facts/inline_asm.dlm".
+
++constant:id(e0:v0),
++inline_asm(e0)
+<-
+   _inline_asm(v0).
+
+
+
 _insertelement_instruction(v0) -> string(v0).
 
 lang:physical:delimiter[`_insertelement_instruction] = "\t".

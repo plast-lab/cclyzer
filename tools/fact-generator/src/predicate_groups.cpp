@@ -431,6 +431,10 @@ pred_t gep_constant_expr::base("getelementptr_constant_expression:base");
 pred_t gep_constant_expr::index("getelementptr_constant_expression:index");
 pred_t gep_constant_expr::nindices("getelementptr_constant_expression:nindices");
 
+entity_pred_t inline_asm::id("inline_asm");
+pred_t inline_asm::text("inline_asm:text");
+pred_t inline_asm::constraints("inline_asm:constraints");
+
 
 //------------------------------------------------------------------------------
 // DWARF-like Debug Information Predicates

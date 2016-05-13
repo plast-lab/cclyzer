@@ -35,14 +35,21 @@ call_instruction:calling_convention[Insn] = Conv ->
 
 direct_call_instruction(Insn)   -> call_instruction(Insn).
 indirect_call_instruction(Insn) -> call_instruction(Insn).
+asm_call_instruction(Insn) -> call_instruction(Insn).
 
 direct_call_instruction(Insn) <-
    call_instruction:raw_function[Insn] = Func,
-   operand:as_constant[Func] = _.
+   operand:as_constant[Func] = Constant,
+   !inline_asm(Constant).
 
 indirect_call_instruction(Insn) <-
    call_instruction:raw_function[Insn] = Func,
    operand:as_variable[Func] = _.
+
+asm_call_instruction(Insn) <-
+   call_instruction:raw_function[Insn] = Func,
+   operand:as_constant[Func] = Constant,
+   inline_asm(Constant).
 
 
 //----------------------

@@ -12,6 +12,7 @@ operand.logic, active
 global.logic, active
 constants.logic, active
 function.logic, active
+asm.logic, active
 
 instruction.logic, active
 add-instruction.logic, active

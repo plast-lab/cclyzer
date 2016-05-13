@@ -54,6 +54,10 @@ cclyzer::refmode_t RefmodeEngine::refmodeOfConstant(const llvm::Constant *c) con
     return impl->refmodeOfConstant(c);
 }
 
+cclyzer::refmode_t RefmodeEngine::refmodeOfInlineAsm(const llvm::InlineAsm *val) const {
+    return impl->refmodeOfInlineAsm(val);
+}
+
 cclyzer::refmode_t RefmodeEngine::refmodeOfLocalValue(const llvm::Value *val) const {
     return impl->refmodeOfLocalValue(val);
 }

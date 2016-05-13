@@ -19,6 +19,7 @@ class cclyzer::RefmodeEngine::Impl
     refmode_t refmodeOfFunction(const llvm::Function *func, bool prefix=true) const;
     refmode_t refmodeOfBasicBlock(const llvm::BasicBlock *bb, bool prefix=true) const;
     refmode_t refmodeOfConstant(const llvm::Constant *);
+    refmode_t refmodeOfInlineAsm(const llvm::InlineAsm *);
     refmode_t refmodeOfLocalValue(const llvm::Value *, bool prefix=true) const;
     refmode_t refmodeOfGlobalValue(const llvm::GlobalValue *val, bool prefix=true) const;
     refmode_t refmodeOfInstruction(const llvm::Instruction *instr, unsigned index) const;

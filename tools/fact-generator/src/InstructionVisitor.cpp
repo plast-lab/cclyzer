@@ -51,6 +51,10 @@ InstructionVisitor::recordValue(const llvm::Value *Val)
         // exclusively for constants) !!
         refmode = gen.writeConstant(*c);
     }
+    else if (const llvm::InlineAsm *asmVal = dyn_cast<llvm::InlineAsm>(Val)) {
+        // Compute refmode for ASM string
+        refmode = gen.writeAsm(*asmVal);
+    }
     else {
         // Compute refmode for variable value
         refmode = gen.refmodeOfLocalValue(Val);
@@ -103,7 +107,9 @@ InstructionVisitor::writeInstrOperand(
     refmode_t refmode = recordValue(operand);
 
     // Predicate name
-    const pred_t &pred = isa<llvm::Constant>(operand)
+    const pred_t &pred = (
+        isa<llvm::Constant>(operand) ||
+        isa<llvm::InlineAsm>(operand))
         ? predicate.asConstant()
         : predicate.asVariable();
 
@@ -124,7 +130,9 @@ InstructionVisitor::writeInstrOperand(
     refmode_t refmode = recordValue(operand);
 
     // Predicate name
-    const pred_t &pred = isa<llvm::Constant>(operand)
+    const pred_t &pred = (
+        isa<llvm::Constant>(operand) ||
+        isa<llvm::InlineAsm>(operand))
         ? predicate.asConstant()
         : predicate.asVariable();
 
@@ -678,8 +686,8 @@ InstructionVisitor::visitLandingPadInst(const llvm::LandingPadInst &LI)
 void
 InstructionVisitor::visitCallInst(const llvm::CallInst &CI)
 {
-    // TODO: somehow handle inline ASM call instructions
-    //
+    refmode_t iref = recordInstruction(pred::call::instr, CI);
+
     // Call instructions are now divided into direct call instructions
     // (which have a statically known function as target) and indirect
     // ones (via function pointers). ASM calls cannot be represented
@@ -688,15 +696,16 @@ InstructionVisitor::visitCallInst(const llvm::CallInst &CI)
     // instructions due to the constraint that all direct calls must
     // be able to determine the function to be called.
 
-    if (CI.isInlineAsm()) {
-        return;
+    if (!CI.isInlineAsm())
+    {
+        // Record if instruction is direct or indirect. This is
+        // probably redundant since it is inferred by the logic
+        // itself, according to the kind of the function operand.
+
+        gen.writeFact(CI.getCalledFunction()
+                      ? pred::call::instr_direct
+                      : pred::call::instr_indirect, iref);
     }
-
-    refmode_t iref = recordInstruction(pred::call::instr, CI);
-
-    gen.writeFact(CI.getCalledFunction()
-              ? pred::call::instr_direct
-              : pred::call::instr_indirect, iref);
 
     const llvm::Value *callOp = CI.getCalledValue();
 

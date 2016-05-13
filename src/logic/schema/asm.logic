@@ -1,0 +1,16 @@
+//----------------------
+// Inline ASM
+//----------------------
+
+// Inline ASM values do not need to be constants. The only reason it
+// is currently so, is so that we do not have to add yet another type
+// of operand (other than variable and constant).
+
+inline_asm(C) -> constant(C).
+lang:isEntity[`inline_asm] = true.
+
+inline_asm:text[C] = Text ->
+   inline_asm(C), string(Text).
+
+inline_asm:constraints[C] = Constraints ->
+   inline_asm(C), string(Constraints).

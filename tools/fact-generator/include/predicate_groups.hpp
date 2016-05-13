@@ -651,6 +651,14 @@ namespace cclyzer
             static pred_t index;
             static pred_t nindices;
         };
+
+        // Inline Assembly
+
+        struct inline_asm: predicate_group {
+            static entity_pred_t id;
+            static pred_t text;
+            static pred_t constraints;
+        };
     }
 }
 

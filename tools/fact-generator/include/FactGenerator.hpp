@@ -6,6 +6,7 @@
 #include <llvm/IR/Attributes.h>
 #include <llvm/IR/Constants.h>
 #include <llvm/IR/DebugInfo.h>
+#include <llvm/IR/InlineAsm.h>
 #include <llvm/IR/Type.h>
 #include <llvm/IR/DataLayout.h>
 #include <llvm/Support/raw_ostream.h>
@@ -65,6 +66,7 @@ class cclyzer::FactGenerator
     void writeConstantVector(const llvm::ConstantVector&, const refmode_t&);
     void writeConstantExpr(const llvm::ConstantExpr&, const refmode_t&);
     refmode_t writeConstant(const llvm::Constant&);
+    refmode_t writeAsm(const llvm::InlineAsm&);
 
     template<typename PredGroup, class ConstantType>
     void writeConstantWithOperands(const ConstantType&, const refmode_t&);

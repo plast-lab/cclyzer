@@ -2,6 +2,7 @@
 #include <map>
 #include <boost/algorithm/string.hpp>
 #include <llvm/Support/raw_ostream.h>
+#include <llvm/IR/InlineAsm.h>
 #include <llvm/IR/Metadata.h>
 #include "RefmodeEngineImpl.hpp"
 #include "llvm_enums.hpp"
@@ -158,6 +159,17 @@ RefmodeEngine::Impl::refmodeOfConstant(const llvm::Constant *c)
 
     withContext<llvm::Instruction>(refmode)
         << constantIndex++ << ':' << refmodeOf(c);
+
+    return refmode.str();
+}
+
+cclyzer::refmode_t
+RefmodeEngine::Impl::refmodeOfInlineAsm(const llvm::InlineAsm *asmVal)
+{
+    std::ostringstream refmode;
+
+    withContext<llvm::Instruction>(refmode)
+        << ':' << "<asm>(" << asmVal->getAsmString() << ")";
 
     return refmode.str();
 }
