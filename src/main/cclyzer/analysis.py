@@ -49,6 +49,10 @@ class Analysis(object):
     def facts_directory(self):
         return os.path.join(self.output_directory, 'facts')
 
+    def facts_file(self, predicate):
+        filename = predicate.replace(':', '-') + '.dlm'
+        return os.path.join(self.facts_directory, filename)
+
     @property
     def database_directory(self):
         return os.path.join(self.output_directory, 'db')
