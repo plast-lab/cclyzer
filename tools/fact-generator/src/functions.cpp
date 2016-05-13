@@ -136,7 +136,7 @@ void FactGenerator::writeFnAttributes(
                   writeFact(PredGroup::fn_attr, refmode, attr);
                   break;
               default:
-                  writeFact(PredGroup::param_attr, refmode, i, attr);
+                  writeFact(PredGroup::param_attr, refmode, index - 1, attr);
                   break;
             }
         }
