@@ -16,21 +16,6 @@ FactGenerator::writeOperands(const llvm::DataLayout &layout)
     using llvm_utils::TypeAccumulator;
     typedef type_cache_t::iterator operand_iterator;
 
-    // Record every constant encountered so far
-    for (operand_iterator
-             it = constantTypes.begin(), end = constantTypes.end();
-         it != end; ++it)
-    {
-        refmode_t refmode = it->first;
-        const llvm::Type *type = it->second;
-
-        // Record constant entity with its type
-        writeFact(pred::constant::id, refmode);
-        writeFact(pred::constant::type, refmode, refmodeOf(type));
-
-        types.insert(type);
-    }
-
     // Record every variable encountered so far
     for (operand_iterator
              it = variableTypes.begin(), end = variableTypes.end();

@@ -44,11 +44,7 @@ class cclyzer::FactGenerator
     typedef predicates::operand_pred_t operand_pred_t;
 
 
-    /* Recording constants and variables */
-
-    void recordConstant(std::string id, const llvm::Type *type) {
-        constantTypes[id] = type;
-    }
+    /* Recording variables */
 
     void recordVariable(std::string id, const llvm::Type *type) {
         variableTypes[id] = type;
@@ -92,9 +88,8 @@ class cclyzer::FactGenerator
     /* Initialize output file streams */
     void initStreams();
 
-    /* Caches for variable and constant types */
+    /* Caches for variable types */
     type_cache_t variableTypes;
-    type_cache_t constantTypes;
 
     /* Debug Info */
     DebugInfoProcessor debugInfoProcessor;
