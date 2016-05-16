@@ -4309,6 +4309,19 @@ lang:physical:filePath[`_switch_instruction:operand$by_variable] = "facts/switch
 
 
 
+_target_dependent_attribute(v0) -> string(v0).
+
+lang:physical:delimiter[`_target_dependent_attribute] = "\t".
+lang:physical:filePath[`_target_dependent_attribute] = "facts/target_dependent_attribute.dlm".
+
++attribute:value(e0:v0),
++attribute(e0),
++target_dependent_attribute(e0)
+<-
+   _target_dependent_attribute(v0).
+
+
+
 _trunc_instruction:from$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_trunc_instruction:from$by_constant] = "\t".

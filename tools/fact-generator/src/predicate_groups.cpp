@@ -435,6 +435,8 @@ entity_pred_t inline_asm::id("inline_asm");
 pred_t inline_asm::text("inline_asm:text");
 pred_t inline_asm::constraints("inline_asm:constraints");
 
+pred_t attribute::target_dependent("target_dependent_attribute");
+
 
 //------------------------------------------------------------------------------
 // DWARF-like Debug Information Predicates

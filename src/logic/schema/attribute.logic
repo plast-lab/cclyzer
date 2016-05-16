@@ -1,6 +1,9 @@
 // Attribute
 attribute(Attr), attribute:value(Attr:Ref) -> string(Ref).
 
+target_dependent_attribute(Attr) -> attribute(Attr).
+lang:isEntity[`target_dependent_attribute] = false.
+
 // Parameter Attributes
 
 parameter_attribute:zeroext[] = Attr <- attribute:value(Attr:"zeroext").

@@ -659,6 +659,12 @@ namespace cclyzer
             static pred_t text;
             static pred_t constraints;
         };
+
+        // Function Attributes
+
+        struct attribute : predicate_group {
+            static pred_t target_dependent;
+        };
     }
 }
 

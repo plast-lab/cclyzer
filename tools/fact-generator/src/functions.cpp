@@ -128,6 +128,11 @@ void FactGenerator::writeFnAttributes(
             std::string attr = it->getAsString();
             attr.erase (std::remove(attr.begin(), attr.end(), '"'), attr.end());
 
+            // Record target-dependent attributes
+            if (it->isStringAttribute())
+                writeFact(pred::attribute::target_dependent, attr);
+
+            // Record attribute by kind
             switch (index) {
               case AttributeSet::AttrIndex::ReturnIndex:
                   writeFact(PredGroup::ret_attr, refmode, attr);

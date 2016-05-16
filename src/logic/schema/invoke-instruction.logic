@@ -146,7 +146,8 @@ schema:sanity()
  ; function_attribute:readnone[] = Attr
  ; function_attribute:cold[] = Attr
  ; function_attribute:returns_twice[] = Attr
- ; function_attribute:builtin[] = Attr. // c5
+ ; function_attribute:builtin[] = Attr
+ ; target_dependent_attribute(Attr). // c5
 
 // cc compatibility
 schema:sanity()
