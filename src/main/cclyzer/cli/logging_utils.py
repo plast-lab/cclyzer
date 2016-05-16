@@ -22,7 +22,7 @@ class CachelessFormatter(logging.Formatter):
 class ConsoleFormatter(CachelessFormatter):
     def format(self, record):
         msg = CachelessFormatter.format(self, record)
-        return msg.replace('\n', '')
+        return msg
 
     def formatException(self, exc_info):
         if not exc_info:
@@ -73,8 +73,4 @@ def setup_logging(lvl=logging.INFO):
     root_logger.addHandler(stderr_handler)
 
     # Start executing task
-    try:
-        root_logger.info('Started')
-        yield root_logger
-    finally:
-        root_logger.info('Finished')
+    yield root_logger

@@ -103,6 +103,9 @@ class LoadProjectStep(AnalysisStep):
 
         if not unpacked_deps:   # All dependencies have been extracted
             with UnpackedProject(project) as project:
+                # Log project installation event
+                self.logger.info("Installing project %s ...", project.name)
+
                 # Execute script while ignoring output
                 return (
                     blox.LoadProjectScript(

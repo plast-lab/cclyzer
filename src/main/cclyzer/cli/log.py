@@ -1,4 +1,5 @@
 from os import path
+import logging
 import shutil
 import sys
 from .commands import CliCommand
@@ -20,6 +21,9 @@ class LogCommand(CliCommand):
         # Path to log file
         env = Environment()
         self._logfile = env.user_log_file
+
+        # Disable logging for this command
+        logging.disable(logging.INFO)
 
     def run(self):
         """The main function that will be called by command-line execution

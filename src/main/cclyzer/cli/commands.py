@@ -44,7 +44,7 @@ class CliCommand(object):
         self._args = args
 
     @classmethod
-    def run_command(cls):
+    def get_command(cls):
         # Get command line arguments
         args = cls.parser.parse_args()
 
@@ -52,8 +52,8 @@ class CliCommand(object):
         cmd_name = args.subcommand_name
         subcommand = cls.registry[cmd_name](args)
 
-        # Run subcommand
-        subcommand.run()
+        # Return subcommand
+        return subcommand
 
     @abstractmethod
     def run(self): pass
@@ -61,8 +61,15 @@ class CliCommand(object):
 def main():
     with setup_logging() as logger:
         try:
-            CliCommand.run_command()
+            # Parse args to get subcommand
+            command = CliCommand.get_command()
+
+            # Run subcommand
+            logger.info('Started')
+            command.run()
         except Exception as e:
             logger.exception('')
             print >> sys.stderr, 'Exiting ...'
             exit(1)
+        finally:
+            logger.info('Finished')
