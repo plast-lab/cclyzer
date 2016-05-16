@@ -74,7 +74,7 @@ alias(Alias), alias:value(Alias:Ref) -> string(Ref).
 alias:type[Alias] = Type -> alias(Alias), type(Type).
 alias:linkage_type[Alias] = Link -> alias(Alias), linkage_type(Link).
 alias:visibility[Alias] = Vis -> alias(Alias), visibility(Vis).
-alias:aliasee[Alias] = Aliasee -> alias(Alias), string(Aliasee).
+alias:aliasee[Alias] = Aliasee -> alias(Alias), constant(Aliasee).
 
 schema:sanity()
  , alias(Var)

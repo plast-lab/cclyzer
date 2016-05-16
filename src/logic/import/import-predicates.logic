@@ -69,7 +69,9 @@ lang:physical:filePath[`_alias:aliasee] = "facts/alias-aliasee.dlm".
 
 +alias:value(e0:v0),
 +alias(e0),
-+alias:aliasee[e0] = v1
++constant:id(e1:v1),
++constant(e1),
++alias:aliasee[e0] = e1
 <-
    _alias:aliasee(v0, v1).
 
