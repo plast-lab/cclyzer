@@ -128,7 +128,7 @@ schema:sanity()
  ; parameter_attribute:signext[] = Attr
  ; parameter_attribute:inreg[] = Attr
  ; parameter_attribute:noallias[] = Attr
- ; parameter_attribute:dereferenceable[] = Attr.   // c1
+ ; parameter_attribute:dereferenceable(Attr).   // c1
 
 schema:sanity()
  , call_instruction:fn_attribute(_, Attr)

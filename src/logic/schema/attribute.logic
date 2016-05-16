@@ -19,10 +19,10 @@ parameter_attribute:nest[] = Attr <- attribute:value(Attr:"nest").
 parameter_attribute:returned[] = Attr <- attribute:value(Attr:"returned").
 parameter_attribute:nonnull[] = Attr <- attribute:value(Attr:"nonnull").
 
-parameter_attribute:dereferenceable[] = Attr <-
+parameter_attribute:dereferenceable(Attr) <-
    attribute:value(Attr:Val), string:like(Val, "dereferenceable(%)").
 
-parameter_attribute:dereferenceable_or_null[] = Attr <-
+parameter_attribute:dereferenceable_or_null(Attr) <-
    attribute:value(Attr:Val), string:like(Val, "dereferenceable_or_null(%)").
 
 
