@@ -9,6 +9,7 @@ pred_t basic_block::predecessor("basicblock:pred_aux");
 // Global
 
 entity_pred_t global_var::id("global_variable");
+pred_t global_var::name("global_variable:name");
 pred_t global_var::type("global_variable:type");
 pred_t global_var::initializer("global_variable:initializer");
 pred_t global_var::section("global_variable:section");
@@ -386,6 +387,7 @@ pred_t variable::pos("variable:debug:decl_pos");
 
 entity_pred_t constant::id("constant");
 pred_t constant::type("constant:type");
+pred_t constant::value("constant:value");
 
 pred_t constant::expr("constant_expression");
 pred_t constant::to_integer("constant:to_int");

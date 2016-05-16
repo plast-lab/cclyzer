@@ -34,11 +34,34 @@ global_variable_constant(C) -> constant(C).
 global_variable_constant:name[C] = Name ->
    global_variable_constant(C), string(Name).
 
-
 schema:sanity()
  , global_variable_constant(C)
  ->
    global_variable_constant:name[C] = _.
+
+
+// Map back to global variable
+
+global_variable_constant:to_var[C] = GVar ->
+   global_variable_constant(C), global_variable(GVar).
+
+global_variable_constant:to_var[C] = GVar <-
+   global_variable_constant:name[C] = Name,
+   global_variable:by_name[Name] = GVar.
+
+schema:sanity()
+ , global_variable_constant(C)
+ ->
+   global_variable_constant:to_var[C] = _.
+
+
+schema:sanity()
+ , global_variable_constant:to_var[C] = GVar
+ , global_variable:type[GVar] = Type
+ , constant:type[C] = Ptr
+ ->
+   pointer_type:component[Ptr] = Type.
+
 
 //--------------------------------------
 // Array of constants

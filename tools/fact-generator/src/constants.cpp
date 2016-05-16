@@ -26,6 +26,12 @@ FactGenerator::writeConstant(const llvm::Constant &c)
     writeFact(pred::constant::type, refmode, refmodeOf(c.getType()));
     types.insert(c.getType());
 
+    // Record constant value
+    std::string rv;
+    raw_string_ostream rso(rv);
+    c.printAsOperand(rso, /* PrintType */ false);
+    writeFact(pred::constant::value, refmode, rso.str());
+
     if (isa<ConstantPointerNull>(c)) {
         writeFact(pred::nullptr_constant::id, refmode);
     }

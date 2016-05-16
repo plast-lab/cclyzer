@@ -890,6 +890,19 @@ lang:physical:filePath[`_constant:type] = "facts/constant-type.dlm".
 
 
 
+_constant:value(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_constant:value] = "\t".
+lang:physical:filePath[`_constant:value] = "facts/constant-value.dlm".
+
++constant:id(e0:v0),
++constant(e0),
++constant:value[e0] = v1
+<-
+   _constant:value(v0, v1).
+
+
+
 _constant_array:index(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
 
 lang:physical:delimiter[`_constant_array:index] = "\t".
@@ -2148,7 +2161,7 @@ _global_variable:align(v0, v1) -> string(v0), int[64](v1).
 lang:physical:delimiter[`_global_variable:align] = "\t".
 lang:physical:filePath[`_global_variable:align] = "facts/global_variable-align.dlm".
 
-+constant:id(e0:v0),
++global_variable:id(e0:v0),
 +global_variable(e0),
 +global_variable:align[e0] = v1
 <-
@@ -2161,7 +2174,7 @@ _global_variable:flag(v0, v1) -> string(v0), string(v1).
 lang:physical:delimiter[`_global_variable:flag] = "\t".
 lang:physical:filePath[`_global_variable:flag] = "facts/global_variable-flag.dlm".
 
-+constant:id(e0:v0),
++global_variable:id(e0:v0),
 +global_variable(e0),
 +flag:value(e1:v1),
 +flag(e1),
@@ -2176,7 +2189,7 @@ _global_variable:initializer(v0, v1) -> string(v0), string(v1).
 lang:physical:delimiter[`_global_variable:initializer] = "\t".
 lang:physical:filePath[`_global_variable:initializer] = "facts/global_variable-initializer.dlm".
 
-+constant:id(e0:v0),
++global_variable:id(e0:v0),
 +global_variable(e0),
 +constant:id(e1:v1),
 +constant(e1),
@@ -2191,7 +2204,7 @@ _global_variable:linkage_type(v0, v1) -> string(v0), string(v1).
 lang:physical:delimiter[`_global_variable:linkage_type] = "\t".
 lang:physical:filePath[`_global_variable:linkage_type] = "facts/global_variable-linkage_type.dlm".
 
-+constant:id(e0:v0),
++global_variable:id(e0:v0),
 +global_variable(e0),
 +linkage_type:id(e1:v1),
 +linkage_type(e1),
@@ -2201,12 +2214,25 @@ lang:physical:filePath[`_global_variable:linkage_type] = "facts/global_variable-
 
 
 
+_global_variable:name(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_global_variable:name] = "\t".
+lang:physical:filePath[`_global_variable:name] = "facts/global_variable-name.dlm".
+
++global_variable:id(e0:v0),
++global_variable(e0),
++global_variable:name[e0] = v1
+<-
+   _global_variable:name(v0, v1).
+
+
+
 _global_variable:section(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_global_variable:section] = "\t".
 lang:physical:filePath[`_global_variable:section] = "facts/global_variable-section.dlm".
 
-+constant:id(e0:v0),
++global_variable:id(e0:v0),
 +global_variable(e0),
 +global_variable:section[e0] = v1
 <-
@@ -2219,7 +2245,7 @@ _global_variable:threadlocal_mode(v0, v1) -> string(v0), string(v1).
 lang:physical:delimiter[`_global_variable:threadlocal_mode] = "\t".
 lang:physical:filePath[`_global_variable:threadlocal_mode] = "facts/global_variable-threadlocal_mode.dlm".
 
-+constant:id(e0:v0),
++global_variable:id(e0:v0),
 +global_variable(e0),
 +threadlocal_mode:id(e1:v1),
 +threadlocal_mode(e1),
@@ -2234,7 +2260,7 @@ _global_variable:type(v0, v1) -> string(v0), string(v1).
 lang:physical:delimiter[`_global_variable:type] = "\t".
 lang:physical:filePath[`_global_variable:type] = "facts/global_variable-type.dlm".
 
-+constant:id(e0:v0),
++global_variable:id(e0:v0),
 +global_variable(e0),
 +type:id(e1:v1),
 +type(e1),
@@ -2249,7 +2275,7 @@ _global_variable:visibility(v0, v1) -> string(v0), string(v1).
 lang:physical:delimiter[`_global_variable:visibility] = "\t".
 lang:physical:filePath[`_global_variable:visibility] = "facts/global_variable-visibility.dlm".
 
-+constant:id(e0:v0),
++global_variable:id(e0:v0),
 +global_variable(e0),
 +visibility:id(e1:v1),
 +visibility(e1),

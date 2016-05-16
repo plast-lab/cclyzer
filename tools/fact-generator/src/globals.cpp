@@ -54,8 +54,11 @@ FactGenerator::writeGlobalAlias(const llvm::GlobalAlias& ga, const refmode_t& re
 void
 FactGenerator::writeGlobalVar(const llvm::GlobalVariable& gv, const refmode_t& refmode)
 {
+    std::string name = "@" + gv.getName().str();
+
     // Record global variable entity
     writeFact(pred::global_var::id, refmode);
+    writeFact(pred::global_var::name, refmode, name);
 
     // Serialize global variable properties
     refmode_t visibility = refmodeOf(gv.getVisibility());

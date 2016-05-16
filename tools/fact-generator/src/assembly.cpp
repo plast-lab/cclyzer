@@ -28,6 +28,7 @@ FactGenerator::writeAsm(const llvm::InlineAsm &asmVal)
     // Record inline ASM as constant entity with its type
     writeFact(pred::constant::id, refmode);
     writeFact(pred::constant::type, refmode, refmodeOf(type));
+    writeFact(pred::constant::value, refmode, "<asm>");
     types.insert(type);
 
     // Record its attributes separately

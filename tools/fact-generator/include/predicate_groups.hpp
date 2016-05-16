@@ -63,6 +63,7 @@ namespace cclyzer
 
         struct global_var : public predicate_group {
             static entity_pred_t id;
+            static pred_t name;
             static pred_t type;
             static pred_t initializer;
             static pred_t section;
@@ -580,6 +581,7 @@ namespace cclyzer
         struct constant : predicate_group {
             static entity_pred_t id;
             static pred_t type;
+            static pred_t value;
             static pred_t expr;
             static pred_t to_integer;
         };

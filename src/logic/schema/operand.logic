@@ -35,35 +35,21 @@ variable:debug:decl_pos(Var, Line, Column) ->
 //--------------
 
 constant(C), constant:id(C:Ref) -> string(Ref).
-
 lang:physical:capacity[`constant] = 8388608.
+
+// Mandatory constant attributes
 
 constant:type[C] = Type -> constant(C), type(Type).
 constant:value[C] = Val -> constant(C), string(Val).
 
 
-// Auxiliary predicate that computes the last colon position of the
-// constant's refmode
-
-constant:last_colon_pos[C] = Pos ->
-   constant(C), uint[32](Pos).
-
-constant:last_colon_pos[C] = Pos  <-
-   agg<<Pos = max(P)>> constant:id(C:Ref), string:substring[Ref, P, 1] = ":".
-
-
-// Compute the actual value of the constant, since the refmode
-// includes more fields in order to uniquely identify this constant
-// from others that happen to have the exact same value.
-
-constant:value[C] = Val <-
-   constant:id(C:Ref),
-   constant:last_colon_pos[C] = ColonPos,
-   string:length[Ref] = Len,
-   string:substring[Ref, ColonPos + 1, Len - ColonPos - 1] = Val.
 
 
 // Auxiliary Predicates
+
+
+
+
 
 constant:eq(C1, C2) <-
    constant:value[C1] = Val,

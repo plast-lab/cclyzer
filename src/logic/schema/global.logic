@@ -1,6 +1,6 @@
 // http://llvm.org/docs/LangRef.html#global-variables
 
-global_variable(Var) -> constant(Var). // TODO: why??
+global_variable(Var), global_variable:id(Var:ID) -> string(ID).
 
 global_variable:type[Var] = Type ->
    global_variable(Var), type(Type).
@@ -8,20 +8,8 @@ global_variable:type[Var] = Type ->
 global_variable:name[Var] = Name ->
    global_variable(Var), string(Name).
 
-// Compute global variable name by the constant value
-global_variable:name[Var] = Name <-
-   global_variable(Var),
-   constant:value[Var] = Name.
-
 global_variable:by_name[Name] = Var <-
    global_variable:name[Var] = Name.
-
-schema:sanity()
- , global_variable:type[Var] = Type
- , constant:type[Var] = Ptr
- ->
-   pointer_type:component[Ptr] = Type.
-
 
 global_variable:initializer[Var] = Init ->
    global_variable(Var), constant(Init).
