@@ -169,7 +169,7 @@ RefmodeEngine::Impl::refmodeOfInlineAsm(const llvm::InlineAsm *asmVal)
     std::ostringstream refmode;
 
     withContext<llvm::Instruction>(refmode)
-        << ':' << "<asm>(" << asmVal->getAsmString() << ")";
+        << ':' << "<asm>";
 
     return refmode.str();
 }
