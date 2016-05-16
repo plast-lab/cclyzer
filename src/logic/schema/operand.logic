@@ -66,15 +66,15 @@ constant:value[C] = Val <-
 // Auxiliary Predicates
 
 constant:eq(C1, C2) <-
-   constant:value[C1] = Val1,
-   constant:value[C2] = Val2,
-   Val1 = Val2. // is this enough??
+   constant:value[C1] = Val,
+   constant:value[C2] = Val.
 
 constant:ne(C1, C2) <-
-   constant(C1),
-   constant(C2),
-   !constant:eq(C1, C2).
+   constant:value[C1] = Val1,
+   constant:value[C2] = Val2,
+   Val1 != Val2.
 
+lang:derivationType[`constant:eq] = "Derived".
 lang:derivationType[`constant:ne] = "Derived".
 
 // constants cannot be labels
