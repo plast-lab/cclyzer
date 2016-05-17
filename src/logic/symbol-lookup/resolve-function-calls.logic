@@ -40,6 +40,41 @@ _constant_references_function[Outer] = FuncDecl
    bitcast_constant_expression:from[Outer] = Inner,
    _constant_references_function[Inner] = FuncDecl.
 
+//-------------------------------------------------------------
+// [Aliases]
+//
+// An alias may also be used as a function operand.
+//-------------------------------------------------------------
+
+// `Constant` is possibly an aliasee of `Alias` (via `Aliasee`)
+_aliased_constants_plus_collisions(Alias, Aliasee, Constant)
+ <-
+   alias:aliasee[Alias] = Aliasee,
+   constant:hash[Aliasee] = HashCode,
+   constant:by_hash(HashCode, Constant).
+
+// `Constant` is an aliasee of `Alias`
+_aliasee(Constant, Alias)
+ <-
+   _aliased_constants_plus_collisions(Alias, Aliasee, Constant),
+   constant:value[Constant] = Value,
+   constant:value[Aliasee] = Value.
+
+// `Constant` is actually an alias (via `Alias`)
+_alias(Constant, Alias) <-
+   constant:value[Constant] = AliasName,
+   alias:by_name[AliasName] = Alias.
+
+// `OtherConstant` is an alias of `Constant`
+aliased_constants(OtherConstant, Constant) <-
+   _alias(OtherConstant, Alias),
+   _aliasee(Constant, Alias).
+
+_constant_references_function[OtherConstant] = FuncDecl
+ <-
+   aliased_constants(OtherConstant, Constant),
+   _constant_references_function[Constant] = FuncDecl.
+
 
 // Mapping from call instructions to function declarations
 
