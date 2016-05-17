@@ -1,6 +1,11 @@
-//------------
-// Variables
-//------------
+//------------------------------------------------------------------------------
+// [Variables]
+//
+// The first type of instruction operands are variables. In this
+// representation, variables correspond to LLVM virtual
+// registers. They are either source-level variables with valid names
+// or temporaries introduced by LLVM that hold intermediate expressions.
+//------------------------------------------------------------------------------
 
 variable(Var), variable:id(Var:Ref) -> string(Ref).
 
@@ -20,8 +25,9 @@ variable:firstclass(Var) <-
    variable:type[Var] = Type,
    type:firstclass(Type).
 
-
-// Debug-level information
+//---------------------------------------------------------
+// Debug-level information from source code (DWARF)
+//---------------------------------------------------------
 
 variable:debug:source_name[Var] = Name ->
    variable(Var), string(Name).
@@ -30,18 +36,23 @@ variable:debug:decl_pos(Var, Line, Column) ->
    variable(Var), int[64](Line), int[64](Column).
 
 
-//--------------
-// Constants
-//--------------
+//------------------------------------------------------------------------------
+// [Constants]
+//
+// The second type of instruction operands are constants. Constants
+// may be quite complex (see constant expressions). Their full
+// hierarchy is represented in `constants.logic`.
+//------------------------------------------------------------------------------
 
 constant(C), constant:id(C:Ref) -> string(Ref).
 lang:physical:capacity[`constant] = 8388608.
 
+//---------------------------------------------------------
 // Mandatory constant attributes
+//---------------------------------------------------------
 
 constant:type[C] = Type -> constant(C), type(Type).
 constant:value[C] = Val -> constant(C), string(Val).
-constant:hash[C] = HashCode -> constant(C), uint[64](HashCode).
 
 schema:sanity(), constant(C)
  ->
@@ -51,15 +62,22 @@ schema:sanity(), constant(C)
  ->
    constant:value[C] = _.
 
+//---------------------------------------------------------
+// Precomputed hash-codes for constant values
+//---------------------------------------------------------
+
+constant:hash[C] = HashCode -> constant(C), uint[64](HashCode).
+
 schema:sanity(), constant(C)
  ->
    constant:hash[C] = _.
 
-
-// Auxiliary Predicates
-
+constant:by_hash(H, C) <-
+   constant:hash[C] = H.
 
 constant:eq(C1, C2) <-
+   constant:by_hash(H, C1),
+   constant:by_hash(H, C2),
    constant:value[C1] = Val,
    constant:value[C2] = Val.
 
