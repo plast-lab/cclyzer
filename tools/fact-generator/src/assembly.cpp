@@ -1,5 +1,6 @@
 #include <string>
 #include <boost/algorithm/string/replace.hpp>
+#include <boost/functional/hash.hpp>
 #include <llvm/IR/InlineAsm.h>
 #include "predicate_groups.hpp"
 #include "FactGenerator.hpp"
@@ -21,23 +22,27 @@ cclyzer::refmode_t
 FactGenerator::writeAsm(const llvm::InlineAsm &asmVal)
 {
     using namespace llvm;
+    static boost::hash<std::string> string_hash;
 
     refmode_t refmode = refmodeOfInlineAsm(&asmVal);
     const llvm::Type *type = asmVal.getType();
 
+    std::string constraints = canonicalize(asmVal.getConstraintString());
+    std::string assem = canonicalize(asmVal.getAsmString());
+    std::string val = "<asm>(" + assem + ")";
+    size_t hashCode = string_hash(val);
+
     // Record inline ASM as constant entity with its type
     writeFact(pred::constant::id, refmode);
     writeFact(pred::constant::type, refmode, refmodeOf(type));
-    writeFact(pred::constant::value, refmode, "<asm>");
+    writeFact(pred::constant::value, refmode, val);
+    writeFact(pred::constant::hash, refmode, hashCode);
     types.insert(type);
 
     // Record its attributes separately
-    std::string constraints = asmVal.getConstraintString();
-    std::string assem = asmVal.getAsmString();
-
     writeFact(pred::inline_asm::id, refmode);
-    writeFact(pred::inline_asm::constraints, refmode, canonicalize(constraints));
-    writeFact(pred::inline_asm::text, refmode, canonicalize(assem));
+    writeFact(pred::inline_asm::constraints, refmode, constraints);
+    writeFact(pred::inline_asm::text, refmode, assem);
 
     return refmode;
 }

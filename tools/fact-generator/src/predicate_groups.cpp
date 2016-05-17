@@ -388,6 +388,7 @@ pred_t variable::pos("variable:debug:decl_pos");
 entity_pred_t constant::id("constant");
 pred_t constant::type("constant:type");
 pred_t constant::value("constant:value");
+pred_t constant::hash("constant:hash");
 
 pred_t constant::expr("constant_expression");
 pred_t constant::to_integer("constant:to_int");

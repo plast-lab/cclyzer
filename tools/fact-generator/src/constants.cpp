@@ -1,4 +1,5 @@
 #include <string>
+#include <boost/functional/hash.hpp>
 #include <llvm/IR/Constants.h>
 #include "predicate_groups.hpp"
 #include "FactGenerator.hpp"
@@ -18,6 +19,7 @@ cclyzer::refmode_t
 FactGenerator::writeConstant(const llvm::Constant &c)
 {
     using namespace llvm;
+    static boost::hash<std::string> string_hash;
 
     refmode_t refmode = refmodeOfConstant(&c);
 
@@ -30,7 +32,11 @@ FactGenerator::writeConstant(const llvm::Constant &c)
     std::string rv;
     raw_string_ostream rso(rv);
     c.printAsOperand(rso, /* PrintType */ false);
-    writeFact(pred::constant::value, refmode, rso.str());
+    const std::string& val = rso.str();
+    size_t hashCode = string_hash(val);
+
+    writeFact(pred::constant::value, refmode, val);
+    writeFact(pred::constant::hash, refmode, hashCode);
 
     if (isa<ConstantPointerNull>(c)) {
         writeFact(pred::nullptr_constant::id, refmode);

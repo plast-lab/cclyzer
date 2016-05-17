@@ -582,6 +582,7 @@ namespace cclyzer
             static entity_pred_t id;
             static pred_t type;
             static pred_t value;
+            static pred_t hash;
             static pred_t expr;
             static pred_t to_integer;
         };
