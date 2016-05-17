@@ -9,34 +9,31 @@ insertvalue_instruction:base[Insn] = Aggregate ->
 insertvalue_instruction:value[Insn] = Value ->
    insertvalue_instruction(Insn), operand(Value).
 
+//------------------------
+// Aggregate Indices
+//------------------------
+
 insertvalue_instruction:nindices[Insn] = Total ->
    insertvalue_instruction(Insn), int[64](Total).
 
 insertvalue_instruction:index[Insn, Index] = Idx ->
-   insertvalue_instruction(Insn), int[64](Index), constant(Idx).
-
-
-//------------------------------------------------------------------------------
-// [Determining Fields]
-//
-// See ‘extractvalue‘ instruction, for this matter is solved in a
-// similar way.
-//------------------------------------------------------------------------------
-
+   insertvalue_instruction(Insn), int[64](Index), int[64](Idx).
 
 instruction:next_index[Insn, Index] = Index + 1 <-
    insertvalue_instruction:index[Insn, Index] = _.
 
+//------------------------------------------------
 // The resulting type for each dereference.
+//------------------------------------------------
+
 insertvalue_instruction:interm_type[Insn, 0] = Type <-
    insertvalue_instruction:base[Insn] = Aggregate,
    operand:type[Aggregate] = Type.
 
 insertvalue_instruction:interm_type[Insn, Next] = Comp <-
    insertvalue_instruction:interm_type[Insn, Index] = Type,
-   insertvalue_instruction:index[Insn, Index] = Constant,
-   constant:to_int[Constant] = Value,
-   struct_type:field[Type, Value] = Comp,
+   insertvalue_instruction:index[Insn, Index] = IdxValue,
+   struct_type:field[Type, IdxValue] = Comp,
    instruction:next_index[Insn, Index] = Next.
 
 insertvalue_instruction:interm_type[Insn, Next] = Comp <-
@@ -50,7 +47,7 @@ insertvalue_instruction:value_type[Insn] = Type <-
 
 insertvalue_instruction:value_type[Insn] = Type <-
    insertvalue_instruction:value[Insn] = Value,
-   operand:type[Value] = Type. // c4 (fdv)
+   operand:type[Value] = Type. // c3 (fdv)
 
 insertvalue_instruction:base_type[Insn] = Type <-
    insertvalue_instruction:interm_type[Insn, 0] = Type.
@@ -62,12 +59,9 @@ insertvalue_instruction:base_type[Insn] = Type <-
 //  (1) The first operand of an ‘insertvalue‘ instruction is
 //      a value of struct or array type.
 //  (2) The second operand is a first-class value to insert.
-//  (3) The following operands are constant indices indicating
-//      the position at which to insert the value in a similar
-//      manner as indices in a ‘extractvalue‘ instruction.
-//  (4) The value to insert must have the same type as the value
+//  (3) The value to insert must have the same type as the value
 //      identified by the indices.
-//  (5) At least one index must be specified.
+//  (4) At least one index must be specified.
 //
 // The result is an aggregate of the same type as the first
 // operand type.
@@ -96,7 +90,7 @@ schema:sanity()
 schema:sanity()
  , insertvalue_instruction:nindices[_] = Total
  ->
-   Total > 0. // c5
+   Total > 0. // c4
 
 schema:sanity()
  , insertvalue_instruction:base_type[_] = Type
@@ -107,14 +101,6 @@ schema:sanity()
  , insertvalue_instruction:value_type[_] = Type
  ->
    type:firstclass(Type). // c2
-
-
-// TODO: check if other integer types are allowed for non-structures
-schema:sanity()
- , insertvalue_instruction:index[_, _] = Index
- , constant:type[Index] = Type
- ->
-   int32_type[] = Type. // c3
 
 schema:sanity()
  , insertvalue_instruction:base_type[Insn] = Type

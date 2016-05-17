@@ -6,43 +6,31 @@ extractvalue_instruction(Insn) -> instruction(Insn).
 extractvalue_instruction:base[Insn] = Aggregate ->
    extractvalue_instruction(Insn), operand(Aggregate).
 
+//------------------------
+// Aggregate Indices
+//------------------------
+
 extractvalue_instruction:nindices[Insn] = Total ->
    extractvalue_instruction(Insn), int[64](Total).
 
 extractvalue_instruction:index[Insn, Index] = Idx ->
-   extractvalue_instruction(Insn), int[64](Index), constant(Idx).
-
-
-//------------------------------------------------------------------------------
-// [Determining Fields]
-//
-// !! In order to determine the exact field of the aggregate type
-// which we're trying to extract, we must be able to compute the
-// exact integer values that would be produced if we were to
-// evaluate the indexing constants, so that we can match against
-// the fields of the base argument !!
-//
-// TODO: Such a thing is not yet possible!  However, we assume a map
-//       of [constant -> int] exists, so that we can introduce
-//       /field-sensitivity/ in the future.
-//------------------------------------------------------------------------------
-
-constant:to_int[Constant] = Value ->
-   constant(Constant), int[64](Value).
+   extractvalue_instruction(Insn), int[64](Index), int[64](Idx).
 
 instruction:next_index[Insn, Index] = Index + 1 <-
    extractvalue_instruction:index[Insn, Index] = _.
 
+//------------------------------------------------
 // The resulting type for each dereference.
+//------------------------------------------------
+
 extractvalue_instruction:interm_type[Insn, 0] = Type <-
    extractvalue_instruction:base[Insn] = Aggregate,
    operand:type[Aggregate] = Type.
 
 extractvalue_instruction:interm_type[Insn, Next] = Comp <-
    extractvalue_instruction:interm_type[Insn, Index] = Type,
-   extractvalue_instruction:index[Insn, Index] = Constant,
-   constant:to_int[Constant] = Value, // Note: read above comments
-   struct_type:field[Type, Value] = Comp,
+   extractvalue_instruction:index[Insn, Index] = IdxValue,
+   struct_type:field[Type, IdxValue] = Comp,
    instruction:next_index[Insn, Index] = Next.
 
 extractvalue_instruction:interm_type[Insn, Next] = Comp <-
@@ -63,10 +51,7 @@ extractvalue_instruction:base_type[Insn] = Type <-
 //
 //  (1) The first operand of an ‘extractvalue‘ instruction is
 //      a value of struct or array type.
-//  (2) The operands are constant indices to specify which value
-//      to extract in a similar manner as indices in a ‘getelementptr‘
-//      instruction.
-//  (3) At least one index must be specified.
+//  (2) At least one index must be specified.
 //
 // The result is the value at the position in the aggregate specified
 // by the index operands.
@@ -90,20 +75,12 @@ schema:sanity()
 schema:sanity()
  , extractvalue_instruction:nindices[_] = Total
  ->
-   Total > 0. // c3
+   Total > 0. // c2
 
 schema:sanity()
  , extractvalue_instruction:base_type[_] = Type
  ->
    aggregate_type(Type). // c1
-
-
-// TODO: check if other integer types are allowed for non-structure
-schema:sanity()
- , extractvalue_instruction:index[_, _] = Index
- , constant:type[Index] = Type
- ->
-   int32_type[] = Type. // c2
 
 schema:sanity()
  , extractvalue_instruction:value_type[Insn] = Type

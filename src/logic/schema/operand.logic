@@ -42,7 +42,13 @@ lang:physical:capacity[`constant] = 8388608.
 constant:type[C] = Type -> constant(C), type(Type).
 constant:value[C] = Val -> constant(C), string(Val).
 
+schema:sanity(), constant(C)
+ ->
+   constant:type[C] = _.
 
+schema:sanity(), constant(C)
+ ->
+   constant:value[C] = _.
 
 
 // Auxiliary Predicates

@@ -489,9 +489,9 @@ InstructionVisitor::visitExtractValueInst(const llvm::ExtractValueInst &EVI)
     // Constant Indices
     int index = 0;
 
-    for (const unsigned *i = EVI.idx_begin(), *e = EVI.idx_end(); i != e; ++i) {
-        gen.writeFact(pred::extract_value::index, iref, index, *i);
-        index++;
+    for (const unsigned *i = EVI.idx_begin(), *e = EVI.idx_end(); i != e; ++i)
+    {
+        gen.writeFact(pred::extract_value::index, iref, index++, *i);
     }
 
     gen.writeFact(pred::extract_value::nindices, iref, EVI.getNumIndices());

@@ -45,12 +45,19 @@ getelementptr_instruction:index_type(Insn, Type) <-
    operand:type[Idx] = Type.
 
 
-//----------------------------------------------------------------
+//------------------------------------------------------------------------------
 // [Determining Fields]
 //
-// In a similar manner as in a ‘extractvalue‘ instruction.
-// The resulting type for each dereference
-//----------------------------------------------------------------
+// !! In order to determine the exact field of the aggregate type
+// which we're trying to extract, we must be able to compute the
+// exact integer values that would be produced if we were to
+// evaluate the indexing constants, so that we can match against
+// the fields of the base argument !!
+//
+// We rely on a mapping from constant to integer (namely,
+// `constant:to_int`), to get back the actual value of *any* arbitrarily
+// complex constant index.
+//------------------------------------------------------------------------------
 
 instruction:next_index[Insn, Index] = Index + 1 <-
    getelementptr_instruction:index[Insn, Index] = _.
