@@ -77,6 +77,7 @@ namespace cclyzer
 
         struct alias : public predicate_group {
             static entity_pred_t id;
+            static pred_t name;
             static pred_t type;
             static pred_t linkage;
             static pred_t visibility;

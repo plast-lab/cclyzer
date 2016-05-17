@@ -59,15 +59,24 @@ global_variable:constant(Var) <-
 //------------------------------------------------------------------------------
 
 alias(Alias), alias:value(Alias:Ref) -> string(Ref).
+alias:name[Alias] = Name -> alias(Alias), string(Name).
 alias:type[Alias] = Type -> alias(Alias), type(Type).
 alias:linkage_type[Alias] = Link -> alias(Alias), linkage_type(Link).
 alias:visibility[Alias] = Vis -> alias(Alias), visibility(Vis).
 alias:aliasee[Alias] = Aliasee -> alias(Alias), constant(Aliasee).
 
+alias:by_name[Name] = Alias <-
+   alias:name[Alias] = Name.
+
 schema:sanity()
  , alias(Var)
  ->
    alias:type[Var] = _.
+
+schema:sanity()
+ , alias(Var)
+ ->
+   alias:name[Var] = _.
 
 schema:sanity()
  , alias:linkage_type[_] = Link

@@ -18,11 +18,14 @@ FactGenerator::writeGlobalAlias(const llvm::GlobalAlias& ga, const refmode_t& re
     // @<Name> = alias [Linkage] [Visibility] <AliaseeTy> @<Aliasee>
     //------------------------------------------------------------------
 
+    std::string name = "@" + ga.getName().str();
+
     // Get aliasee value as llvm constant
     const llvm::Constant *Aliasee = ga.getAliasee();
 
     // Record alias entity
     writeFact(pred::alias::id, refmode);
+    writeFact(pred::alias::name, refmode, name);
 
     // Serialize alias properties
     refmode_t visibility = refmodeOf(ga.getVisibility());
