@@ -78,9 +78,15 @@ _constant_references_function[OtherConstant] = FuncDecl
 
 // Mapping from call instructions to function declarations
 
-call_instruction:function_decl[Insn] = FuncDecl <-
+_instr_calls_func[Insn] = FuncDecl <-
    direct_call_instruction(Insn),
    call_instruction:raw_function[Insn] = Op,
+   operand:as_constant[Op] = C,
+   _constant_references_function[C] = FuncDecl.
+
+_instr_calls_func[Insn] = FuncDecl <-
+   direct_invoke_instruction(Insn),
+   invoke_instruction:raw_function[Insn] = Op,
    operand:as_constant[Op] = C,
    _constant_references_function[C] = FuncDecl.
 
@@ -89,6 +95,10 @@ call_instruction:function_decl[Insn] = FuncDecl <-
 direct_call_instruction(Insn)
  ->
    call_instruction:function[Insn] = _.
+
+direct_invoke_instruction(Insn)
+ ->
+   invoke_instruction:function[Insn] = _.
 
 
 //----------------------------------------------------------------------
@@ -113,9 +123,21 @@ function:definition[Func] = Func <-
 // map to it; else map to declaration
 
 call_instruction:function[Insn] = Func <-
-   call_instruction:function_decl[Insn] = FuncDecl,
+   call_instruction(Insn),
+   _instr_calls_func[Insn] = FuncDecl,
    function:definition[FuncDecl] = Func.
 
 call_instruction:function[Insn] = FuncDecl <-
-   call_instruction:function_decl[Insn] = FuncDecl,
+   call_instruction(Insn),
+   _instr_calls_func[Insn] = FuncDecl,
+   !function:definition[FuncDecl] = _.
+
+invoke_instruction:function[Insn] = Func <-
+   invoke_instruction(Insn),
+   _instr_calls_func[Insn] = FuncDecl,
+   function:definition[FuncDecl] = Func.
+
+invoke_instruction:function[Insn] = FuncDecl <-
+   invoke_instruction(Insn),
+   _instr_calls_func[Insn] = FuncDecl,
    !function:definition[FuncDecl] = _.

@@ -166,7 +166,7 @@ entity_pred_t instruction::unreachable("unreachable_instruction");
 entity_pred_t invoke::instr("invoke_instruction");
 entity_pred_t invoke::instr_direct("direct_invoke_instruction");
 entity_pred_t invoke::instr_indirect("indirect_invoke_instruction");
-operand_pred_t invoke::function("invoke_instruction:function");
+operand_pred_t invoke::function("invoke_instruction:raw_function");
 operand_pred_t invoke::arg("invoke_instruction:arg");
 pred_t invoke::calling_conv("invoke_instruction:calling_convention");
 pred_t invoke::ret_attr("invoke_instruction:return_attribute");

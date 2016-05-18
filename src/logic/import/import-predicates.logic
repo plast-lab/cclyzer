@@ -2900,38 +2900,6 @@ lang:physical:filePath[`_invoke_instruction:fn_attribute] = "facts/invoke_instru
 
 
 
-_invoke_instruction:function$by_constant(v0, v1) -> string(v0), string(v1).
-
-lang:physical:delimiter[`_invoke_instruction:function$by_constant] = "\t".
-lang:physical:filePath[`_invoke_instruction:function$by_constant] = "facts/invoke_instruction-function-by_constant.dlm".
-
-+instruction:id(e0:v0),
-+invoke_instruction(e0),
-+operand:by_constant[e1] = e2,
-+operand(e2),
-+invoke_instruction:function[e0] = e2
-<-
-   _invoke_instruction:function$by_constant(v0, v1),
-   constant:id(e1:v1),
-   constant(e1).
-
-_invoke_instruction:function$by_variable(v0, v1) -> string(v0), string(v1).
-
-lang:physical:delimiter[`_invoke_instruction:function$by_variable] = "\t".
-lang:physical:filePath[`_invoke_instruction:function$by_variable] = "facts/invoke_instruction-function-by_variable.dlm".
-
-+instruction:id(e0:v0),
-+invoke_instruction(e0),
-+operand:by_variable[e1] = e2,
-+operand(e2),
-+invoke_instruction:function[e0] = e2
-<-
-   _invoke_instruction:function$by_variable(v0, v1),
-   variable:id(e1:v1),
-   variable(e1).
-
-
-
 _invoke_instruction:normal_label(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_invoke_instruction:normal_label] = "\t".
@@ -2959,6 +2927,38 @@ lang:physical:filePath[`_invoke_instruction:param_attribute] = "facts/invoke_ins
 +invoke_instruction:param_attribute(e0,v1,e1)
 <-
    _invoke_instruction:param_attribute(v0, v1, v2).
+
+
+
+_invoke_instruction:raw_function$by_constant(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_invoke_instruction:raw_function$by_constant] = "\t".
+lang:physical:filePath[`_invoke_instruction:raw_function$by_constant] = "facts/invoke_instruction-raw_function-by_constant.dlm".
+
++instruction:id(e0:v0),
++invoke_instruction(e0),
++operand:by_constant[e1] = e2,
++operand(e2),
++invoke_instruction:raw_function[e0] = e2
+<-
+   _invoke_instruction:raw_function$by_constant(v0, v1),
+   constant:id(e1:v1),
+   constant(e1).
+
+_invoke_instruction:raw_function$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_invoke_instruction:raw_function$by_variable] = "\t".
+lang:physical:filePath[`_invoke_instruction:raw_function$by_variable] = "facts/invoke_instruction-raw_function-by_variable.dlm".
+
++instruction:id(e0:v0),
++invoke_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++invoke_instruction:raw_function[e0] = e2
+<-
+   _invoke_instruction:raw_function$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
 
 
 
