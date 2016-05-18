@@ -25,9 +25,12 @@ class_type(Type), class_type:name[Type] = Name
    string:substring[FQName, 7, N - 7] = Name. // 7 is the length of the prefix "%class."
 
 
-// Constructors for objects of this class type
+// Constructors and Destructors for objects of this class type
 
 class_type:constructor(Ctor, Type) ->
+   class_type(Type), function(Ctor).
+
+class_type:destructor(Ctor, Type) ->
    class_type(Type), function(Ctor).
 
 
@@ -53,6 +56,28 @@ class_type:constructor(Ctor, Type)
    string:split[FQClassName, ":", _] = ClassName,
    string:like(FQClassName, "%::" + ClassName),
    string:like(Signature, FQClassName + "::" + ClassName + "(%)").
+
+// Same for destructors
+
+class_type:destructor(Ctor, Type)
+ <-
+   class_type:name[Type] = ClassName,
+   function(Ctor), function:signature[Ctor] = Signature,
+   function:type[Ctor] = FType,
+   function_type:param[FType, 0] = PtrType,
+   pointer_type:component[PtrType] = Type,
+   string:like(Signature, ClassName + "::~" + ClassName + "(%)").
+
+class_type:destructor(Ctor, Type)
+ <-
+   class_type:name[Type] = FQClassName,
+   function(Ctor), function:signature[Ctor] = Signature,
+   function:type[Ctor] = FType,
+   function_type:param[FType, 0] = PtrType,
+   pointer_type:component[PtrType] = Type,
+   string:split[FQClassName, ":", _] = ClassName,
+   string:like(FQClassName, "%::" + ClassName),
+   string:like(Signature, FQClassName + "::~" + ClassName + "(%)").
 
 
 // Mandatory properties of class types
