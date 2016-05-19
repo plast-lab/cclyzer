@@ -1,0 +1,61 @@
+//------------------------------------------------------------------------------
+// Exceptions - Important functions in the libc++ ABI
+//------------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------
+// [Throw Function]
+//
+// Signature:
+// void __cxa_throw(void* thrown_exception,
+//                  struct std::type_info * tinfo,
+//                  void (*dest)(void*));
+//
+// The arguments are:
+//   * The address of the thrown exception object (which points to the
+//     throw value, after the header, as specified above).
+//   * A std::type_info pointer, giving the static type of the throw
+//     argument as a std::type_info pointer, used for matching
+//     potential catch sites to the thrown exception.
+//   * A destructor pointer to be used eventually to destroy the
+//     object.
+//
+// This routine never returns.
+//-------------------------------------------------------------------------
+
+cxx:throw_function[] = Func -> function_decl(Func).
+
+cxx:throw_function[] = Func <-
+   function:by_name["@__cxa_throw"] = Func,
+   function:type[Func] = FType,
+   function_type:param[FType, 0] = Type1,
+   function_type:param[FType, 1] = Type2,
+   function_type:param[FType, 2] = Type3,
+   pointer_type(Type1),
+   pointer_type(Type2),
+   pointer_type(Type3),
+   function_type:nparams[FType] = 3.
+
+
+//-------------------------------------------------------------------------
+// [Exception Allocation - Memory Management]
+//
+// Signature:
+// void* __cxa_allocate_exception(size_t thrown_size) throw();
+//
+// Allocates memory to hold the exception to be thrown. thrown_size is
+// the size of the exception object. Can allocate additional memory to
+// hold private data. If memory can not be allocated, call
+// std::terminate().
+//
+// Returns: A pointer to the memory allocated for the exception
+// object.
+//-------------------------------------------------------------------------
+
+cxx:alloc_exception[] = Func -> function_decl(Func).
+
+cxx:alloc_exception[] = Func, heap_alloc_function(Func) <-
+   function:by_name["@__cxa_allocate_exception"] = Func,
+   function:type[Func] = FType,
+   function_type:param[FType, 0] = Type,
+   integer_type(Type),
+   function_type:nparams[FType] = 1.

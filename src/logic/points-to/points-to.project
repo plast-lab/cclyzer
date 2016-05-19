@@ -34,6 +34,7 @@ constant-exprs.logic, active
 virtual-tables.logic, active
 class-type.logic, active
 cplusplus.logic, active
+cplusplus-exceptions.logic, active
 type-back-propagation.logic, active
 
 

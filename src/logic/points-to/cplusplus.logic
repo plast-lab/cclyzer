@@ -4,12 +4,12 @@
 
 // There must be a single allocating function
 
-new_function[] = Func -> function_decl(Func).
+cxx:new_function[] = Func -> function_decl(Func).
 
 // Consider only functions with a single parameter of integer type, no
 // definition, and whose unmangled name contains the keyword `new`
 
-new_function[] = Func, heap_alloc_function(Func)
+cxx:new_function[] = Func, heap_alloc_function(Func)
  <-
    function:signature[Func] = Signature,
    function:type[Func] = FType,
@@ -22,7 +22,7 @@ new_function[] = Func, heap_alloc_function(Func)
 // Introduce new heap allocation selector
 
 heap_allocation:by_new[Insn] = HeapAlloc <-
-   new_function[] = Func,
+   cxx:new_function[] = Func,
    call_instruction:function[Insn] = Func,
    heap_allocation:by_instruction[Insn] = HeapAlloc.
 
