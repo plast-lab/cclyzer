@@ -51,7 +51,7 @@ constructor:class_type[Ctor] = ClassType <-
 // `Alloc`. Note that the latter may be initialized by many
 // constructors, unless it is of a base type.
 
-_init_by_ctor(Type, Ctor, InFunction, Alloc)
+init_by_ctor(Type, Ctor, InFunction, Alloc)
  <-
    instruction:function[InitInsn] = InFunction,
    callgraph:edge(Ctor, InitInsn),
@@ -68,7 +68,7 @@ allocation:type[HeapAlloc] = Type <-
    heap_allocation:by_new[AllocInsn] = HeapAlloc,
    allocation:size[HeapAlloc] = Size,
    type:size[Type] = Size,
-   _init_by_ctor(Type, _, InFunction, HeapAlloc).
+   init_by_ctor(Type, _, InFunction, HeapAlloc).
 
 
 //----------------------------------------------------
@@ -82,7 +82,7 @@ class_instance(Alloc) <-
 
 class_instance:constructor[Alloc] = Ctor <-
    allocation:type[Alloc] = Type,
-   _init_by_ctor(Type, Ctor, _, Alloc),
+   init_by_ctor(Type, Ctor, _, Alloc),
    basic_allocation(Alloc).
 
 
@@ -108,7 +108,7 @@ secondary_superclass(Supertype, Type) ->
 primary_superclass[Type] = Supertype <-
    class_instance:constructor[Alloc] = Ctor,
    constructor:class_type[Ctor] = Type,
-   _init_by_ctor(Supertype, _, Ctor, Alloc),
+   init_by_ctor(Supertype, _, Ctor, Alloc),
    struct_type:field[Type, 0] = UnpaddedType,
    struct_type:nfields[UnpaddedType] = NFields,
    type_compatible:up_to_field(Supertype, UnpaddedType, NFields - 1).
@@ -124,7 +124,7 @@ secondary_superclass(Supertype, Type) <-
    alloc_aliases(BaseAlloc, BaseAlloc0),     // redundant opt clause
    alloc_subregion:base[Alloc] = BaseAlloc0, // reduntant opt clause
    alloc_subregion:at_field[BaseAlloc0, Index] = Alloc,
-   _init_by_ctor(Supertype, _, Ctor, Alloc),
+   init_by_ctor(Supertype, _, Ctor, Alloc),
    struct_type:field[Type, Index] = UnpaddedType,
    struct_type:nfields[UnpaddedType] = NFields,
    type_compatible:up_to_field(Supertype, UnpaddedType, NFields - 1),
@@ -182,7 +182,7 @@ class_instance:vtable[Alloc] = VTable
 
 vtable:class_type[VTable] = Type
  <-
-   _init_by_ctor(Type, Ctor, _, Alloc),
+   init_by_ctor(Type, Ctor, _, Alloc),
    instruction:function[StoreInsn] = Ctor,
    store_instruction:value[StoreInsn] = Value,
    store_instruction:address[StoreInsn] = Pointer,

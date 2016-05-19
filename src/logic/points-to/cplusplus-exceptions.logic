@@ -72,7 +72,15 @@ heap_allocation:by_alloc_exc[Insn] = HeapAlloc
    heap_allocation:by_instruction[Insn] = HeapAlloc.
 
 // Compute size
-allocation:size[HeapAlloc] = Size <-
-   heap_allocation:by_alloc_exc[Insn] = HeapAlloc,
+allocation:size[ExcObj] = Size <-
+   heap_allocation:by_alloc_exc[Insn] = ExcObj,
    call_instruction:arg[Insn, 0] = SizeOp,
    operand:to_int[SizeOp] = Size.
+
+// Infer its type
+allocation:type[ExcObj] = Type <-
+   instruction:function[AllocInsn] = InFunction,
+   heap_allocation:by_alloc_exc[AllocInsn] = ExcObj,
+   allocation:size[ExcObj] = Size,
+   type:size[Type] = Size,
+   init_by_ctor(Type, _, InFunction, ExcObj).
