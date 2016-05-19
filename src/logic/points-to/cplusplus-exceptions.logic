@@ -59,3 +59,20 @@ cxx:alloc_exception[] = Func, heap_alloc_function(Func) <-
    function_type:param[FType, 0] = Type,
    integer_type(Type),
    function_type:nparams[FType] = 1.
+
+// Exception Object
+exception_object(Alloc) -> allocation(Alloc).
+
+// Introduce new heap allocation selector
+heap_allocation:by_alloc_exc[Insn] = HeapAlloc
+ , exception_object(HeapAlloc)
+ <-
+   cxx:alloc_exception[] = Func,
+   call_instruction:function[Insn] = Func,
+   heap_allocation:by_instruction[Insn] = HeapAlloc.
+
+// Compute size
+allocation:size[HeapAlloc] = Size <-
+   heap_allocation:by_alloc_exc[Insn] = HeapAlloc,
+   call_instruction:arg[Insn, 0] = SizeOp,
+   operand:to_int[SizeOp] = Size.
