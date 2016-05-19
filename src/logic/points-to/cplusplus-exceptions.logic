@@ -3,40 +3,6 @@
 //------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------
-// [Throw Function]
-//
-// Signature:
-// void __cxa_throw(void* thrown_exception,
-//                  struct std::type_info * tinfo,
-//                  void (*dest)(void*));
-//
-// The arguments are:
-//   * The address of the thrown exception object (which points to the
-//     throw value, after the header, as specified above).
-//   * A std::type_info pointer, giving the static type of the throw
-//     argument as a std::type_info pointer, used for matching
-//     potential catch sites to the thrown exception.
-//   * A destructor pointer to be used eventually to destroy the
-//     object.
-//
-// This routine never returns.
-//-------------------------------------------------------------------------
-
-cxx:throw_function[] = Func -> function_decl(Func).
-
-cxx:throw_function[] = Func <-
-   function:by_name["@__cxa_throw"] = Func,
-   function:type[Func] = FType,
-   function_type:param[FType, 0] = Type1,
-   function_type:param[FType, 1] = Type2,
-   function_type:param[FType, 2] = Type3,
-   pointer_type(Type1),
-   pointer_type(Type2),
-   pointer_type(Type3),
-   function_type:nparams[FType] = 3.
-
-
-//-------------------------------------------------------------------------
 // [Exception Allocation - Memory Management]
 //
 // Signature:
@@ -84,3 +50,94 @@ allocation:type[ExcObj] = Type <-
    allocation:size[ExcObj] = Size,
    type:size[Type] = Size,
    init_by_ctor(Type, _, InFunction, ExcObj).
+
+
+//-------------------------------------------------------------------------
+// [Throw Function]
+//
+// Signature:
+// void __cxa_throw(void* thrown_exception,
+//                  struct std::type_info * tinfo,
+//                  void (*dest)(void*));
+//
+// The arguments are:
+//   * The address of the thrown exception object (which points to the
+//     throw value, after the header, as specified above).
+//   * A std::type_info pointer, giving the static type of the throw
+//     argument as a std::type_info pointer, used for matching
+//     potential catch sites to the thrown exception.
+//   * A destructor pointer to be used eventually to destroy the
+//     object.
+//
+// This routine never returns.
+//-------------------------------------------------------------------------
+
+cxx:throw_function[] = Func -> function_decl(Func).
+
+cxx:throw_function[] = Func <-
+   function:by_name["@__cxa_throw"] = Func,
+   function:type[Func] = FType,
+   function_type:param[FType, 0] = Type1,
+   function_type:param[FType, 1] = Type2,
+   function_type:param[FType, 2] = Type3,
+   pointer_type(Type1),
+   pointer_type(Type2),
+   pointer_type(Type3),
+   function_type:nparams[FType] = 3.
+
+
+//------------------------------------------------
+// * Throw Instr throws exception object
+//------------------------------------------------
+
+cxx:throw_instruction(ThrowInsn) <-
+   cxx:throw_function[] = ThrowFunc,
+   callgraph:inv_edge(ThrowInsn, ThrowFunc).
+
+throws_exception(ExcObj, ThrowInsn) <-
+   cxx:throw_instruction(ThrowInsn),
+   ( call_instruction:arg[ThrowInsn, 0] = Exc
+   ; invoke_instruction:arg[ThrowInsn, 0] = Exc ),
+   operand_points_to(ExcObj, Exc).
+
+//------------------------------------------------
+// * Throw Instr associates typeinfo object
+//------------------------------------------------
+
+throws_exception_type(ExcTypeInfo, ThrowInsn) <-
+   cxx:throw_instruction(ThrowInsn),
+   ( call_instruction:arg[ThrowInsn, 1] = TypeInfoArg
+   ; invoke_instruction:arg[ThrowInsn, 1] = TypeInfoArg ),
+   operand_points_to(TypeInfoObj, TypeInfoArg),
+   _type_info_by_alloc[TypeInfoObj] =  ExcTypeInfo.
+
+_type_info_by_alloc[Obj] =  ExcTypeInfo <-
+   typeinfo(ExcTypeInfo),
+   global_allocation:by_variable[ExcTypeInfo] = Obj.
+
+//------------------------------------------------
+// * Throw Instr registers destructor
+//------------------------------------------------
+
+throws_exception_destructor(Dtor, ThrowInsn) <-
+   cxx:throw_instruction(ThrowInsn),
+   ( call_instruction:arg[ThrowInsn, 2] = DtorArg
+   ; invoke_instruction:arg[ThrowInsn, 2] = DtorArg ),
+   operand_points_to(Alloc, DtorArg),
+   function:by_location[Alloc] = Dtor.
+
+//-------------------------------------------------------------------------
+// The following is a generic catch-all relation that associates with
+// each throw instruction multiple destructor - typeinfo - exception
+// object triplets. Each triplet contains compatible elements.
+//-------------------------------------------------------------------------
+
+cxx:throws(Dtor, TypeInfo, ExcObj, ThrowInsn)
+ <-
+   throws_exception(ExcObj, ThrowInsn),
+   throws_exception_type(TypeInfo, ThrowInsn),
+   throws_exception_destructor(Dtor, ThrowInsn),
+   vtable:typeinfo[VTable] = TypeInfo,
+   vtable:class_type[VTable] = Type,
+   allocation:type[ExcObj] = Type,
+   class_type:destructor(Dtor, Type).

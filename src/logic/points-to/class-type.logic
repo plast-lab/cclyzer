@@ -30,8 +30,8 @@ class_type(Type), class_type:name[Type] = Name
 class_type:constructor(Ctor, Type) ->
    class_type(Type), function(Ctor).
 
-class_type:destructor(Ctor, Type) ->
-   class_type(Type), function(Ctor).
+class_type:destructor(Dtor, Type) ->
+   class_type(Type), function(Dtor).
 
 
 // To identify constructors we rely on the presence of unmangled
@@ -59,20 +59,20 @@ class_type:constructor(Ctor, Type)
 
 // Same for destructors
 
-class_type:destructor(Ctor, Type)
+class_type:destructor(Dtor, Type)
  <-
    class_type:name[Type] = ClassName,
-   function(Ctor), function:signature[Ctor] = Signature,
-   function:type[Ctor] = FType,
+   function(Dtor), function:signature[Dtor] = Signature,
+   function:type[Dtor] = FType,
    function_type:param[FType, 0] = PtrType,
    pointer_type:component[PtrType] = Type,
    string:like(Signature, ClassName + "::~" + ClassName + "(%)").
 
-class_type:destructor(Ctor, Type)
+class_type:destructor(Dtor, Type)
  <-
    class_type:name[Type] = FQClassName,
-   function(Ctor), function:signature[Ctor] = Signature,
-   function:type[Ctor] = FType,
+   function(Dtor), function:signature[Dtor] = Signature,
+   function:type[Dtor] = FType,
    function_type:param[FType, 0] = PtrType,
    pointer_type:component[PtrType] = Type,
    string:split[FQClassName, ":", _] = ClassName,
