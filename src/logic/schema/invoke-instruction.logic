@@ -7,7 +7,7 @@ terminator_instruction(Insn) <-
    invoke_instruction(Insn).
 
 // Function operand: can be either a constant or a variable
-invoke_instruction:raw_function[Insn] = Func ->
+invoke_instruction:__function[Insn] = Func ->
    invoke_instruction(Insn), operand(Func).
 
 // Resolved function of invoke instruction. Initially empty.
@@ -35,11 +35,11 @@ direct_invoke_instruction(Insn)   -> invoke_instruction(Insn).
 indirect_invoke_instruction(Insn) -> invoke_instruction(Insn).
 
 direct_invoke_instruction(Insn) <-
-   invoke_instruction:raw_function[Insn] = Func,
+   invoke_instruction:__function[Insn] = Func,
    operand:as_constant[Func] = _.
 
 indirect_invoke_instruction(Insn) <-
-   invoke_instruction:raw_function[Insn] = Func,
+   invoke_instruction:__function[Insn] = Func,
    operand:as_variable[Func] = _.
 
 
@@ -70,7 +70,7 @@ invoke_instruction:fn_attribute(Insn, Attr) ->
 //-----------------------------
 
 invoke_instruction:signature[Insn] = Type <-
-   invoke_instruction:raw_function[Insn] = Func,
+   invoke_instruction:__function[Insn] = Func,
    operand:type[Func] = PtrType,
    pointer_type:component[PtrType] = Type,
    function_type(Type).
@@ -120,7 +120,7 @@ invoke_instruction:exception_label[Insn] = Exception ->
 schema:sanity()
  , invoke_instruction(Insn)
  ->
-   invoke_instruction:raw_function[Insn] = _.
+   invoke_instruction:__function[Insn] = _.
 
 schema:sanity()
  , invoke_instruction(Insn)

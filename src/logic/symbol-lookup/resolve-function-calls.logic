@@ -80,13 +80,13 @@ _constant_references_function[OtherConstant] = FuncDecl
 
 _instr_calls_func[Insn] = FuncDecl <-
    direct_call_instruction(Insn),
-   call_instruction:raw_function[Insn] = Op,
+   call_instruction:__function[Insn] = Op,
    operand:as_constant[Op] = C,
    _constant_references_function[C] = FuncDecl.
 
 _instr_calls_func[Insn] = FuncDecl <-
    direct_invoke_instruction(Insn),
-   invoke_instruction:raw_function[Insn] = Op,
+   invoke_instruction:__function[Insn] = Op,
    operand:as_constant[Op] = C,
    _constant_references_function[C] = FuncDecl.
 

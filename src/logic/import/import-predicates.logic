@@ -612,6 +612,38 @@ lang:physical:filePath[`_br_uncond_instruction:dest] = "facts/br_uncond_instruct
 
 
 
+_call_instruction:__function$by_constant(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_call_instruction:__function$by_constant] = "\t".
+lang:physical:filePath[`_call_instruction:__function$by_constant] = "facts/call_instruction-__function-by_constant.dlm".
+
++instruction:id(e0:v0),
++call_instruction(e0),
++operand:by_constant[e1] = e2,
++operand(e2),
++call_instruction:__function[e0] = e2
+<-
+   _call_instruction:__function$by_constant(v0, v1),
+   constant:id(e1:v1),
+   constant(e1).
+
+_call_instruction:__function$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_call_instruction:__function$by_variable] = "\t".
+lang:physical:filePath[`_call_instruction:__function$by_variable] = "facts/call_instruction-__function-by_variable.dlm".
+
++instruction:id(e0:v0),
++call_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++call_instruction:__function[e0] = e2
+<-
+   _call_instruction:__function$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
 _call_instruction:arg$by_constant(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
 
 lang:physical:delimiter[`_call_instruction:arg$by_constant] = "\t".
@@ -686,38 +718,6 @@ lang:physical:filePath[`_call_instruction:param_attribute] = "facts/call_instruc
 +call_instruction:param_attribute(e0,v1,e1)
 <-
    _call_instruction:param_attribute(v0, v1, v2).
-
-
-
-_call_instruction:raw_function$by_constant(v0, v1) -> string(v0), string(v1).
-
-lang:physical:delimiter[`_call_instruction:raw_function$by_constant] = "\t".
-lang:physical:filePath[`_call_instruction:raw_function$by_constant] = "facts/call_instruction-raw_function-by_constant.dlm".
-
-+instruction:id(e0:v0),
-+call_instruction(e0),
-+operand:by_constant[e1] = e2,
-+operand(e2),
-+call_instruction:raw_function[e0] = e2
-<-
-   _call_instruction:raw_function$by_constant(v0, v1),
-   constant:id(e1:v1),
-   constant(e1).
-
-_call_instruction:raw_function$by_variable(v0, v1) -> string(v0), string(v1).
-
-lang:physical:delimiter[`_call_instruction:raw_function$by_variable] = "\t".
-lang:physical:filePath[`_call_instruction:raw_function$by_variable] = "facts/call_instruction-raw_function-by_variable.dlm".
-
-+instruction:id(e0:v0),
-+call_instruction(e0),
-+operand:by_variable[e1] = e2,
-+operand(e2),
-+call_instruction:raw_function[e0] = e2
-<-
-   _call_instruction:raw_function$by_variable(v0, v1),
-   variable:id(e1:v1),
-   variable(e1).
 
 
 
@@ -2823,6 +2823,38 @@ lang:physical:filePath[`_inttoptr_instruction:to_type] = "facts/inttoptr_instruc
 
 
 
+_invoke_instruction:__function$by_constant(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_invoke_instruction:__function$by_constant] = "\t".
+lang:physical:filePath[`_invoke_instruction:__function$by_constant] = "facts/invoke_instruction-__function-by_constant.dlm".
+
++instruction:id(e0:v0),
++invoke_instruction(e0),
++operand:by_constant[e1] = e2,
++operand(e2),
++invoke_instruction:__function[e0] = e2
+<-
+   _invoke_instruction:__function$by_constant(v0, v1),
+   constant:id(e1:v1),
+   constant(e1).
+
+_invoke_instruction:__function$by_variable(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_invoke_instruction:__function$by_variable] = "\t".
+lang:physical:filePath[`_invoke_instruction:__function$by_variable] = "facts/invoke_instruction-__function-by_variable.dlm".
+
++instruction:id(e0:v0),
++invoke_instruction(e0),
++operand:by_variable[e1] = e2,
++operand(e2),
++invoke_instruction:__function[e0] = e2
+<-
+   _invoke_instruction:__function$by_variable(v0, v1),
+   variable:id(e1:v1),
+   variable(e1).
+
+
+
 _invoke_instruction:arg$by_constant(v0, v1, v2) -> string(v0), int[64](v1), string(v2).
 
 lang:physical:delimiter[`_invoke_instruction:arg$by_constant] = "\t".
@@ -2927,38 +2959,6 @@ lang:physical:filePath[`_invoke_instruction:param_attribute] = "facts/invoke_ins
 +invoke_instruction:param_attribute(e0,v1,e1)
 <-
    _invoke_instruction:param_attribute(v0, v1, v2).
-
-
-
-_invoke_instruction:raw_function$by_constant(v0, v1) -> string(v0), string(v1).
-
-lang:physical:delimiter[`_invoke_instruction:raw_function$by_constant] = "\t".
-lang:physical:filePath[`_invoke_instruction:raw_function$by_constant] = "facts/invoke_instruction-raw_function-by_constant.dlm".
-
-+instruction:id(e0:v0),
-+invoke_instruction(e0),
-+operand:by_constant[e1] = e2,
-+operand(e2),
-+invoke_instruction:raw_function[e0] = e2
-<-
-   _invoke_instruction:raw_function$by_constant(v0, v1),
-   constant:id(e1:v1),
-   constant(e1).
-
-_invoke_instruction:raw_function$by_variable(v0, v1) -> string(v0), string(v1).
-
-lang:physical:delimiter[`_invoke_instruction:raw_function$by_variable] = "\t".
-lang:physical:filePath[`_invoke_instruction:raw_function$by_variable] = "facts/invoke_instruction-raw_function-by_variable.dlm".
-
-+instruction:id(e0:v0),
-+invoke_instruction(e0),
-+operand:by_variable[e1] = e2,
-+operand(e2),
-+invoke_instruction:raw_function[e0] = e2
-<-
-   _invoke_instruction:raw_function$by_variable(v0, v1),
-   variable:id(e1:v1),
-   variable(e1).
 
 
 

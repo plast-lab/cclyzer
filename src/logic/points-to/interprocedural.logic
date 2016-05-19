@@ -77,7 +77,7 @@ callgraph:edge(Callee, CallerInsn), reachable_function(Callee)
  <-
    reachable_instruction(CallerInsn),
    indirect_call_instruction(CallerInsn),
-   call_instruction:raw_function[CallerInsn] = Op,
+   call_instruction:__function[CallerInsn] = Op,
    operand_points_to(Alloc, Op),
    function:by_location[Alloc] = Callee,
    function(Callee),
@@ -92,7 +92,7 @@ callgraph:edge(Callee, CallerInsn), reachable_function(Callee)
  <-
    reachable_instruction(CallerInsn),
    invoke_instruction(CallerInsn),
-   invoke_instruction:raw_function[CallerInsn] = Op,
+   invoke_instruction:__function[CallerInsn] = Op,
    operand_points_to(Alloc, Op),
    function:by_location[Alloc] = Callee,
    function(Callee),

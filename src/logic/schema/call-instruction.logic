@@ -5,7 +5,7 @@ call_instruction(Insn) -> instruction(Insn).
 
 
 // Function operand: can be either a constant or a variable
-call_instruction:raw_function[Insn] = Func ->
+call_instruction:__function[Insn] = Func ->
    call_instruction(Insn), operand(Func).
 
 // Resolved function of call instruction. Initially empty.
@@ -38,16 +38,16 @@ indirect_call_instruction(Insn) -> call_instruction(Insn).
 asm_call_instruction(Insn) -> call_instruction(Insn).
 
 direct_call_instruction(Insn) <-
-   call_instruction:raw_function[Insn] = Func,
+   call_instruction:__function[Insn] = Func,
    operand:as_constant[Func] = Constant,
    !inline_asm(Constant).
 
 indirect_call_instruction(Insn) <-
-   call_instruction:raw_function[Insn] = Func,
+   call_instruction:__function[Insn] = Func,
    operand:as_variable[Func] = _.
 
 asm_call_instruction(Insn) <-
-   call_instruction:raw_function[Insn] = Func,
+   call_instruction:__function[Insn] = Func,
    operand:as_constant[Func] = Constant,
    inline_asm(Constant).
 
@@ -82,7 +82,7 @@ call_instruction:signature[Insn] = Type ->
    call_instruction(Insn), function_type(Type).
 
 call_instruction:signature[Insn] = Type <-
-   call_instruction:raw_function[Insn] = Func,
+   call_instruction:__function[Insn] = Func,
    operand:type[Func] = PtrType,
    pointer_type:component[PtrType] = Type,
    function_type(Type).
@@ -113,7 +113,7 @@ call_instruction:return_type[Insn] = Type <-
 schema:sanity()
  , call_instruction(Insn)
  ->
-   call_instruction:raw_function[Insn] = _.
+   call_instruction:__function[Insn] = _.
 
 schema:sanity()
  , call_instruction(Insn)
