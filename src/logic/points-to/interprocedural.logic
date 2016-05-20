@@ -4,17 +4,15 @@
 
 // Flow of actual arguments regardless of instruction type
 function:actual_arg(Callee, Index, Argument) ->
-   function(Callee), int[64](Index), operand(Argument).
+   function_decl(Callee), int[64](Index), operand(Argument).
 
 function:actual_arg(Callee, Index, Argument) <-
    call_instruction:arg[CallInsn, Index] = Argument,
-   callgraph:edge(Callee, CallInsn),
-   function(Callee).
+   callgraph:edge(Callee, CallInsn).
 
 function:actual_arg(Callee, Index, Argument) <-
    invoke_instruction:arg[InvokeInsn, Index] = Argument,
-   callgraph:edge(Callee, InvokeInsn),
-   function(Callee).
+   callgraph:edge(Callee, InvokeInsn).
 
 // Identify variable arguments for variadic functions
 function:va_actual_arg(Callee, Index, Argument) <-
