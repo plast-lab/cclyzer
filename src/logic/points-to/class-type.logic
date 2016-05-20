@@ -28,10 +28,10 @@ class_type(Type), class_type:name[Type] = Name
 // Constructors and Destructors for objects of this class type
 
 class_type:constructor(Ctor, Type) ->
-   class_type(Type), function(Ctor).
+   class_type(Type), function_decl(Ctor).
 
 class_type:destructor(Dtor, Type) ->
-   class_type(Type), function(Dtor).
+   class_type(Type), function_decl(Dtor).
 
 
 // To identify constructors we rely on the presence of unmangled
@@ -40,7 +40,7 @@ class_type:destructor(Dtor, Type) ->
 class_type:constructor(Ctor, Type)
  <-
    class_type:name[Type] = ClassName,
-   function(Ctor), function:signature[Ctor] = Signature,
+   function:signature[Ctor] = Signature,
    function:type[Ctor] = FType,
    function_type:param[FType, 0] = PtrType,
    pointer_type:component[PtrType] = Type,
@@ -49,7 +49,7 @@ class_type:constructor(Ctor, Type)
 class_type:constructor(Ctor, Type)
  <-
    class_type:name[Type] = FQClassName,
-   function(Ctor), function:signature[Ctor] = Signature,
+   function:signature[Ctor] = Signature,
    function:type[Ctor] = FType,
    function_type:param[FType, 0] = PtrType,
    pointer_type:component[PtrType] = Type,
@@ -62,7 +62,7 @@ class_type:constructor(Ctor, Type)
 class_type:destructor(Dtor, Type)
  <-
    class_type:name[Type] = ClassName,
-   function(Dtor), function:signature[Dtor] = Signature,
+   function:signature[Dtor] = Signature,
    function:type[Dtor] = FType,
    function_type:param[FType, 0] = PtrType,
    pointer_type:component[PtrType] = Type,
@@ -71,7 +71,7 @@ class_type:destructor(Dtor, Type)
 class_type:destructor(Dtor, Type)
  <-
    class_type:name[Type] = FQClassName,
-   function(Dtor), function:signature[Dtor] = Signature,
+   function:signature[Dtor] = Signature,
    function:type[Dtor] = FType,
    function_type:param[FType, 0] = PtrType,
    pointer_type:component[PtrType] = Type,
