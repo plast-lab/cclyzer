@@ -109,11 +109,21 @@ cxx:throw_instruction:typeinfo(ExcTypeInfo, ThrowInsn) <-
    ( call_instruction:arg[ThrowInsn, 1] = TypeInfoArg
    ; invoke_instruction:arg[ThrowInsn, 1] = TypeInfoArg ),
    operand_points_to(TypeInfoObj, TypeInfoArg),
-   _type_info_by_alloc[TypeInfoObj] =  ExcTypeInfo.
+   _type_info_by_alloc[TypeInfoObj] = ExcTypeInfo.
 
-_type_info_by_alloc[Obj] =  ExcTypeInfo <-
+_type_info_by_alloc[Obj] = ExcTypeInfo <-
    typeinfo(ExcTypeInfo),
    global_allocation:by_variable[ExcTypeInfo] = Obj.
+
+// A typeinfo structure may have external linkage. Try to match it by
+// name.
+
+typeinfo(Var) <-
+   linkage_type:external[] = ExternalLinkage,
+   global_variable:linkage_type[Var] = ExternalLinkage,
+   global_variable:name[Var] = Name,
+   string:like(Name, "@_ZTI%").
+
 
 //------------------------------------------------
 // * Throw Instr registers destructor
@@ -125,6 +135,13 @@ cxx:throw_instruction:destructor(Dtor, ThrowInsn) <-
    ; invoke_instruction:arg[ThrowInsn, 2] = DtorArg ),
    operand_points_to(Alloc, DtorArg),
    function:by_location[Alloc] = Dtor.
+
+cxx:throw_instruction:no_dtor(ThrowInsn) <-
+   null_location[] = Null,
+   cxx:throw_instruction(ThrowInsn),
+   ( call_instruction:arg[ThrowInsn, 2] = DtorArg
+   ; invoke_instruction:arg[ThrowInsn, 2] = DtorArg ),
+   operand_points_to(Null, DtorArg).
 
 //-------------------------------------------------------------------------
 // The following is a generic catch-all relation that associates with
