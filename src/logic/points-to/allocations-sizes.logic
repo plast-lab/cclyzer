@@ -66,17 +66,27 @@ array_allocation(HeapAlloc) <-
 // Compute sizes when available
 
 allocation:size[HeapAlloc] = Size <-
-   heap_allocation:by_malloc[Insn] = HeapAlloc,
+   heap_allocation:by_instruction[Insn] = HeapAlloc,
+   heap_alloc_instruction:size[Insn] = Size.
+
+heap_alloc_instruction:size[Insn] = Size ->
+   instruction(Insn), int[64](Size).
+
+heap_alloc_instruction:size[Insn] = Size <-
+   function:by_name["@malloc"] = Func,
+   call_instruction:function[Insn] = Func,
    call_instruction:arg[Insn, 0] = Operand,
    operand:to_int[Operand] = Size.
 
-allocation:size[HeapAlloc] = Size <-
-   heap_allocation:by_realloc[Insn] = HeapAlloc,
+heap_alloc_instruction:size[Insn] = Size <-
+   function:by_name["@realloc"] = Func,
+   call_instruction:function[Insn] = Func,
    call_instruction:arg[Insn, 1] = Operand,
    operand:to_int[Operand] = Size.
 
-allocation:size[HeapAlloc] = Size * Nmemb <-
-   heap_allocation:by_calloc[Insn] = HeapAlloc,
+heap_alloc_instruction:size[Insn] = Size * Nmemb <-
+   function:by_name["@realloc"] = Func,
+   call_instruction:function[Insn] = Func,
    call_instruction:arg[Insn, 0] = NmembOp,
    call_instruction:arg[Insn, 1] = SizeOp,
    operand:to_int[NmembOp] = Nmemb,
