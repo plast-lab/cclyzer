@@ -28,13 +28,13 @@ heap_allocation:by_new[Insn] = HeapAlloc <-
 
 // Compute size
 
-heap_alloc_instruction:size[Insn] = Size <-
+alloc_instr_size[Insn] = Size <-
    cxx:new_function[] = Func,
    call_instruction:function[Insn] = Func,
    call_instruction:arg[Insn, 0] = Operand,
    operand:to_int[Operand] = Size.
 
-heap_alloc_instruction:size[Insn] = Size <-
+alloc_instr_size[Insn] = Size <-
    cxx:new_function[] = Func,
    invoke_instruction:function[Insn] = Func,
    invoke_instruction:arg[Insn, 0] = Operand,
