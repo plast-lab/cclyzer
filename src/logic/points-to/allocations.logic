@@ -69,7 +69,8 @@ heap_allocation:by_instruction[Insn] = HeapAlloc,
 var_points_to(HeapAlloc, Var)
  <-
    heap_alloc_function(Func),
-   call_instruction:function[Insn] = Func,
+   ( call_instruction:function[Insn] = Func
+   ; invoke_instruction:function[Insn] = Func),
    reachable_instruction(Insn),
    instruction:to[Insn] = Var.
 

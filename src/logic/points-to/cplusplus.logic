@@ -23,7 +23,8 @@ cxx:new_function[] = Func, heap_alloc_function(Func)
 
 heap_allocation:by_new[Insn] = HeapAlloc <-
    cxx:new_function[] = Func,
-   call_instruction:function[Insn] = Func,
+   ( call_instruction:function[Insn] = Func
+   ; invoke_instruction:function[Insn] = Func),
    heap_allocation:by_instruction[Insn] = HeapAlloc.
 
 // Compute size
