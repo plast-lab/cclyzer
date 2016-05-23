@@ -6,6 +6,9 @@ lang:constructor(`heap_allocation:by_type_instruction).
 
 // Mark all heap allocations that do not carry any type information
 
+untyped_allocation(Insn, Alloc) ->
+   instruction(Insn), allocation(Alloc).
+
 untyped_allocation(Insn, Alloc) <-
    heap_allocation:by_malloc[Insn] = Alloc
  ; heap_allocation:by_calloc[Insn] = Alloc
