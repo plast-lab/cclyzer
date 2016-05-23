@@ -26,7 +26,7 @@ type_indication(Type, Alloc) <-
    bitcast_instruction:from[Insn] = FromOperand,
    operand_points_to(Alloc, FromOperand),
    untyped_allocation(AllocInsn, Alloc),
-   !alloc_instr_size[AllocInsn] = _,
+   !sized_alloc_instr[AllocInsn] = _,
    pointer_type:component[PtrType] = Type.
 
 type_indication(Type, Alloc) <-
@@ -36,7 +36,7 @@ type_indication(Type, Alloc) <-
    operand_points_to(Alloc, FromOperand),
    untyped_allocation(AllocInsn, Alloc),
    pointer_type:component[PtrType] = Type,
-   alloc_instr_size[AllocInsn] = Size,
+   sized_alloc_instr[AllocInsn] = Size,
    type:size[Type] = Size.
 
 
