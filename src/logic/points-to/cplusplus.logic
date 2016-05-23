@@ -55,6 +55,9 @@ sized_alloc_instr[Insn] = Size <-
 constructor:class_type[Ctor] = ClassType <-
    class_type:constructor(Ctor, ClassType).
 
+destructor:class_type[Dtor] = ClassType <-
+   class_type:destructor(Dtor, ClassType).
+
 // We have a call to a constructor function (associated with type
 // `Type`) inside function `InFunction`, where `this` points to
 // `Alloc`. Note that the latter may be initialized by many
