@@ -24,6 +24,7 @@ class_type(Type), class_type:name[Type] = Name
    string:length[FQName] = N,
    string:substring[FQName, 7, N - 7] = Name. // 7 is the length of the prefix "%class."
 
+// TODO: Augment with struct types
 
 // Constructors and Destructors for objects of this class type
 
