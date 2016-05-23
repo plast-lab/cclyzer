@@ -119,7 +119,7 @@ _type_info_by_alloc[Obj] = ExcTypeInfo <-
 // A typeinfo structure may have external linkage. Try to match it by
 // name.
 
-typeinfo(Var) <-
+typeinfo(Var), external_typeinfo(Var) <-
    linkage_type:external[] = ExternalLinkage,
    global_variable:linkage_type[Var] = ExternalLinkage,
    global_variable:name[Var] = Name,
