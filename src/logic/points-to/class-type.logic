@@ -54,6 +54,20 @@ class_type:tpl_part[Type] = TplPart
    SuffixLength = Length - PrefixLength,
    string:substring[FQName, PrefixLength, SuffixLength] = TplPart.
 
+class_type:unqualified_name[Type] = NoTplPart
+ <-
+   class_type:no_tpl_part[Type] = NoTplPart,
+   string:notlike(NoTplPart, "%::%").
+
+class_type:unqualified_name[Type] = Component
+ <-
+   class_type:no_tpl_part[Type] = NoTplPart,
+   string:split[NoTplPart, ":", _] = Component,
+   string:length[Component] = N,
+   N > 0,
+   string:like(NoTplPart, "%::" + Component).
+
+
 // TODO: Augment with struct types
 
 //-------------------------------------------------------------------
