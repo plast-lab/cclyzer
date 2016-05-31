@@ -30,6 +30,8 @@ typeinfo_vtable(VT, Name) <-
 
 typeinfo_vtable:baseclass(VT, Name) <-
    typeinfo_vtable(VT, Name),
+   string:notlike(Name, "%__si_class_type_info%"),
+   string:notlike(Name, "%__vmi_class_type_info%"),
    string:like(Name, "%__class_type_info%").
 
 typeinfo_vtable:single_inheritance(VT, Name) <-
@@ -65,10 +67,22 @@ constant_contains_vptr(VTable, Outer) <-
 
 // Identify the actual type info objects throught their vpointers
 
-typeinfo(TypeInfo) <-
+typeinfo(TypeInfo), typeinfo:vtable[TypeInfo] = VTable <-
    constant_contains_vptr(VTable, Initializer),
    typeinfo_vtable(VTable, _),
    global_variable:initializer[TypeInfo] = Initializer.
+
+typeinfo:baseclass(TypeInfo) <-
+   typeinfo:vtable[TypeInfo] = VT,
+   typeinfo_vtable:baseclass(VT, _).
+
+typeinfo:single_inheritance(TypeInfo) <-
+   typeinfo:vtable[TypeInfo] = VT,
+   typeinfo_vtable:single_inheritance(VT, _).
+
+typeinfo:multiple_inheritance(TypeInfo) <-
+   typeinfo:vtable[TypeInfo] = VT,
+   typeinfo_vtable:multiple_inheritance(VT, _).
 
 
 // Now identify vtables
