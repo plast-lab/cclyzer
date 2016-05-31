@@ -36,6 +36,7 @@ virtual-tables.logic, active
 class-type.logic, active
 cplusplus.logic, active
 cplusplus-exceptions.logic, active
+cplusplus-atexit.logic, active
 
 
 // Common queries

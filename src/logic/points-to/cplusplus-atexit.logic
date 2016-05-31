@@ -1,0 +1,57 @@
+//------------------------------------------------------------------------------
+// [Atexit Function - Itanium C++ ABI]
+//
+// Signature:
+// int __cxa_atexit(void (*func) (void *), void * arg, void * dso_handle);
+//
+// Registers a destructor function to be called by exit() or when a
+// shared library is unloaded.
+//
+// Its arguments are:
+//   * A pointer to the destructor function
+//   * The receiver object of the call
+//   * A handle to the shared library
+//
+// This routine never returns.
+//------------------------------------------------------------------------------
+
+cxx:atexit_function[] = Func -> function_decl(Func).
+
+cxx:atexit_function[] = Func <-
+   function:by_name["@__cxa_atexit"] = Func,
+   function:type[Func] = FType,
+   function_type:param[FType, 0] = Type1,
+   function_type:param[FType, 1] = Type2,
+   function_type:param[FType, 2] = Type3,
+   pointer_type:component[Type1] = CompType1,
+   function_type(CompType1),
+   pointer_type:integer(Type2),
+   pointer_type:integer(Type3),
+   function_type:nparams[FType] = 3.
+
+registers_dtor_atexit(DtorOperand, RecvOperand) <-
+   cxx:atexit_function[] = AtExit,
+   callgraph:edge(AtExit, Insn),
+   callgraph:inv_edge(Insn, AtExit), // redundant OPT clause
+   call_instruction:arg[Insn, 0] = DtorOperand,
+   call_instruction:arg[Insn, 1] = RecvOperand.
+
+
+// Model effects of `__cxa_atexit`
+
+reachable_function(Dtor)
+ , __dtor_accepts_recv(RecvObj, Dtor)
+ <-
+   registers_dtor_atexit(DtorOperand, RecvOperand),
+   operand_points_to(DtorObj, DtorOperand),
+   operand_points_to(SomeObj, RecvOperand),
+   alloc_aliases(RecvObj, SomeObj),
+   allocation:type[RecvObj] = RecvType,
+   function:by_location[DtorObj] = Dtor,
+   function:type[Dtor] = DtorType,
+   function_type:param[DtorType, 0] = PtrType,
+   pointer_type:component[PtrType] = RecvType.
+
+var_points_to(RecvObj, This) <-
+   __dtor_accepts_recv(RecvObj, Dtor),
+   function:param[Dtor, 0] = This.
