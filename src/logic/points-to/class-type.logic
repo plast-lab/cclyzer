@@ -24,6 +24,8 @@ class_type(Type), class_type:name[Type] = Name
    string:length[FQName] = N,
    string:substring[FQName, 7, N - 7] = Name. // 7 is the length of the prefix "%class."
 
+// TODO: Augment with struct types
+
 //--------------------------------
 // Class Type Name Parsing
 //--------------------------------
@@ -32,6 +34,8 @@ class_type(Type), class_type:name[Type] = Name
 class_type:template_instance(Type) <-
    class_type:name[Type] = FQName,
    string:like(FQName, "%<%>").
+
+// Name without the template part
 
 class_type:no_tpl_part[Type] = NoTplPart
  <-
@@ -44,6 +48,9 @@ class_type:no_tpl_part[Type] = FQName
    class_type:name[Type] = FQName,
    !class_type:template_instance(Type).
 
+
+// Template part of name
+
 class_type:tpl_part[Type] = TplPart
  <-
    class_type:name[Type] = FQName,
@@ -53,6 +60,9 @@ class_type:tpl_part[Type] = TplPart
    string:length[FQName] = Length,
    SuffixLength = Length - PrefixLength,
    string:substring[FQName, PrefixLength, SuffixLength] = TplPart.
+
+
+// Name without namespace qualifier
 
 class_type:unqualified_name[Type] = NoTplPart
  <-
@@ -68,7 +78,35 @@ class_type:unqualified_name[Type] = Component
    string:like(NoTplPart, "%::" + Component).
 
 
-// TODO: Augment with struct types
+// Drop the LLVM version suffix (e.g., '.145')
+
+class_type:simple_name[Type] = SimpleName
+ <-
+   class_type:unqualified_name[Type] = Name,
+   string:split[Name, ".", 0] = SimpleName.
+
+class_type:simple_name[Type] = Name
+ <-
+   class_type:unqualified_name[Type] = Name,
+   string:notlike(Name, "%.%").
+
+
+// Namespace
+
+class_type:namespace[Type] = ""
+ <-
+   class_type:no_tpl_part[Type] = Name,
+   string:notlike(Name, "%::%").
+
+class_type:namespace[Type] = Namespace
+ <-
+   class_type:no_tpl_part[Type] = FQName,
+   class_type:unqualified_name[Type] = Name,
+   string:like(FQName, "%::%"),
+   string:length[FQName] = Length,
+   string:length[Name] = N,
+   string:substring[FQName, 0, Length - N - 2] = Namespace.
+
 
 //-------------------------------------------------------------------
 // Constructors and Destructors for objects of this class type
