@@ -47,8 +47,14 @@ callgraph:fn_edge(Callee, Caller) <-
 // Base Case: The @main function is our entry point.
 
 entry_point(Main) <-
-   function:name[Main] = "@main",
+   function:by_name["@main"] = Main,
    function(Main).
+
+// C Runtime performs initializations before running main() by calling
+// functions (e.g., global constructors) insided special sections.
+
+entry_point(Func) <-
+   function:section[Func] = ".text.startup".
 
 
 // Entry points are reachable by definition
