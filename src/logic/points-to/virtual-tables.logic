@@ -102,6 +102,16 @@ vtable(VT, Name), vtable:typeinfo[VT] = TypeInfo <-
    _constant_contains_typeinfo(TypeInfo, TIC).
 
 
+// Recover hints of class hierarchy by identifying cases of typeinfo
+// objects inside other typeinfo objects
+
+_typeinfo_contains_typeinfo[Outer, Index] = Inner <-
+   typeinfo(Outer),
+   global_variable:initializer[Outer] = Initializer,
+   constant_struct:index[Initializer, Index] = TIC,
+   _constant_contains_typeinfo(Inner, TIC).
+
+
 // Find the functions stored inside each vtable
 
 vtable:function[VT, Index] = Function ->
