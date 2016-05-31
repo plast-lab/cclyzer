@@ -69,6 +69,9 @@ FactGenerator::writeGlobalVar(const llvm::GlobalVariable& gv, const refmode_t& r
     refmode_t varType    = refmodeOf(gv.getType()->getElementType());
     refmode_t thrLocMode = refmodeOf(gv.getThreadLocalMode());
 
+    // Record unmangled variable name
+    writeFact(pred::global_var::unmangl_name, refmode, demangle(gv.getName().data()));
+
     // Record external linkage
     if (!gv.hasInitializer() && gv.hasExternalLinkage())
         writeFact(pred::global_var::linkage, refmode, "external");

@@ -10,6 +10,7 @@ pred_t basic_block::predecessor("basicblock:pred_aux");
 
 entity_pred_t global_var::id("global_variable");
 pred_t global_var::name("global_variable:name");
+pred_t global_var::unmangl_name("global_variable:unmangled_name");
 pred_t global_var::type("global_variable:type");
 pred_t global_var::initializer("global_variable:initializer");
 pred_t global_var::section("global_variable:section");

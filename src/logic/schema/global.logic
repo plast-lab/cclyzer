@@ -8,6 +8,9 @@ global_variable:type[Var] = Type ->
 global_variable:name[Var] = Name ->
    global_variable(Var), string(Name).
 
+global_variable:unmangled_name[Var] = Name ->
+   global_variable(Var), string(Name).
+
 global_variable:by_name[Name] = Var <-
    global_variable:name[Var] = Name.
 
