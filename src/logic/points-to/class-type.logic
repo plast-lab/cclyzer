@@ -119,50 +119,29 @@ class_type:destructor(Dtor, Type) ->
    class_type(Type), function_decl(Dtor).
 
 
-// To identify constructors we rely on the presence of unmangled
-// function names, which should be computed during fact generation.
+// To identify constructors we rely on the Itanium ABI mangling rules
 
 class_type:constructor(Ctor, Type)
  <-
-   class_type:name[Type] = ClassName,
-   function:signature[Ctor] = Signature,
+   class_type(Type),
+   function:name[Ctor] = FuncName,
    function:type[Ctor] = FType,
    function_type:param[FType, 0] = PtrType,
    pointer_type:component[PtrType] = Type,
-   string:like(Signature, ClassName + "::" + ClassName + "(%)").
-
-class_type:constructor(Ctor, Type)
- <-
-   class_type:name[Type] = FQClassName,
-   function:signature[Ctor] = Signature,
-   function:type[Ctor] = FType,
-   function_type:param[FType, 0] = PtrType,
-   pointer_type:component[PtrType] = Type,
-   string:split[FQClassName, ":", _] = ClassName,
-   string:like(FQClassName, "%::" + ClassName),
-   string:like(Signature, FQClassName + "::" + ClassName + "(%)").
+   ( string:like(FuncName, "%C1%")
+   ; string:like(FuncName, "%C2%")).
 
 // Same for destructors
 
 class_type:destructor(Dtor, Type)
  <-
-   class_type:name[Type] = ClassName,
-   function:signature[Dtor] = Signature,
+   class_type(Type),
+   function:name[Dtor] = FuncName,
    function:type[Dtor] = FType,
    function_type:param[FType, 0] = PtrType,
    pointer_type:component[PtrType] = Type,
-   string:like(Signature, ClassName + "::~" + ClassName + "(%)").
-
-class_type:destructor(Dtor, Type)
- <-
-   class_type:name[Type] = FQClassName,
-   function:signature[Dtor] = Signature,
-   function:type[Dtor] = FType,
-   function_type:param[FType, 0] = PtrType,
-   pointer_type:component[PtrType] = Type,
-   string:split[FQClassName, ":", _] = ClassName,
-   string:like(FQClassName, "%::" + ClassName),
-   string:like(Signature, FQClassName + "::~" + ClassName + "(%)").
+   ( string:like(FuncName, "%D1%")
+   ; string:like(FuncName, "%D2%")).
 
 
 // Mandatory properties of class types
