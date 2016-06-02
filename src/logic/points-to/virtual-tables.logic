@@ -112,6 +112,27 @@ _typeinfo_contains_typeinfo[Outer, Index] = Inner <-
    _constant_contains_typeinfo(Inner, TIC).
 
 
+typeinfo:base_class[TypeInfo, Offset] = BaseTypeInfo ->
+   global_variable(TypeInfo), int[64](Offset), global_variable(BaseTypeInfo).
+
+
+// Single inheritance case
+typeinfo:base_class[TypeInfo, 0] = BaseTypeInfo <-
+   typeinfo:single_inheritance(TypeInfo),
+   _typeinfo_contains_typeinfo[TypeInfo, 2] = BaseTypeInfo.
+
+// Multiple inheritance case
+typeinfo:base_class[TypeInfo, Offset] = BaseTypeInfo <-
+   typeinfo:multiple_inheritance(TypeInfo),
+   _typeinfo_contains_typeinfo[TypeInfo, Index] = BaseTypeInfo,
+   global_variable:initializer[TypeInfo] = Initializer,
+   constant_struct:index[Initializer, Index + 1] = Constant,
+   constant:to_int[Constant] = OffsetMask,
+   Offset = OffsetMask / 256.
+
+// see RTTI Layout of Itanium C++ ABI
+
+
 // Find the functions stored inside each vtable
 
 vtable:function[VT, Index] = Function ->
