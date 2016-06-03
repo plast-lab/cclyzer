@@ -24,11 +24,53 @@ class_type(Type), class_type:name[Type] = Name
    string:length[FQName] = N,
    string:substring[FQName, 7, N - 7] = Name. // 7 is the length of the prefix "%class."
 
+class_type:by_name[Name] = Type <-
+   class_type:name[Type] = Name.
+
 // TODO: Augment with struct types
 
-//--------------------------------
+
+//------------------------------------------------------------------------------
+// Virtual Table - Type Info - Class Type Associations
+//------------------------------------------------------------------------------
+
+// `typeinfo of v-table` : defined in virtual-tables.logic
+vtable:typeinfo[VT] = TypeInfo ->
+   global_variable(VT), global_variable(TypeInfo).
+
+// Extract class name from unmangled type info name. The latter is of
+// the form: typeinfo for /CLASSNAME/
+_typeinfo_class_name[TypeInfo] = ClassName <-
+   typeinfo(TypeInfo),
+   global_variable:unmangled_name[TypeInfo] = TIName,
+   string:like(TIName, "typeinfo for %"),
+   string:length[TIName] = N,
+   string:substring[TIName, 13, N - 13] = ClassName.
+
+// `typeinfo of class`
+class_type:typeinfo[ClassType] = TypeInfo <-
+   _typeinfo_class_name[TypeInfo] = ClassName,
+   class_type:by_name[ClassName] = ClassType.
+
+
+// Extract class name from unmangled vtable name. The latter is of
+// the form: vtable for /CLASSNAME/
+_vtable_class_name[VTable] = ClassName <-
+   vtable(VTable, _),
+   global_variable:unmangled_name[VTable] = UnmangledName,
+   string:like(UnmangledName, "vtable for %"),
+   string:length[UnmangledName] = N,
+   string:substring[UnmangledName, 11, N - 11] = ClassName.
+
+// `v-table of class`
+class_type:vtable[ClassType] = VTable <-
+   _vtable_class_name[VTable] = ClassName,
+   class_type:by_name[ClassName] = ClassType.
+
+
+//------------------------------------------------------------------------------
 // Class Type Name Parsing
-//--------------------------------
+//------------------------------------------------------------------------------
 
 // Class types that are template instantiations
 class_type:template_instance(Type) <-
@@ -108,9 +150,9 @@ class_type:namespace[Type] = Namespace
    string:substring[FQName, 0, Length - N - 2] = Namespace.
 
 
-//-------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // Constructors and Destructors for objects of this class type
-//-------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 class_type:constructor(Ctor, Type) ->
    class_type(Type), function_decl(Ctor).
