@@ -29,6 +29,14 @@ namespace cclyzer { namespace predicates
         static pred_t scope;
     };
 
+    // file entries
+    struct di_file : public predicate_group {
+        static entity_pred_t id;
+        static pred_t filename;
+        static pred_t directory;
+    };
+
+
 }} // end of namespace cclyzer::predicates
 
 #endif

@@ -8,6 +8,9 @@ di:scope(Entry) -> di:entry(Entry).
 di:global_variable(Entry) -> di:entry(Entry).
 di:typedef_entry(Entry)   -> di:entry(Entry).
 
+di:file(Entry) -> di:entry(Entry).
+
 lang:entity(`di:scope).
 lang:entity(`di:global_variable).
 lang:entity(`di:typedef_entry).
+lang:entity(`di:file).

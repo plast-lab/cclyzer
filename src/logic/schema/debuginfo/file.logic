@@ -1,0 +1,7 @@
+di:file(Entry) -> di:entry(Entry).
+
+di:file:filename[Entry] = Name ->
+   di:file(Entry), string(Name).
+
+di:file:directory[Entry] = Directory ->
+   di:file(Entry), string(Directory).

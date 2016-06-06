@@ -1013,6 +1013,32 @@ lang:physical:filePath[`_constant_vector:size] = "facts/constant_vector-size.dlm
 
 
 
+_di:file:directory(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_di:file:directory] = "\t".
+lang:physical:filePath[`_di:file:directory] = "facts/di-file-directory.dlm".
+
++di:entry:id(e0:v0),
++di:file(e0),
++di:file:directory[e0] = v1
+<-
+   _di:file:directory(v0, v1).
+
+
+
+_di:file:filename(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_di:file:filename] = "\t".
+lang:physical:filePath[`_di:file:filename] = "facts/di-file-filename.dlm".
+
++di:entry:id(e0:v0),
++di:file(e0),
++di:file:filename[e0] = v1
+<-
+   _di:file:filename(v0, v1).
+
+
+
 _di:global_variable:name(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_di:global_variable:name] = "\t".

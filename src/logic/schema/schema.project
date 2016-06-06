@@ -79,3 +79,4 @@ activate-sanity.logic, inactive
 // DWARF-like Debug Metadata Info Extensions
 debuginfo/entry.logic, active
 debuginfo/global_variable.logic, active
+debuginfo/file.logic, active

@@ -457,3 +457,8 @@ entity_pred_t di_typedef_entry::id("di:typedef_entry");
 entity_pred_t di_global_var::id("di:global_variable");
 pred_t di_global_var::name("di:global_variable:name");
 pred_t di_global_var::scope("di:global_variable:scope");
+
+// File Entry
+entity_pred_t di_file::id("di:file");
+pred_t di_file::filename("di:file:filename");
+pred_t di_file::directory("di:file:directory");
