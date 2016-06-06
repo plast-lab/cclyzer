@@ -143,30 +143,6 @@ secondary_superclass(Supertype, Type) <-
    Index != 0.
 
 
-// Union of the above two kinds of superclasses
-
-direct_superclass(Supertype, Type) <-
-   primary_superclass[Type] = Supertype
- ; secondary_superclass(Supertype, Type).
-
-
-// Inverse relation
-
-direct_subclass(Subtype, Type) <-
-   direct_superclass(Type, Subtype).
-
-// Transitive closure computation to compute all superclasses of each
-// type
-
-superclass(Supertype, Type) <-
-   direct_superclass(Supertype, Type).
-
-superclass(Supertype, Type) <-
-   direct_superclass(Supertype, IntermType),
-   superclass(IntermType, Type).
-
-
-
 //----------------------------------------------------
 // Find vtable associated with given class instance
 //----------------------------------------------------

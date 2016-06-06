@@ -69,6 +69,71 @@ class_type:vtable[ClassType] = VTable <-
 
 
 //------------------------------------------------------------------------------
+// Recovering Class Hierarchy
+//------------------------------------------------------------------------------
+
+primary_superclass[Type] = Supertype ->
+   struct_type(Type), struct_type(Supertype).
+
+secondary_superclass(Supertype, Type) ->
+   struct_type(Type), struct_type(Supertype).
+
+
+_typeinfo_class_type[TypeInfo] = ClassType <-
+   class_type:typeinfo[ClassType] = TypeInfo.
+
+primary_superclass[Type] = Supertype <-
+   typeinfo:base_class[TypeInfo, 0] = BaseTypeInfo,
+   _typeinfo_class_type[TypeInfo] = Type,
+   _typeinfo_class_type[BaseTypeInfo] = Supertype.
+
+secondary_superclass(Supertype, Type) <-
+   typeinfo:base_class[TypeInfo, Index] = BaseTypeInfo,
+   _typeinfo_class_type[TypeInfo] = Type,
+   _typeinfo_class_type[BaseTypeInfo] = Supertype,
+   Index > 0.
+
+
+// Union of the above two kinds of superclasses
+
+direct_superclass(Supertype, Type) <-
+   primary_superclass[Type] = Supertype
+ ; secondary_superclass(Supertype, Type).
+
+
+// Inverse relation
+
+direct_subclass(Subtype, Type) <-
+   direct_superclass(Type, Subtype).
+
+// Transitive closure computation to compute all superclasses of each
+// type
+
+superclass(Supertype, Type) <-
+   direct_superclass(Supertype, Type).
+
+superclass(Supertype, Type) <-
+   direct_superclass(Supertype, IntermType),
+   superclass(IntermType, Type).
+
+
+// Constraints according to typeinfo recorded inheritance
+
+typeinfo:baseclass(TypeInfo)
+ , _typeinfo_class_type[TypeInfo] = ClassType
+ ->
+   !direct_superclass(_, ClassType).
+
+
+typeinfo:single_inheritance(TypeInfo)
+ , _typeinfo_class_type[TypeInfo] = ClassType
+ , direct_superclass(Supertype1, ClassType)
+ , direct_superclass(Supertype2, ClassType)
+ ->
+   Supertype1 = Supertype2.
+
+
+//------------------------------------------------------------------------------
 // Class Type Name Parsing
 //------------------------------------------------------------------------------
 
