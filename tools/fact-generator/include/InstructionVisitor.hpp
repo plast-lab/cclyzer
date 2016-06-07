@@ -132,7 +132,7 @@ class cclyzer::InstructionVisitor
         writeInstrOperand(pred::from_operand, iref, instr.getOperand(0));
 
         // Record type being casted to
-        gen.writeFact(pred::to_type, iref, gen.refmodeOf(instr.getType()));
+        gen.writeFact(pred::to_type, iref, gen.recordType(instr.getType()));
     }
 
     // Process binary instruction
@@ -158,7 +158,7 @@ class cclyzer::InstructionVisitor
         AtomicOrdering order = instr.getOrdering();
         SynchronizationScope synchScope = instr.getSynchScope();
 
-        std::string atomic = gen.refmodeOf(order);
+        refmode_t atomic = gen.refmode<AtomicOrdering>(order);
 
         // default synchScope: crossthread
         if (synchScope == SingleThread)

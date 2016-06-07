@@ -1,28 +1,24 @@
-#include <sstream>
 #include <map>
 #include <boost/algorithm/string.hpp>
 #include <llvm/Support/raw_ostream.h>
-#include <llvm/IR/InlineAsm.h>
 #include <llvm/IR/Metadata.h>
 #include "RefmodeEngineImpl.hpp"
-#include "llvm_enums.hpp"
 
-using cclyzer::RefmodeEngine;
-
-using boost::algorithm::trim;
+using std::string;
+using llvm::raw_string_ostream;
 using llvm::cast;
 using llvm::dyn_cast;
 using llvm::isa;
-using llvm::raw_string_ostream;
-using std::string;
+using cclyzer::RefmodeEngine;
+using cclyzer::refmode_t;
 
-namespace enums = cclyzer::utils;
+using boost::algorithm::trim;
 
 
 // Refmode for LLVM Values
 
-cclyzer::refmode_t
-RefmodeEngine::Impl::refmodeOf(const llvm::Value * Val) const
+refmode_t
+RefmodeEngine::Impl::refmodeOf(const llvm::Value * Val)
 {
     string rv;
     raw_string_ostream rso(rv);
@@ -67,7 +63,8 @@ RefmodeEngine::Impl::refmodeOf(const llvm::Value * Val) const
                 // at least for LLVM version 3.7.{0,1}. So instead, we
                 // manually construct the refmodes ourselves.
 
-                rso << refmodeOf(type) << " " << refmodeOf(innerValue);
+                rso << refmode<llvm::Type>(*type)
+                    << " " << refmodeOf(innerValue);
             }
         }
 
@@ -107,108 +104,8 @@ print:
 }
 
 
-// Refmode for LLVM Functions
-
-cclyzer::refmode_t
-RefmodeEngine::Impl::refmodeOfFunction(const llvm::Function * func, bool prefix) const
-{
-    string functionName = string(func->getName());
-
-    if (!prefix)
-        return functionName;
-
-    std::ostringstream refmode;
-
-    withGlobalContext(refmode) << functionName;
-    return refmode.str();
-}
-
-
-cclyzer::refmode_t
-RefmodeEngine::Impl::refmodeOfBasicBlock(const llvm::BasicBlock *bb, bool prefix) const
-{
-    string bbName = refmodeOf(bb);
-
-    if (!prefix)
-        return bbName;
-
-    std::ostringstream refmode;
-
-    withContext<llvm::Function>(refmode) << "[basicblock]" << bbName;
-    return refmode.str();
-}
-
-
-cclyzer::refmode_t
-RefmodeEngine::Impl::refmodeOfInstruction(const llvm::Instruction *instr, unsigned index) const
-{
-    std::ostringstream refmode;
-
-    // BasicBlock context is intented so as not to qualify instruction
-    // id by its surrounding basic block's id
-
-    withContext<llvm::Function>(refmode) << std::to_string(index);
-    return refmode.str();
-}
-
-
-cclyzer::refmode_t
-RefmodeEngine::Impl::refmodeOfConstant(const llvm::Constant *c)
-{
-    std::ostringstream refmode;
-
-    withContext<llvm::Instruction>(refmode)
-        << constantIndex++ << ':' << refmodeOf(c);
-
-    return refmode.str();
-}
-
-cclyzer::refmode_t
-RefmodeEngine::Impl::refmodeOfInlineAsm(const llvm::InlineAsm *asmVal)
-{
-    std::ostringstream refmode;
-
-    withContext<llvm::Instruction>(refmode)
-        << ':' << "<asm>";
-
-    return refmode.str();
-}
-
-
-cclyzer::refmode_t
-RefmodeEngine::Impl::refmodeOfLocalValue(const llvm::Value *val, bool prefix) const
-{
-    if (const llvm::BasicBlock *bb = dyn_cast<llvm::BasicBlock>(val))
-        return refmodeOfBasicBlock(bb, prefix);
-
-    refmode_t id = refmodeOf(val);
-
-    if (!prefix)
-        return id;
-
-    std::ostringstream refmode;
-
-    withContext<llvm::Function>(refmode) << id;
-    return refmode.str();
-}
-
-
-cclyzer::refmode_t
-RefmodeEngine::Impl::refmodeOfGlobalValue(const llvm::GlobalValue *val, bool prefix) const
-{
-    string id = refmodeOf(val);
-
-    if (!prefix)
-        return id;
-
-    std::ostringstream refmode;
-
-    withGlobalContext(refmode) << id;
-    return refmode.str();
-}
-
-
-void RefmodeEngine::Impl::computeNumbering(
+void
+RefmodeEngine::Impl::computeNumbering(
     const llvm::Function *func, std::map<const llvm::Value*,unsigned> &numbering)
 {
     unsigned counter = 0;
@@ -239,61 +136,4 @@ void RefmodeEngine::Impl::computeNumbering(
     }
 
     assert(!numbering.empty() && "asked for numbering but numbering was no-op");
-}
-
-
-// Refmodes for LLVM Enums
-
-cclyzer::refmode_t
-RefmodeEngine::Impl::refmodeOf(llvm::GlobalValue::LinkageTypes LT) const {
-    return enums::to_string(LT);
-}
-
-cclyzer::refmode_t
-RefmodeEngine::Impl::refmodeOf(llvm::GlobalValue::VisibilityTypes Vis) const {
-    return enums::to_string(Vis);
-}
-
-cclyzer::refmode_t
-RefmodeEngine::Impl::refmodeOf(llvm::GlobalVariable::ThreadLocalMode TLM) const {
-    return enums::to_string(TLM);
-}
-
-cclyzer::refmode_t
-RefmodeEngine::Impl::refmodeOf(llvm::CallingConv::ID CC) const {
-    return enums::to_string(CC);
-}
-
-cclyzer::refmode_t
-RefmodeEngine::Impl::refmodeOf(llvm::AtomicOrdering AO) const {
-    return enums::to_string(AO);
-}
-
-
-// Refmodes for LLVM Type
-
-cclyzer::refmode_t
-RefmodeEngine::Impl::refmodeOf(const llvm::Type *type) const
-{
-    string type_str;
-    raw_string_ostream rso(type_str);
-
-    if (type->isStructTy()) {
-        const llvm::StructType *STy = cast<llvm::StructType>(type);
-
-        if (STy->isLiteral()) {
-            type->print(rso);
-            return rso.str();
-        }
-
-        if (STy->hasName()) {
-            rso << "%" << STy->getName();
-            return rso.str();
-        }
-        rso << "%\"type " << STy << "\"";
-    }
-    else {
-        type->print(rso);
-    }
-    return rso.str();
 }

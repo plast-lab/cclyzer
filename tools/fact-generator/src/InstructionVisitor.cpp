@@ -28,7 +28,7 @@ InstructionVisitor::recordInstruction(
     const entity_pred_t &pred, const llvm::Instruction &instr)
 {
     // Get refmode of enclosing instruction
-    refmode_t iref = gen.refmodeOfInstruction(&instr);
+    refmode_t iref = gen.refmode<llvm::Instruction>(instr);
 
     gen.writeFact(pred, iref);
     return iref;
@@ -57,7 +57,7 @@ InstructionVisitor::recordValue(const llvm::Value *Val)
     }
     else {
         // Compute refmode for variable value
-        refmode = gen.refmodeOfLocalValue(Val);
+        refmode = gen.refmode<llvm::Value>(*Val);
 
         // Record variable value
         gen.recordVariable(refmode, type);
@@ -415,7 +415,7 @@ InstructionVisitor::visitInvokeInst(const llvm::InvokeInst &II)
 
     // TODO: Why not CallingConv::C
     if (II.getCallingConv() != llvm::CallingConv::C) {
-        refmode_t cconv = gen.refmodeOf(II.getCallingConv());
+        refmode_t cconv = gen.refmode(II.getCallingConv());
         gen.writeFact(pred::invoke::calling_conv, iref, cconv);
     }
 }
@@ -439,8 +439,9 @@ void
 InstructionVisitor::visitAllocaInst(const llvm::AllocaInst &AI)
 {
     refmode_t iref = recordInstruction(pred::alloca::instr, AI);
+    refmode_t type = gen.recordType(AI.getAllocatedType());
 
-    gen.writeFact(pred::alloca::type, iref, gen.refmodeOf(AI.getAllocatedType()));
+    gen.writeFact(pred::alloca::type, iref, type);
 
     if(AI.isArrayAllocation())
         writeInstrOperand(pred::alloca::size, iref, AI.getArraySize());
@@ -472,8 +473,9 @@ void
 InstructionVisitor::visitVAArgInst(const llvm::VAArgInst &VI)
 {
     refmode_t iref = recordInstruction(pred::va_arg::instr, VI);
+    refmode_t type = gen.recordType(VI.getType());
 
-    gen.writeFact(pred::va_arg::type, iref, gen.refmodeOf(VI.getType()));
+    gen.writeFact(pred::va_arg::type, iref, type);
     writeInstrOperand(pred::va_arg::va_list, iref, VI.getPointerOperand());
 }
 
@@ -533,8 +535,8 @@ InstructionVisitor::visitAtomicCmpXchgInst(const llvm::AtomicCmpXchgInst &AXI)
     llvm::AtomicOrdering failureOrd = AXI.getFailureOrdering();
     llvm::SynchronizationScope synchScope = AXI.getSynchScope();
 
-    string successOrdStr = gen.refmodeOf(successOrd);
-    string failureOrdStr = gen.refmodeOf(failureOrd);
+    string successOrdStr = gen.refmode<llvm::AtomicOrdering>(successOrd);
+    string failureOrdStr = gen.refmode<llvm::AtomicOrdering>(failureOrd);
 
     // default synchScope: crossthread
     if (synchScope == llvm::SingleThread)
@@ -610,9 +612,10 @@ InstructionVisitor::visitPHINode(const llvm::PHINode &PHI)
 {
     // <result> = phi <ty> [ <val0>, <label0>], ...
     refmode_t iref = recordInstruction(pred::phi::instr, PHI);
+    refmode_t type = gen.recordType(PHI.getType());
 
     // type
-    gen.writeFact(pred::phi::type, iref, gen.refmodeOf(PHI.getType()));
+    gen.writeFact(pred::phi::type, iref, type);
 
     for (unsigned op = 0; op < PHI.getNumIncomingValues(); ++op)
     {
@@ -661,8 +664,9 @@ void
 InstructionVisitor::visitLandingPadInst(const llvm::LandingPadInst &LI)
 {
     refmode_t iref = recordInstruction(pred::landingpad::instr, LI);
+    refmode_t type = gen.recordType(LI.getType());
 
-    gen.writeFact(pred::landingpad::type, iref, gen.refmodeOf(LI.getType()));
+    gen.writeFact(pred::landingpad::type, iref, type);
 
     // cleanup
     if (LI.isCleanup())
@@ -719,7 +723,7 @@ InstructionVisitor::visitCallInst(const llvm::CallInst &CI)
         gen.writeFact(pred::call::tail, iref);
 
     if (CI.getCallingConv() != llvm::CallingConv::C) {
-        refmode_t cconv = gen.refmodeOf(CI.getCallingConv());
+        refmode_t cconv = gen.refmode(CI.getCallingConv());
         gen.writeFact(pred::call::calling_conv, iref, cconv);
     }
 
@@ -751,7 +755,7 @@ InstructionVisitor::visitDbgDeclareInst(const llvm::DbgDeclareInst &DDI)
         return;
 
     // Obtain the refmode of the local variable
-    refmode_t refmode = gen.refmodeOfLocalValue(address);
+    refmode_t refmode = gen.refmode<llvm::Value>(*address);
 
     // Record source variable name
     if (const llvm::DILocalVariable *var = DDI.getVariable()) {

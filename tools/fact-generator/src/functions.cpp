@@ -17,13 +17,10 @@ FactGenerator::writeFunction(
     const llvm::Function& func,
     const refmode_t& funcref)
 {
-    // Record function type
-    types.insert(func.getFunctionType());
-
     // Serialize function properties
-    refmode_t visibility = refmodeOf(func.getVisibility());
-    refmode_t linkage = refmodeOf(func.getLinkage());
-    refmode_t typeSignature = refmodeOf(func.getFunctionType());
+    refmode_t visibility = refmode(func.getVisibility());
+    refmode_t linkage = refmode(func.getLinkage());
+    refmode_t typeSignature = recordType(func.getFunctionType());
 
     // Record function type signature
     writeFact(pred::function::type, funcref, typeSignature);
@@ -54,7 +51,7 @@ FactGenerator::writeFunction(
 
     // Record calling convection if it not defaults to C
     if (func.getCallingConv() != llvm::CallingConv::C) {
-        refmode_t cconv = refmodeOf(func.getCallingConv());
+        refmode_t cconv = refmode(func.getCallingConv());
         writeFact(pred::function::calling_conv, funcref, cconv);
     }
 
@@ -97,7 +94,7 @@ FactGenerator::writeFunction(
              arg = func.arg_begin(), arg_end = func.arg_end();
          arg != arg_end; arg++)
     {
-        refmode_t varId = refmodeOfLocalValue(arg);
+        refmode_t varId = refmode<llvm::Value>(*arg);
 
         writeFact(pred::function::param, funcref, index++, varId);
         recordVariable(varId, arg->getType());

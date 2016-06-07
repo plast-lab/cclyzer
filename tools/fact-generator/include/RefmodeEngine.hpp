@@ -12,50 +12,85 @@
 #include <llvm/IR/Instructions.h>
 
 namespace cclyzer {
+
     namespace refmode {
         /* Type aliases */
         typedef std::string refmode_t;
     }
 
-    /* Forward Declartion */
-    class RefmodeEngine;
-
     typedef refmode::refmode_t refmode_t;
-}
 
 
-class cclyzer::RefmodeEngine {
-  public:
-    RefmodeEngine();
-    ~RefmodeEngine();
+    class RefmodeEngine {
+      public:
+        RefmodeEngine();
+        ~RefmodeEngine();
 
-    // Simple value-based refmodes
-    refmode_t refmodeOf(llvm::GlobalValue::LinkageTypes LT) const;
-    refmode_t refmodeOf(llvm::GlobalValue::VisibilityTypes Vis) const;
-    refmode_t refmodeOf(llvm::GlobalVariable::ThreadLocalMode TLM) const;
-    refmode_t refmodeOf(llvm::CallingConv::ID CC) const;
-    refmode_t refmodeOf(llvm::AtomicOrdering AO) const;
-    refmode_t refmodeOf(const llvm::Type *type) const;
+        // Context modifying methods
+        void enterContext(const llvm::Value *val);
+        void exitContext();
+        void enterModule(const llvm::Module *Mod, const std::string &path);
+        void exitModule();
 
-    // Fully qualified refmodes that guarantee uniqueness
-    refmode_t refmodeOfFunction(const llvm::Function *) const;
-    refmode_t refmodeOfBasicBlock(const llvm::BasicBlock *) const;
-    refmode_t refmodeOfConstant(const llvm::Constant *) const;
-    refmode_t refmodeOfInlineAsm(const llvm::InlineAsm *) const;
-    refmode_t refmodeOfLocalValue(const llvm::Value *) const;
-    refmode_t refmodeOfGlobalValue(const llvm::GlobalValue *) const;
-    refmode_t refmodeOfInstruction(const llvm::Instruction *) const;
+        // Compute refmode for obj, given some context state
+        template<typename T>
+        refmode_t refmode(const T& obj) const;
 
-    // Context modifying methods
-    void enterContext(const llvm::Value *val);
-    void exitContext();
-    void enterModule(const llvm::Module *Mod, const std::string &path);
-    void exitModule();
+      private:
+        /* Opaque Pointer Idiom */
+        class Impl;
+        mutable Impl *impl;
+    };
 
-  private:
-    /* Opaque Pointer Idiom */
-    class Impl;
-    Impl *impl;
-};
+
+    //-------------------------------------------------------------------
+    // Explicit instantiation declarations
+    //-------------------------------------------------------------------
+
+    extern template refmode_t
+    RefmodeEngine::refmode<llvm::Type>(const llvm::Type & ) const;
+
+    extern template refmode_t
+    RefmodeEngine::refmode<llvm::Instruction>(const llvm::Instruction & ) const;
+
+    extern template refmode_t
+    RefmodeEngine::refmode<llvm::Constant>(const llvm::Constant & ) const;
+
+    extern template refmode_t
+    RefmodeEngine::refmode<llvm::BasicBlock>(const llvm::BasicBlock & ) const;
+
+    extern template refmode_t
+    RefmodeEngine::refmode<llvm::Function>(const llvm::Function & ) const;
+
+    extern template refmode_t
+    RefmodeEngine::refmode<llvm::InlineAsm>(const llvm::InlineAsm & ) const;
+
+    extern template refmode_t
+    RefmodeEngine::refmode<llvm::GlobalValue>(const llvm::GlobalValue & ) const;
+
+    extern template refmode_t
+    RefmodeEngine::refmode<llvm::Value>(const llvm::Value & ) const;
+
+    extern template refmode_t
+    RefmodeEngine::refmode<llvm::GlobalValue::LinkageTypes>(
+        const llvm::GlobalValue::LinkageTypes & ) const;
+
+    extern template refmode_t
+    RefmodeEngine::refmode<llvm::GlobalValue::VisibilityTypes>(
+        const llvm::GlobalValue::VisibilityTypes & ) const;
+
+    extern template refmode_t
+    RefmodeEngine::refmode<llvm::GlobalVariable::ThreadLocalMode>(
+        const llvm::GlobalVariable::ThreadLocalMode &) const;
+
+    extern template refmode_t
+    RefmodeEngine::refmode<llvm::CallingConv::ID>(
+        const llvm::CallingConv::ID & ) const;
+
+    extern template refmode_t
+    RefmodeEngine::refmode<llvm::AtomicOrdering>(
+        const llvm::AtomicOrdering & ) const;
+
+} // end of namespace cclyzer
 
 #endif /* REFMODE_ENGINE_HPP__ */

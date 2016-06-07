@@ -30,13 +30,13 @@ TypeVisitor::visitType(const llvm::Type *type)
         uint64_t storeSize = layout.getTypeStoreSize(const_cast<Type*>(type));
 
         // Store size of type in bytes
-        refmode_t typeRef = gen.refmodeOf(type);
+        refmode_t typeId = gen.refmode<llvm::Type>(*type);
 
-        gen.writeFact(pred::type::alloc_size, typeRef, allocSize);
-        gen.writeFact(pred::type::store_size, typeRef, storeSize);
+        gen.writeFact(pred::type::alloc_size, typeId, allocSize);
+        gen.writeFact(pred::type::store_size, typeId, storeSize);
     }
 
-    refmode_t tref = gen.refmodeOf(type);
+    refmode_t tref = gen.refmode<llvm::Type>(*type);
 
     // Record each different kind of type
     switch (type->getTypeID()) { // Fallthrough is intended
@@ -81,31 +81,35 @@ TypeVisitor::visitType(const llvm::Type *type)
 void
 TypeVisitor::visitPointerType(const PointerType *ptrType)
 {
-    refmode_t tref = gen.refmodeOf(ptrType);
-    refmode_t elementType = gen.refmodeOf(ptrType->getPointerElementType());
+    const llvm::Type *elemType = ptrType->getPointerElementType();
+
+    refmode_t typeId = gen.refmode<llvm::Type>(*ptrType);
+    refmode_t elemTypeId = gen.refmode<llvm::Type>(*elemType);
 
     // Record pointer type entity
-    gen.writeFact(pred::ptr_type::id, tref);
+    gen.writeFact(pred::ptr_type::id, typeId);
 
     // Record pointer element type
-    gen.writeFact(pred::ptr_type::component_type, tref, elementType);
+    gen.writeFact(pred::ptr_type::component_type, typeId, elemTypeId);
 
     // Record pointer address space
     if (unsigned addressSpace = ptrType->getPointerAddressSpace())
-        gen.writeFact(pred::ptr_type::addr_space, tref, addressSpace);
+        gen.writeFact(pred::ptr_type::addr_space, typeId, addressSpace);
 }
 
 
 void
 TypeVisitor::visitArrayType(const ArrayType *arrayType)
 {
-    refmode_t tref = gen.refmodeOf(arrayType);
-    refmode_t componentType = gen.refmodeOf(arrayType->getArrayElementType());
+    const llvm::Type *elemType = arrayType->getArrayElementType();
     size_t nElements = arrayType->getArrayNumElements();
 
-    gen.writeFact(pred::array_type::id, tref);
-    gen.writeFact(pred::array_type::component_type, tref, componentType);
-    gen.writeFact(pred::array_type::size, tref, nElements);
+    refmode_t typeId = gen.refmode<llvm::Type>(*arrayType);
+    refmode_t elemTypeId = gen.refmode<llvm::Type>(*elemType);
+
+    gen.writeFact(pred::array_type::id, typeId);
+    gen.writeFact(pred::array_type::component_type, typeId, elemTypeId);
+    gen.writeFact(pred::array_type::size, typeId, nElements);
 }
 
 
@@ -114,7 +118,7 @@ TypeVisitor::visitStructType(const StructType *structType)
 {
     using llvm::StructLayout;
 
-    refmode_t tref = gen.refmodeOf(structType);
+    refmode_t tref = gen.refmode<llvm::Type>(*structType);
     size_t nFields = structType->getStructNumElements();
 
     // Record struct type entity
@@ -131,8 +135,8 @@ TypeVisitor::visitStructType(const StructType *structType)
         // Record struct field types
         for (size_t i = 0; i < nFields; i++)
         {
-            refmode_t fieldType = gen.refmodeOf(
-                structType->getStructElementType(i));
+            refmode_t fieldType = gen.refmode<llvm::Type>(
+                *(structType->getStructElementType(i)));
 
             uint64_t fieldOffset = structLayout->getElementOffset(i);
             uint64_t fieldBitOffset = structLayout->getElementOffsetInBits(i);
@@ -151,38 +155,40 @@ TypeVisitor::visitStructType(const StructType *structType)
 void
 TypeVisitor::visitFunctionType(const FunctionType *functionType)
 {
-    refmode_t signature  = gen.refmodeOf(functionType);
-    refmode_t returnType = gen.refmodeOf(functionType->getReturnType());
     size_t nParameters = functionType->getFunctionNumParams();
+    const llvm::Type *returnType = functionType->getReturnType();
+
+    refmode_t funcId = gen.refmode<llvm::Type>(*functionType);
+    refmode_t returnTypeId = gen.refmode<llvm::Type>(*returnType);
 
     // Record function type entity
-    gen.writeFact(pred::func_type::id, signature);
+    gen.writeFact(pred::func_type::id, funcId);
 
     // TODO: which predicate/entity do we need to update for varagrs?
     if (functionType->isVarArg())
-        gen.writeFact(pred::func_type::varargs, signature);
+        gen.writeFact(pred::func_type::varargs, funcId);
 
     // Record return type
-    gen.writeFact(pred::func_type::return_type, signature, returnType);
+    gen.writeFact(pred::func_type::return_type, funcId, returnTypeId);
 
     // Record function formal parameters
     for (size_t i = 0; i < nParameters; i++)
     {
-        refmode_t paramType =
-            gen.refmodeOf(functionType->getFunctionParamType(i));
+        const llvm::Type *paramType = functionType->getFunctionParamType(i);
+        refmode_t paramTypeId = gen.refmode<llvm::Type>(*paramType);
 
-        gen.writeFact(pred::func_type::param_type, signature, i, paramType);
+        gen.writeFact(pred::func_type::param_type, funcId, i, paramTypeId);
     }
 
     // Record number of formal parameters
-    gen.writeFact(pred::func_type::nparams, signature, nParameters);
+    gen.writeFact(pred::func_type::nparams, funcId, nParameters);
 }
 
 
 void
 TypeVisitor::visitVectorType(const VectorType *vectorType)
 {
-    refmode_t tref = gen.refmodeOf(vectorType);
+    refmode_t tref = gen.refmode<llvm::Type>(*vectorType);
     size_t nElements = vectorType->getVectorNumElements();
     Type *componentType = vectorType->getVectorElementType();
 
@@ -190,7 +196,7 @@ TypeVisitor::visitVectorType(const VectorType *vectorType)
     gen.writeFact(pred::vector_type::id, tref);
 
     // Record vector component type
-    refmode_t compref = gen.refmodeOf(componentType);
+    refmode_t compref = gen.refmode<llvm::Type>(*componentType);
     gen.writeFact(pred::vector_type::component_type, tref, compref);
 
     // Record vector type size

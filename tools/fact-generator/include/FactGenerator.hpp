@@ -32,7 +32,7 @@ class cclyzer::FactGenerator
 {
     friend class InstructionVisitor;
     friend class TypeVisitor;
-    using RefmodeEngine::refmodeOf;
+    using RefmodeEngine::refmode;
 
   protected:
 
@@ -44,12 +44,16 @@ class cclyzer::FactGenerator
     typedef predicates::operand_pred_t operand_pred_t;
 
 
-    /* Recording variables */
+    /* Recording variables and types */
 
     void recordVariable(std::string id, const llvm::Type *type) {
         variableTypes[id] = type;
     }
 
+    refmode_t recordType(const llvm::Type *type) {
+        types.insert(type);
+        return refmode<llvm::Type>(*type);
+    }
 
     /* Fact writing methods */
 

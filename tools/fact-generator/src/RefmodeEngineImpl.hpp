@@ -7,26 +7,9 @@ class cclyzer::RefmodeEngine::Impl
 {
   public:
 
-    // Methods that compute refmodes for various LLVM types
-    refmode_t refmodeOf(llvm::GlobalValue::LinkageTypes LT) const;
-    refmode_t refmodeOf(llvm::GlobalValue::VisibilityTypes Vis) const;
-    refmode_t refmodeOf(llvm::GlobalVariable::ThreadLocalMode TLM) const;
-    refmode_t refmodeOf(llvm::CallingConv::ID CC) const;
-    refmode_t refmodeOf(llvm::AtomicOrdering AO) const;
-    refmode_t refmodeOf(const llvm::Type *type) const;
-    refmode_t refmodeOf(const llvm::Value *Val) const;
-
-    refmode_t refmodeOfFunction(const llvm::Function *func, bool prefix=true) const;
-    refmode_t refmodeOfBasicBlock(const llvm::BasicBlock *bb, bool prefix=true) const;
-    refmode_t refmodeOfConstant(const llvm::Constant *);
-    refmode_t refmodeOfInlineAsm(const llvm::InlineAsm *);
-    refmode_t refmodeOfLocalValue(const llvm::Value *, bool prefix=true) const;
-    refmode_t refmodeOfGlobalValue(const llvm::GlobalValue *val, bool prefix=true) const;
-    refmode_t refmodeOfInstruction(const llvm::Instruction *instr, unsigned index) const;
-
-    refmode_t refmodeOfInstruction(const llvm::Instruction *instr) const {
-        return refmodeOfInstruction(instr, instrIndex - 1);
-    }
+    // Compute refmode for obj, given some context state
+    template<typename T>
+    refmode_t refmode(const T& obj); // const;
 
     // The following are copied from LLVM Diff Consumer
 
@@ -41,12 +24,12 @@ class cclyzer::RefmodeEngine::Impl
         // Compute prefix for fully qualified value names under given
         // context
 
-        if (llvm::isa<llvm::Function>(ctx)) {
-            prefix = refmodeOfFunction(llvm::cast<llvm::Function>(ctx), false);
+        if (const llvm::Function *fctx = llvm::dyn_cast<llvm::Function>(ctx)) {
+            prefix = fctx->getName();
             instrIndex = 0;
         }
-        else if (llvm::isa<llvm::BasicBlock>(ctx)) {
-            prefix = refmodeOfBasicBlock(llvm::cast<llvm::BasicBlock>(ctx), false);
+        else if (const llvm::BasicBlock *bbctx = llvm::dyn_cast<llvm::BasicBlock>(ctx)) {
+            prefix = refmodeOf(bbctx);
         }
         else if (llvm::isa<llvm::Instruction>(ctx)) {
             prefix = std::to_string(instrIndex++);
@@ -83,6 +66,9 @@ class cclyzer::RefmodeEngine::Impl
     }
 
   protected:
+    // Methods that compute refmodes for various LLVM types
+    refmode_t refmodeOf(const llvm::Value *Val);
+
     // Compute variable numberings
     static void computeNumbering(const llvm::Function *, std::map<const llvm::Value*,unsigned> &);
 

@@ -21,12 +21,11 @@ FactGenerator::writeConstant(const llvm::Constant &c)
     using namespace llvm;
     static boost::hash<std::string> string_hash;
 
-    refmode_t refmode = refmodeOfConstant(&c);
+    refmode_t id = refmode<llvm::Constant>(c);
 
     // Record constant entity with its type
-    writeFact(pred::constant::id, refmode);
-    writeFact(pred::constant::type, refmode, refmodeOf(c.getType()));
-    types.insert(c.getType());
+    writeFact(pred::constant::id, id);
+    writeFact(pred::constant::type, id, recordType(c.getType()));
 
     // Record constant value
     std::string rv;
@@ -35,52 +34,52 @@ FactGenerator::writeConstant(const llvm::Constant &c)
     const std::string& val = rso.str();
     size_t hashCode = string_hash(val);
 
-    writeFact(pred::constant::value, refmode, val);
-    writeFact(pred::constant::hash, refmode, hashCode);
+    writeFact(pred::constant::value, id, val);
+    writeFact(pred::constant::hash, id, hashCode);
 
     if (isa<ConstantPointerNull>(c)) {
-        writeFact(pred::nullptr_constant::id, refmode);
+        writeFact(pred::nullptr_constant::id, id);
     }
     else if (isa<ConstantInt>(c)) {
-        writeFact(pred::integer_constant::id, refmode);
+        writeFact(pred::integer_constant::id, id);
 
         // Compute integer string representation
         std::string int_value = c.getUniqueInteger().toString(10, true);
 
         // Write constant to integer fact
-        writeFact(pred::constant::to_integer, refmode, int_value);
+        writeFact(pred::constant::to_integer, id, int_value);
     }
     else if (isa<ConstantFP>(c)) {
-        writeFact(pred::fp_constant::id, refmode);
+        writeFact(pred::fp_constant::id, id);
     }
     else if (isa<Function>(c)) {
         const Function &func = cast<Function>(c);
         const std::string funcname = "@" + func.getName().str();
 
-        writeFact(pred::function_constant::id, refmode);
-        writeFact(pred::function_constant::name, refmode, funcname);
+        writeFact(pred::function_constant::id, id);
+        writeFact(pred::function_constant::name, id, funcname);
     }
     else if (isa<GlobalVariable>(c)) {
         const GlobalVariable &global_var = cast<GlobalVariable>(c);
         const std::string varname = "@" + global_var.getName().str();
 
-        writeFact(pred::global_variable_constant::id, refmode);
-        writeFact(pred::global_variable_constant::name, refmode, varname);
+        writeFact(pred::global_variable_constant::id, id);
+        writeFact(pred::global_variable_constant::name, id, varname);
     }
     else if (isa<ConstantExpr>(c)) {
-        writeConstantExpr(cast<ConstantExpr>(c), refmode);
+        writeConstantExpr(cast<ConstantExpr>(c), id);
     }
     else if (isa<ConstantArray>(c)) {
-        writeConstantArray(cast<ConstantArray>(c), refmode);
+        writeConstantArray(cast<ConstantArray>(c), id);
     }
     else if (isa<ConstantStruct>(c)) {
-        writeConstantStruct(cast<ConstantStruct>(c), refmode);
+        writeConstantStruct(cast<ConstantStruct>(c), id);
     }
     else if (isa<ConstantVector>(c)) {
-        writeConstantVector(cast<ConstantVector>(c), refmode);
+        writeConstantVector(cast<ConstantVector>(c), id);
     }
 
-    return refmode;
+    return id;
 }
 
 

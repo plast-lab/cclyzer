@@ -37,20 +37,18 @@ FactGenerator::processModule(const llvm::Module &Mod, const std::string& path)
     for (llvm::Module::const_global_iterator
              it = Mod.global_begin(), end = Mod.global_end(); it != end; ++it)
     {
-        refmode_t refmode = refmodeOfGlobalValue(it);
+        refmode_t id = refmode<llvm::GlobalValue>(*it);
 
-        writeGlobalVar(*it, refmode);
-        types.insert(it->getType());
+        writeGlobalVar(*it, id);
     }
 
     // iterating over global alias in a module
     for (llvm::Module::const_alias_iterator
              it = Mod.alias_begin(), end = Mod.alias_end(); it != end; ++it)
     {
-        refmode_t refmode = refmodeOfGlobalValue(it);
+        refmode_t id = refmode<llvm::GlobalValue>(*it);
 
-        writeGlobalAlias(*it, refmode);
-        types.insert(it->getType());
+        writeGlobalAlias(*it, id);
     }
 
     // iterating over functions in a module
@@ -60,7 +58,7 @@ FactGenerator::processModule(const llvm::Module &Mod, const std::string& path)
         const llvm::Function &func = *it;
 
         Context C(*this, func);
-        refmode_t funcref = refmodeOfFunction(it);
+        refmode_t funcref = refmode<llvm::Function>(*it);
 
         // Process function and record its various attributes, but do
         // not examine its body
@@ -74,7 +72,7 @@ FactGenerator::processModule(const llvm::Module &Mod, const std::string& path)
         foreach (const llvm::BasicBlock &bb, func)
         {
             Context C(*this, bb);
-            refmode_t bbRef = refmodeOfBasicBlock(&bb);
+            refmode_t bbRef = refmode<llvm::BasicBlock>(bb);
 
             // Record basic block entry as a label
             writeFact(pred::variable::id, bbRef);
@@ -85,7 +83,7 @@ FactGenerator::processModule(const llvm::Module &Mod, const std::string& path)
                      pi = pred_begin(&bb), pi_end = pred_end(&bb);
                  pi != pi_end; ++pi)
             {
-                refmode_t predBB = refmodeOfBasicBlock(*pi);
+                refmode_t predBB = refmode<llvm::BasicBlock>(**pi);
                 writeFact(pred::basic_block::predecessor, bbRef, predBB);
             }
 
@@ -95,11 +93,11 @@ FactGenerator::processModule(const llvm::Module &Mod, const std::string& path)
                 Context C(*this, instr);
 
                 // Compute instruction refmode
-                const refmode_t iref = refmodeOfInstruction(&instr);
+                const refmode_t iref = refmode<llvm::Instruction>(instr);
 
                 // Record instruction target variable if such exists
                 if (!instr.getType()->isVoidTy()) {
-                    refmode_t targetVar = refmodeOfLocalValue(&instr);
+                    refmode_t targetVar = refmode<llvm::Value>(instr);
 
                     writeFact(pred::instruction::to, iref, targetVar);
                     recordVariable(targetVar, instr.getType());
@@ -117,8 +115,9 @@ FactGenerator::processModule(const llvm::Module &Mod, const std::string& path)
                 writeFact(pred::instruction::function, iref, funcref);
 
                 // Record instruction's basic block entry (label)
-                refmode_t bbEntry = refmodeOfBasicBlock(instr.getParent());
-                writeFact(pred::instruction::bb_entry, iref, bbEntry);
+                const llvm::BasicBlock *bbEntry = instr.getParent();
+                refmode_t bbEntryId = refmode<llvm::BasicBlock>(*bbEntry);
+                writeFact(pred::instruction::bb_entry, iref, bbEntryId);
 
                 // Visit instruction
                 IV.visit(const_cast<llvm::Instruction &>(instr));

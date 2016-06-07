@@ -24,7 +24,7 @@ FactGenerator::writeAsm(const llvm::InlineAsm &asmVal)
     using namespace llvm;
     static boost::hash<std::string> string_hash;
 
-    refmode_t refmode = refmodeOfInlineAsm(&asmVal);
+    refmode_t id = refmode<llvm::InlineAsm>(asmVal);
     const llvm::Type *type = asmVal.getType();
 
     std::string constraints = canonicalize(asmVal.getConstraintString());
@@ -33,16 +33,16 @@ FactGenerator::writeAsm(const llvm::InlineAsm &asmVal)
     size_t hashCode = string_hash(val);
 
     // Record inline ASM as constant entity with its type
-    writeFact(pred::constant::id, refmode);
-    writeFact(pred::constant::type, refmode, refmodeOf(type));
-    writeFact(pred::constant::value, refmode, val);
-    writeFact(pred::constant::hash, refmode, hashCode);
+    writeFact(pred::constant::id, id);
+    writeFact(pred::constant::type, id, recordType(type));
+    writeFact(pred::constant::value, id, val);
+    writeFact(pred::constant::hash, id, hashCode);
     types.insert(type);
 
     // Record its attributes separately
-    writeFact(pred::inline_asm::id, refmode);
-    writeFact(pred::inline_asm::constraints, refmode, constraints);
-    writeFact(pred::inline_asm::text, refmode, assem);
+    writeFact(pred::inline_asm::id, id);
+    writeFact(pred::inline_asm::constraints, id, constraints);
+    writeFact(pred::inline_asm::text, id, assem);
 
-    return refmode;
+    return id;
 }
