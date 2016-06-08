@@ -6,76 +6,108 @@
 #include <boost/filesystem/fstream.hpp>
 
 namespace cclyzer {
-    class csv_writer;
-}
 
-class cclyzer::csv_writer
-{
-  public:
+    // Define serializable type trait. Only serializable types will be
+    // allowed to be written by CSV writer
+    template<class T>
+    struct is_serializable
+        : std::integral_constant<
+        bool,
+        std::is_convertible<T, const char*>::value ||
+        std::is_arithmetic<T>::value ||
+        std::is_same<std::string, typename std::remove_cv<T>::type>::value
+        >
+    {};
 
-    typedef boost::filesystem::path path;
-    typedef boost::filesystem::ofstream ofstream;
+    // Define variadic serializable type trait that generalizes to
+    // multiple values
+    template <typename... Ts>
+    struct all_serializable;
 
-    /* Constructor must create output file stream */
-
-    csv_writer(const path& csvfile, std::string delimiter = "\t")
-        : out(csvfile), delim(delimiter)
+    template <typename Head, typename... Tail>
+    struct all_serializable<Head, Tail...>
     {
-        // Create parent directory
-        create_directory(csvfile.parent_path());
-    }
+        static const bool value =
+            is_serializable<Head>::value && all_serializable<Tail...>::value;
+    };
 
-    /* Destructor must flush and close underlying file stream */
-    ~csv_writer() {
-        out.flush();
-        out.close();
-    }
-
-
-    /* Basic routines for appending new records to CSV files */
-
-    void write(const std::string& hdr) {
-        out << hdr << "\n";
-    }
+    template <typename T>
+    struct all_serializable<T>
+    {
+        static const bool value = is_serializable<T>::value;
+    };
 
 
-    template<typename V>
-    void write(const std::string& hdr, const V& fld) {
-        out << hdr
-            << delim << fld << "\n";
-    }
+    //-----------------------------------------------------------------------
+    // Generic CSV writer class
+    //-----------------------------------------------------------------------
 
-    template<typename V, typename... Vs>
-    void write(const std::string& hdr, const V& fld, const Vs&... flds) {
-        out << hdr;
-        appendFields(fld, flds...);
-        out << "\n";
-    }
+    class csv_writer
+    {
+      public:
 
-  protected:
+        typedef boost::filesystem::path path;
+        typedef boost::filesystem::ofstream ofstream;
 
-    /* Variadic method to append fields to record */
+        /* Constructor must create output file stream */
 
-    template<typename V, typename ...Vargs>
-    void appendFields(const V& value) {
-        out << delim << value;
-    }
+        csv_writer(const path& csvfile, std::string delimiter = "\t")
+            : out(csvfile), delim(delimiter)
+        {
+            // Create parent directory
+            create_directory(csvfile.parent_path());
+        }
 
-    template<typename V, typename ...Vs>
-    void appendFields(const V& value, const Vs&... values) {
-        appendFields(value);
-        appendFields(values...);
-    }
+        /* Destructor must flush and close underlying file stream */
+        ~csv_writer() {
+            out.flush();
+            out.close();
+        }
 
 
-  private:
+        /* Basic routines for appending new records to CSV files */
 
-    /* CSV Output Stream */
-    ofstream out;
+        void write(const std::string& hdr) {
+            out << hdr << "\n";
+        }
 
-    /* Column Delimiter */
-    const std::string delim;
-};
 
+        template<typename V, typename... Vs>
+        void write(const std::string& hdr, const V& fld, const Vs&... flds)
+        {
+            static_assert( all_serializable<V, Vs...>::value,
+                           "All types must be serializable" );
+            out << hdr;
+            appendFields(fld, flds...);
+            out << "\n";
+        }
+
+      protected:
+
+        /* Variadic method to append fields to record */
+
+        void appendFields() {}
+
+        template<typename V, typename ...Vargs>
+        void appendFields(const V& value) {
+            out << delim << value;
+        }
+
+        template<typename V, typename ...Vs>
+        void appendFields(const V& value, const Vs&... values) {
+            appendFields(value);
+            appendFields(values...);
+        }
+
+      private:
+
+        /* CSV Output Stream */
+        ofstream out;
+
+        /* Column Delimiter */
+        const std::string delim;
+    };
+
+} // end of namespace cclyzer
 
 #endif /* CSV_WRITER_H__ */
