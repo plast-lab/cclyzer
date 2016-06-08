@@ -40,7 +40,7 @@ class cclyzer::FactWriter
     template <typename V, typename ...Vs>
     void writeFact(const Predicate &pred,
                    const refmode_t &refmode,
-                   const V val, const Vs&... vals)
+                   const V& val, const Vs&... vals)
     {
         getWriter(pred)->write(refmode, val, vals...);
     }
