@@ -73,5 +73,6 @@ setup(
         'scripts/cclyzer',
         'scripts/gen-protobuf-message',
         'scripts/project-dependencies',
+        'scripts/pack-facts.py',
     ],
 )
