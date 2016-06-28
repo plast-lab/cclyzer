@@ -1,4 +1,5 @@
 /build
+*.pyc
 /tools/import-generator/src/blox/common/Common.pb.cc
 /tools/import-generator/src/blox/compiler/BloxCompiler.pb.cc
 /tools/import-generator/include/blox/common/Common.pb.h
