@@ -5,6 +5,9 @@ import os
 import zipfile
 
 class TestFactGen(object):
+    # Belongs to the `factgen` subset of tests
+    factgen = True
+
     # Input files
     INPUT = 'tests/coreutils-8.24/sort.bc'
 
