@@ -110,9 +110,12 @@ class cd:
 
 @contextmanager
 def stdout_redirected(to=os.devnull):
+    # Keep stdout at this point in case it is redirected (e.g., via nose)
+    old_stdout, sys.stdout = sys.stdout, sys.__stdout__
     stdout_fd = sys.stdout.fileno()
+
     # Store old stdout
-    with os.fdopen(os.dup(stdout_fd), 'wb') as old_stdout:
+    with os.fdopen(os.dup(stdout_fd), 'wb') as dupped_stdout:
         sys.stdout.flush()
         # Temporarily redirect stdout to /dev/null (or some file)
         with open(to, 'wb') as to_file:
@@ -123,4 +126,5 @@ def stdout_redirected(to=os.devnull):
         finally:
             # restore stdout to its previous value
             sys.stdout.flush()
-            os.dup2(old_stdout.fileno(), stdout_fd)
+            os.dup2(dupped_stdout.fileno(), stdout_fd)
+            sys.stdout = old_stdout
