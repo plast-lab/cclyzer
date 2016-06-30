@@ -142,14 +142,14 @@ interactive experience:
 
     $ python
     >>> from cclyzer import *
-    >>> config = AnalysisConfig(['./tests/stty/stty.bc'], './build/tests/stty')
+    >>> config = AnalysisConfig('./tests/coreutils-8.24/sort.bc', output_dir='./build/tests/sort')
     >>> analysis = Analysis(config)
     >>> analysis.run()
     ...
     >>> print analysis.stats
-    # instructions        : 4157
-    # reachable functions :   81
-    # callgraph edges     :  144
+    # instructions        : 25417
+    # functions           :   438
+    # app functions       :   317
     ...
     >>>
 
