@@ -18,7 +18,7 @@ namespace cclyzer {
     {
       public:
         Registry() {
-            allInstances.insert(static_cast<const T*>(this));
+            all().insert(static_cast<const T*>(this));
         }
 
         // Define iterator methods over class instances
@@ -26,20 +26,20 @@ namespace cclyzer {
         typedef typename std::set< const T* >::const_iterator iterator;
 
         static iterator begin() {
-            return allInstances.begin();
+            return all().begin();
         }
 
         static iterator end() {
-            return allInstances.end();
+            return all().end();
         }
 
       protected:
         ~Registry() {
-            allInstances.erase(static_cast<const T*>(this));
+            all().erase(static_cast<const T*>(this));
         }
 
         // Collection of instances
-        static std::set< const T* > allInstances;
+        static std::set< const T* >& all();
 
       private:
         // Make objects non-copyable

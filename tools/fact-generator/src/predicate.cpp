@@ -7,7 +7,10 @@ using cclyzer::OperandPredicate;
 using cclyzer::EntityPredicate;
 
 // Initialize registries
-template <typename T> std::set< const T* > Registry<T>::allInstances;
+template <typename T> std::set< const T* >& Registry<T>::all() {
+    static std::set< const T* > *allInstances = new std::set< const T*>();
+    return *allInstances;
+}
 
 // Two suffixes for the two variants of each operand predicate
 const char *OperandPredicate::CONSTANT_SUFFIX = "by_constant";
