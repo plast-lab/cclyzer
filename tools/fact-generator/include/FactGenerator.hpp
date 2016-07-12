@@ -106,7 +106,7 @@ class cclyzer::FactGenerator
     struct Context {
         Context(FactGenerator &generator, const llvm::Value &v)
             : gen(generator) {
-            gen.enterContext(&v);
+            gen.enterContext(v);
         }
 
         ~Context() {
@@ -118,10 +118,10 @@ class cclyzer::FactGenerator
     };
 
     struct ModuleContext {
-        ModuleContext(FactGenerator &generator, const llvm::Module &m, const std::string &path)
+        ModuleContext(FactGenerator& generator, const llvm::Module& m, const std::string& path)
             : gen(generator)
         {
-            gen.enterModule(&m, path);
+            gen.enterModule(m, path);
             gen.debugInfoProcessor.processModule(m);
         }
 

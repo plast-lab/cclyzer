@@ -27,9 +27,9 @@ namespace cclyzer {
         ~RefmodeEngine();
 
         // Context modifying methods
-        void enterContext(const llvm::Value *val);
+        void enterContext(const llvm::Value& val);
         void exitContext();
-        void enterModule(const llvm::Module *Mod, const std::string &path);
+        void enterModule(const llvm::Module& Mod, const std::string& path);
         void exitModule();
 
         // Compute refmode for obj, given some context state

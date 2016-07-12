@@ -159,7 +159,7 @@ refmode_t RefmodeEngine::refmode(const T& obj) const {
     return impl->refmode(obj);
 }
 
-void RefmodeEngine::enterContext(const llvm::Value *val) {
+void RefmodeEngine::enterContext(const llvm::Value& val) {
     impl->enterContext(val);
 }
 
@@ -167,7 +167,7 @@ void RefmodeEngine::exitContext() {
     impl->exitContext();
 }
 
-void RefmodeEngine::enterModule(const llvm::Module *module, const std::string &path) {
+void RefmodeEngine::enterModule(const llvm::Module& module, const std::string& path) {
     impl->enterModule(module, path);
 }
 

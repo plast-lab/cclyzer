@@ -11,6 +11,7 @@ class cclyzer::RefmodeEngine::Impl
     template<typename T>
     refmode_t refmode(const T& obj); // const;
 
+    // Context Stack implementation
     // The following are copied from LLVM Diff Consumer
 
     /// Record that a local context has been entered.  ctx is an IR
@@ -44,7 +45,7 @@ class cclyzer::RefmodeEngine::Impl
         contexts.pop_back();
     }
 
-    void enterModule(const llvm::Module *module, const std::string &path)
+    void enterModule(const llvm::Module *module, const std::string& path)
     {
         using namespace llvm;
 
@@ -66,11 +67,13 @@ class cclyzer::RefmodeEngine::Impl
     }
 
   protected:
+
     // Methods that compute refmodes for various LLVM types
     refmode_t refmodeOf(const llvm::Value *Val);
 
     // Compute variable numberings
-    static void computeNumbering(const llvm::Function *, std::map<const llvm::Value*,unsigned> &);
+    static void computeNumbering(
+        const llvm::Function *, std::map<const llvm::Value*,unsigned> &);
 
     // Compute all metadata slots
     void parseMetadata(const llvm::Module *module);
@@ -107,12 +110,13 @@ class cclyzer::RefmodeEngine::Impl
 
   private:
 
+    // Single context item
     struct RefContext {
-        RefContext(const llvm::Value *v, std::string prefix)
-            : anchor(v), prefix(prefix)
+        RefContext(const llvm::Value& v, const std::string& prefix)
+            : anchor(&v), prefix(prefix)
             , isFunction(llvm::isa<llvm::Function>(v)) {}
 
-        RefContext(std::string prefix)
+        RefContext(const std::string& prefix)
             : anchor(nullptr), prefix(prefix)
             , isFunction(false) {}
 
