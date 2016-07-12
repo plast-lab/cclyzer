@@ -72,28 +72,25 @@ RefmodeEngine::Impl::refmodeOf(const llvm::Value * Val)
     }
 
     // Handle unnamed variables
+    for (ContextManager::reverse_iterator
+             it = ctx->rbegin(); it != ctx->rend(); ++it)
     {
-        unsigned N = contexts.size();
+        ContextManager::context& ctxt = *it;
 
-        while (N > 0) {
-            --N;
-            RefContext &ctxt = const_cast<RefContext&>(contexts[N]);
+        if (ctxt.isFunction) {
 
-            if (ctxt.isFunction) {
+            if (ctxt.numbering.empty())
+                computeNumbering(
+                    cast<llvm::Function>(ctxt.anchor), ctxt.numbering
+                );
 
-                if (ctxt.numbering.empty())
-                    computeNumbering(
-                        cast<llvm::Function>(ctxt.anchor), ctxt.numbering
-                    );
-
-                rso << '%' << ctxt.numbering[Val];
-                goto print;
-            }
+            rso << '%' << ctxt.numbering[Val];
+            goto print;
         }
     }
 
     // Expensive
-    Val->printAsOperand(rso, false, Mod);
+    Val->printAsOperand(rso, false, &ctx->module());
 
 print:
     // Trim external whitespace

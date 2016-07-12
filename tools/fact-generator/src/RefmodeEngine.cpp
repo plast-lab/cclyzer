@@ -65,7 +65,7 @@ namespace cclyzer {
         // BasicBlock context is intended so as not to qualify instruction
         // id by its surrounding basic block's id
 
-        withContext<llvm::Function>(refmode) << std::to_string(instrIndex - 1);
+        withContext<llvm::Function>(refmode) << std::to_string(ctx->instrCount() - 1);
         return refmode.str();
     }
 
@@ -76,7 +76,7 @@ namespace cclyzer {
         std::ostringstream refmode;
 
         withContext<llvm::Instruction>(refmode)
-            << constantIndex++ << ':' << refmodeOf(&constant);
+            << ctx->constantCount() << ':' << refmodeOf(&constant);
 
         return refmode.str();
     }
