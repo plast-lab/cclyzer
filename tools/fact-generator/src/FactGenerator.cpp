@@ -30,7 +30,7 @@ FactGenerator::processModule(const llvm::Module &Mod, const std::string& path)
              it  = Mod.named_metadata_begin(),
              end = Mod.named_metadata_end(); it != end; ++it)
     {
-        visitNamedMDNode(it);
+        visitNamedMDNode(*it);
     }
 
     // iterating over global variables in a module
@@ -149,9 +149,9 @@ FactGenerator::processModule(const llvm::Module &Mod, const std::string& path)
 
 
 void
-FactGenerator::visitNamedMDNode(const llvm::NamedMDNode *NMD)
+FactGenerator::visitNamedMDNode(const llvm::NamedMDNode& metadata)
 {
-    for (unsigned i = 0, e = NMD->getNumOperands(); i != e; ++i) {
+    for (unsigned i = 0, e = metadata.getNumOperands(); i != e; ++i) {
         // TODO
         ;
     }

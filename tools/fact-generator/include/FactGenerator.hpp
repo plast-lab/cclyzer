@@ -80,9 +80,9 @@ class cclyzer::FactGenerator
 
     /* Global fact writing methods */
 
-    void writeGlobalAlias(const llvm::GlobalAlias&, const refmode_t&);
-    void writeGlobalVar(const llvm::GlobalVariable&, const refmode_t&);
-    void visitNamedMDNode(const llvm::NamedMDNode *);
+    void writeGlobalAlias(const llvm::GlobalAlias & , const refmode_t & );
+    void writeGlobalVar(const llvm::GlobalVariable &, const refmode_t & );
+    void visitNamedMDNode(const llvm::NamedMDNode & );
 
 
     void processModule(const llvm::Module &Mod, const std::string& path);
