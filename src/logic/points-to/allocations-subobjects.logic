@@ -172,16 +172,24 @@ pointer_index(Index) <-
 
 // Find all statically possible array indices
 
+array_indices:__no_typecomp(Type, Index) ->
+   array_type(Type), int[64](Index).
+
+array_indices:__no_typecomp(DeclaredType, ConstantIndex) <-
+   getelementptr_instruction:index[Insn, Index] = IndexOp,
+   getelementptr_instruction:interm_type[Insn, Index] = DeclaredType,
+   operand:to_int[IndexOp] = ConstantIndex,
+   array_type(DeclaredType).
+
+// Same thing, but also consider compatible array types
+
 array_indices(Type, Index) ->
    array_type(Type), int[64](Index).
 
 array_indices(Type, ConstantIndex) <-
-   getelementptr_instruction:index[Insn, Index] = IndexOp,
-   getelementptr_instruction:interm_type[Insn, Index] = DeclaredType,
-   operand:to_int[IndexOp] = ConstantIndex,
-   array_type(DeclaredType),
    array_type(Type),
-   type_compatible(Type, DeclaredType).
+   type_compatible(Type, DeclaredType),
+   array_indices:__no_typecomp(DeclaredType, ConstantIndex).
 
 
 //-------------------------------------------------------------------

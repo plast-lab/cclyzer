@@ -35,11 +35,10 @@ initialized_by_constant[Alloc] = InnerConstant <-
 
 // Augment array indices to include those from constant initializers
 
-array_indices(Type, Index) <-
+array_indices:__no_typecomp(ConstantType, Index) <-
    constant:type[Constant] = ConstantType,
    constant_array:index[Constant, Index] = _,
-   array_type(Type),
-   type_compatible(Type, ConstantType).
+   array_type(ConstantType).
 
 
 // A constant may point to a global allocation, so if used to

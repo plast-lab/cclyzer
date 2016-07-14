@@ -36,84 +36,19 @@ gep_points_to(Insn, 0, Alloc) <-
    operand_points_to(Alloc, Base).
 // TODO check type compatibility
 
-//----------------------------------------------------------
+
+// Introduce inverted predicate to optimize indexing
+_inv_gep_points_to(Alloc, Index, Insn) <-
+   gep_points_to(Insn, Index, Alloc).
+
+
+// Guard configuration predicate for pointer arithmetic support
+analyze_pointer_arithmetic() -> .
+
+
+//------------------------------------------------------------------------------
 // For the first index of the GEP instruction
-//----------------------------------------------------------
-
-// First zero index is ignored when address operand points-to non-base
-// object.
-
-_gep_with_zero_base_offset(Insn) <-
-   getelementptr_instruction:index[Insn, 0] = IndexOp,
-   operand:to_int[IndexOp] = 0.
-
-gep_points_to(Insn, 1, Alloc)
- <-
-   _gep_with_zero_base_offset(Insn),
-   gep_points_to(Insn, 0, Alloc),
-   alloc_subregion(Alloc).
-
-
-// The first non-zero index must be added to the previous index of the
-// allocation to produce a new offset
-
-_gep_with_nonzero_base_offset[Insn] = Index <-
-   getelementptr_instruction:index[Insn, 0] = IndexOp,
-   operand:to_int[IndexOp] = Index,
-   Index != 0.
-
-gep_points_to(Insn, 1, NewAlloc)
- <-
-   gep_points_to(Insn, 0, Alloc),
-   getelementptr_instruction:interm_type[Insn, 1] = DeclaredType,
-   // constant non-zero first index
-   _gep_with_nonzero_base_offset[Insn] = Index,
-   // get existing allocation at new index
-   _array_index_subobject:at_offset[Alloc, Index] = NewAlloc,
-   // check for type compatibility
-   allocation:type[NewAlloc] = Type, // old type may not be compatible
-   type_compatible(Type, DeclaredType).
-
-// Fetch an array index subobject given another array index subobject
-// as a base, plus some offset to its index.
-_array_index_subobject:at_offset[Alloc, Offset] = NewAlloc <-
-   alloc_subregion:at_array_index[Base, Index] = Alloc,
-   alloc_subregion:at_array_index[Base, Index + Offset] = NewAlloc.
-
-
-// The first index, if unknown, must be used to generate a new
-// star-index allocation that replaces the older constant index
-
-_gep_with_unknown_base_offset(Insn) <-
-   getelementptr_instruction:index[Insn, 0] = IndexOp,
-   !operand:to_int[IndexOp] = _.
-
-gep_points_to(Insn, 1, NewAlloc)
- <-
-   gep_points_to(Insn, 0, Alloc),
-   getelementptr_instruction:interm_type[Insn, 1] = DeclaredType,
-   // variable first index
-   _gep_with_unknown_base_offset(Insn),
-   // check for type compatibility
-   allocation:type[Alloc] = Type,
-   type_compatible(Type, DeclaredType),
-   // allocation pointed to some specific (known) element
-   alloc_subregion:at_array_index[Base, _] = Alloc,
-   alloc_subregion:at_any_array_index[Base] = NewAlloc,
-   alloc_subregion:base[Alloc] = Base. // OPT: redundant clause
-
-
-// First index is also ignored when address points-to non-base object
-// with variable array index, since adding the new first index will
-// not change anything. Thus, it suffices to propagate the existing
-// allocation
-
-gep_points_to(Insn, 1, Alloc)
- <-
-   gep_points_to(Insn, 0, Alloc),
-   alloc_subregion:at_any_array_index[Base] = Alloc,
-   alloc_subregion:base[Alloc] = Base. // OPT: redundant clause
-
+//------------------------------------------------------------------------------
 
 // We point to the aliased zero index of a base allocation, as if it
 // had been an array allocation, whenever the base allocation flows to
@@ -129,8 +64,141 @@ gep_points_to(Insn, 0, ZeroAliasAlloc)
    alloc_subregion:at_array_index[Alloc, 0] = ZeroAliasAlloc.
 
 
-// When address operand points-to base object, then we must record the
-// index accordingly
+// 1. First zero index is ignored when address operand points-to
+// non-base object.
+
+_gep_with_zero_base_offset(Insn) <-
+   getelementptr_instruction:index[Insn, 0] = IndexOp,
+   operand:to_int[IndexOp] = 0.
+
+gep_points_to(Insn, 1, Alloc)
+ <-
+   _gep_with_zero_base_offset(Insn),
+   gep_points_to(Insn, 0, Alloc),
+   alloc_subregion(Alloc).
+
+
+// 2. The first non-zero index must be added to the previous index of
+// the allocation to produce a new offset
+
+// GEP instruction has non-zero base offset
+_gep_with_nonzero_base_offset[Insn] = Index <-
+   getelementptr_instruction:index[Insn, 0] = IndexOp,
+   operand:to_int[IndexOp] = Index,
+   Index != 0.
+
+_nonzero_gep_points_to(Insn, DeclaredType, Index, Alloc) <-
+   _inv_gep_points_to(Alloc, 0, Insn),
+   // constant non-zero first index
+   _gep_with_nonzero_base_offset[Insn] = Index,
+   getelementptr_instruction:interm_type[Insn, 1] = DeclaredType.
+
+
+/// 2.1 Offset exists
+
+// Two array subobjects at relative offset
+_array_subobjects_at_rel_offset[Alloc, Offset] = NewAlloc <-
+   alloc_subregion:at_array_index[Base, Index] = Alloc,
+   alloc_subregion:at_array_index[Base, Index + Offset] = NewAlloc.
+
+gep_points_to(Insn, 1, NewAlloc)
+ <-
+   _nonzero_gep_points_to(Insn, DeclaredType, Index, Alloc),
+   // get existing allocation at new index (when such exists)
+   _array_subobjects_at_rel_offset[Alloc, Index] = NewAlloc,
+   // check for type compatibility
+   allocation:type[NewAlloc] = Type, // old type may not be compatible
+   type_compatible(Type, DeclaredType).
+
+
+/// 2.2 Pointer offset doesn't exist
+
+// Get star object pointer, given a pointer to a base object
+_star_subobj_of_base_subobj(NewAlloc, Index, Alloc) <-
+   basic_allocation(Base),
+   alloc_subregion:at_array_index[Base, Index] = Alloc,
+   alloc_subregion:at_any_array_index[Base] = NewAlloc.
+
+gep_points_to(Insn, 1, NewAlloc)
+ <-
+   // This rule may be turned on/off via configuration
+   analyze_pointer_arithmetic(),
+   // GEP instruction to non-zero Index where base points to Alloc
+   _nonzero_gep_points_to(Insn, DeclaredType, Index, Alloc),
+   // get star pointer object
+   _star_subobj_of_base_subobj(NewAlloc, OtherIndex, Alloc),
+   // new index doesn't exist
+   Offset = OtherIndex + Index,
+   !pointer_index(Offset),
+   // check for type compatibility
+   allocation:type[NewAlloc] = Type, // old type may not be compatible
+   type_compatible(Type, DeclaredType).
+
+
+/// 2.3 Array offset doesn't exist
+
+// Get star subobject, given an array subobject
+_star_subobj_of_array_subobj(NewAlloc, BaseType, Index, Alloc) <-
+   allocation:type[Base] = BaseType,
+   array_type(BaseType),
+   alloc_subregion:at_array_index[Base, Index] = Alloc,
+   alloc_subregion:at_any_array_index[Base] = NewAlloc.
+
+gep_points_to(Insn, 1, NewAlloc)
+ <-
+   // This rule may be turned on/off via configuration
+   analyze_pointer_arithmetic(),
+   // GEP instruction to non-zero Index where base points to Alloc
+   _nonzero_gep_points_to(Insn, DeclaredType, Index, Alloc),
+   // get star array subobject
+   _star_subobj_of_array_subobj(NewAlloc, BaseType, OtherIndex, Alloc),
+   // new index doesn't exist (over-approximation to avoid NTR)
+   Offset = OtherIndex + Index,
+   type_compatible(BaseType, SomeType),
+   !array_indices:__no_typecomp(SomeType, Offset),
+   // check for type compatibility
+   allocation:type[NewAlloc] = Type, // old type may not be compatible
+   type_compatible(Type, DeclaredType).
+
+
+// 3. The first index, if unknown, must be used to generate a new
+// star-index allocation that replaces the older constant index
+
+_gep_with_unknown_base_offset(Insn) <-
+   getelementptr_instruction:index[Insn, 0] = IndexOp,
+   !operand:to_int[IndexOp] = _.
+
+_unknown_gep_points_to(Insn, DeclaredType, Alloc) <-
+   _inv_gep_points_to(Alloc, 0, Insn),
+   _gep_with_unknown_base_offset(Insn),
+   getelementptr_instruction:interm_type[Insn, 1] = DeclaredType.
+
+gep_points_to(Insn, 1, NewAlloc)
+ <-
+   _unknown_gep_points_to(Insn, DeclaredType, Alloc),
+   // check for type compatibility
+   allocation:type[Alloc] = Type,
+   type_compatible(Type, DeclaredType),
+   // allocation pointed to some specific (known) element
+   alloc_subregion:at_array_index[Base, _] = Alloc,
+   alloc_subregion:at_any_array_index[Base] = NewAlloc,
+   alloc_subregion:base[Alloc] = Base. // OPT: redundant clause
+
+
+// 4. First index is also ignored when address points-to non-base
+// object with variable array index, since adding the new first index
+// will not change anything. Thus, it suffices to propagate the
+// existing allocation
+
+gep_points_to(Insn, 1, Alloc)
+ <-
+   gep_points_to(Insn, 0, Alloc),
+   alloc_subregion:at_any_array_index[Base] = Alloc,
+   alloc_subregion:base[Alloc] = Base. // OPT: redundant clause
+
+
+// 5. When address operand points to base object, then we must record
+// the index accordingly
 
 _gep_addr_points_to_baseobj(Alloc, Insn) <-
    gep_points_to(Insn, 0, Alloc),
@@ -162,7 +230,7 @@ gep_points_to(Insn, 1, Region)
    alloc_subregion:at_any_array_index[Alloc] = Region.
 
 
-// It also possible that a struct type is treated as an array of
+// 6. It also possible that a struct type is treated as an array of
 // bytes, in which case we must match the byte offset to some field
 
 gep_points_to(Insn, 1, Region)
@@ -183,9 +251,9 @@ gep_points_to(Insn, 1, Region)
    alloc_subregion:at_field[Alloc, Field] = Region.
 
 
-//----------------------------------------------------------
+//------------------------------------------------------------------------------
 // For the rest of the indices of the GEP instruction
-//----------------------------------------------------------
+//------------------------------------------------------------------------------
 
 gep_interm_points_to_array(Insn, Index, Alloc)
  <-
