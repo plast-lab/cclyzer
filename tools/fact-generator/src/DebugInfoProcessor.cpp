@@ -5,8 +5,10 @@
 #include "DebugInfoProcessor.hpp"
 #include "RefmodeEngine.hpp"
 #include "predicate_groups.hpp"
+#include "debuginfo_predicate_groups.hpp"
 
 using cclyzer::DebugInfoProcessor;
+using cclyzer::refmode_t;
 using namespace llvm;
 using std::list;
 using std::map;
@@ -36,6 +38,10 @@ DebugInfoProcessor::printScope(Stream &stream, const DIScopeRef &outerScope)
             const DIScope *dis = dyn_cast<DIScope>(&scope);
             nsComponents.push_front(dis->getName());
             iScope = dis->getScope();
+
+            if (DIFile *difile = dis->getFile()) {
+                writeDebugInfoFile(*difile);
+            }
         }
     }
 
@@ -256,4 +262,26 @@ void DebugInfoProcessor::CollectTypeIDs()
             if (!refmode.empty())
                 typeNameByID[tp->getIdentifier()] = refmode;
         }
+}
+
+
+refmode_t
+DebugInfoProcessor::writeDebugInfoFile(const llvm::DIFile& difile)
+{
+    // Check if node has been processed before
+    auto search = nodeIds.find(&difile);
+
+    if (search != nodeIds.end())
+        return search->second;
+
+    // Generate refmode for this node
+    refmode_t nodeId = refmEngine.refmode<DINode>(difile);
+    string filename = difile.getFilename();
+    string directory = difile.getDirectory();
+
+    writeFact(pred::di_file::id, nodeId);
+    writeFact(pred::di_file::filename, nodeId, filename);
+    writeFact(pred::di_file::directory, nodeId, directory);
+
+    return nodeIds[&difile] = nodeId;
 }

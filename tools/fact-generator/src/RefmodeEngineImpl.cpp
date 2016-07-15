@@ -43,31 +43,7 @@ RefmodeEngine::Impl::refmodeOf(const llvm::Value * Val)
         const llvm::MetadataAsValue *mv = cast<llvm::MetadataAsValue>(Val);
         const llvm::Metadata *meta = mv->getMetadata();
 
-        if (llvm::isa<llvm::MDNode>(meta)) {
-            meta->printAsOperand(rso, *slotTracker);
-        }
-        else if (llvm::isa<llvm::MDString>(meta)) {
-            meta->printAsOperand(rso, *slotTracker);
-        }
-        else {
-            const llvm::ValueAsMetadata *v = cast<llvm::ValueAsMetadata>(meta);
-            const llvm::Value *innerValue = v->getValue();
-            const llvm::Type  *type = v->getType();
-
-            if (llvm::isa<llvm::ConstantAsMetadata>(meta)) {
-                meta->printAsOperand(rso, *slotTracker);
-            }
-            else {
-                // For unknown reasons the printAsOperand() method is
-                // super expensive for this particular metadata type,
-                // at least for LLVM version 3.7.{0,1}. So instead, we
-                // manually construct the refmodes ourselves.
-
-                rso << refmode<llvm::Type>(*type)
-                    << " " << refmodeOf(innerValue);
-            }
-        }
-
+        appendMetadataId(rso, *meta);
         goto print;
     }
 
@@ -100,6 +76,35 @@ print:
     return ref;
 }
 
+
+void
+RefmodeEngine::Impl::appendMetadataId(raw_string_ostream& rso, const llvm::Metadata& meta)
+{
+    if (llvm::isa<llvm::MDNode>(meta)) {
+        meta.printAsOperand(rso, *slotTracker);
+    }
+    else if (llvm::isa<llvm::MDString>(meta)) {
+        meta.printAsOperand(rso, *slotTracker);
+    }
+    else {
+        const llvm::ValueAsMetadata& v = cast<llvm::ValueAsMetadata>(meta);
+        const llvm::Value *innerValue = v.getValue();
+        const llvm::Type  *type = v.getType();
+
+        if (llvm::isa<llvm::ConstantAsMetadata>(meta)) {
+            meta.printAsOperand(rso, *slotTracker);
+        }
+        else {
+            // For unknown reasons the printAsOperand() method is
+            // super expensive for this particular metadata type,
+            // at least for LLVM version 3.7.{0,1}. So instead, we
+            // manually construct the refmodes ourselves.
+
+            rso << refmode<llvm::Type>(*type)
+                << " " << refmodeOf(innerValue);
+        }
+    }
+}
 
 void
 RefmodeEngine::Impl::computeNumbering(

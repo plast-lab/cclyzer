@@ -1,6 +1,7 @@
 #include <sstream>
 #include <llvm/Support/raw_ostream.h>
 #include <llvm/IR/InlineAsm.h>
+#include <llvm/IR/DebugInfoMetadata.h>
 #include "RefmodeEngine.hpp"
 #include "RefmodeEngineImpl.hpp"
 #include "llvm_enums.hpp"
@@ -139,6 +140,20 @@ namespace cclyzer {
         withContext<llvm::Function>(refmode) << id;
         return refmode.str();
     }
+
+
+    template<> refmode_t
+    RefmodeEngine::Impl::refmode(const llvm::DINode& node) // const
+    {
+        std::ostringstream refmode;
+
+        string rv;
+        raw_string_ostream rso(rv);
+        appendMetadataId(rso, node);
+
+        withGlobalContext(refmode) << rso.str();
+        return refmode.str();
+    }
 }
 
 
@@ -222,3 +237,7 @@ RefmodeEngine::refmode<llvm::CallingConv::ID>(
 template refmode_t
 RefmodeEngine::refmode<llvm::AtomicOrdering>(
     const llvm::AtomicOrdering & ) const;
+
+template refmode_t
+RefmodeEngine::refmode<llvm::DINode>(
+    const llvm::DINode & ) const;

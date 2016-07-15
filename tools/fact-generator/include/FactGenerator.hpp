@@ -75,7 +75,7 @@ class cclyzer::FactGenerator
     /* Constructor must initialize output file streams */
     FactGenerator(FactWriter &writer)
         : ForwardingFactWriter(writer)
-        , debugInfoProcessor(writer)
+        , debugInfoProcessor(writer, static_cast<RefmodeEngine&>(*this))
     {}
 
     /* Global fact writing methods */

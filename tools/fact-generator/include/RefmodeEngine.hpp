@@ -91,6 +91,10 @@ namespace cclyzer {
     RefmodeEngine::refmode<llvm::AtomicOrdering>(
         const llvm::AtomicOrdering & ) const;
 
+    extern template refmode_t
+    RefmodeEngine::refmode<llvm::DINode>(
+        const llvm::DINode & ) const;
+
 } // end of namespace cclyzer
 
 #endif /* REFMODE_ENGINE_HPP__ */

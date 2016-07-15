@@ -6,6 +6,7 @@
 #include "Demangler.hpp"
 #include "FactWriter.hpp"
 #include "ForwardingFactWriter.hpp"
+#include "RefmodeEngine.hpp"
 
 namespace cclyzer {
     class DebugInfoProcessor;
@@ -16,8 +17,8 @@ class cclyzer::DebugInfoProcessor
       private ForwardingFactWriter
 {
   public:
-    DebugInfoProcessor(FactWriter &writer)
-        : ForwardingFactWriter(writer) {}
+    DebugInfoProcessor(FactWriter& writer, RefmodeEngine& engine)
+        : ForwardingFactWriter(writer), refmEngine(engine) {}
 
     /* Delegate to debug info finder */
 
@@ -42,6 +43,8 @@ class cclyzer::DebugInfoProcessor
 
 
     /* Fact-generating methods */
+
+    refmode_t writeDebugInfoFile(const llvm::DIFile & );
 
     void
     postProcess(const llvm::Module &, const std::string &);
@@ -79,6 +82,12 @@ class cclyzer::DebugInfoProcessor
 
     /* Mapping from DIType ID to type name  */
     std::map<std::string, refmode_t> typeNameByID;
+
+    /* Refmode Engine */
+    RefmodeEngine &refmEngine;
+
+    /* Cache of processed nodes */
+    std::map<const llvm::DINode *, refmode_t> nodeIds;
 };
 
 #endif /* DEBUG_INFO_PROCESSOR_HPP__ */

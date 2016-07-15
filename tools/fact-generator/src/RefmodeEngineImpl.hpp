@@ -3,6 +3,11 @@
 #include "ContextManager.hpp"
 #include "RefmodeEngine.hpp"
 
+// Forward declaration
+namespace llvm {
+    class raw_string_ostream;
+}
+
 // Refmode Policy implementation
 class cclyzer::RefmodeEngine::Impl
 {
@@ -36,6 +41,8 @@ class cclyzer::RefmodeEngine::Impl
 
     // Methods that compute refmodes for various LLVM types
     refmode_t refmodeOf(const llvm::Value *Val);
+
+    void appendMetadataId(llvm::raw_string_ostream & , const llvm::Metadata & );
 
     // Compute variable numberings
     static void computeNumbering(
