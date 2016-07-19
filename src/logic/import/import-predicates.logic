@@ -1067,6 +1067,62 @@ lang:physical:filePath[`_di:global_variable:scope] = "facts/di-global_variable-s
 
 
 
+_di:namespace:file(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_di:namespace:file] = "\t".
+lang:physical:filePath[`_di:namespace:file] = "facts/di-namespace-file.dlm".
+
++di:entry:id(e0:v0),
++di:namespace(e0),
++di:entry:id(e1:v1),
++di:file(e1),
++di:namespace:file[e0] = e1
+<-
+   _di:namespace:file(v0, v1).
+
+
+
+_di:namespace:line(v0, v1) -> string(v0), uint[64](v1).
+
+lang:physical:delimiter[`_di:namespace:line] = "\t".
+lang:physical:filePath[`_di:namespace:line] = "facts/di-namespace-line.dlm".
+
++di:entry:id(e0:v0),
++di:namespace(e0),
++di:namespace:line[e0] = v1
+<-
+   _di:namespace:line(v0, v1).
+
+
+
+_di:namespace:name(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_di:namespace:name] = "\t".
+lang:physical:filePath[`_di:namespace:name] = "facts/di-namespace-name.dlm".
+
++di:entry:id(e0:v0),
++di:namespace(e0),
++di:namespace:name[e0] = v1
+<-
+   _di:namespace:name(v0, v1).
+
+
+
+_di:namespace:scope(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_di:namespace:scope] = "\t".
+lang:physical:filePath[`_di:namespace:scope] = "facts/di-namespace-scope.dlm".
+
++di:entry:id(e0:v0),
++di:namespace(e0),
++di:entry:id(e1:v1),
++di:scope(e1),
++di:namespace:scope[e0] = e1
+<-
+   _di:namespace:scope(v0, v1).
+
+
+
 _extractelement_instruction:base$by_constant(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_extractelement_instruction:base$by_constant] = "\t".

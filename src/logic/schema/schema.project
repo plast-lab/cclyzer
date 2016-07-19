@@ -80,3 +80,4 @@ activate-sanity.logic, inactive
 debuginfo/entry.logic, active
 debuginfo/global_variable.logic, active
 debuginfo/file.logic, active
+debuginfo/namespace.logic, active

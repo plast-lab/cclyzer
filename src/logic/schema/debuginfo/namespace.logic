@@ -1,0 +1,13 @@
+di:namespace(Entry) -> di:scope(Entry).
+
+di:namespace:name[Entry] = Name ->
+   di:namespace(Entry), string(Name).
+
+di:namespace:line[Entry] = Line ->
+   di:namespace(Entry), uint[64](Line).
+
+di:namespace:file[Entry] = File ->
+   di:namespace(Entry), di:file(File).
+
+di:namespace:scope[Entry] = Scope ->
+   di:namespace(Entry), di:scope(Scope).
