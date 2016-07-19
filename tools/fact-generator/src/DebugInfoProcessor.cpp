@@ -39,9 +39,7 @@ DebugInfoProcessor::printScope(Stream &stream, const DIScopeRef &outerScope)
             nsComponents.push_front(dis->getName());
             iScope = dis->getScope();
 
-            if (DIFile *difile = dis->getFile()) {
-                writeDebugInfoFile(*difile);
-            }
+            writeDebugInfoScope(*dis);
         }
     }
 
@@ -275,7 +273,7 @@ DebugInfoProcessor::writeDebugInfoFile(const llvm::DIFile& difile)
         return search->second;
 
     // Generate refmode for this node
-    refmode_t nodeId = refmEngine.refmode<DINode>(difile);
+    refmode_t nodeId = refmEngine.refmode<llvm::DINode>(difile);
     string filename = difile.getFilename();
     string directory = difile.getDirectory();
 
@@ -284,4 +282,63 @@ DebugInfoProcessor::writeDebugInfoFile(const llvm::DIFile& difile)
     writeFact(pred::di_file::directory, nodeId, directory);
 
     return nodeIds[&difile] = nodeId;
+}
+
+
+refmode_t
+DebugInfoProcessor::writeDebugInfoNamespace(const llvm::DINamespace& dinamespace)
+{
+    // Check if node has been processed before
+    auto search = nodeIds.find(&dinamespace);
+
+    if (search != nodeIds.end())
+        return search->second;
+
+    // Generate refmode for this node
+    refmode_t nodeId = refmEngine.refmode<llvm::DINode>(dinamespace);
+    const string name = dinamespace.getName();
+    const unsigned line = dinamespace.getLine();
+
+    writeFact(pred::di_namespace::id, nodeId);
+    writeFact(pred::di_namespace::name, nodeId, name);
+    writeFact(pred::di_namespace::line, nodeId, line);
+
+    // Record file information for namespace
+    if (const llvm::DIFile *difile = dinamespace.getFile()) {
+        refmode_t fileId = writeDebugInfoFile(*difile);
+        writeFact(pred::di_namespace::file, nodeId, fileId);
+    }
+
+    // Record enclosing scope
+    if (const llvm::DIScope *discope = dinamespace.getScope()) {
+        refmode_t scopeId = writeDebugInfoScope(*discope);
+        writeFact(pred::di_namespace::scope, nodeId, scopeId);
+    }
+
+    return nodeIds[&dinamespace] = nodeId;
+}
+
+
+refmode_t
+DebugInfoProcessor::writeDebugInfoScope(const llvm::DIScope& discope)
+{
+    using llvm::DINamespace;
+
+    if (const DINamespace *dins = llvm::dyn_cast<DINamespace>(&discope))
+        return writeDebugInfoNamespace(*dins);
+    return "<nullref>";
+}
+
+
+refmode_t
+DebugInfoProcessor::writeDebugInfoScope(const llvm::DIScopeRef& discope)
+{
+    using llvm::MDString;
+    const llvm::Metadata& meta = *discope;
+
+    if (const MDString *mds = dyn_cast<MDString>(&meta)) {
+        return "<nullref>";
+    }
+
+    return writeDebugInfoScope(cast<DIScope>(*discope));
 }

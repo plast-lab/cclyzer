@@ -36,6 +36,15 @@ namespace cclyzer { namespace predicates
         static pred_t directory;
     };
 
+    // namespace entries
+    struct di_namespace : public predicate_group {
+        static entity_pred_t id;
+        static pred_t name;
+        static pred_t file;
+        static pred_t line;
+        static pred_t scope;
+    };
+
 
 }} // end of namespace cclyzer::predicates
 

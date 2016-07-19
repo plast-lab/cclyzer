@@ -462,3 +462,10 @@ pred_t di_global_var::scope("di:global_variable:scope");
 entity_pred_t di_file::id("di:file");
 pred_t di_file::filename("di:file:filename");
 pred_t di_file::directory("di:file:directory");
+
+// Namespace Entry
+entity_pred_t di_namespace::id("di:namespace");
+pred_t di_namespace::name("di:namespace:name");
+pred_t di_namespace::file("di:namespace:file");
+pred_t di_namespace::line("di:namespace:line");
+pred_t di_namespace::scope("di:namespace:scope");

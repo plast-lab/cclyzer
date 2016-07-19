@@ -45,6 +45,9 @@ class cclyzer::DebugInfoProcessor
     /* Fact-generating methods */
 
     refmode_t writeDebugInfoFile(const llvm::DIFile & );
+    refmode_t writeDebugInfoNamespace(const llvm::DINamespace & );
+    refmode_t writeDebugInfoScope(const llvm::DIScope & );
+    refmode_t writeDebugInfoScope(const llvm::DIScopeRef & );
 
     void
     postProcess(const llvm::Module &, const std::string &);
