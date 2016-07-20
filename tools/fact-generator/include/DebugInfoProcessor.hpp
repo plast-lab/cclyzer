@@ -47,7 +47,7 @@ class cclyzer::DebugInfoProcessor
     refmode_t writeDebugInfoFile(const llvm::DIFile & );
     refmode_t writeDebugInfoNamespace(const llvm::DINamespace & );
     refmode_t writeDebugInfoScope(const llvm::DIScope & );
-    refmode_t writeDebugInfoScope(const llvm::DIScopeRef & );
+    refmode_t writeDebugInfoType(const llvm::DIType & );
 
     void
     postProcess(const llvm::Module &, const std::string &);
@@ -64,6 +64,12 @@ class cclyzer::DebugInfoProcessor
     postProcessTypedef(const llvm::DIDerivedType &, const std::string &);
 
   protected:
+
+    void handleCoreDIType(const llvm::DIType &, const refmode_t & );
+    void handleDIBasicType(const llvm::DIBasicType &, const refmode_t & );
+    void handleDICompositeType(const llvm::DICompositeType &, const refmode_t & );
+    void handleDIDerivedType(const llvm::DIDerivedType &, const refmode_t & );
+    void handleDISubroutineType(const llvm::DISubroutineType &, const refmode_t & );
 
     // Construct a mapping from type ID to type name
     void CollectTypeIDs();

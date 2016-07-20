@@ -469,3 +469,27 @@ pred_t di_namespace::name("di:namespace:name");
 pred_t di_namespace::file("di:namespace:file");
 pred_t di_namespace::line("di:namespace:line");
 pred_t di_namespace::scope("di:namespace:scope");
+
+// Type Entry
+entity_pred_t di_type::id("di:type_entry");
+pred_t di_type::name("di:type_entry:name");
+pred_t di_type::line("di:type_entry:line");
+pred_t di_type::scope("di:type_entry:scope");
+pred_t di_type::raw_scope("di:type_entry:raw_scope");
+pred_t di_type::flag("di:type_entry:flag");
+pred_t di_type::bitsize("di:type_entry:bit_size");
+pred_t di_type::bitalign("di:type_entry:bit_align");
+pred_t di_type::bitoffset("di:type_entry:bit_offset");
+
+entity_pred_t di_basic_type::id("di:basic_type_entry");
+entity_pred_t di_composite_type::id("di:composite_type_entry");
+
+entity_pred_t di_derived_type::id("di:derived_type_entry");
+pred_t di_derived_type::kind("di:derived_type_entry:kind");
+pred_t di_derived_type::file("di:derived_type_entry:file");
+pred_t di_derived_type::basetype("di:derived_type_entry:base_type");
+pred_t di_derived_type::raw_basetype("di:derived_type_entry:raw_base_type");
+
+entity_pred_t di_subroutine_type::id("di:subroutine_type_entry");
+pred_t di_subroutine_type::type_elem("di:subroutine_type:type_elem");
+pred_t di_subroutine_type::raw_type_elem("di:subroutine_type:raw_type_elem");

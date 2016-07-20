@@ -86,6 +86,7 @@ DebugInfoProcessor::postProcess(const Module &m, const string &path)
         const DIType &dbgType = **iType;
 
         // dbgType.dump();
+        writeDebugInfoType(dbgType);
 
         switch (dbgType.getTag()) {
           case dwarf::Tag::DW_TAG_typedef: {
@@ -326,19 +327,218 @@ DebugInfoProcessor::writeDebugInfoScope(const llvm::DIScope& discope)
 
     if (const DINamespace *dins = llvm::dyn_cast<DINamespace>(&discope))
         return writeDebugInfoNamespace(*dins);
+    // TODO
     return "<nullref>";
 }
 
 
 refmode_t
-DebugInfoProcessor::writeDebugInfoScope(const llvm::DIScopeRef& discope)
+DebugInfoProcessor::writeDebugInfoType(const llvm::DIType& ditype)
 {
-    using llvm::MDString;
-    const llvm::Metadata& meta = *discope;
+    using llvm::DIBasicType;
+    using llvm::DICompositeType;
+    using llvm::DIDerivedType;
+    using llvm::DISubroutineType;
+    using llvm::dyn_cast;
 
-    if (const MDString *mds = dyn_cast<MDString>(&meta)) {
-        return "<nullref>";
+    // Check if node has been processed before
+    auto search = nodeIds.find(&ditype);
+
+    if (search != nodeIds.end())
+        return search->second;
+
+    // Generate refmode for this node
+    refmode_t nodeId = refmEngine.refmode<llvm::DINode>(ditype);
+    handleCoreDIType(ditype, nodeId);
+
+    if (const DIBasicType *basictype = dyn_cast<DIBasicType>(&ditype))
+        handleDIBasicType(*basictype, nodeId);
+    else if (const DICompositeType *comptype = dyn_cast<DICompositeType>(&ditype))
+        handleDICompositeType(*comptype, nodeId);
+    else if (const DIDerivedType *derivedtype = dyn_cast<DIDerivedType>(&ditype))
+        handleDIDerivedType(*derivedtype, nodeId);
+    else if (const DISubroutineType *subrtype = dyn_cast<DISubroutineType>(&ditype))
+        handleDISubroutineType(*subrtype, nodeId);
+
+    return nodeIds[&ditype] = nodeId;
+}
+
+
+void
+DebugInfoProcessor::handleCoreDIType(const llvm::DIType& ditype, const refmode_t& nodeId)
+{
+    const string name = ditype.getName();
+    const unsigned line = ditype.getLine();
+
+    writeFact(pred::di_type::id, nodeId);
+
+    if (!name.empty()) {
+        writeFact(pred::di_type::name, nodeId, name);
     }
 
-    return writeDebugInfoScope(cast<DIScope>(*discope));
+    if (line) {                 // zero indicates non-existence
+        writeFact(pred::di_type::line, nodeId, line);
+    }
+
+
+    // Record bit sizes
+    switch (ditype.getTag()) {
+      // Skip sizeless entries
+      case dwarf::Tag::DW_TAG_typedef:
+      case dwarf::Tag::DW_TAG_const_type:
+      case dwarf::Tag::DW_TAG_restrict_type:
+      case dwarf::Tag::DW_TAG_subroutine_type:
+          break;
+      default: {
+          const uint64_t bitSize = ditype.getSizeInBits();
+          const uint64_t bitAlign = ditype.getAlignInBits();
+          const uint64_t bitOffset = ditype.getOffsetInBits();
+
+          writeFact(pred::di_type::bitsize, nodeId, bitSize);
+          writeFact(pred::di_type::bitalign, nodeId, bitAlign);
+          writeFact(pred::di_type::bitoffset, nodeId, bitOffset);
+      }
+    }
+
+
+    // Record enclosing scope
+    if (const llvm::DIScopeRef discope = ditype.getScope())
+    {
+        using llvm::MDString;
+        const llvm::Metadata& meta = *discope;
+
+        if (const MDString *mds = dyn_cast<MDString>(&meta)) {
+            string scopeStr = mds->getString();
+            writeFact(pred::di_type::raw_scope, nodeId, scopeStr);
+        }
+        else {
+            refmode_t scopeId = writeDebugInfoScope(cast<DIScope>(*discope));
+            writeFact(pred::di_type::scope, nodeId, scopeId);
+        }
+    }
+
+
+    // Record flags
+    const pred::pred_t& flag = pred::di_type::flag;
+
+    if (ditype.isPrivate()) { writeFact(flag, nodeId, "private"); }
+    if (ditype.isProtected()) { writeFact(flag, nodeId, "protected"); }
+    if (ditype.isPublic()) { writeFact(flag, nodeId, "public"); }
+    if (ditype.isForwardDecl()) { writeFact(flag, nodeId, "forward_decl"); }
+    if (ditype.isAppleBlockExtension()) { writeFact(flag, nodeId, "apple_block_extension"); }
+    if (ditype.isBlockByrefStruct()) { writeFact(flag, nodeId, "block_byref_struct"); }
+    if (ditype.isVirtual()) { writeFact(flag, nodeId, "virtual"); }
+    if (ditype.isArtificial()) { writeFact(flag, nodeId, "artificial"); }
+    if (ditype.isObjectPointer()) { writeFact(flag, nodeId, "object_pointer"); }
+    if (ditype.isObjcClassComplete()) { writeFact(flag, nodeId, "objc_class_complete"); }
+    if (ditype.isVector()) { writeFact(flag, nodeId, "vector"); }
+    if (ditype.isStaticMember()) { writeFact(flag, nodeId, "static_member"); }
+    if (ditype.isLValueReference()) { writeFact(flag, nodeId, "lvalue_reference"); }
+    if (ditype.isRValueReference()) { writeFact(flag, nodeId, "rvalue_reference"); }
+}
+
+
+void
+DebugInfoProcessor::handleDIBasicType(const llvm::DIBasicType& ditype, const refmode_t& nodeId)
+{
+    writeFact(pred::di_basic_type::id, nodeId);
+}
+
+
+void
+DebugInfoProcessor::handleDICompositeType(const llvm::DICompositeType& ditype, const refmode_t& nodeId)
+{
+    writeFact(pred::di_composite_type::id, nodeId);
+    // TODO
+}
+
+
+void
+DebugInfoProcessor::handleDIDerivedType(const llvm::DIDerivedType& ditype, const refmode_t& nodeId)
+{
+    writeFact(pred::di_derived_type::id, nodeId);
+
+    // Record exact kind of derived type
+    switch (ditype.getTag()) {
+      case dwarf::Tag::DW_TAG_pointer_type:
+          writeFact(pred::di_derived_type::kind, nodeId, "pointer_type");
+          break;
+      case dwarf::Tag::DW_TAG_restrict_type:
+          writeFact(pred::di_derived_type::kind, nodeId, "restrict_type");
+          break;
+      case dwarf::Tag::DW_TAG_volatile_type:
+          writeFact(pred::di_derived_type::kind, nodeId, "volatile_type");
+          break;
+      case dwarf::Tag::DW_TAG_const_type:
+          writeFact(pred::di_derived_type::kind, nodeId, "const_type");
+          break;
+      case dwarf::Tag::DW_TAG_reference_type:
+          writeFact(pred::di_derived_type::kind, nodeId, "reference_type");
+          break;
+      case dwarf::Tag::DW_TAG_rvalue_reference_type:
+          writeFact(pred::di_derived_type::kind, nodeId, "rvalue_reference_type");
+          break;
+      case dwarf::Tag::DW_TAG_ptr_to_member_type:
+          writeFact(pred::di_derived_type::kind, nodeId, "ptr_to_member_type");
+          break;
+      case dwarf::Tag::DW_TAG_typedef:
+          writeFact(pred::di_derived_type::kind, nodeId, "typedef");
+          break;
+      case dwarf::Tag::DW_TAG_member:
+          writeFact(pred::di_derived_type::kind, nodeId, "member");
+          break;
+      case dwarf::Tag::DW_TAG_inheritance:
+          writeFact(pred::di_derived_type::kind, nodeId, "inheritance");
+          break;
+      case dwarf::Tag::DW_TAG_friend:
+          writeFact(pred::di_derived_type::kind, nodeId, "friend");
+          break;
+    }
+
+    // Record base type
+    if (const llvm::DITypeRef baseType = ditype.getBaseType())
+    {
+        using llvm::MDString;
+        const llvm::Metadata& meta = *baseType;
+
+        if (const MDString *mds = dyn_cast<MDString>(&meta)) {
+            string typeStr = mds->getString();
+            writeFact(pred::di_derived_type::raw_basetype, nodeId, typeStr);
+        }
+        else {
+            refmode_t baseTypeId = writeDebugInfoType(cast<DIType>(*baseType));
+            writeFact(pred::di_derived_type::basetype, nodeId, baseTypeId);
+        }
+    }
+
+    // Record file information for type
+    if (const llvm::DIFile *difile = ditype.getFile()) {
+        refmode_t fileId = writeDebugInfoFile(*difile);
+        writeFact(pred::di_derived_type::file, nodeId, fileId);
+    }
+}
+
+
+void
+DebugInfoProcessor::handleDISubroutineType(const llvm::DISubroutineType& ditype, const refmode_t& nodeId)
+{
+    using llvm::MDString;
+    writeFact(pred::di_subroutine_type::id, nodeId);
+
+    auto typeArray = ditype.getTypeArray();
+
+    for (size_t i = 0; i < typeArray.size(); ++i) {
+        if (const DITypeRef type = typeArray[i]) {
+            const llvm::Metadata& meta = *type;
+
+            if (const MDString *mds = dyn_cast<MDString>(&meta)) {
+                string typeStr = mds->getString();
+                writeFact(pred::di_subroutine_type::raw_type_elem, nodeId, i, typeStr);
+            }
+            else {
+                refmode_t typeId = writeDebugInfoType(cast<DIType>(*type));
+                writeFact(pred::di_subroutine_type::type_elem, nodeId, i, typeId);
+            }
+        }
+    }
 }
