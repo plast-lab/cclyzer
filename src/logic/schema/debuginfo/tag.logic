@@ -1,0 +1,13 @@
+di:tag(Tag), di:tag:id(Tag:ID) -> string(ID).
+
+di:tag:pointer_type[] = Tag <- di:tag:id(Tag:"pointer_type").
+di:tag:restrict_type[] = Tag <- di:tag:id(Tag:"restrict_type").
+di:tag:volatile_type[] = Tag <- di:tag:id(Tag:"volatile_type").
+di:tag:const_type[] = Tag <- di:tag:id(Tag:"const_type").
+di:tag:reference_type[] = Tag <- di:tag:id(Tag:"reference_type").
+di:tag:rvalue_ref_type[] = Tag <- di:tag:id(Tag:"rvalue_reference_type").
+di:tag:ptr_to_member_type[] = Tag <- di:tag:id(Tag:"ptr_to_member_type").
+di:tag:typedef[] = Tag <- di:tag:id(Tag:"typedef").
+di:tag:member[] = Tag <- di:tag:id(Tag:"member").
+di:tag:inheritance[] = Tag <- di:tag:id(Tag:"inheritance").
+di:tag:friend[] = Tag <- di:tag:id(Tag:"friend").
