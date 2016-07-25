@@ -1,3 +1,4 @@
+from collections import deque
 from os import path
 import logging
 import shutil
@@ -13,7 +14,8 @@ class LogCommand(CliCommand):
         """Add custom options to CLI subcommand parser.
 
         """
-        pass
+        parser.add_argument('-n', '--lines', metavar='K', type=int,
+                            help='output the last K lines')
 
     def __init__(self, args):
         CliCommand.__init__(self, args)
@@ -21,6 +23,8 @@ class LogCommand(CliCommand):
         # Path to log file
         env = Environment()
         self._logfile = env.user_log_file
+        self._lines = args.lines or 10
+        assert self._lines > 0, "Number of lines must be positive"
 
         # Disable logging for this command
         logging.disable(logging.INFO)
@@ -31,4 +35,6 @@ class LogCommand(CliCommand):
 
         """
         with open(self._logfile) as log:
-            shutil.copyfileobj(log, sys.stdout)
+            for line in deque(log, self._lines):
+                sys.stdout.write(line)
+            sys.stdout.flush()
