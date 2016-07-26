@@ -40,6 +40,9 @@ lines appropriately:
 
 ### Install LLVM
 
+This step is not needed for newer Linux distributions, where you can
+install LLVM version 3.7 (or later) from the system's package manager.
+
 * Download LLVM 3.7.0 pre-built binary from the
   [LLVM Download Page](http://www.llvm.org/releases/download.html#3.7.0).
 * Untar the downloaded file to a destination path of your choice
@@ -53,7 +56,11 @@ You will also have to install the following packages:
 
 #### Fedora 20, 21, 22
 
-    # yum install m4 ncurses ncurses-devel boost-devel boost-python protobuf-devel python-pip python-devel
+    # yum install boost-devel boost-python protobuf-devel python-pip python-devel
+
+#### Fedora 24
+
+    # yum install boost-devel boost-python protobuf-devel python-pip python-devel llvm-devel
 
 #### Ubuntu
 
