@@ -55,7 +55,7 @@ namespace cclyzer {
 /* Predicate */
 
 class cclyzer::Predicate
-    : protected Registry<Predicate>
+    : public Registry<Predicate>
 {
   public:
 
@@ -104,7 +104,7 @@ class cclyzer::Predicate
 
 class cclyzer::EntityPredicate
     : public cclyzer::Predicate,
-      protected Registry<EntityPredicate>
+      public Registry<EntityPredicate>
 {
   public:
     EntityPredicate(const char *name) : Predicate(name) {}
@@ -117,7 +117,7 @@ class cclyzer::EntityPredicate
 
 class cclyzer::OperandPredicate
     : public cclyzer::Predicate,
-      protected Registry<OperandPredicate>
+      public Registry<OperandPredicate>
 {
   public:
     OperandPredicate(const char *name)
