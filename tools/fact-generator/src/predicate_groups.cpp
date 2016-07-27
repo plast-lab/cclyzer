@@ -491,5 +491,5 @@ pred_t di_derived_type::basetype("di:derived_type_entry:base_type");
 pred_t di_derived_type::raw_basetype("di:derived_type_entry:raw_base_type");
 
 entity_pred_t di_subroutine_type::id("di:subroutine_type_entry");
-pred_t di_subroutine_type::type_elem("di:subroutine_type:type_elem");
-pred_t di_subroutine_type::raw_type_elem("di:subroutine_type:raw_type_elem");
+pred_t di_subroutine_type::type_elem("di:subroutine_type_entry:type_elem");
+pred_t di_subroutine_type::raw_type_elem("di:subroutine_type_entry:raw_type_elem");

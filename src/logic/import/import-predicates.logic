@@ -1013,6 +1013,64 @@ lang:physical:filePath[`_constant_vector:size] = "facts/constant_vector-size.dlm
 
 
 
+_di:derived_type_entry:base_type(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_di:derived_type_entry:base_type] = "\t".
+lang:physical:filePath[`_di:derived_type_entry:base_type] = "facts/di-derived_type_entry-base_type.dlm".
+
++di:entry:id(e0:v0),
++di:derived_type_entry(e0),
++di:entry:id(e1:v1),
++di:type_entry(e1),
++di:derived_type_entry:base_type[e0] = e1
+<-
+   _di:derived_type_entry:base_type(v0, v1).
+
+
+
+_di:derived_type_entry:file(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_di:derived_type_entry:file] = "\t".
+lang:physical:filePath[`_di:derived_type_entry:file] = "facts/di-derived_type_entry-file.dlm".
+
++di:entry:id(e0:v0),
++di:derived_type_entry(e0),
++di:entry:id(e1:v1),
++di:file(e1),
++di:derived_type_entry:file[e0] = e1
+<-
+   _di:derived_type_entry:file(v0, v1).
+
+
+
+_di:derived_type_entry:kind(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_di:derived_type_entry:kind] = "\t".
+lang:physical:filePath[`_di:derived_type_entry:kind] = "facts/di-derived_type_entry-kind.dlm".
+
++di:entry:id(e0:v0),
++di:derived_type_entry(e0),
++di:tag:id(e1:v1),
++di:tag(e1),
++di:derived_type_entry:kind[e0] = e1
+<-
+   _di:derived_type_entry:kind(v0, v1).
+
+
+
+_di:derived_type_entry:raw_base_type(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_di:derived_type_entry:raw_base_type] = "\t".
+lang:physical:filePath[`_di:derived_type_entry:raw_base_type] = "facts/di-derived_type_entry-raw_base_type.dlm".
+
++di:entry:id(e0:v0),
++di:derived_type_entry(e0),
++di:derived_type_entry:raw_base_type[e0] = v1
+<-
+   _di:derived_type_entry:raw_base_type(v0, v1).
+
+
+
 _di:file:directory(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_di:file:directory] = "\t".
@@ -1120,6 +1178,140 @@ lang:physical:filePath[`_di:namespace:scope] = "facts/di-namespace-scope.dlm".
 +di:namespace:scope[e0] = e1
 <-
    _di:namespace:scope(v0, v1).
+
+
+
+_di:subroutine_type_entry:raw_type_elem(v0, v1, v2) -> string(v0), uint[64](v1), string(v2).
+
+lang:physical:delimiter[`_di:subroutine_type_entry:raw_type_elem] = "\t".
+lang:physical:filePath[`_di:subroutine_type_entry:raw_type_elem] = "facts/di-subroutine_type_entry-raw_type_elem.dlm".
+
++di:entry:id(e0:v0),
++di:subroutine_type_entry(e0),
++di:subroutine_type_entry:raw_type_elem[e0,v1] = v2
+<-
+   _di:subroutine_type_entry:raw_type_elem(v0, v1, v2).
+
+
+
+_di:subroutine_type_entry:type_elem(v0, v1, v2) -> string(v0), uint[64](v1), string(v2).
+
+lang:physical:delimiter[`_di:subroutine_type_entry:type_elem] = "\t".
+lang:physical:filePath[`_di:subroutine_type_entry:type_elem] = "facts/di-subroutine_type_entry-type_elem.dlm".
+
++di:entry:id(e0:v0),
++di:subroutine_type_entry(e0),
++di:entry:id(e1:v2),
++di:type_entry(e1),
++di:subroutine_type_entry:type_elem[e0,v1] = e1
+<-
+   _di:subroutine_type_entry:type_elem(v0, v1, v2).
+
+
+
+_di:type_entry:bit_align(v0, v1) -> string(v0), uint[64](v1).
+
+lang:physical:delimiter[`_di:type_entry:bit_align] = "\t".
+lang:physical:filePath[`_di:type_entry:bit_align] = "facts/di-type_entry-bit_align.dlm".
+
++di:entry:id(e0:v0),
++di:type_entry(e0),
++di:type_entry:bit_align[e0] = v1
+<-
+   _di:type_entry:bit_align(v0, v1).
+
+
+
+_di:type_entry:bit_offset(v0, v1) -> string(v0), uint[64](v1).
+
+lang:physical:delimiter[`_di:type_entry:bit_offset] = "\t".
+lang:physical:filePath[`_di:type_entry:bit_offset] = "facts/di-type_entry-bit_offset.dlm".
+
++di:entry:id(e0:v0),
++di:type_entry(e0),
++di:type_entry:bit_offset[e0] = v1
+<-
+   _di:type_entry:bit_offset(v0, v1).
+
+
+
+_di:type_entry:bit_size(v0, v1) -> string(v0), uint[64](v1).
+
+lang:physical:delimiter[`_di:type_entry:bit_size] = "\t".
+lang:physical:filePath[`_di:type_entry:bit_size] = "facts/di-type_entry-bit_size.dlm".
+
++di:entry:id(e0:v0),
++di:type_entry(e0),
++di:type_entry:bit_size[e0] = v1
+<-
+   _di:type_entry:bit_size(v0, v1).
+
+
+
+_di:type_entry:flag(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_di:type_entry:flag] = "\t".
+lang:physical:filePath[`_di:type_entry:flag] = "facts/di-type_entry-flag.dlm".
+
++di:entry:id(e0:v0),
++di:type_entry(e0),
++di:type_entry:flag(e0,v1)
+<-
+   _di:type_entry:flag(v0, v1).
+
+
+
+_di:type_entry:line(v0, v1) -> string(v0), uint[64](v1).
+
+lang:physical:delimiter[`_di:type_entry:line] = "\t".
+lang:physical:filePath[`_di:type_entry:line] = "facts/di-type_entry-line.dlm".
+
++di:entry:id(e0:v0),
++di:type_entry(e0),
++di:type_entry:line[e0] = v1
+<-
+   _di:type_entry:line(v0, v1).
+
+
+
+_di:type_entry:name(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_di:type_entry:name] = "\t".
+lang:physical:filePath[`_di:type_entry:name] = "facts/di-type_entry-name.dlm".
+
++di:entry:id(e0:v0),
++di:type_entry(e0),
++di:type_entry:name[e0] = v1
+<-
+   _di:type_entry:name(v0, v1).
+
+
+
+_di:type_entry:raw_scope(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_di:type_entry:raw_scope] = "\t".
+lang:physical:filePath[`_di:type_entry:raw_scope] = "facts/di-type_entry-raw_scope.dlm".
+
++di:entry:id(e0:v0),
++di:type_entry(e0),
++di:type_entry:raw_scope[e0] = v1
+<-
+   _di:type_entry:raw_scope(v0, v1).
+
+
+
+_di:type_entry:scope(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_di:type_entry:scope] = "\t".
+lang:physical:filePath[`_di:type_entry:scope] = "facts/di-type_entry-scope.dlm".
+
++di:entry:id(e0:v0),
++di:type_entry(e0),
++di:entry:id(e1:v1),
++di:scope(e1),
++di:type_entry:scope[e0] = e1
+<-
+   _di:type_entry:scope(v0, v1).
 
 
 

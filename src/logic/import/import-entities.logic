@@ -226,6 +226,42 @@ lang:physical:filePath[`_constant_vector] = "facts/constant_vector.dlm".
 
 
 
+_di:basic_type_entry(v0) -> string(v0).
+
+lang:physical:delimiter[`_di:basic_type_entry] = "\t".
+lang:physical:filePath[`_di:basic_type_entry] = "facts/di-basic_type_entry.dlm".
+
++di:entry:id(e0:v0),
++di:basic_type_entry(e0)
+<-
+   _di:basic_type_entry(v0).
+
+
+
+_di:composite_type_entry(v0) -> string(v0).
+
+lang:physical:delimiter[`_di:composite_type_entry] = "\t".
+lang:physical:filePath[`_di:composite_type_entry] = "facts/di-composite_type_entry.dlm".
+
++di:entry:id(e0:v0),
++di:composite_type_entry(e0)
+<-
+   _di:composite_type_entry(v0).
+
+
+
+_di:derived_type_entry(v0) -> string(v0).
+
+lang:physical:delimiter[`_di:derived_type_entry] = "\t".
+lang:physical:filePath[`_di:derived_type_entry] = "facts/di-derived_type_entry.dlm".
+
++di:entry:id(e0:v0),
++di:derived_type_entry(e0)
+<-
+   _di:derived_type_entry(v0).
+
+
+
 _di:file(v0) -> string(v0).
 
 lang:physical:delimiter[`_di:file] = "\t".
@@ -271,6 +307,30 @@ lang:physical:filePath[`_di:scope] = "facts/di-scope.dlm".
 +di:scope(e0)
 <-
    _di:scope(v0).
+
+
+
+_di:subroutine_type_entry(v0) -> string(v0).
+
+lang:physical:delimiter[`_di:subroutine_type_entry] = "\t".
+lang:physical:filePath[`_di:subroutine_type_entry] = "facts/di-subroutine_type_entry.dlm".
+
++di:entry:id(e0:v0),
++di:subroutine_type_entry(e0)
+<-
+   _di:subroutine_type_entry(v0).
+
+
+
+_di:type_entry(v0) -> string(v0).
+
+lang:physical:delimiter[`_di:type_entry] = "\t".
+lang:physical:filePath[`_di:type_entry] = "facts/di-type_entry.dlm".
+
++di:entry:id(e0:v0),
++di:type_entry(e0)
+<-
+   _di:type_entry(v0).
 
 
 

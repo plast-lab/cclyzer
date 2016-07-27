@@ -1,0 +1,79 @@
+//-----------------------------------------------------------
+// Debug Info - Core Type Entry
+//-----------------------------------------------------------
+
+di:type_entry(Entry) -> di:entry(Entry).
+
+di:type_entry:name[Entry] = Name ->
+   di:type_entry(Entry), string(Name).
+
+di:type_entry:line[Entry] = Line ->
+   di:type_entry(Entry), uint[64](Line).
+
+di:type_entry:flag(Entry, Flag) ->
+   di:type_entry(Entry), string(Flag).
+
+// Scope of type
+di:type_entry:scope[Entry] = Scope ->
+   di:type_entry(Entry), di:scope(Scope).
+
+di:type_entry:raw_scope[Entry] = Scope ->
+   di:type_entry(Entry), string(Scope).
+
+// Size properties
+di:type_entry:bit_size[Entry] = Size ->
+   di:type_entry(Entry), uint[64](Size).
+
+di:type_entry:bit_align[Entry] = Align ->
+   di:type_entry(Entry), uint[64](Align).
+
+di:type_entry:bit_offset[Entry] = Offset ->
+   di:type_entry(Entry), uint[64](Offset).
+
+
+//-----------------------------------------------------------
+// Debug Info - Basic Type Entry
+//-----------------------------------------------------------
+
+di:basic_type_entry(Entry) -> di:type_entry(Entry).
+
+
+//-----------------------------------------------------------
+// Debug Info - Composite Type Entry
+//-----------------------------------------------------------
+
+di:composite_type_entry(Entry) -> di:type_entry(Entry).
+
+
+//-----------------------------------------------------------
+// Debug Info - Derived Type Entry
+//-----------------------------------------------------------
+
+di:derived_type_entry(Entry) -> di:type_entry(Entry).
+
+di:derived_type_entry:file[Entry] = File ->
+   di:derived_type_entry(Entry), di:file(File).
+
+di:derived_type_entry:kind[Entry] = Kind ->
+   di:derived_type_entry(Entry), di:tag(Kind).
+
+// Base type
+di:derived_type_entry:base_type[Entry] = Type ->
+   di:derived_type_entry(Entry), di:type_entry(Type).
+
+di:derived_type_entry:raw_base_type[Entry] = Type ->
+   di:derived_type_entry(Entry), string(Type).
+
+
+//-----------------------------------------------------------
+// Debug Info - Subroutine Type Entry
+//-----------------------------------------------------------
+
+di:subroutine_type_entry(Entry) -> di:type_entry(Entry).
+
+// Array elements
+di:subroutine_type_entry:type_elem[Entry, Index] = Type ->
+   di:subroutine_type_entry(Entry), uint[64](Index), di:type_entry(Type).
+
+di:subroutine_type_entry:raw_type_elem[Entry, Index] = Type ->
+   di:subroutine_type_entry(Entry), uint[64](Index), string(Type).

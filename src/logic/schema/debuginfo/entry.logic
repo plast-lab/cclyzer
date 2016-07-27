@@ -4,15 +4,27 @@ di:entry(Entry), di:entry:id(Entry:Ref) -> string(Ref).
 // Debug Information Entry - Type Hierarchy
 //--------------------------------------------------------
 
+di:file(Entry) -> di:entry(Entry).
 di:scope(Entry) -> di:entry(Entry).
+di:namespace(Entry) -> di:scope(Entry).
+
+di:type_entry(Entry) -> di:scope(Entry).
+di:basic_type_entry(Entry) -> di:type_entry(Entry).
+di:composite_type_entry(Entry) -> di:type_entry(Entry).
+di:derived_type_entry(Entry) -> di:type_entry(Entry).
+di:subroutine_type_entry(Entry) -> di:type_entry(Entry).
+
 di:global_variable(Entry) -> di:entry(Entry).
 di:typedef_entry(Entry)   -> di:entry(Entry).
 
-di:file(Entry) -> di:entry(Entry).
-di:namespace(Entry) -> di:scope(Entry).
 
 lang:entity(`di:scope).
 lang:entity(`di:global_variable).
 lang:entity(`di:typedef_entry).
 lang:entity(`di:file).
 lang:entity(`di:namespace).
+lang:entity(`di:type_entry).
+lang:entity(`di:basic_type_entry).
+lang:entity(`di:composite_type_entry).
+lang:entity(`di:derived_type_entry).
+lang:entity(`di:subroutine_type_entry).
