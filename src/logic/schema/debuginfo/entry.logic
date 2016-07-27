@@ -28,3 +28,4 @@ lang:entity(`di:basic_type_entry).
 lang:entity(`di:composite_type_entry).
 lang:entity(`di:derived_type_entry).
 lang:entity(`di:subroutine_type_entry).
+lang:physical:capacity[`di:entry] = 1048576.
