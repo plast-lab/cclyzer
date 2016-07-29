@@ -144,7 +144,7 @@ FactGenerator::processModule(const llvm::Module &Mod, const std::string& path)
     }
 
     // Process any existing debug information
-    debugInfoProcessor.postProcess(Mod, path);
+    debugInfoProcessor.generateDebugInfo(Mod, path);
 }
 
 

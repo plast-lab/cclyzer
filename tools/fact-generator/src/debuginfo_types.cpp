@@ -1,4 +1,4 @@
-#include "DebugInfoProcessor.hpp"
+#include "DebugInfoProcessorImpl.hpp"
 #include "debuginfo_predicate_groups.hpp"
 
 
@@ -17,7 +17,7 @@ namespace dwarf = llvm::dwarf;
 //----------------------------------------------------------------------------
 
 void
-DebugInfoProcessor::write_di_type::write(
+DebugInfoProcessor::Impl::write_di_type::write(
     const llvm::DIType& ditype, const refmode_t& nodeId, DIProc& proc)
 {
     using llvm::DIBasicType;
@@ -41,7 +41,7 @@ DebugInfoProcessor::write_di_type::write(
 //----------------------------------------------------------------------------
 
 void
-DebugInfoProcessor::write_di_basic_type::write(
+DebugInfoProcessor::Impl::write_di_basic_type::write(
     const llvm::DIBasicType& ditype, const refmode_t& nodeId, DIProc& proc)
 {
     proc.write_di_type_common(ditype, nodeId);
@@ -54,7 +54,7 @@ DebugInfoProcessor::write_di_basic_type::write(
 //----------------------------------------------------------------------------
 
 void
-DebugInfoProcessor::write_di_composite_type::write(
+DebugInfoProcessor::Impl::write_di_composite_type::write(
     const llvm::DICompositeType& ditype, const refmode_t& nodeId, DIProc& proc)
 {
     using llvm::DIType;
@@ -116,7 +116,7 @@ DebugInfoProcessor::write_di_composite_type::write(
 //----------------------------------------------------------------------------
 
 void
-DebugInfoProcessor::write_di_derived_type::write(
+DebugInfoProcessor::Impl::write_di_derived_type::write(
     const llvm::DIDerivedType& ditype, const refmode_t& nodeId, DIProc& proc)
 {
     proc.write_di_type_common(ditype, nodeId);
@@ -176,7 +176,7 @@ DebugInfoProcessor::write_di_derived_type::write(
 //----------------------------------------------------------------------------
 
 void
-DebugInfoProcessor::write_di_subroutine_type::write(
+DebugInfoProcessor::Impl::write_di_subroutine_type::write(
     const llvm::DISubroutineType& ditype, const refmode_t& nodeId, DIProc& proc)
 {
     using llvm::MDString;
@@ -211,7 +211,7 @@ DebugInfoProcessor::write_di_subroutine_type::write(
 //----------------------------------------------------------------------------
 
 void
-DebugInfoProcessor::write_di_type_common(
+DebugInfoProcessor::Impl::write_di_type_common(
     const llvm::DIType& ditype, const refmode_t& nodeId)
 {
     const string name = ditype.getName();
@@ -276,7 +276,7 @@ DebugInfoProcessor::write_di_type_common(
 //------------------------------------------------------------------------------
 
 template<typename P, typename writer, typename T> void
-DebugInfoProcessor::recordUnionAttribute(
+DebugInfoProcessor::Impl::recordUnionAttribute(
     const refmode_t& nodeId, const llvm::TypedDINodeRef<T>& attribute)
 {
     typedef P pred;

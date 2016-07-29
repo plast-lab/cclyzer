@@ -1,4 +1,4 @@
-#include "DebugInfoProcessor.hpp"
+#include "DebugInfoProcessorImpl.hpp"
 #include "debuginfo_predicate_groups.hpp"
 
 
@@ -15,7 +15,7 @@ namespace pred = cclyzer::predicates;
 //----------------------------------------------------------------------------
 
 void
-DebugInfoProcessor::write_di_file::write(
+DebugInfoProcessor::Impl::write_di_file::write(
     const llvm::DIFile& difile, const refmode_t& nodeId, DIProc& proc)
 {
     string filename = difile.getFilename();
@@ -32,7 +32,7 @@ DebugInfoProcessor::write_di_file::write(
 //----------------------------------------------------------------------------
 
 void
-DebugInfoProcessor::write_di_namespace::write(
+DebugInfoProcessor::Impl::write_di_namespace::write(
     const llvm::DINamespace& dinamespace, const refmode_t& nodeId, DIProc& proc)
 {
     const string name = dinamespace.getName();
@@ -61,7 +61,7 @@ DebugInfoProcessor::write_di_namespace::write(
 //----------------------------------------------------------------------------
 
 void
-DebugInfoProcessor::write_di_scope::write(
+DebugInfoProcessor::Impl::write_di_scope::write(
     const llvm::DIScope& discope, const refmode_t& nodeId, DIProc& proc)
 {
     using llvm::DINamespace;
