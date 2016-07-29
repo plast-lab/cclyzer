@@ -95,12 +95,14 @@ DebugInfoProcessor::Impl::write_di_composite_type::write(
         nodeId, ditype.getVTableHolder());
 
     // Record template parameters
-    const llvm::DITemplateParameterArray& tplParams = ditype.getTemplateParams();
-
+    const auto& tplParams = ditype.getTemplateParams();
     for (size_t i = 0; i < tplParams.size(); ++i) {
-        const llvm::DITemplateParameter *tplParam = tplParams[i];
+        // Record template parameter
+        refmode_t param =
+            record_di_template_param::record(*tplParams[i], proc);
 
-        // TODO
+        // Record parameter - type association
+        proc.writeFact(pred::di_composite_type::template_param, nodeId, i, param);
     }
 
     // Record file information for type
@@ -268,31 +270,4 @@ DebugInfoProcessor::Impl::write_di_type_common(
     if (ditype.isStaticMember()) { writeFact(flag, nodeId, "static_member"); }
     if (ditype.isLValueReference()) { writeFact(flag, nodeId, "lvalue_reference"); }
     if (ditype.isRValueReference()) { writeFact(flag, nodeId, "rvalue_reference"); }
-}
-
-
-//------------------------------------------------------------------------------
-// Helper method to record union attributes
-//------------------------------------------------------------------------------
-
-template<typename P, typename writer, typename T> void
-DebugInfoProcessor::Impl::recordUnionAttribute(
-    const refmode_t& nodeId, const llvm::TypedDINodeRef<T>& attribute)
-{
-    typedef P pred;
-    typedef di_recorder<T, writer> recorder;
-
-    if (attribute) {
-        using llvm::MDString;
-        const llvm::Metadata& meta = *attribute;
-
-        if (const MDString *mds = dyn_cast<MDString>(&meta)) {
-            std::string attribStr = mds->getString();
-            writeFact(pred::raw, nodeId, attribStr);
-        }
-        else {
-            refmode_t attribId = recorder::record(cast<T>(*attribute), *this);
-            writeFact(pred::node, nodeId, attribId);
-        }
-    }
 }

@@ -487,6 +487,7 @@ entity_pred_t di_composite_type::id("di:composite_type_entry");
 pred_t di_composite_type::file("di:composite_type_entry:file");
 pred_t di_composite_type::abi_id("di:composite_type_entry:abi_id");
 pred_t di_composite_type::field("di:composite_type_entry:field");
+pred_t di_composite_type::template_param("di:composite_type_entry:template_param");
 pred_t di_composite_type::vtable::node("di:composite_type_entry:vtable");
 pred_t di_composite_type::vtable::raw("di:composite_type_entry:raw_vtable");
 pred_t di_composite_type::basetype::node("di:composite_type_entry:base_type");
@@ -501,3 +502,12 @@ pred_t di_derived_type::basetype::raw("di:derived_type_entry:raw_base_type");
 entity_pred_t di_subroutine_type::id("di:subroutine_type_entry");
 pred_t di_subroutine_type::type_elem("di:subroutine_type_entry:type_elem");
 pred_t di_subroutine_type::raw_type_elem("di:subroutine_type_entry:raw_type_elem");
+
+// Template Parameter Entry
+entity_pred_t di_template_param::id("di:template_param");
+pred_t di_template_param::name("di:template_param:name");
+pred_t di_template_param::type::node("di:template_param:type");
+pred_t di_template_param::type::raw("di:template_param:raw_type");
+
+entity_pred_t di_template_type_param::id("di:template_type_param");
+entity_pred_t di_template_value_param::id("di:template_value_param");

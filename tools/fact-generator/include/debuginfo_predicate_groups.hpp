@@ -70,6 +70,7 @@ namespace cclyzer { namespace predicates
         static pred_t file;
         static pred_t abi_id;
         static pred_t field;
+        static pred_t template_param;
 
         struct vtable {
             static pred_t node;
@@ -97,6 +98,25 @@ namespace cclyzer { namespace predicates
         static entity_pred_t id;
         static pred_t type_elem;
         static pred_t raw_type_elem;
+    };
+
+    // template parameter entries
+    struct di_template_param : public predicate_group {
+        static entity_pred_t id;
+        static pred_t name;
+
+        struct type {
+            static pred_t node;
+            static pred_t raw;
+        };
+    };
+
+    struct di_template_type_param : public predicate_group {
+        static entity_pred_t id;
+    };
+
+    struct di_template_value_param : public predicate_group {
+        static entity_pred_t id;
     };
 
 
