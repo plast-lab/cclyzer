@@ -63,13 +63,17 @@ DebugInfoProcessor::Impl::write_di_composite_type::write(
     proc.writeFact(pred::di_composite_type::id, nodeId);
 
     // Record exact kind of derived type
-    switch (ditype.getTag()) {  // TODO
+    switch (ditype.getTag()) {
       case dwarf::Tag::DW_TAG_structure_type:
+          proc.writeFact(pred::di_composite_type::structures, nodeId);   break;
       case dwarf::Tag::DW_TAG_class_type:
+          proc.writeFact(pred::di_composite_type::classes, nodeId);      break;
       case dwarf::Tag::DW_TAG_array_type:
+          proc.writeFact(pred::di_composite_type::arrays, nodeId);       break;
       case dwarf::Tag::DW_TAG_union_type:
+          proc.writeFact(pred::di_composite_type::unions, nodeId);       break;
       case dwarf::Tag::DW_TAG_enumeration_type:
-          break;
+          proc.writeFact(pred::di_composite_type::enumerations, nodeId); break;
     }
 
     // Record ABI Identifier for this composite type

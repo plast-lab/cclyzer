@@ -81,6 +81,13 @@ namespace cclyzer { namespace predicates
             static pred_t node;
             static pred_t raw;
         };
+
+        // Kinds of composite types
+        static entity_pred_t structures;
+        static entity_pred_t classes;
+        static entity_pred_t arrays;
+        static entity_pred_t unions;
+        static entity_pred_t enumerations;
     };
 
     struct di_derived_type : public predicate_group {
