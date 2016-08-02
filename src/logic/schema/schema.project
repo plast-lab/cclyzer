@@ -83,3 +83,4 @@ debuginfo/global_variable.logic, active
 debuginfo/file.logic, active
 debuginfo/namespace.logic, active
 debuginfo/types.logic, active
+debuginfo/templates.logic, active

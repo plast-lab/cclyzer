@@ -1,0 +1,18 @@
+//-----------------------------------------------------------
+// Debug Info - Template Parameters
+//-----------------------------------------------------------
+
+di:template_param(Entry) -> di:entry(Entry).
+
+di:template_param:name[Entry] = Name ->
+   di:template_param(Entry), string(Name).
+
+// Type of template parameter
+di:template_param:type[Entry] = Type ->
+   di:template_param(Entry), di:type_entry(Type).
+
+di:template_param:raw_type[Entry] = Type ->
+   di:template_param(Entry), string(Type).
+
+di:template_type_param(Entry) -> di:template_param(Entry).
+di:template_value_param(Entry) -> di:template_param(Entry).

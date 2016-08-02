@@ -44,6 +44,38 @@ di:basic_type_entry(Entry) -> di:type_entry(Entry).
 
 di:composite_type_entry(Entry) -> di:type_entry(Entry).
 
+di:composite_type_entry:file[Entry] = File ->
+   di:composite_type_entry(Entry), di:file(File).
+
+di:composite_type_entry:abi_id[Entry] = ID ->
+   di:composite_type_entry(Entry), string(ID).
+
+di:composite_type_entry:field[Entry, Index] = Field ->
+   di:composite_type_entry(Entry), uint[64](Index), di:type_entry(Field).
+
+di:composite_type_entry:template_param[Entry, Index] = Param ->
+   di:composite_type_entry(Entry), uint[64](Index), di:template_param(Param).
+
+di:structure_type_entry(Entry) -> di:composite_type_entry(Entry).
+di:class_type_entry(Entry) -> di:composite_type_entry(Entry).
+di:array_type_entry(Entry) -> di:composite_type_entry(Entry).
+di:union_type_entry(Entry) -> di:composite_type_entry(Entry).
+di:enum_type_entry(Entry) -> di:composite_type_entry(Entry).
+
+// Base type
+di:composite_type_entry:base_type[Entry] = Type ->
+   di:composite_type_entry(Entry), di:type_entry(Type).
+
+di:composite_type_entry:raw_base_type[Entry] = Type ->
+   di:composite_type_entry(Entry), string(Type).
+
+// Virtual Table
+di:composite_type_entry:vtable[Entry] = VT ->
+   di:composite_type_entry(Entry), di:type_entry(VT).
+
+di:composite_type_entry:raw_vtable[Entry] = VT ->
+   di:composite_type_entry(Entry), string(VT).
+
 
 //-----------------------------------------------------------
 // Debug Info - Derived Type Entry

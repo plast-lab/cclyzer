@@ -7,6 +7,7 @@ di:entry(Entry), di:entry:id(Entry:Ref) -> string(Ref).
 di:file(Entry) -> di:entry(Entry).
 di:scope(Entry) -> di:entry(Entry).
 di:namespace(Entry) -> di:scope(Entry).
+di:template_param(Entry) -> di:entry(Entry).
 
 di:type_entry(Entry) -> di:scope(Entry).
 di:basic_type_entry(Entry) -> di:type_entry(Entry).
@@ -28,4 +29,5 @@ lang:entity(`di:basic_type_entry).
 lang:entity(`di:composite_type_entry).
 lang:entity(`di:derived_type_entry).
 lang:entity(`di:subroutine_type_entry).
+lang:entity(`di:template_param).
 lang:physical:capacity[`di:entry] = 1048576.
