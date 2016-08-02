@@ -453,11 +453,6 @@ entity_pred_t di_scope_entry::id("di:scope");
 // Typedef Entry
 entity_pred_t di_typedef_entry::id("di:typedef_entry");
 
-// Global Variable Entry
-entity_pred_t di_global_var::id("di:global_variable");
-pred_t di_global_var::name("di:global_variable:name");
-pred_t di_global_var::scope("di:global_variable:scope");
-
 // File Entry
 entity_pred_t di_file::id("di:file");
 pred_t di_file::filename("di:file:filename");
@@ -516,3 +511,22 @@ pred_t di_template_param::type::raw("di:template_param:raw_type");
 
 entity_pred_t di_template_type_param::id("di:template_type_param");
 entity_pred_t di_template_value_param::id("di:template_value_param");
+
+// Variable Entry
+entity_pred_t di_variable::id("di:variable");
+pred_t di_variable::name("di:variable:name");
+pred_t di_variable::file("di:variable:file");
+pred_t di_variable::line("di:variable:line");
+pred_t di_variable::scope("di:variable:scope");
+pred_t di_variable::type::node("di:variable:type");
+pred_t di_variable::type::raw("di:variable:raw_type");
+
+entity_pred_t di_local_var::id("di:local_variable");
+pred_t di_local_var::arg_num("di:local_variable:arg_num");
+pred_t di_local_var::flag("di:local_variable:flag");
+entity_pred_t di_global_var::id("di:global_variable");
+pred_t di_global_var::variable("di:global_variable:resolved_name");
+pred_t di_global_var::linkage_name("di:global_variable:linkage_name");
+pred_t di_global_var::is_definition("di:global_variable:is_definition");
+pred_t di_global_var::is_local_to_unit("di:global_variable:is_local_to_unit");
+pred_t di_global_var::static_data_member_decl("di:global_variable:static_data_member_decl");

@@ -91,6 +91,8 @@ DebugInfoProcessor::Impl::generateDebugInfo(
         string dir = dbgGlobalVar.getDirectory();
 
         writeFact(pred::global_var::pos, refmode, dir, fileName, lineNum);
+
+        record_di_variable::record(**iVar, *this);
     }
 
     // Get type iterator

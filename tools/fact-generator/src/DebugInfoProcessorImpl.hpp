@@ -119,6 +119,18 @@ class cclyzer::DebugInfoProcessor::Impl
         static void write(const llvm::DITemplateValueParameter &, const refmode_t &, DIProc &);
     };
 
+    struct write_di_variable : public write_di_node {
+        static void write(const llvm::DIVariable &, const refmode_t &, DIProc &);
+    };
+
+    struct write_di_global_variable : public write_di_node {
+        static void write(const llvm::DIGlobalVariable &, const refmode_t &, DIProc &);
+    };
+
+    struct write_di_local_variable : public write_di_node {
+        static void write(const llvm::DILocalVariable &, const refmode_t &, DIProc &);
+    };
+
 
     /* Type aliases for common recording operations */
 
@@ -127,6 +139,7 @@ class cclyzer::DebugInfoProcessor::Impl
     typedef di_recorder<llvm::DIScope, write_di_scope> record_di_scope;
     typedef di_recorder<llvm::DIType, write_di_type> record_di_type;
     typedef di_recorder<llvm::DITemplateParameter, write_di_tpl_param> record_di_template_param;
+    typedef di_recorder<llvm::DIVariable, write_di_variable> record_di_variable;
 
     void
     generateDebugInfo(const llvm::Module &, const std::string &);

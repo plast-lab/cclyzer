@@ -22,11 +22,33 @@ namespace cclyzer { namespace predicates
         static entity_pred_t id;
     };
 
-    // global variable entries
-    struct di_global_var : public predicate_group {
+    // variable entries
+    struct di_variable : public predicate_group {
         static entity_pred_t id;
         static pred_t name;
+        struct type {
+            static pred_t node;
+            static pred_t raw;
+        };
+        static pred_t file;
+        static pred_t line;
         static pred_t scope;
+    };
+
+    struct di_local_var : public predicate_group {
+        static entity_pred_t id;
+        static pred_t arg_num;
+        static pred_t flag;
+        static pred_t variable;
+    };
+
+    struct di_global_var : public predicate_group {
+        static entity_pred_t id;
+        static pred_t variable;
+        static pred_t linkage_name;
+        static pred_t is_definition;
+        static pred_t is_local_to_unit;
+        static pred_t static_data_member_decl;
     };
 
     // file entries

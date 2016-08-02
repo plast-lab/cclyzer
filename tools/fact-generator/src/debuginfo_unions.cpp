@@ -50,6 +50,12 @@ DebugInfoProcessor::Impl
 
 template void
 DebugInfoProcessor::Impl
+::recordUnionAttribute<pred::di_variable::type,
+                       DebugInfoProcessor::Impl::write_di_type>(
+    const refmode_t &, const llvm::DITypeRef & );
+
+template void
+DebugInfoProcessor::Impl
 ::recordUnionAttribute<pred::di_composite_type::basetype,
                        DebugInfoProcessor::Impl::write_di_type>(
     const refmode_t &, const llvm::DITypeRef & );
