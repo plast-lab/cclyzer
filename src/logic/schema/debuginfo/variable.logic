@@ -26,12 +26,12 @@ di:variable:raw_type[Entry] = Type ->
    di:variable(Entry), string(Type).
 
 // Mandatory properties
-schema:sanity(), di:variable(Entry) -> di:variable:name[Entry] = _.
-schema:sanity(), di:variable(Entry) -> di:variable:file[Entry] = _.
-schema:sanity(), di:variable(Entry) -> di:variable:line[Entry] = _.
-schema:sanity(), di:variable(Entry) -> di:variable:scope[Entry] = _.
-schema:sanity(), di:variable(Entry) -> di:variable:type[Entry] = _
-                                     ; di:variable:raw_type[Entry] = _.
+schema:sanity(), di:global_variable(Entry) -> di:variable:name[Entry] = _.
+schema:sanity(), di:global_variable(Entry) -> di:variable:file[Entry] = _.
+schema:sanity(), di:global_variable(Entry) -> di:variable:line[Entry] = _.
+schema:sanity(), di:global_variable(Entry) -> di:variable:scope[Entry] = _.
+schema:sanity(), di:global_variable(Entry) -> di:variable:type[Entry] = _
+                                            ; di:variable:raw_type[Entry] = _.
 
 
 //-----------------------------------------------------------
