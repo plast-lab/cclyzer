@@ -1,7 +1,0 @@
-di:global_variable(Entry) -> di:entry(Entry).
-
-di:global_variable:name[Entry] = Name ->
-   di:global_variable(Entry), string(Name).
-
-di:global_variable:scope[Entry] = Scope ->
-   di:global_variable(Entry), di:scope(Scope).

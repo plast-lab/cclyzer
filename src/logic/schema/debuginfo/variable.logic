@@ -1,0 +1,88 @@
+//-----------------------------------------------------------
+// Debug Info - Variable Entry
+//-----------------------------------------------------------
+
+di:variable(Entry) -> di:entry(Entry).
+
+di:variable:name[Entry] = Name ->
+   di:variable(Entry), string(Name).
+
+// Location of variable
+di:variable:file[Entry] = File ->
+   di:variable(Entry), di:file(File).
+
+di:variable:line[Entry] = Line ->
+   di:variable(Entry), uint[64](Line).
+
+// Scope of variable
+di:variable:scope[Entry] = Scope ->
+   di:variable(Entry), di:scope(Scope).
+
+// Type of variable
+di:variable:type[Entry] = Type ->
+   di:variable(Entry), di:type_entry(Type).
+
+di:variable:raw_type[Entry] = Type ->
+   di:variable(Entry), string(Type).
+
+// Mandatory properties
+schema:sanity(), di:variable(Entry) -> di:variable:name[Entry] = _.
+schema:sanity(), di:variable(Entry) -> di:variable:file[Entry] = _.
+schema:sanity(), di:variable(Entry) -> di:variable:line[Entry] = _.
+schema:sanity(), di:variable(Entry) -> di:variable:scope[Entry] = _.
+schema:sanity(), di:variable(Entry) -> di:variable:type[Entry] = _
+                                     ; di:variable:raw_type[Entry] = _.
+
+
+//-----------------------------------------------------------
+// Debug Info - Global Variable Entry
+//-----------------------------------------------------------
+
+di:global_variable(Entry) -> di:variable(Entry).
+
+di:global_variable:linkage_name[Entry] = Name ->
+   di:global_variable(Entry), string(Name).
+
+di:global_variable:is_definition(Entry) ->
+   di:global_variable(Entry).
+
+di:global_variable:is_local_to_unit(Entry) ->
+   di:global_variable(Entry).
+
+
+// Static Data Member Declaration
+
+di:global_variable:static_data_member_decl[Entry] = MemberDecl ->
+   di:global_variable(Entry), di:derived_type_entry(MemberDecl).
+
+schema:sanity()
+ , di:global_variable:static_data_member_decl[_] = MemberDecl
+ ->
+   di:member_type_entry(MemberDecl).
+
+
+// !! This relation associates this node to an LLVM global variable !!
+di:global_variable:resolved_name[Entry] = Name ->
+   di:global_variable(Entry), string(Name).
+
+
+//-----------------------------------------------------------
+// Debug Info - Local Variable Entry
+//-----------------------------------------------------------
+
+di:local_variable(Entry) -> di:variable(Entry).
+
+di:local_variable:arg_num[Entry] = ArgNum ->
+   di:local_variable(Entry), uint[64](ArgNum).
+
+di:local_variable:is_parameter(Entry) <-
+   di:local_variable:arg_num[Entry] = _.
+
+di:local_variable:flag(Entry, Flag) ->
+   di:local_variable(Entry), string(Flag).
+
+di:local_variable:is_artificial(Entry) <-
+   di:local_variable:flag(Entry, "artificial").
+
+di:local_variable:is_object_pointer(Entry) <-
+   di:local_variable:flag(Entry, "objectpointer").

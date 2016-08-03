@@ -286,6 +286,18 @@ lang:physical:filePath[`_di:global_variable] = "facts/di-global_variable.dlm".
 
 
 
+_di:local_variable(v0) -> string(v0).
+
+lang:physical:delimiter[`_di:local_variable] = "\t".
+lang:physical:filePath[`_di:local_variable] = "facts/di-local_variable.dlm".
+
++di:entry:id(e0:v0),
++di:local_variable(e0)
+<-
+   _di:local_variable(v0).
+
+
+
 _di:namespace(v0) -> string(v0).
 
 lang:physical:delimiter[`_di:namespace] = "\t".
@@ -355,6 +367,18 @@ lang:physical:filePath[`_di:typedef_entry] = "facts/di-typedef_entry.dlm".
 +di:typedef_entry(e0)
 <-
    _di:typedef_entry(v0).
+
+
+
+_di:variable(v0) -> string(v0).
+
+lang:physical:delimiter[`_di:variable] = "\t".
+lang:physical:filePath[`_di:variable] = "facts/di-variable.dlm".
+
++di:entry:id(e0:v0),
++di:variable(e0)
+<-
+   _di:variable(v0).
 
 
 

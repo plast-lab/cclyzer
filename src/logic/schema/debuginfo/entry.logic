@@ -15,12 +15,17 @@ di:composite_type_entry(Entry) -> di:type_entry(Entry).
 di:derived_type_entry(Entry) -> di:type_entry(Entry).
 di:subroutine_type_entry(Entry) -> di:type_entry(Entry).
 
-di:global_variable(Entry) -> di:entry(Entry).
+di:variable(Entry) -> di:entry(Entry).
+di:local_variable(Entry) -> di:variable(Entry).
+di:global_variable(Entry) -> di:variable(Entry).
+
 di:typedef_entry(Entry)   -> di:entry(Entry).
 
 
 lang:entity(`di:scope).
+lang:entity(`di:variable).
 lang:entity(`di:global_variable).
+lang:entity(`di:local_variable).
 lang:entity(`di:typedef_entry).
 lang:entity(`di:file).
 lang:entity(`di:namespace).
