@@ -7,7 +7,7 @@ using cclyzer::DebugInfoProcessor;
 using cclyzer::refmode_t;
 using llvm::cast;
 using llvm::dyn_cast;
-using llvm::isa
+using llvm::isa;
 using std::string;
 namespace pred = cclyzer::predicates;
 
