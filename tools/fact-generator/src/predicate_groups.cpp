@@ -509,6 +509,7 @@ pred_t di_composite_type::vtable::node("di:composite_type_entry:vtable");
 pred_t di_composite_type::vtable::raw("di:composite_type_entry:raw_vtable");
 pred_t di_composite_type::basetype::node("di:composite_type_entry:base_type");
 pred_t di_composite_type::basetype::raw("di:composite_type_entry:raw_base_type");
+pred_t di_composite_type::kind("di:composite_type_entry:kind");
 entity_pred_t di_composite_type::structures("di:structure_type_entry");
 entity_pred_t di_composite_type::classes("di:class_type_entry");
 entity_pred_t di_composite_type::arrays("di:array_type_entry");

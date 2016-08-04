@@ -1,3 +1,4 @@
+#include <llvm/ADT/SmallVector.h>
 #include "DebugInfoProcessorImpl.hpp"
 #include "debuginfo_predicate_groups.hpp"
 
@@ -5,6 +6,7 @@ using cclyzer::DebugInfoProcessor;
 using cclyzer::refmode_t;
 using llvm::cast;
 using llvm::dyn_cast;
+using llvm::SmallVector;
 using std::string;
 namespace pred = cclyzer::predicates;
 namespace dwarf = llvm::dwarf;
@@ -37,6 +39,28 @@ DebugInfoProcessor::Impl::recordUnionAttribute(
     }
 }
 
+//------------------------------------------------------------------------------
+// Helper method to record bit flags
+//------------------------------------------------------------------------------
+
+void
+DebugInfoProcessor::Impl::recordFlags(
+    const Predicate& pred, const refmode_t& nodeId, unsigned flags)
+{
+    if (flags) {
+        // Split flags inside vector
+        typedef SmallVector<unsigned,8> FlagVectorT;
+        FlagVectorT flagsVector;
+        llvm::DINode::splitFlags(flags, flagsVector);
+
+        for (FlagVectorT::iterator it = flagsVector.begin(),
+                 end = flagsVector.end(); it != end; ++it )
+        {
+            const char *flag = llvm::DINode::getFlagString(*it);
+            writeFact(pred, nodeId, flag);
+        }
+    }
+}
 
 //------------------------------------------------------------------------------
 // Explicit template instantiations

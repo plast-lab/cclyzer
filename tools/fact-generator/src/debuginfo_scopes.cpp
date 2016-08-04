@@ -1,4 +1,3 @@
-#include <llvm/ADT/SmallVector.h>
 #include "DebugInfoProcessorImpl.hpp"
 #include "debuginfo_predicate_groups.hpp"
 
@@ -7,7 +6,6 @@ using cclyzer::DebugInfoProcessor;
 using cclyzer::refmode_t;
 using llvm::cast;
 using llvm::dyn_cast;
-using llvm::SmallVector;
 using std::string;
 namespace pred = cclyzer::predicates;
 
@@ -143,20 +141,7 @@ DebugInfoProcessor::Impl::write_di_subprogram::write(
     }
 
     // Record flags
-    if (unsigned flags = disubprogram.getFlags())
-    {
-        // Split flags inside vector
-        typedef SmallVector<unsigned,8> FlagVectorT;
-        FlagVectorT flagsVector;
-        llvm::DINode::splitFlags(flags, flagsVector);
-
-        for (FlagVectorT::iterator it = flagsVector.begin(),
-                 end = flagsVector.end(); it != end; ++it )
-        {
-            const char *flag = llvm::DINode::getFlagString(*it);
-            proc.writeFact(pred::di_subprogram::flag, nodeId, flag);
-        }
-    }
+    proc.recordFlags(pred::di_subprogram::flag, nodeId, disubprogram.getFlags());
 
     // Record variables
     const auto& variables = disubprogram.getVariables();

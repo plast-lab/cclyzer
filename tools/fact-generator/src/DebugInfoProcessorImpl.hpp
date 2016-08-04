@@ -169,6 +169,9 @@ class cclyzer::DebugInfoProcessor::Impl
     template<typename P, typename writer, typename T>
     void recordUnionAttribute(const refmode_t &, const llvm::TypedDINodeRef<T> & );
 
+    /* Helper method to write bit flags */
+    void recordFlags(const Predicate &, const refmode_t &, unsigned);
+
     // Construct a mapping from type ID to type name
     void CollectTypeIDs();
 

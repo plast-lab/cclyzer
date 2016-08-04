@@ -133,6 +133,7 @@ namespace cclyzer { namespace predicates
         };
 
         // Kinds of composite types
+        static pred_t kind;
         static entity_pred_t structures;
         static entity_pred_t classes;
         static entity_pred_t arrays;

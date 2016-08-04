@@ -75,6 +75,8 @@ DebugInfoProcessor::Impl::write_di_composite_type::write(
       case dwarf::Tag::DW_TAG_enumeration_type:
           proc.writeFact(pred::di_composite_type::enumerations, nodeId); break;
     }
+    const char *tagStr = dwarf::TagString(ditype.getTag());
+    proc.writeFact(pred::di_composite_type::kind, nodeId, tagStr);
 
     // Record ABI Identifier for this composite type
     const string abiId = ditype.getIdentifier();
@@ -129,41 +131,8 @@ DebugInfoProcessor::Impl::write_di_derived_type::write(
     proc.writeFact(pred::di_derived_type::id, nodeId);
 
     // Record exact kind of derived type
-    switch (ditype.getTag()) {
-      case dwarf::Tag::DW_TAG_pointer_type:
-          proc.writeFact(pred::di_derived_type::kind, nodeId, "pointer_type");
-          break;
-      case dwarf::Tag::DW_TAG_restrict_type:
-          proc.writeFact(pred::di_derived_type::kind, nodeId, "restrict_type");
-          break;
-      case dwarf::Tag::DW_TAG_volatile_type:
-          proc.writeFact(pred::di_derived_type::kind, nodeId, "volatile_type");
-          break;
-      case dwarf::Tag::DW_TAG_const_type:
-          proc.writeFact(pred::di_derived_type::kind, nodeId, "const_type");
-          break;
-      case dwarf::Tag::DW_TAG_reference_type:
-          proc.writeFact(pred::di_derived_type::kind, nodeId, "reference_type");
-          break;
-      case dwarf::Tag::DW_TAG_rvalue_reference_type:
-          proc.writeFact(pred::di_derived_type::kind, nodeId, "rvalue_reference_type");
-          break;
-      case dwarf::Tag::DW_TAG_ptr_to_member_type:
-          proc.writeFact(pred::di_derived_type::kind, nodeId, "ptr_to_member_type");
-          break;
-      case dwarf::Tag::DW_TAG_typedef:
-          proc.writeFact(pred::di_derived_type::kind, nodeId, "typedef");
-          break;
-      case dwarf::Tag::DW_TAG_member:
-          proc.writeFact(pred::di_derived_type::kind, nodeId, "member");
-          break;
-      case dwarf::Tag::DW_TAG_inheritance:
-          proc.writeFact(pred::di_derived_type::kind, nodeId, "inheritance");
-          break;
-      case dwarf::Tag::DW_TAG_friend:
-          proc.writeFact(pred::di_derived_type::kind, nodeId, "friend");
-          break;
-    }
+    const char *tagStr = dwarf::TagString(ditype.getTag());
+    proc.writeFact(pred::di_derived_type::kind, nodeId, tagStr);
 
     // Record base type
     proc.recordUnionAttribute<pred::di_derived_type::basetype, write_di_type>(
@@ -258,20 +227,5 @@ DebugInfoProcessor::Impl::write_di_type_common(
         nodeId, ditype.getScope());
 
     // Record flags
-    const pred::pred_t& flag = pred::di_type::flag;
-
-    if (ditype.isPrivate()) { writeFact(flag, nodeId, "private"); }
-    if (ditype.isProtected()) { writeFact(flag, nodeId, "protected"); }
-    if (ditype.isPublic()) { writeFact(flag, nodeId, "public"); }
-    if (ditype.isForwardDecl()) { writeFact(flag, nodeId, "forward_decl"); }
-    if (ditype.isAppleBlockExtension()) { writeFact(flag, nodeId, "apple_block_extension"); }
-    if (ditype.isBlockByrefStruct()) { writeFact(flag, nodeId, "block_byref_struct"); }
-    if (ditype.isVirtual()) { writeFact(flag, nodeId, "virtual"); }
-    if (ditype.isArtificial()) { writeFact(flag, nodeId, "artificial"); }
-    if (ditype.isObjectPointer()) { writeFact(flag, nodeId, "object_pointer"); }
-    if (ditype.isObjcClassComplete()) { writeFact(flag, nodeId, "objc_class_complete"); }
-    if (ditype.isVector()) { writeFact(flag, nodeId, "vector"); }
-    if (ditype.isStaticMember()) { writeFact(flag, nodeId, "static_member"); }
-    if (ditype.isLValueReference()) { writeFact(flag, nodeId, "lvalue_reference"); }
-    if (ditype.isRValueReference()) { writeFact(flag, nodeId, "rvalue_reference"); }
+    recordFlags(pred::di_type::flag, nodeId, ditype.getFlags());
 }
