@@ -517,6 +517,7 @@ entity_pred_t di_composite_type::id("di:composite_type_entry");
 pred_t di_composite_type::file("di:composite_type_entry:file");
 pred_t di_composite_type::abi_id("di:composite_type_entry:abi_id");
 pred_t di_composite_type::field("di:composite_type_entry:field");
+pred_t di_composite_type::enumerator("di:composite_type_entry:enumerator");
 pred_t di_composite_type::template_param("di:composite_type_entry:template_param");
 pred_t di_composite_type::vtable::node("di:composite_type_entry:vtable");
 pred_t di_composite_type::vtable::raw("di:composite_type_entry:raw_vtable");
@@ -567,3 +568,8 @@ pred_t di_global_var::linkage_name("di:global_variable:linkage_name");
 pred_t di_global_var::is_definition("di:global_variable:is_definition");
 pred_t di_global_var::is_local_to_unit("di:global_variable:is_local_to_unit");
 pred_t di_global_var::static_data_member_decl("di:global_variable:static_data_member_decl");
+
+// Enumerator Entry
+entity_pred_t di_enumerator::id("di:enumerator");
+pred_t di_enumerator::name("di:enumerator:name");
+pred_t di_enumerator::value("di:enumerator:value");

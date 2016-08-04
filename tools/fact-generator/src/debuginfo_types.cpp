@@ -58,6 +58,7 @@ DebugInfoProcessor::Impl::write_di_composite_type::write(
     const llvm::DICompositeType& ditype, const refmode_t& nodeId, DIProc& proc)
 {
     using llvm::DIType;
+    using llvm::DIEnumerator;
 
     proc.write_di_type_common(ditype, nodeId);
     proc.writeFact(pred::di_composite_type::id, nodeId);
@@ -89,6 +90,10 @@ DebugInfoProcessor::Impl::write_di_composite_type::write(
         if (const DIType *field = dyn_cast<DIType>(elements[i])) {
             refmode_t fieldId = record_di_type::record(*field, proc);
             proc.writeFact(pred::di_composite_type::field, nodeId, i, fieldId);
+        }
+        else if (const auto *enumfld = dyn_cast<DIEnumerator>(elements[i])) {
+            refmode_t enumId = record_di_enumerator::record(*enumfld, proc);
+            proc.writeFact(pred::di_composite_type::enumerator, nodeId, i, enumId);
         }
     }
 

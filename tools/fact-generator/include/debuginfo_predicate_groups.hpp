@@ -137,6 +137,7 @@ namespace cclyzer { namespace predicates
         static pred_t file;
         static pred_t abi_id;
         static pred_t field;
+        static pred_t enumerator;
         static pred_t template_param;
 
         struct vtable {
@@ -192,6 +193,13 @@ namespace cclyzer { namespace predicates
 
     struct di_template_value_param : public predicate_group {
         static entity_pred_t id;
+    };
+
+    // enumerator entries
+    struct di_enumerator : public predicate_group {
+        static entity_pred_t id;
+        static pred_t name;
+        static pred_t value;
     };
 
 
