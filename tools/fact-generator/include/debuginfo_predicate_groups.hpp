@@ -67,6 +67,34 @@ namespace cclyzer { namespace predicates
         static pred_t scope;
     };
 
+    // subprogram entries
+    struct di_subprogram : public predicate_group {
+        static entity_pred_t id;
+        static pred_t name;
+        static pred_t linkage_name;
+        static pred_t file;
+        static pred_t line;
+        struct scope {
+            static pred_t node;
+            static pred_t raw;
+        };
+        static pred_t scope_line;
+        static pred_t type;
+        struct containing_type {
+            static pred_t node;
+            static pred_t raw;
+        };
+        static pred_t declaration;
+        static pred_t virtuality;
+        static pred_t virtual_index;
+        static pred_t flag;
+        static pred_t template_param;
+        static pred_t variable;
+        static pred_t is_definition;
+        static pred_t is_local_to_unit;
+        static pred_t is_optimized;
+    };
+
     // type entries
     struct di_type : public predicate_group {
         static entity_pred_t id;

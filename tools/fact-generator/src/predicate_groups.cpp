@@ -465,6 +465,28 @@ pred_t di_namespace::file("di:namespace:file");
 pred_t di_namespace::line("di:namespace:line");
 pred_t di_namespace::scope("di:namespace:scope");
 
+// Subprogram Entry
+entity_pred_t di_subprogram::id("di:subprogram");
+pred_t di_subprogram::name("di:subprogram:name");
+pred_t di_subprogram::linkage_name("di:subprogram:linkage_name");
+pred_t di_subprogram::file("di:subprogram:file");
+pred_t di_subprogram::line("di:subprogram:line");
+pred_t di_subprogram::scope::node("di:subprogram:scope");
+pred_t di_subprogram::scope::raw("di:subprogram:raw_scope");
+pred_t di_subprogram::scope_line("di:subprogram:scope_line");
+pred_t di_subprogram::type("di:subprogram:type");
+pred_t di_subprogram::containing_type::node("di:subprogram:containing_type");
+pred_t di_subprogram::containing_type::raw("di:subprogram:raw_containing_type");
+pred_t di_subprogram::declaration("di:subprogram:declaration");
+pred_t di_subprogram::virtuality("di:subprogram:virtuality");
+pred_t di_subprogram::virtual_index("di:subprogram:virtual_index");
+pred_t di_subprogram::flag("di:subprogram:flag");
+pred_t di_subprogram::template_param("di:subprogram:template_param");
+pred_t di_subprogram::variable("di:subprogram:variable");
+pred_t di_subprogram::is_definition("di:subprogram:is_definition");
+pred_t di_subprogram::is_local_to_unit("di:subprogram:is_local_to_unit");
+pred_t di_subprogram::is_optimized("di:subprogram:is_optimized");
+
 // Type Entry
 entity_pred_t di_type::id("di:type_entry");
 pred_t di_type::name("di:type_entry:name");
