@@ -44,6 +44,18 @@ DebugInfoProcessor::Impl::recordUnionAttribute(
 
 template void
 DebugInfoProcessor::Impl
+::recordUnionAttribute<pred::di_subprogram::containing_type,
+                       DebugInfoProcessor::Impl::write_di_type>(
+    const refmode_t &, const llvm::DITypeRef & );
+
+template void
+DebugInfoProcessor::Impl
+::recordUnionAttribute<pred::di_subprogram::scope,
+                       DebugInfoProcessor::Impl::write_di_scope>(
+    const refmode_t &, const llvm::DIScopeRef & );
+
+template void
+DebugInfoProcessor::Impl
 ::recordUnionAttribute<pred::di_template_param::type,
                        DebugInfoProcessor::Impl::write_di_type>(
     const refmode_t &, const llvm::DITypeRef & );

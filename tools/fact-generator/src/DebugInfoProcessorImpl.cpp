@@ -70,6 +70,7 @@ DebugInfoProcessor::Impl::generateDebugInfo(
     using llvm::MDString;
     using llvm::Metadata;
     typedef llvm::DebugInfoFinder::type_iterator di_type_iterator;
+    typedef llvm::DebugInfoFinder::subprogram_iterator di_subprogram_iterator;
     typedef llvm::DebugInfoFinder::global_variable_iterator di_global_var_iterator;
 
     // Get global variable iterator
@@ -93,6 +94,18 @@ DebugInfoProcessor::Impl::generateDebugInfo(
         writeFact(pred::global_var::pos, refmode, dir, fileName, lineNum);
 
         record_di_variable::record(**iVar, *this);
+    }
+
+    // Get subprogram iterator
+    llvm::iterator_range<di_subprogram_iterator> subprograms =
+        debugInfoFinder.subprograms();
+
+    // iterate over subprogram and record each one
+    for (di_subprogram_iterator it = subprograms.begin(),
+             end = subprograms.end(); it != end; ++it )
+    {
+        const llvm::DISubprogram& subprogram = **it;
+        record_di_subprogram::record(subprogram, *this);
     }
 
     // Get type iterator

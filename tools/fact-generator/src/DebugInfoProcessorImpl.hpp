@@ -131,6 +131,10 @@ class cclyzer::DebugInfoProcessor::Impl
         static void write(const llvm::DILocalVariable &, const refmode_t &, DIProc &);
     };
 
+    struct write_di_subprogram : public write_di_node {
+        static void write(const llvm::DISubprogram &, const refmode_t &, DIProc &);
+    };
+
 
     /* Type aliases for common recording operations */
 
@@ -140,6 +144,7 @@ class cclyzer::DebugInfoProcessor::Impl
     typedef di_recorder<llvm::DIType, write_di_type> record_di_type;
     typedef di_recorder<llvm::DITemplateParameter, write_di_tpl_param> record_di_template_param;
     typedef di_recorder<llvm::DIVariable, write_di_variable> record_di_variable;
+    typedef di_recorder<llvm::DISubprogram, write_di_subprogram> record_di_subprogram;
 
     void
     generateDebugInfo(const llvm::Module &, const std::string &);
