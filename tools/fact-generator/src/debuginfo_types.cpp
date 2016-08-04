@@ -59,6 +59,7 @@ DebugInfoProcessor::Impl::write_di_composite_type::write(
 {
     using llvm::DIType;
     using llvm::DIEnumerator;
+    using llvm::DISubrange;
 
     proc.write_di_type_common(ditype, nodeId);
     proc.writeFact(pred::di_composite_type::id, nodeId);
@@ -94,6 +95,10 @@ DebugInfoProcessor::Impl::write_di_composite_type::write(
         else if (const auto *enumfld = dyn_cast<DIEnumerator>(elements[i])) {
             refmode_t enumId = record_di_enumerator::record(*enumfld, proc);
             proc.writeFact(pred::di_composite_type::enumerator, nodeId, i, enumId);
+        }
+        else if (const auto *range = dyn_cast<DISubrange>(elements[i])) {
+            refmode_t rangeId = record_di_subrange::record(*range, proc);
+            proc.writeFact(pred::di_composite_type::subrange, nodeId, i, rangeId);
         }
     }
 

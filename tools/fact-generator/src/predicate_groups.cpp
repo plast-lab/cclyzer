@@ -518,6 +518,7 @@ pred_t di_composite_type::file("di:composite_type_entry:file");
 pred_t di_composite_type::abi_id("di:composite_type_entry:abi_id");
 pred_t di_composite_type::field("di:composite_type_entry:field");
 pred_t di_composite_type::enumerator("di:composite_type_entry:enumerator");
+pred_t di_composite_type::subrange("di:composite_type_entry:subrange");
 pred_t di_composite_type::template_param("di:composite_type_entry:template_param");
 pred_t di_composite_type::vtable::node("di:composite_type_entry:vtable");
 pred_t di_composite_type::vtable::raw("di:composite_type_entry:raw_vtable");
@@ -573,3 +574,8 @@ pred_t di_global_var::static_data_member_decl("di:global_variable:static_data_me
 entity_pred_t di_enumerator::id("di:enumerator");
 pred_t di_enumerator::name("di:enumerator:name");
 pred_t di_enumerator::value("di:enumerator:value");
+
+// Subrange Entry
+entity_pred_t di_subrange::id("di:subrange");
+pred_t di_subrange::lower_bound("di:subrange:lower_bound");
+pred_t di_subrange::count("di:subrange:count");

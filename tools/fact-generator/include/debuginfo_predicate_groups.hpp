@@ -138,6 +138,7 @@ namespace cclyzer { namespace predicates
         static pred_t abi_id;
         static pred_t field;
         static pred_t enumerator;
+        static pred_t subrange;
         static pred_t template_param;
 
         struct vtable {
@@ -200,6 +201,13 @@ namespace cclyzer { namespace predicates
         static entity_pred_t id;
         static pred_t name;
         static pred_t value;
+    };
+
+    // subrange entries
+    struct di_subrange : public predicate_group {
+        static entity_pred_t id;
+        static pred_t lower_bound;
+        static pred_t count;
     };
 
 
