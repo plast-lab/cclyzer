@@ -67,6 +67,23 @@ namespace cclyzer { namespace predicates
         static pred_t scope;
     };
 
+    // lexical block entries
+    struct di_lex_block : public predicate_group {
+        static entity_pred_t id;
+        static pred_t file;
+        static pred_t line;
+        static pred_t column;
+        static pred_t scope;
+    };
+
+    // lexical block file entries
+    struct di_lex_block_file : public predicate_group {
+        static entity_pred_t id;
+        static pred_t file;
+        static pred_t discriminator;
+        static pred_t scope;
+    };
+
     // subprogram entries
     struct di_subprogram : public predicate_group {
         static entity_pred_t id;

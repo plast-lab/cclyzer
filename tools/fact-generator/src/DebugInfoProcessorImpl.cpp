@@ -70,6 +70,7 @@ DebugInfoProcessor::Impl::generateDebugInfo(
     using llvm::MDString;
     using llvm::Metadata;
     typedef llvm::DebugInfoFinder::type_iterator di_type_iterator;
+    typedef llvm::DebugInfoFinder::scope_iterator di_scope_iterator;
     typedef llvm::DebugInfoFinder::subprogram_iterator di_subprogram_iterator;
     typedef llvm::DebugInfoFinder::global_variable_iterator di_global_var_iterator;
 
@@ -106,6 +107,18 @@ DebugInfoProcessor::Impl::generateDebugInfo(
     {
         const llvm::DISubprogram& subprogram = **it;
         record_di_subprogram::record(subprogram, *this);
+    }
+
+    // Get scope iterator
+    llvm::iterator_range<di_scope_iterator> scopes =
+        debugInfoFinder.scopes();
+
+    // iterate over subprogram and record each one
+    for (di_scope_iterator it = scopes.begin(),
+             end = scopes.end(); it != end; ++it )
+    {
+        const llvm::DIScope& scope = **it;
+        record_di_scope::record(scope, *this);
     }
 
     // Get type iterator

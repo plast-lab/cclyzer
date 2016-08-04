@@ -465,6 +465,19 @@ pred_t di_namespace::file("di:namespace:file");
 pred_t di_namespace::line("di:namespace:line");
 pred_t di_namespace::scope("di:namespace:scope");
 
+// Lexical Block Entry
+entity_pred_t di_lex_block::id("di:lexical_block");
+pred_t di_lex_block::file("di:lexical_block:file");
+pred_t di_lex_block::line("di:lexical_block:line");
+pred_t di_lex_block::column("di:lexical_block:column");
+pred_t di_lex_block::scope("di:lexical_block:scope");
+
+// Lexical Block File Entry
+entity_pred_t di_lex_block_file::id("di:lexical_block_file");
+pred_t di_lex_block_file::file("di:lexical_block_file:file");
+pred_t di_lex_block_file::discriminator("di:lexical_block_file:discrim");
+pred_t di_lex_block_file::scope("di:lexical_block_file:scope");
+
 // Subprogram Entry
 entity_pred_t di_subprogram::id("di:subprogram");
 pred_t di_subprogram::name("di:subprogram:name");
@@ -547,6 +560,7 @@ pred_t di_variable::type::raw("di:variable:raw_type");
 entity_pred_t di_local_var::id("di:local_variable");
 pred_t di_local_var::arg_num("di:local_variable:arg_num");
 pred_t di_local_var::flag("di:local_variable:flag");
+
 entity_pred_t di_global_var::id("di:global_variable");
 pred_t di_global_var::variable("di:global_variable:resolved_name");
 pred_t di_global_var::linkage_name("di:global_variable:linkage_name");

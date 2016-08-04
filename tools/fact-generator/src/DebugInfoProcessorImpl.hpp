@@ -135,6 +135,14 @@ class cclyzer::DebugInfoProcessor::Impl
         static void write(const llvm::DISubprogram &, const refmode_t &, DIProc &);
     };
 
+    struct write_di_lex_block : public write_di_node {
+        static void write(const llvm::DILexicalBlock &, const refmode_t &, DIProc &);
+    };
+
+    struct write_di_lex_block_file : public write_di_node {
+        static void write(const llvm::DILexicalBlockFile &, const refmode_t &, DIProc &);
+    };
+
 
     /* Type aliases for common recording operations */
 

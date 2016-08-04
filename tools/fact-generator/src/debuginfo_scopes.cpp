@@ -57,6 +57,59 @@ DebugInfoProcessor::Impl::write_di_namespace::write(
 
 
 //----------------------------------------------------------------------------
+// Process Debug Info Lexical Blocks
+//----------------------------------------------------------------------------
+
+void
+DebugInfoProcessor::Impl::write_di_lex_block::write(
+    const llvm::DILexicalBlock& dilexblock, const refmode_t& nodeId, DIProc& proc)
+{
+    const unsigned line = dilexblock.getLine();
+    const unsigned column = dilexblock.getColumn();
+
+    proc.writeFact(pred::di_lex_block::id, nodeId);
+    proc.writeFact(pred::di_lex_block::line, nodeId, line);
+    proc.writeFact(pred::di_lex_block::column, nodeId, column);
+
+    // Record file information for lexical block
+    if (const llvm::DIFile *difile = dilexblock.getFile()) {
+        refmode_t fileId = record_di_file::record(*difile, proc);
+        proc.writeFact(pred::di_lex_block::file, nodeId, fileId);
+    }
+
+    // Record lexical block scope
+    if (const llvm::DIScope *discope = dilexblock.getScope()) {
+        refmode_t scopeId = record_di_scope::record(*discope, proc);
+        proc.writeFact(pred::di_lex_block::scope, nodeId, scopeId);
+    }
+}
+
+
+void
+DebugInfoProcessor::Impl::write_di_lex_block_file::write(
+    const llvm::DILexicalBlockFile& dilexblkfile, const refmode_t& nodeId, DIProc& proc)
+{
+    proc.writeFact(pred::di_lex_block_file::id, nodeId);
+
+    // Record discriminator
+    const unsigned discriminator = dilexblkfile.getDiscriminator();
+    proc.writeFact(pred::di_lex_block_file::discriminator, nodeId, discriminator);
+
+    // Record file information for lexical block file
+    if (const llvm::DIFile *difile = dilexblkfile.getFile()) {
+        refmode_t fileId = record_di_file::record(*difile, proc);
+        proc.writeFact(pred::di_lex_block_file::file, nodeId, fileId);
+    }
+
+    // Record lexical block file scope
+    if (const llvm::DIScope *discope = dilexblkfile.getScope()) {
+        refmode_t scopeId = record_di_scope::record(*discope, proc);
+        proc.writeFact(pred::di_lex_block_file::scope, nodeId, scopeId);
+    }
+}
+
+
+//----------------------------------------------------------------------------
 // Process Debug Info Subprograms
 //----------------------------------------------------------------------------
 
@@ -179,6 +232,8 @@ DebugInfoProcessor::Impl::write_di_scope::write(
     using llvm::DIFile;
     using llvm::DIType;
     using llvm::DISubprogram;
+    using llvm::DILexicalBlock;
+    using llvm::DILexicalBlockFile;
 
     if (const DINamespace *dins = dyn_cast<DINamespace>(&discope)) {
         write_di_namespace::write(*dins, nodeId, proc);
@@ -197,6 +252,16 @@ DebugInfoProcessor::Impl::write_di_scope::write(
 
     if (const DISubprogram *disp = dyn_cast<DISubprogram>(&discope)) {
         write_di_subprogram::write(*disp, nodeId, proc);
+        return;
+    }
+
+    if (const DILexicalBlock *dilb = dyn_cast<DILexicalBlock>(&discope)) {
+        write_di_lex_block::write(*dilb, nodeId, proc);
+        return;
+    }
+
+    if (const DILexicalBlockFile *dilb = dyn_cast<DILexicalBlockFile>(&discope)) {
+        write_di_lex_block_file::write(*dilb, nodeId, proc);
         return;
     }
 
