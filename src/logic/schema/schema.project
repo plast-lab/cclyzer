@@ -81,6 +81,10 @@ debuginfo/tag.logic, active
 debuginfo/entry.logic, active
 debuginfo/file.logic, active
 debuginfo/namespace.logic, active
+debuginfo/enumerators.logic, active
 debuginfo/types.logic, active
 debuginfo/templates.logic, active
 debuginfo/variable.logic, active
+debuginfo/subrange.logic, active
+debuginfo/subprogram.logic, active
+debuginfo/lexical_scopes.logic, active

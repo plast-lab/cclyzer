@@ -53,6 +53,13 @@ di:composite_type_entry:abi_id[Entry] = ID ->
 di:composite_type_entry:field[Entry, Index] = Field ->
    di:composite_type_entry(Entry), uint[64](Index), di:type_entry(Field).
 
+schema:sanity()
+ , di:composite_type_entry:field[Entry, _] = _
+ ->
+   di:structure_type_entry(Entry)
+ ; di:class_type_entry(Entry)
+ ; di:union_type_entry(Entry).
+
 di:composite_type_entry:template_param[Entry, Index] = Param ->
    di:composite_type_entry(Entry), uint[64](Index), di:template_param(Param).
 
@@ -61,6 +68,24 @@ di:class_type_entry(Entry) -> di:composite_type_entry(Entry).
 di:array_type_entry(Entry) -> di:composite_type_entry(Entry).
 di:union_type_entry(Entry) -> di:composite_type_entry(Entry).
 di:enum_type_entry(Entry) -> di:composite_type_entry(Entry).
+
+// Array Composite Types
+di:composite_type_entry:subrange[Entry, Index] = Subrange ->
+   di:composite_type_entry(Entry), uint[64](Index), di:subrange(Subrange).
+
+schema:sanity()
+ , di:composite_type_entry:subrange[Entry, _] = _
+ ->
+   di:array_type_entry(Entry).
+
+// Enum Composite Types
+di:composite_type_entry:enumerator[Entry, Index] = Enumerator ->
+   di:composite_type_entry(Entry), uint[64](Index), di:enumerator(Enumerator).
+
+schema:sanity()
+ , di:composite_type_entry:enumerator[Entry, _] = _
+ ->
+   di:enum_type_entry(Entry).
 
 // Base type
 di:composite_type_entry:base_type[Entry] = Type ->

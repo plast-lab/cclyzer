@@ -1,3 +1,7 @@
+//-----------------------------------------------------------
+// Debug Info - Namespace Scopes
+//-----------------------------------------------------------
+
 di:namespace(Entry) -> di:scope(Entry).
 
 di:namespace:name[Entry] = Name ->

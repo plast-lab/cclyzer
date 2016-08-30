@@ -1,0 +1,16 @@
+//-----------------------------------------------------------
+// Debug Info - Subranges
+//-----------------------------------------------------------
+
+di:subrange(Entry) -> di:entry(Entry).
+
+di:subrange:count[Entry] = Count ->
+   di:subrange(Entry), int[64](Count).
+
+di:subrange:lower_bound[Entry] = Bound ->
+   di:subrange(Entry), int[64](Bound).
+
+schema:sanity()
+ , di:subrange(Entry)
+ ->
+   di:subrange:count[Entry] = _.

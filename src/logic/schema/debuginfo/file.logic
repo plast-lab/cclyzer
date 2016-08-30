@@ -1,3 +1,7 @@
+//-----------------------------------------------------------
+// Debug Info - Source Files
+//-----------------------------------------------------------
+
 di:file(Entry) -> di:entry(Entry).
 
 di:file:filename[Entry] = Name ->
@@ -5,3 +9,14 @@ di:file:filename[Entry] = Name ->
 
 di:file:directory[Entry] = Directory ->
    di:file(Entry), string(Directory).
+
+
+schema:sanity()
+ , di:file(Entry)
+ ->
+   di:file:filename[Entry] = _.
+
+schema:sanity()
+ , di:file(Entry)
+ ->
+   di:file:directory[Entry] = _.

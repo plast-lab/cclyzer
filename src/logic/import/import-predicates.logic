@@ -1067,6 +1067,21 @@ lang:physical:filePath[`_di:composite_type_entry:base_type] = "facts/di-composit
 
 
 
+_di:composite_type_entry:enumerator(v0, v1, v2) -> string(v0), uint[64](v1), string(v2).
+
+lang:physical:delimiter[`_di:composite_type_entry:enumerator] = "\t".
+lang:physical:filePath[`_di:composite_type_entry:enumerator] = "facts/di-composite_type_entry-enumerator.dlm".
+
++di:entry:id(e0:v0),
++di:composite_type_entry(e0),
++di:entry:id(e1:v2),
++di:enumerator(e1),
++di:composite_type_entry:enumerator[e0,v1] = e1
+<-
+   _di:composite_type_entry:enumerator(v0, v1, v2).
+
+
+
 _di:composite_type_entry:field(v0, v1, v2) -> string(v0), uint[64](v1), string(v2).
 
 lang:physical:delimiter[`_di:composite_type_entry:field] = "\t".
@@ -1120,6 +1135,21 @@ lang:physical:filePath[`_di:composite_type_entry:raw_vtable] = "facts/di-composi
 +di:composite_type_entry:raw_vtable[e0] = v1
 <-
    _di:composite_type_entry:raw_vtable(v0, v1).
+
+
+
+_di:composite_type_entry:subrange(v0, v1, v2) -> string(v0), uint[64](v1), string(v2).
+
+lang:physical:delimiter[`_di:composite_type_entry:subrange] = "\t".
+lang:physical:filePath[`_di:composite_type_entry:subrange] = "facts/di-composite_type_entry-subrange.dlm".
+
++di:entry:id(e0:v0),
++di:composite_type_entry(e0),
++di:entry:id(e1:v2),
++di:subrange(e1),
++di:composite_type_entry:subrange[e0,v1] = e1
+<-
+   _di:composite_type_entry:subrange(v0, v1, v2).
 
 
 
@@ -1224,6 +1254,32 @@ lang:physical:filePath[`_di:enum_type_entry] = "facts/di-enum_type_entry.dlm".
 
 
 
+_di:enumerator:name(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_di:enumerator:name] = "\t".
+lang:physical:filePath[`_di:enumerator:name] = "facts/di-enumerator-name.dlm".
+
++di:entry:id(e0:v0),
++di:enumerator(e0),
++di:enumerator:name[e0] = v1
+<-
+   _di:enumerator:name(v0, v1).
+
+
+
+_di:enumerator:value(v0, v1) -> string(v0), int[64](v1).
+
+lang:physical:delimiter[`_di:enumerator:value] = "\t".
+lang:physical:filePath[`_di:enumerator:value] = "facts/di-enumerator-value.dlm".
+
++di:entry:id(e0:v0),
++di:enumerator(e0),
++di:enumerator:value[e0] = v1
+<-
+   _di:enumerator:value(v0, v1).
+
+
+
 _di:file:directory(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_di:file:directory] = "\t".
@@ -1314,6 +1370,105 @@ lang:physical:filePath[`_di:global_variable:static_data_member_decl] = "facts/di
 +di:global_variable:static_data_member_decl[e0] = e1
 <-
    _di:global_variable:static_data_member_decl(v0, v1).
+
+
+
+_di:lexical_block:column(v0, v1) -> string(v0), uint[64](v1).
+
+lang:physical:delimiter[`_di:lexical_block:column] = "\t".
+lang:physical:filePath[`_di:lexical_block:column] = "facts/di-lexical_block-column.dlm".
+
++di:entry:id(e0:v0),
++di:lexical_block(e0),
++di:lexical_block:column[e0] = v1
+<-
+   _di:lexical_block:column(v0, v1).
+
+
+
+_di:lexical_block:file(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_di:lexical_block:file] = "\t".
+lang:physical:filePath[`_di:lexical_block:file] = "facts/di-lexical_block-file.dlm".
+
++di:entry:id(e0:v0),
++di:lexical_block(e0),
++di:entry:id(e1:v1),
++di:file(e1),
++di:lexical_block:file[e0] = e1
+<-
+   _di:lexical_block:file(v0, v1).
+
+
+
+_di:lexical_block:line(v0, v1) -> string(v0), uint[64](v1).
+
+lang:physical:delimiter[`_di:lexical_block:line] = "\t".
+lang:physical:filePath[`_di:lexical_block:line] = "facts/di-lexical_block-line.dlm".
+
++di:entry:id(e0:v0),
++di:lexical_block(e0),
++di:lexical_block:line[e0] = v1
+<-
+   _di:lexical_block:line(v0, v1).
+
+
+
+_di:lexical_block:scope(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_di:lexical_block:scope] = "\t".
+lang:physical:filePath[`_di:lexical_block:scope] = "facts/di-lexical_block-scope.dlm".
+
++di:entry:id(e0:v0),
++di:lexical_block(e0),
++di:entry:id(e1:v1),
++di:scope(e1),
++di:lexical_block:scope[e0] = e1
+<-
+   _di:lexical_block:scope(v0, v1).
+
+
+
+_di:lexical_block_file:discrim(v0, v1) -> string(v0), uint[64](v1).
+
+lang:physical:delimiter[`_di:lexical_block_file:discrim] = "\t".
+lang:physical:filePath[`_di:lexical_block_file:discrim] = "facts/di-lexical_block_file-discrim.dlm".
+
++di:entry:id(e0:v0),
++di:lexical_block_file(e0),
++di:lexical_block_file:discrim[e0] = v1
+<-
+   _di:lexical_block_file:discrim(v0, v1).
+
+
+
+_di:lexical_block_file:file(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_di:lexical_block_file:file] = "\t".
+lang:physical:filePath[`_di:lexical_block_file:file] = "facts/di-lexical_block_file-file.dlm".
+
++di:entry:id(e0:v0),
++di:lexical_block_file(e0),
++di:entry:id(e1:v1),
++di:file(e1),
++di:lexical_block_file:file[e0] = e1
+<-
+   _di:lexical_block_file:file(v0, v1).
+
+
+
+_di:lexical_block_file:scope(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_di:lexical_block_file:scope] = "\t".
+lang:physical:filePath[`_di:lexical_block_file:scope] = "facts/di-lexical_block_file-scope.dlm".
+
++di:entry:id(e0:v0),
++di:lexical_block_file(e0),
++di:entry:id(e1:v1),
++di:scope(e1),
++di:lexical_block_file:scope[e0] = e1
+<-
+   _di:lexical_block_file:scope(v0, v1).
 
 
 
@@ -1409,6 +1564,293 @@ lang:physical:filePath[`_di:structure_type_entry] = "facts/di-structure_type_ent
 +di:structure_type_entry(e0)
 <-
    _di:structure_type_entry(v0).
+
+
+
+_di:subprogram:containing_type(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_di:subprogram:containing_type] = "\t".
+lang:physical:filePath[`_di:subprogram:containing_type] = "facts/di-subprogram-containing_type.dlm".
+
++di:entry:id(e0:v0),
++di:subprogram(e0),
++di:entry:id(e1:v1),
++di:type_entry(e1),
++di:subprogram:containing_type[e0] = e1
+<-
+   _di:subprogram:containing_type(v0, v1).
+
+
+
+_di:subprogram:declaration(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_di:subprogram:declaration] = "\t".
+lang:physical:filePath[`_di:subprogram:declaration] = "facts/di-subprogram-declaration.dlm".
+
++di:entry:id(e0:v0),
++di:subprogram(e0),
++di:entry:id(e1:v1),
++di:subprogram(e1),
++di:subprogram:declaration[e0] = e1
+<-
+   _di:subprogram:declaration(v0, v1).
+
+
+
+_di:subprogram:file(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_di:subprogram:file] = "\t".
+lang:physical:filePath[`_di:subprogram:file] = "facts/di-subprogram-file.dlm".
+
++di:entry:id(e0:v0),
++di:subprogram(e0),
++di:entry:id(e1:v1),
++di:file(e1),
++di:subprogram:file[e0] = e1
+<-
+   _di:subprogram:file(v0, v1).
+
+
+
+_di:subprogram:flag(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_di:subprogram:flag] = "\t".
+lang:physical:filePath[`_di:subprogram:flag] = "facts/di-subprogram-flag.dlm".
+
++di:entry:id(e0:v0),
++di:subprogram(e0),
++di:subprogram:flag(e0,v1)
+<-
+   _di:subprogram:flag(v0, v1).
+
+
+
+_di:subprogram:is_definition(v0) -> string(v0).
+
+lang:physical:delimiter[`_di:subprogram:is_definition] = "\t".
+lang:physical:filePath[`_di:subprogram:is_definition] = "facts/di-subprogram-is_definition.dlm".
+
++di:entry:id(e0:v0),
++di:subprogram(e0),
++di:subprogram:is_definition(e0)
+<-
+   _di:subprogram:is_definition(v0).
+
+
+
+_di:subprogram:is_local_to_unit(v0) -> string(v0).
+
+lang:physical:delimiter[`_di:subprogram:is_local_to_unit] = "\t".
+lang:physical:filePath[`_di:subprogram:is_local_to_unit] = "facts/di-subprogram-is_local_to_unit.dlm".
+
++di:entry:id(e0:v0),
++di:subprogram(e0),
++di:subprogram:is_local_to_unit(e0)
+<-
+   _di:subprogram:is_local_to_unit(v0).
+
+
+
+_di:subprogram:is_optimized(v0) -> string(v0).
+
+lang:physical:delimiter[`_di:subprogram:is_optimized] = "\t".
+lang:physical:filePath[`_di:subprogram:is_optimized] = "facts/di-subprogram-is_optimized.dlm".
+
++di:entry:id(e0:v0),
++di:subprogram(e0),
++di:subprogram:is_optimized(e0)
+<-
+   _di:subprogram:is_optimized(v0).
+
+
+
+_di:subprogram:line(v0, v1) -> string(v0), uint[64](v1).
+
+lang:physical:delimiter[`_di:subprogram:line] = "\t".
+lang:physical:filePath[`_di:subprogram:line] = "facts/di-subprogram-line.dlm".
+
++di:entry:id(e0:v0),
++di:subprogram(e0),
++di:subprogram:line[e0] = v1
+<-
+   _di:subprogram:line(v0, v1).
+
+
+
+_di:subprogram:linkage_name(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_di:subprogram:linkage_name] = "\t".
+lang:physical:filePath[`_di:subprogram:linkage_name] = "facts/di-subprogram-linkage_name.dlm".
+
++di:entry:id(e0:v0),
++di:subprogram(e0),
++di:subprogram:linkage_name[e0] = v1
+<-
+   _di:subprogram:linkage_name(v0, v1).
+
+
+
+_di:subprogram:name(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_di:subprogram:name] = "\t".
+lang:physical:filePath[`_di:subprogram:name] = "facts/di-subprogram-name.dlm".
+
++di:entry:id(e0:v0),
++di:subprogram(e0),
++di:subprogram:name[e0] = v1
+<-
+   _di:subprogram:name(v0, v1).
+
+
+
+_di:subprogram:raw_containing_type(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_di:subprogram:raw_containing_type] = "\t".
+lang:physical:filePath[`_di:subprogram:raw_containing_type] = "facts/di-subprogram-raw_containing_type.dlm".
+
++di:entry:id(e0:v0),
++di:subprogram(e0),
++di:subprogram:raw_containing_type[e0] = v1
+<-
+   _di:subprogram:raw_containing_type(v0, v1).
+
+
+
+_di:subprogram:raw_scope(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_di:subprogram:raw_scope] = "\t".
+lang:physical:filePath[`_di:subprogram:raw_scope] = "facts/di-subprogram-raw_scope.dlm".
+
++di:entry:id(e0:v0),
++di:subprogram(e0),
++di:subprogram:raw_scope[e0] = v1
+<-
+   _di:subprogram:raw_scope(v0, v1).
+
+
+
+_di:subprogram:scope(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_di:subprogram:scope] = "\t".
+lang:physical:filePath[`_di:subprogram:scope] = "facts/di-subprogram-scope.dlm".
+
++di:entry:id(e0:v0),
++di:subprogram(e0),
++di:entry:id(e1:v1),
++di:scope(e1),
++di:subprogram:scope[e0] = e1
+<-
+   _di:subprogram:scope(v0, v1).
+
+
+
+_di:subprogram:scope_line(v0, v1) -> string(v0), uint[64](v1).
+
+lang:physical:delimiter[`_di:subprogram:scope_line] = "\t".
+lang:physical:filePath[`_di:subprogram:scope_line] = "facts/di-subprogram-scope_line.dlm".
+
++di:entry:id(e0:v0),
++di:subprogram(e0),
++di:subprogram:scope_line[e0] = v1
+<-
+   _di:subprogram:scope_line(v0, v1).
+
+
+
+_di:subprogram:template_param(v0, v1, v2) -> string(v0), uint[64](v1), string(v2).
+
+lang:physical:delimiter[`_di:subprogram:template_param] = "\t".
+lang:physical:filePath[`_di:subprogram:template_param] = "facts/di-subprogram-template_param.dlm".
+
++di:entry:id(e0:v0),
++di:subprogram(e0),
++di:entry:id(e1:v2),
++di:template_param(e1),
++di:subprogram:template_param[e0,v1] = e1
+<-
+   _di:subprogram:template_param(v0, v1, v2).
+
+
+
+_di:subprogram:type(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_di:subprogram:type] = "\t".
+lang:physical:filePath[`_di:subprogram:type] = "facts/di-subprogram-type.dlm".
+
++di:entry:id(e0:v0),
++di:subprogram(e0),
++di:entry:id(e1:v1),
++di:type_entry(e1),
++di:subprogram:type[e0] = e1
+<-
+   _di:subprogram:type(v0, v1).
+
+
+
+_di:subprogram:variable(v0, v1, v2) -> string(v0), uint[64](v1), string(v2).
+
+lang:physical:delimiter[`_di:subprogram:variable] = "\t".
+lang:physical:filePath[`_di:subprogram:variable] = "facts/di-subprogram-variable.dlm".
+
++di:entry:id(e0:v0),
++di:subprogram(e0),
++di:entry:id(e1:v2),
++di:variable(e1),
++di:subprogram:variable[e0,v1] = e1
+<-
+   _di:subprogram:variable(v0, v1, v2).
+
+
+
+_di:subprogram:virtual_index(v0, v1) -> string(v0), uint[64](v1).
+
+lang:physical:delimiter[`_di:subprogram:virtual_index] = "\t".
+lang:physical:filePath[`_di:subprogram:virtual_index] = "facts/di-subprogram-virtual_index.dlm".
+
++di:entry:id(e0:v0),
++di:subprogram(e0),
++di:subprogram:virtual_index[e0] = v1
+<-
+   _di:subprogram:virtual_index(v0, v1).
+
+
+
+_di:subprogram:virtuality(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_di:subprogram:virtuality] = "\t".
+lang:physical:filePath[`_di:subprogram:virtuality] = "facts/di-subprogram-virtuality.dlm".
+
++di:entry:id(e0:v0),
++di:subprogram(e0),
++di:subprogram:virtuality[e0] = v1
+<-
+   _di:subprogram:virtuality(v0, v1).
+
+
+
+_di:subrange:count(v0, v1) -> string(v0), int[64](v1).
+
+lang:physical:delimiter[`_di:subrange:count] = "\t".
+lang:physical:filePath[`_di:subrange:count] = "facts/di-subrange-count.dlm".
+
++di:entry:id(e0:v0),
++di:subrange(e0),
++di:subrange:count[e0] = v1
+<-
+   _di:subrange:count(v0, v1).
+
+
+
+_di:subrange:lower_bound(v0, v1) -> string(v0), int[64](v1).
+
+lang:physical:delimiter[`_di:subrange:lower_bound] = "\t".
+lang:physical:filePath[`_di:subrange:lower_bound] = "facts/di-subrange-lower_bound.dlm".
+
++di:entry:id(e0:v0),
++di:subrange(e0),
++di:subrange:lower_bound[e0] = v1
+<-
+   _di:subrange:lower_bound(v0, v1).
 
 
 

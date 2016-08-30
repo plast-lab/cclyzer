@@ -4,35 +4,51 @@ di:entry(Entry), di:entry:id(Entry:Ref) -> string(Ref).
 // Debug Information Entry - Type Hierarchy
 //--------------------------------------------------------
 
-di:file(Entry) -> di:entry(Entry).
+// Scopes
 di:scope(Entry) -> di:entry(Entry).
 di:namespace(Entry) -> di:scope(Entry).
-di:template_param(Entry) -> di:entry(Entry).
+di:file(Entry) -> di:scope(Entry).
+di:local_scope(Entry) -> di:scope(Entry).
+di:subprogram(Entry) -> di:local_scope(Entry).
+di:lexical_block(Entry) -> di:local_scope(Entry).
+di:lexical_block_file(Entry) -> di:local_scope(Entry).
 
+// Types
 di:type_entry(Entry) -> di:scope(Entry).
 di:basic_type_entry(Entry) -> di:type_entry(Entry).
 di:composite_type_entry(Entry) -> di:type_entry(Entry).
 di:derived_type_entry(Entry) -> di:type_entry(Entry).
 di:subroutine_type_entry(Entry) -> di:type_entry(Entry).
 
+// Variables
 di:variable(Entry) -> di:entry(Entry).
 di:local_variable(Entry) -> di:variable(Entry).
 di:global_variable(Entry) -> di:variable(Entry).
 
-di:typedef_entry(Entry)   -> di:entry(Entry).
+// Miscellaneous
+di:typedef_entry(Entry)   -> di:entry(Entry). // ?
+di:template_param(Entry) -> di:entry(Entry).
+di:enumerator(Entry) -> di:entry(Entry).
+di:subrange(Entry) -> di:entry(Entry).
 
 
 lang:entity(`di:scope).
+lang:entity(`di:local_scope).
 lang:entity(`di:variable).
 lang:entity(`di:global_variable).
 lang:entity(`di:local_variable).
 lang:entity(`di:typedef_entry).
 lang:entity(`di:file).
 lang:entity(`di:namespace).
+lang:entity(`di:subprogram).
+lang:entity(`di:lexical_block).
+lang:entity(`di:lexical_block_file).
 lang:entity(`di:type_entry).
 lang:entity(`di:basic_type_entry).
 lang:entity(`di:composite_type_entry).
 lang:entity(`di:derived_type_entry).
 lang:entity(`di:subroutine_type_entry).
 lang:entity(`di:template_param).
+lang:entity(`di:enumerator).
+lang:entity(`di:subrange).
 lang:physical:capacity[`di:entry] = 1048576.

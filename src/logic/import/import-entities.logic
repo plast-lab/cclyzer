@@ -262,6 +262,18 @@ lang:physical:filePath[`_di:derived_type_entry] = "facts/di-derived_type_entry.d
 
 
 
+_di:enumerator(v0) -> string(v0).
+
+lang:physical:delimiter[`_di:enumerator] = "\t".
+lang:physical:filePath[`_di:enumerator] = "facts/di-enumerator.dlm".
+
++di:entry:id(e0:v0),
++di:enumerator(e0)
+<-
+   _di:enumerator(v0).
+
+
+
 _di:file(v0) -> string(v0).
 
 lang:physical:delimiter[`_di:file] = "\t".
@@ -283,6 +295,30 @@ lang:physical:filePath[`_di:global_variable] = "facts/di-global_variable.dlm".
 +di:global_variable(e0)
 <-
    _di:global_variable(v0).
+
+
+
+_di:lexical_block(v0) -> string(v0).
+
+lang:physical:delimiter[`_di:lexical_block] = "\t".
+lang:physical:filePath[`_di:lexical_block] = "facts/di-lexical_block.dlm".
+
++di:entry:id(e0:v0),
++di:lexical_block(e0)
+<-
+   _di:lexical_block(v0).
+
+
+
+_di:lexical_block_file(v0) -> string(v0).
+
+lang:physical:delimiter[`_di:lexical_block_file] = "\t".
+lang:physical:filePath[`_di:lexical_block_file] = "facts/di-lexical_block_file.dlm".
+
++di:entry:id(e0:v0),
++di:lexical_block_file(e0)
+<-
+   _di:lexical_block_file(v0).
 
 
 
@@ -319,6 +355,30 @@ lang:physical:filePath[`_di:scope] = "facts/di-scope.dlm".
 +di:scope(e0)
 <-
    _di:scope(v0).
+
+
+
+_di:subprogram(v0) -> string(v0).
+
+lang:physical:delimiter[`_di:subprogram] = "\t".
+lang:physical:filePath[`_di:subprogram] = "facts/di-subprogram.dlm".
+
++di:entry:id(e0:v0),
++di:subprogram(e0)
+<-
+   _di:subprogram(v0).
+
+
+
+_di:subrange(v0) -> string(v0).
+
+lang:physical:delimiter[`_di:subrange] = "\t".
+lang:physical:filePath[`_di:subrange] = "facts/di-subrange.dlm".
+
++di:entry:id(e0:v0),
++di:subrange(e0)
+<-
+   _di:subrange(v0).
 
 
 

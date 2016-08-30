@@ -1,0 +1,22 @@
+//-----------------------------------------------------------
+// Debug Info - Enumerators
+//-----------------------------------------------------------
+
+di:enumerator(Entry) -> di:entry(Entry).
+
+di:enumerator:name[Entry] = Name ->
+   di:enumerator(Entry), string(Name).
+
+di:enumerator:value[Entry] = Value ->
+   di:enumerator(Entry), int[64](Value).
+
+
+schema:sanity()
+ , di:enumerator(Entry)
+ ->
+   di:enumerator:name[Entry] = _.
+
+schema:sanity()
+ , di:enumerator(Entry)
+ ->
+   di:enumerator:value[Entry] = _.

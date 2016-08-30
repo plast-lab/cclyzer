@@ -16,3 +16,4 @@ schema:sanity
 instruction:id:_$inverse
 di:entry
 di:tag
+di:local_scope

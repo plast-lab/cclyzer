@@ -1,0 +1,44 @@
+//-----------------------------------------------------------
+// Debug Info - Lexical Block Scopes
+//-----------------------------------------------------------
+
+di:lexical_block(Entry) -> di:local_scope(Entry).
+
+di:lexical_block:file[Entry] = File ->
+   di:lexical_block(Entry), di:file(File).
+
+di:lexical_block:line[Entry] = Line ->
+   di:lexical_block(Entry), uint[64](Line).
+
+di:lexical_block:column[Entry] = Column ->
+   di:lexical_block(Entry), uint[64](Column).
+
+di:lexical_block:scope[Entry] = Scope ->
+   di:lexical_block(Entry), di:scope(Scope).
+
+
+schema:sanity()
+ , di:lexical_block(Entry)
+ ->
+   di:lexical_block:line[Entry] = _.
+
+schema:sanity()
+ , di:lexical_block(Entry)
+ ->
+   di:lexical_block:column[Entry] = _.
+
+
+//-----------------------------------------------------------
+// Debug Info - Lexical Block File Scopes
+//-----------------------------------------------------------
+
+di:lexical_block_file(Entry) -> di:local_scope(Entry).
+
+di:lexical_block_file:file[Entry] = File ->
+   di:lexical_block_file(Entry), di:file(File).
+
+di:lexical_block_file:scope[Entry] = Scope ->
+   di:lexical_block_file(Entry), di:scope(Scope).
+
+di:lexical_block_file:discrim[Entry] = Discrim ->
+   di:lexical_block_file(Entry), uint[64](Discrim).

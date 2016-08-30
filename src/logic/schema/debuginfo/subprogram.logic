@@ -1,0 +1,80 @@
+//-----------------------------------------------------------
+// Debug Info - Subprogram Scopes
+//-----------------------------------------------------------
+
+di:subprogram(Entry) -> di:scope(Entry).
+
+di:subprogram:name[Entry] = Name ->
+   di:subprogram(Entry), string(Name).
+
+di:subprogram:linkage_name[Entry] = Name ->
+   di:subprogram(Entry), string(Name).
+
+di:subprogram:line[Entry] = Line ->
+   di:subprogram(Entry), uint[64](Line).
+
+di:subprogram:file[Entry] = File ->
+   di:subprogram(Entry), di:file(File).
+
+di:subprogram:declaration[Entry] = Decl ->
+   di:subprogram(Entry), di:subprogram(Decl).
+
+
+// Containing Type
+
+di:subprogram:containing_type[Entry] = Type ->
+   di:subprogram(Entry), di:type_entry(Type).
+
+di:subprogram:raw_containing_type[Entry] = Type ->
+   di:subprogram(Entry), string(Type).
+
+
+// Type and Scope
+
+di:subprogram:type[Entry] = Type ->
+   di:subprogram(Entry), di:type_entry(Type).
+
+di:subprogram:scope[Entry] = Scope ->
+   di:subprogram(Entry), di:scope(Scope).
+
+di:subprogram:scope_line[Entry] = Line ->
+   di:subprogram(Entry), uint[64](Line).
+
+di:subprogram:raw_scope[Entry] = Scope ->
+   di:subprogram(Entry), string(Scope).
+
+
+// Various Flags
+
+di:subprogram:flag(Entry, Flag) ->
+   di:subprogram(Entry), string(Flag).
+
+di:subprogram:is_definition(Entry) ->
+   di:subprogram(Entry).
+
+di:subprogram:is_local_to_unit(Entry) ->
+   di:subprogram(Entry).
+
+di:subprogram:is_optimized(Entry) ->
+   di:subprogram(Entry).
+
+
+// Virtuality and Virtual Index
+
+di:subprogram:virtuality[Entry] = Virtuality ->
+   di:subprogram(Entry), string(Virtuality).
+
+di:subprogram:virtual_index[Entry] = Index ->
+   di:subprogram(Entry), uint[64](Index).
+
+
+// Template Parameters
+
+di:subprogram:template_param[Entry, Index] = Param ->
+   di:subprogram(Entry), uint[64](Index), di:template_param(Param).
+
+
+// Variables
+
+di:subprogram:variable[Entry, Index] = Param ->
+   di:subprogram(Entry), uint[64](Index), di:variable(Param).
