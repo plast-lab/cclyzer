@@ -116,5 +116,4 @@ DebugInfoProcessor::Impl::write_di_local_variable::write(
     if (divar.isObjectPointer())
         proc.writeFact(pred::di_local_var::flag, nodeId, "objectpointer");
 
-    // TODO Scope is LocalScope
 }

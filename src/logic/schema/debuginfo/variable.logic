@@ -86,3 +86,9 @@ di:local_variable:is_artificial(Entry) <-
 
 di:local_variable:is_object_pointer(Entry) <-
    di:local_variable:flag(Entry, "objectpointer").
+
+schema:sanity()
+ , di:local_variable(Entry)
+ , di:variable:scope[Entry] = Scope
+ ->
+   di:local_scope(Scope).
