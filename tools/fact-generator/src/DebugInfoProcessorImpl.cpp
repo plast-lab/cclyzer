@@ -73,6 +73,7 @@ DebugInfoProcessor::Impl::generateDebugInfo(
     typedef llvm::DebugInfoFinder::scope_iterator di_scope_iterator;
     typedef llvm::DebugInfoFinder::subprogram_iterator di_subprogram_iterator;
     typedef llvm::DebugInfoFinder::global_variable_iterator di_global_var_iterator;
+    typedef llvm::DebugInfoFinder::compile_unit_iterator di_comp_unit_iterator;
 
     // Get global variable iterator
     llvm::iterator_range<di_global_var_iterator> allVars =
@@ -119,6 +120,26 @@ DebugInfoProcessor::Impl::generateDebugInfo(
     {
         const llvm::DIScope& scope = **it;
         record_di_scope::record(scope, *this);
+    }
+
+    // Get compile unit iterator
+    llvm::iterator_range<di_comp_unit_iterator> compunits =
+        debugInfoFinder.compile_units();
+
+    // iterate over subprogram and record each one
+    for (di_comp_unit_iterator it = compunits.begin(),
+             end = compunits.end(); it != end; ++it )
+    {
+        const llvm::DICompileUnit& compUnit = **it;
+
+        // iterate over imported entities
+        auto importedEntities = compUnit.getImportedEntities();
+
+        // record each imported entity entry
+        for (unsigned i = 0; i < importedEntities.size(); ++i) {
+            const llvm::DIImportedEntity& diimport = *importedEntities[i];
+            record_di_imported_entity::record(diimport, *this);
+        }
     }
 
     // Get type iterator

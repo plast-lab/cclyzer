@@ -210,6 +210,19 @@ namespace cclyzer { namespace predicates
         static pred_t count;
     };
 
+    // imported entity entries
+    struct di_imported_entity : public predicate_group {
+        static entity_pred_t id;
+        static pred_t name;
+        static pred_t line;
+        static pred_t scope;
+
+        struct entity {
+            static pred_t node;
+            static pred_t raw;
+        };
+    };
+
 
 }} // end of namespace cclyzer::predicates
 

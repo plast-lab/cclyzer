@@ -579,3 +579,11 @@ pred_t di_enumerator::value("di:enumerator:value");
 entity_pred_t di_subrange::id("di:subrange");
 pred_t di_subrange::lower_bound("di:subrange:lower_bound");
 pred_t di_subrange::count("di:subrange:count");
+
+// Imported Entity Entry
+entity_pred_t di_imported_entity::id("di:imported_entity");
+pred_t di_imported_entity::name("di:imported_entity:name");
+pred_t di_imported_entity::line("di:imported_entity:line");
+pred_t di_imported_entity::scope("di:imported_entity:scope");
+pred_t di_imported_entity::entity::node("di:imported_entity:entity");
+pred_t di_imported_entity::entity::raw("di:imported_entity:raw_entity");
