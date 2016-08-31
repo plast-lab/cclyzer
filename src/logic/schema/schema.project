@@ -88,3 +88,4 @@ debuginfo/variable.logic, active
 debuginfo/subrange.logic, active
 debuginfo/subprogram.logic, active
 debuginfo/lexical_scopes.logic, active
+debuginfo/imports.logic, active

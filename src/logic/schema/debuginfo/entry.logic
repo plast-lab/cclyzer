@@ -30,6 +30,7 @@ di:typedef_entry(Entry)   -> di:entry(Entry). // ?
 di:template_param(Entry) -> di:entry(Entry).
 di:enumerator(Entry) -> di:entry(Entry).
 di:subrange(Entry) -> di:entry(Entry).
+di:imported_entity(Entry) -> di:entry(Entry).
 
 
 lang:entity(`di:scope).
@@ -51,4 +52,5 @@ lang:entity(`di:subroutine_type_entry).
 lang:entity(`di:template_param).
 lang:entity(`di:enumerator).
 lang:entity(`di:subrange).
+lang:entity(`di:imported_entity).
 lang:physical:capacity[`di:entry] = 1048576.

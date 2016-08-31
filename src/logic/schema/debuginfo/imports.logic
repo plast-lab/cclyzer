@@ -1,0 +1,20 @@
+//-----------------------------------------------------------
+// Debug Info - Imported Entities
+//-----------------------------------------------------------
+
+di:imported_entity(Entry) -> di:entry(Entry).
+
+di:imported_entity:name[Entry] = Name ->
+   di:imported_entity(Entry), string(Name).
+
+di:imported_entity:line[Entry] = Line ->
+   di:imported_entity(Entry), uint[64](Line).
+
+di:imported_entity:scope[Entry] = Scope ->
+   di:imported_entity(Entry), di:scope(Scope).
+
+di:imported_entity:entity[Entry] = Entity ->
+   di:imported_entity(Entry), di:entry(Entity).
+
+di:imported_entity:raw_entity[Entry] = Entity ->
+   di:imported_entity(Entry), string(Entity).

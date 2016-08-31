@@ -298,6 +298,18 @@ lang:physical:filePath[`_di:global_variable] = "facts/di-global_variable.dlm".
 
 
 
+_di:imported_entity(v0) -> string(v0).
+
+lang:physical:delimiter[`_di:imported_entity] = "\t".
+lang:physical:filePath[`_di:imported_entity] = "facts/di-imported_entity.dlm".
+
++di:entry:id(e0:v0),
++di:imported_entity(e0)
+<-
+   _di:imported_entity(v0).
+
+
+
 _di:lexical_block(v0) -> string(v0).
 
 lang:physical:delimiter[`_di:lexical_block] = "\t".
