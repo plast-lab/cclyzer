@@ -199,12 +199,11 @@ DebugInfoProcessor::Impl::write_di_subprogram::write(
     // Record variables
     const auto& variables = disubprogram.getVariables();
     for (size_t i = 0; i < variables.size(); ++i) {
-        // TODO this throws segfault
-        // // Record variable
-        // refmode_t varId = record_di_variable::record(*variables[i], proc);
+        // Record variable
+        refmode_t varId = record_di_variable::record(*variables[i], proc);
 
-        // // Record variable - subprogram association
-        // proc.writeFact(pred::di_subprogram::variable, nodeId, i, varId);
+        // Record variable - subprogram association
+        proc.writeFact(pred::di_subprogram::variable, nodeId, i, varId);
     }
 
     // Record template parameters
