@@ -61,12 +61,11 @@ class cclyzer::DebugInfoProcessor::Impl
             // Generate refmode for this node
             refmode_t nodeId = eng.refmode<llvm::DINode>(node);
 
-            // Store the refmode before processing it, so that it
-            // works in the presence of cyclic references
-            nodeIds[&node] = nodeId;
-
-            // Process and record node attributes
-            writer::write(dinode, nodeId, proc);
+            // Cache the generated refmode and *then* process it
+            // (i.e., record all its attributes, etc), so that it gets
+            // not processed twice in the presence of cyclic
+            // references
+            writer::write(dinode, nodeIds[&node] = nodeId, proc);
 
             return nodeId;
         }

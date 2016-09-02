@@ -12,7 +12,7 @@ namespace pred = cclyzer::predicates;
 
 
 //------------------------------------------------------------------------------
-// Top-level method that records every kinds of constant
+// Top-level method that records every kind of constant
 //------------------------------------------------------------------------------
 
 cclyzer::refmode_t
