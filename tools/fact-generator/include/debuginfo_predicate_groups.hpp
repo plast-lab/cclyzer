@@ -223,6 +223,16 @@ namespace cclyzer { namespace predicates
         };
     };
 
+    // compilation unit entries
+    struct di_compile_unit : public predicate_group {
+        // TODO
+    };
+
+    // location entries
+    struct di_location : public predicate_group {
+        // TODO
+    };
+
 
 }} // end of namespace cclyzer::predicates
 

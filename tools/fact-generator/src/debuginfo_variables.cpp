@@ -134,6 +134,9 @@ void DebugInfoProcessor::Impl::record_local_var_assoc(
             // Obtain the refmodes of the local variable and the decl instruction
             refmode_t refmode = refmEngine.refmode<llvm::Value>(*address);
 
+            // TODO consider also recording instruction
+            // refmode_t iref = refmEngine.refmode<llvm::Instruction>(inst);
+
             // Record debug-info variable to LLVM variable association
             localVars.insert(LocalVarMap::value_type(var, refmode));
         }
