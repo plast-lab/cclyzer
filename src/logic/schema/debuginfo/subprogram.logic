@@ -19,6 +19,9 @@ di:subprogram:file[Entry] = File ->
 di:subprogram:declaration[Entry] = Decl ->
    di:subprogram(Entry), di:subprogram(Decl).
 
+di:subprogram:function[Entry] = Func ->
+   di:subprogram(Entry), function_decl(Func).
+
 
 // Containing Type
 

@@ -1709,6 +1709,21 @@ lang:physical:filePath[`_di:subprogram:flag] = "facts/di-subprogram-flag.dlm".
 
 
 
+_di:subprogram:function(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_di:subprogram:function] = "\t".
+lang:physical:filePath[`_di:subprogram:function] = "facts/di-subprogram-function.dlm".
+
++di:entry:id(e0:v0),
++di:subprogram(e0),
++function_decl:id(e1:v1),
++function_decl(e1),
++di:subprogram:function[e0] = e1
+<-
+   _di:subprogram:function(v0, v1).
+
+
+
 _di:subprogram:is_definition(v0) -> string(v0).
 
 lang:physical:delimiter[`_di:subprogram:is_definition] = "\t".

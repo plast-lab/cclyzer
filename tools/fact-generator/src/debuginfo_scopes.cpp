@@ -123,6 +123,12 @@ DebugInfoProcessor::Impl::write_di_subprogram::write(
 
     proc.writeFact(pred::di_subprogram::id, nodeId);
 
+    // Record function subprogram
+    if (const llvm::Function *func = disubprogram.getFunction()) {
+        refmode_t funcref = proc.refmEngine.refmode<llvm::Function>(*func);
+        proc.writeFact(pred::di_subprogram::function, nodeId, funcref);
+    }
+
     //-----------------------------------------------------------------
     // Record generic scope properties
     //-----------------------------------------------------------------

@@ -110,6 +110,7 @@ namespace cclyzer { namespace predicates
         static pred_t is_definition;
         static pred_t is_local_to_unit;
         static pred_t is_optimized;
+        static pred_t function;
     };
 
     // type entries

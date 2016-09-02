@@ -499,6 +499,7 @@ pred_t di_subprogram::variable("di:subprogram:variable");
 pred_t di_subprogram::is_definition("di:subprogram:is_definition");
 pred_t di_subprogram::is_local_to_unit("di:subprogram:is_local_to_unit");
 pred_t di_subprogram::is_optimized("di:subprogram:is_optimized");
+pred_t di_subprogram::function("di:subprogram:function");
 
 // Type Entry
 entity_pred_t di_type::id("di:type_entry");
