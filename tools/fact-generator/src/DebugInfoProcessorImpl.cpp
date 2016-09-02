@@ -126,7 +126,7 @@ DebugInfoProcessor::Impl::generateDebugInfo(
     llvm::iterator_range<di_comp_unit_iterator> compunits =
         debugInfoFinder.compile_units();
 
-    // iterate over subprogram and record each one
+    // iterate over compile unit and record each one
     for (di_comp_unit_iterator it = compunits.begin(),
              end = compunits.end(); it != end; ++it )
     {
