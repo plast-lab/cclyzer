@@ -24,7 +24,7 @@ namespace cclyzer {
     class RefmodeEngine {
       public:
         RefmodeEngine();
-        ~RefmodeEngine();
+        virtual ~RefmodeEngine();
 
         // Context modifying methods
         void enterContext(const llvm::Value& val);
