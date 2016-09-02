@@ -562,7 +562,7 @@ pred_t di_variable::type::raw("di:variable:raw_type");
 entity_pred_t di_local_var::id("di:local_variable");
 pred_t di_local_var::arg_num("di:local_variable:arg_num");
 pred_t di_local_var::flag("di:local_variable:flag");
-pred_t di_local_var::variable("di:local_variable:resolved_name");
+pred_t di_local_var::variable("di:local_variable_declaration");
 
 entity_pred_t di_global_var::id("di:global_variable");
 pred_t di_global_var::variable("di:global_variable:resolved_name");

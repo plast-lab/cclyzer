@@ -92,3 +92,8 @@ schema:sanity()
  , di:variable:scope[Entry] = Scope
  ->
    di:local_scope(Scope).
+
+
+// !! This relation associates this node to an LLVM local variable !!
+di:local_variable_declaration(Entry, Var) ->
+   di:local_variable(Entry), variable(Var).
