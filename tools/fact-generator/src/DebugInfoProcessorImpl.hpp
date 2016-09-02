@@ -28,6 +28,7 @@ class cclyzer::DebugInfoProcessor::Impl
     processDeclare(const llvm::Module &module,
                    const llvm::DbgDeclareInst *inst) {
         debugInfoFinder.processDeclare(module, inst);
+        record_local_var_assoc(*inst);
     }
 
     void
@@ -198,6 +199,12 @@ class cclyzer::DebugInfoProcessor::Impl
     /* Helper method to write bit flags */
     void recordFlags(const Predicate &, const refmode_t &, unsigned);
 
+    /* Record association between DI Node and LLVM local variable */
+    void record_local_var_assoc(const llvm::DbgDeclareInst & );
+
+    /* Write all local variable associations */
+    void write_local_var_assocs();
+
     // Construct a mapping from type ID to type name
     void CollectTypeIDs();
 
@@ -218,6 +225,13 @@ class cclyzer::DebugInfoProcessor::Impl
 
     /* Mapping from DIType ID to type name  */
     std::map<std::string, refmode_t> typeNameByID;
+
+    /* Mapping from DI Local Variable to LLVM variable */
+    typedef std::multimap<const llvm::DILocalVariable *, refmode_t> LocalVarMap;
+    LocalVarMap localVars;
+
+    /* List of DI Local Variables that correspond to undefined addresses */
+    std::list<const llvm::DILocalVariable *> undefVars;
 
     /* Refmode Engine */
     RefmodeEngine &refmEngine;

@@ -209,6 +209,7 @@ DebugInfoProcessor::Impl::generateDebugInfo(
           }
         }
     }
+    write_local_var_assocs();
 }
 
 

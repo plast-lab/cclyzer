@@ -8,6 +8,7 @@ using cclyzer::refmode_t;
 using llvm::cast;
 using llvm::dyn_cast;
 using llvm::isa;
+using std::list;
 using std::string;
 namespace pred = cclyzer::predicates;
 
@@ -115,5 +116,47 @@ DebugInfoProcessor::Impl::write_di_local_variable::write(
 
     if (divar.isObjectPointer())
         proc.writeFact(pred::di_local_var::flag, nodeId, "objectpointer");
+}
 
+
+void DebugInfoProcessor::Impl::record_local_var_assoc(
+    const llvm::DbgDeclareInst& inst)
+{
+    const llvm::Value *address = inst.getAddress();
+
+    // Record source variable name
+    if (const llvm::DILocalVariable *var = inst.getVariable())
+    {
+        // Skip undefined values
+        if (isa<llvm::UndefValue>(address)) {
+            undefVars.push_back(var);
+        } else {
+            // Obtain the refmodes of the local variable and the decl instruction
+            refmode_t refmode = refmEngine.refmode<llvm::Value>(*address);
+
+            // Record debug-info variable to LLVM variable association
+            localVars.insert(LocalVarMap::value_type(var, refmode));
+        }
+    }
+}
+
+
+void DebugInfoProcessor::Impl::write_local_var_assocs()
+{
+    for (LocalVarMap::const_iterator it = localVars.begin(), end = localVars.end();
+         it != end; ++it )
+    {
+        const llvm::DILocalVariable *divar = it->first;
+        refmode_t varId = it->second;
+        refmode_t nodeId = record_di_variable::record(*divar, *this);
+
+        writeFact(pred::di_local_var::variable, nodeId, varId);
+    }
+
+    for (list<const llvm::DILocalVariable *>::iterator it = undefVars.begin(),
+             end = undefVars.end(); it != end; ++it )
+    {
+        const llvm::DILocalVariable *divar = *it;
+        record_di_variable::record(*divar, *this);
+    }
 }
