@@ -1,0 +1,41 @@
+//------------------------------------------------------------------------------
+// Matching debug-info nodes and LLVM entities
+//------------------------------------------------------------------------------
+
+// Matching predicates
+
+di:match_variable(Var, DIVar) ->
+   variable(Var), di:variable(DIVar).
+
+di:match_global_variable[DIVar] = Var ->
+   global_variable(Var), di:variable(DIVar).
+
+di:match_type(Type, DIType) ->
+   type(Type), di:type_entry(DIType).
+
+
+//------------------------------------------------------------------------------
+// Matching variables to debug-info nodes
+//------------------------------------------------------------------------------
+
+// Match global variables
+
+di:match_global_variable[DIVar] = Var <-
+   di:global_variable:resolved_name[DIVar] = Name,
+   global_variable:by_name[Name] = Var.
+
+
+// Match local variables
+
+di:match_variable(Var, DIVar) <-
+   di:local_variable_declaration(DIVar, Var).
+
+
+// Match function parameters
+
+di:match_variable(Param, DIParam) <-
+   di:local_variable:is_parameter(DIParam),
+   di:local_variable:arg_num[DIParam] = Index,
+   di:variable:scope[DIParam] = DIScope,
+   di:subprogram:function[DIScope] = Func,
+   function:param[Func, Index - 1] = Param.
