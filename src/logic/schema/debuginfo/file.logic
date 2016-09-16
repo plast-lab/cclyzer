@@ -11,6 +11,21 @@ di:file:directory[Entry] = Directory ->
    di:file(Entry), string(Directory).
 
 
+// Path computation
+
+di:file:path[DIFile] = Dir + "/" + File <-
+   di:file:filename[DIFile] = File,
+   di:file:directory[DIFile] = Dir,
+   string:notlike(File, "/%").
+
+di:file:path[DIFile] = File <-
+   di:file:filename[DIFile] = File,
+   string:like(File, "/%").
+
+di:file:by_path[Path] = DIFile <-
+   di:file:path[DIFile] = Path.
+
+
 schema:sanity()
  , di:file(Entry)
  ->
