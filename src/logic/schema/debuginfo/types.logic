@@ -13,6 +13,9 @@ di:type_entry:line[Entry] = Line ->
 di:type_entry:flag(Entry, Flag) ->
    di:type_entry(Entry), string(Flag).
 
+_di:type_entry:by_flag(Flag, Entry) <-
+   di:type_entry:flag(Entry, Flag).
+
 // Scope of type
 di:type_entry:scope[Entry] = Scope ->
    di:type_entry(Entry), di:scope(Scope).
@@ -29,6 +32,9 @@ di:type_entry:bit_align[Entry] = Align ->
 
 di:type_entry:bit_offset[Entry] = Offset ->
    di:type_entry(Entry), uint[64](Offset).
+
+di:type_entry:is_forward_decl(Entry) <-
+   _di:type_entry:by_flag("DIFlagFwdDecl", Entry).
 
 
 //-----------------------------------------------------------
@@ -120,6 +126,14 @@ _di:derived_type_entry:by_kind(Entry, Kind) <-
 di:member_type_entry(Entry) <-
    di:tag:member[] = MemberTag,
    _di:derived_type_entry:by_kind(Entry, MemberTag).
+
+di:ptr_type_entry(Entry) <-
+   di:tag:pointer_type[] = PtrTag,
+   _di:derived_type_entry:by_kind(Entry, PtrTag).
+
+di:const_type_entry(Entry) <-
+   di:tag:const_type[] = ConstTag,
+   _di:derived_type_entry:by_kind(Entry, ConstTag).
 
 // Base type
 di:derived_type_entry:base_type[Entry] = Type ->
