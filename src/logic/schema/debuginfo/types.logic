@@ -135,6 +135,10 @@ di:const_type_entry(Entry) <-
    di:tag:const_type[] = ConstTag,
    _di:derived_type_entry:by_kind(Entry, ConstTag).
 
+di:typedef_type_entry(Entry) <-
+   di:tag:typedef[] = TypedefTag,
+   _di:derived_type_entry:by_kind(Entry, TypedefTag).
+
 // Base type
 di:derived_type_entry:base_type[Entry] = Type ->
    di:derived_type_entry(Entry), di:type_entry(Type).
