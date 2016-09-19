@@ -123,6 +123,9 @@ di:derived_type_entry:kind[Entry] = Kind ->
 _di:derived_type_entry:by_kind(Entry, Kind) <-
    di:derived_type_entry:kind[Entry] = Kind.
 
+
+// Categorize derived type entries by kind
+
 di:member_type_entry(Entry) <-
    di:tag:member[] = MemberTag,
    _di:derived_type_entry:by_kind(Entry, MemberTag).
@@ -138,6 +141,34 @@ di:const_type_entry(Entry) <-
 di:typedef_type_entry(Entry) <-
    di:tag:typedef[] = TypedefTag,
    _di:derived_type_entry:by_kind(Entry, TypedefTag).
+
+di:restrict_type_entry(Entry) <-
+   di:tag:restrict_type[] = RestrictTag,
+   _di:derived_type_entry:by_kind(Entry, RestrictTag).
+
+di:volatile_type_entry(Entry) <-
+   di:tag:volatile_type[] = VolatileTag,
+   _di:derived_type_entry:by_kind(Entry, VolatileTag).
+
+di:reference_type_entry(Entry) <-
+   di:tag:reference_type[] = ReferenceTag,
+   _di:derived_type_entry:by_kind(Entry, ReferenceTag).
+
+di:friend_type_entry(Entry) <-
+   di:tag:friend[] = FriendTag,
+   _di:derived_type_entry:by_kind(Entry, FriendTag).
+
+di:inheritance_type_entry(Entry) <-
+   di:tag:inheritance[] = InheritanceTag,
+   _di:derived_type_entry:by_kind(Entry, InheritanceTag).
+
+di:rvalue_ref_type_entry(Entry) <-
+   di:tag:rvalue_ref_type[] = RValueRefTag,
+   _di:derived_type_entry:by_kind(Entry, RValueRefTag).
+
+di:ptr_to_member_type_entry(Entry) <-
+   di:tag:ptr_to_member_type[] = PtrToMemberTag,
+   _di:derived_type_entry:by_kind(Entry, PtrToMemberTag).
 
 // Base type
 di:derived_type_entry:base_type[Entry] = Type ->
