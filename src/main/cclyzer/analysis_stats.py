@@ -42,16 +42,31 @@ class AnalysisStatisticsBuilder(object):
     def analysis(self):
         return self._analysis
 
-    def count(self, predicate, columnHeader=None, project=None):
+    def count(self, predicate, project=None, title=None):
+        # Loaded projects
+        projects = self._analysis.loaded_projects
+        project_names = [p.name for p in projects]
+        self.analysis.logger.info('Project loaded: %s', project_names)
+
+        # Project can be part of predicate name, delimited by '|'
+        if not project and '|' in predicate:
+            project, predicate = predicate.split('|')
+
         # Ensure required project was loaded
-        if project and (project not in self._analysis.loaded_projects):
-            return self
+        if project:
+            # Check project by name
+            if isinstance(project, basestring):
+                if project not in project_names:
+                    return self
+            # Check project by identity
+            elif project not in projects:
+                return self
 
         # Make generic column header based on predicate name
-        if columnHeader is None:
-            columnHeader = predicate.replace(':', ' ').replace('_', ' ') + 's'
+        if title is None:
+            title = predicate.replace(':', ' ').replace('_', ' ') + 's'
 
-        self._headers[predicate] = columnHeader
+        self._headers[predicate] = title
         self._counted_preds.append(predicate)
 
         return self
