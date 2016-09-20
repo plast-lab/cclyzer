@@ -1,0 +1,68 @@
+//------------------------------------------------------------------------------
+// [Define arbitrary type representatives]
+//
+// The same type ID, which is normally the mangled name of the
+// typeinfo entry of the composite type, may be mapped to multiple
+// type entry nodes. Hence, we decide to arbitrarily define one of
+// these nodes as the representative for all debug-info entries of the
+// same type.
+//
+// The representative will not be a forward declaration, unless only
+// forward declarations have been associated with some type ID.
+//------------------------------------------------------------------------------
+
+_di_types_by_id(TypeID, DIType) <-
+   di:composite_type_entry:abi_id[DIType] = TypeID, TypeID != "".
+
+_di_types_by_id:no_forward_decl(TypeID, DIType) <-
+   di:composite_type_entry:abi_id[DIType] = TypeID, TypeID != "",
+   !di:type_entry:is_forward_decl(DIType).
+
+_no_forward_decl_type_repr[TypeID] = ReprDIType <-
+   agg<<ReprDIType = min(DIType)>>
+   _di_types_by_id:no_forward_decl(TypeID, DIType).
+
+_fallback_type_repr[TypeID] = ReprDIType <-
+   agg<<ReprDIType = min(DIType)>>
+   _di_types_by_id(TypeID, DIType).
+
+
+//-----------------------------------------------------------------
+// The representative type node for a type ID
+//-----------------------------------------------------------------
+
+di:repr_type_entry:by_id[TypeID] = DIType ->
+   string(TypeID), di:composite_type_entry(DIType).
+
+di:repr_type_entry:by_id[TypeID] = ReprDIType <-
+   !_di_types_by_id:no_forward_decl(TypeID, _),
+   _fallback_type_repr[TypeID] = ReprDIType.
+
+di:repr_type_entry:by_id[TypeID] = ReprDIType <-
+   _di_types_by_id:no_forward_decl(TypeID, _),
+   _no_forward_decl_type_repr[TypeID] = ReprDIType.
+
+
+// Sanity check: all type IDs have a representative node
+di:composite_type_entry:abi_id[_] = TypeID
+ ->
+   TypeID = "" ; di:repr_type_entry:by_id[TypeID] = _.
+
+
+//---------------------------------------------------------------------
+// [Identify typedef'd types]
+//
+// Note that some typedefs may not be included here. This can only
+// happen if they have a *null* baseType, for some reason.
+//---------------------------------------------------------------------
+
+typedefd_type[DITypedef, TypeName] = BaseType <-
+   di:typedef_type_entry(DITypedef),
+   di:type_entry:name[DITypedef] = TypeName,
+   di:derived_type_entry:raw_base_type[DITypedef] = BaseTypeID,
+   di:repr_type_entry:by_id[BaseTypeID] = BaseType.
+
+typedefd_type[DITypedef, TypeName] = BaseType <-
+   di:typedef_type_entry(DITypedef),
+   di:type_entry:name[DITypedef] = TypeName,
+   di:derived_type_entry:base_type[DITypedef] = BaseType.

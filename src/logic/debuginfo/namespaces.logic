@@ -1,4 +1,4 @@
-// Compute the names of namespaces recursively
+// Construct the names of namespaces recursively
 
 di:namespace:to_string[DINamespace] = Name ->
    di:namespace(DINamespace), string(Name).
