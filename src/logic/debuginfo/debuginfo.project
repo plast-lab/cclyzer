@@ -1,6 +1,7 @@
 llvm:debuginfo, projectname
 llvm:schema, library
 
+namespaces.logic, active
 node-representatives.logic, active
 match-nodes.logic, active
-namespaces.logic, active
+types.logic, active
