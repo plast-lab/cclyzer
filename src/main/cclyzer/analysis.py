@@ -11,7 +11,9 @@ class Analysis(object):
         self._stats = None
         self._loaded_projects = []
         self._projects = projects
-        self._pipeline = [
+
+        # Default pipeline of analysis steps
+        pipeline = [
             CleaningStep(),
             FactGenerationStep(),
             DatabaseCreationStep(),
@@ -19,8 +21,32 @@ class Analysis(object):
             UserOptionsStep(config.config_options('analysis')),
             LoadProjectStep(projects.symbol_lookup),
             LoadProjectStep(projects.callgraph),
+            LoadProjectStep(projects.debuginfo),
             LoadProjectStep(config.points_to),
         ]
+
+        # Decide if step should run in the actual pipeline
+        def keep_step(step):
+            # TODO make method of AnalysisStep to be overriden at will
+            if isinstance(step, LoadProjectStep):
+                # Transform project name to match canonicalized option
+                projname = step.project.name.replace('-', '_')
+                option = config.config_option('module', projname)
+
+                # Log inclusion check
+                self.logger.info("Checking inclusion for module %s: %s", projname, option)
+
+                # TODO check if project is dependency of another project
+
+                # Check if module was disabled by command-line option
+                if option and option.lower() in ('off', 'no'):
+                    return False
+
+            # By default, keep step in the pipeline
+            return True
+
+        # Filtered pipeline
+        self._pipeline = [step for step in pipeline if keep_step(step)]
 
     @property
     def loaded_projects(self):

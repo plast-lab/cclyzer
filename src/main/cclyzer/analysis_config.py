@@ -57,9 +57,10 @@ class AnalysisConfig(object):
         return config
 
     def _set_config_option(self, section, option, value):
+        # Canonicalize option name and then set its value
+        option = option.replace('-', '_')
         self._confopt.setdefault(section, {})[option] = value
-        self._logger.info("Config [%s]: %s = %s",
-                          section, option, value)
+        self._logger.info("Config [%s]: %s = %s", section, option, value)
 
     def config_option(self, section, option):
         return self._confopt.get(section, {}).get(option, None)
