@@ -130,6 +130,10 @@ class Analysis(object):
                 self._loaded_projects.append(step.project)
             step.apply(self)
 
+        # Report loaded projects
+        projects = [p.name for p in self.loaded_projects]
+        self.logger.info('Projects loaded: %s', projects)
+
         # Compute stats
         self.compute_stats()
 

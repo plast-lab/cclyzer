@@ -44,9 +44,8 @@ class AnalysisStatisticsBuilder(object):
 
     def count(self, predicate, project=None, title=None):
         # Loaded projects
-        projects = self._analysis.loaded_projects
+        projects = self.analysis.loaded_projects
         project_names = [p.name for p in projects]
-        self.analysis.logger.info('Project loaded: %s', project_names)
 
         # Project can be part of predicate name, delimited by '|'
         if not project and '|' in predicate:
