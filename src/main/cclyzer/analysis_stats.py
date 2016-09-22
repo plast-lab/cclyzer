@@ -43,6 +43,12 @@ class AnalysisStatisticsBuilder(object):
         return self._analysis
 
     def count(self, predicate, project=None, title=None):
+        """Report size of predicate.
+
+        Predicate can be prefixed with the project it belongs to, in
+        the form "project|predicate", if no project argument is given.
+
+        """
         # Loaded projects
         projects = self.analysis.loaded_projects
         project_names = [p.name for p in projects]
@@ -71,6 +77,9 @@ class AnalysisStatisticsBuilder(object):
         return self
 
     def build(self):
+        """Create the analysis report.
+
+        """
         # Run popCount command to workspace for the marked predicates
         counters = self._connector.popCount(*self._counted_preds)
 
