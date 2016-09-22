@@ -10,8 +10,15 @@ from . import runtime
 from .resource import unpacked_binary, unpacked_project
 from .project import UnpackedProject
 
+# Export all analysis steps
+__all__ = [
+    'AnalysisStep', '_CleaningStep', '_FactGenerationStep', '_DatabaseCreationStep',
+    '_LoadProjectStep', '_RunOutputQueriesStep', '_SanityCheckStep', '_UserOptionsStep',
+]
+
 
 class AnalysisStep(object):
+    '''Base class that all analysis steps should extend'''
     __metaclass__ = abc.ABCMeta
 
     def __init__(self):
@@ -31,7 +38,8 @@ class AnalysisStep(object):
         pass
 
 
-class FactGenerationStep(AnalysisStep):
+class _FactGenerationStep(AnalysisStep):
+    '''Analysis step that performs fact generation'''
     def apply(self, analysis):
         input_files = analysis.input_files
         outdir = analysis.facts_directory
@@ -52,7 +60,8 @@ class FactGenerationStep(AnalysisStep):
         return 'generated facts'
 
 
-class DatabaseCreationStep(AnalysisStep):
+class _DatabaseCreationStep(AnalysisStep):
+    '''Analysis step that creates database and imports generated facts'''
     def apply(self, analysis):
         dbdir = analysis.database_directory
         factdir = analysis.facts_directory
@@ -86,7 +95,8 @@ class DatabaseCreationStep(AnalysisStep):
         return self
 
 
-class LoadProjectStep(AnalysisStep):
+class _LoadProjectStep(AnalysisStep):
+    '''Analysis step that loads a project module'''
     def __init__(self, project):
         AnalysisStep.__init__(self)
         self._project = project
@@ -131,7 +141,8 @@ class LoadProjectStep(AnalysisStep):
         return 'installed %s project' % self._project.name
 
 
-class CleaningStep(AnalysisStep):
+class _CleaningStep(AnalysisStep):
+    '''Analysis step that cleans up output directory'''
     def apply(self, analysis):
         # Remove previous analysis results
         if os.path.exists(analysis.output_directory):
@@ -142,7 +153,8 @@ class CleaningStep(AnalysisStep):
         return 'cleaned previous contents'
 
 
-class SanityCheckStep(AnalysisStep):
+class _SanityCheckStep(AnalysisStep):
+    '''Analysis step that activates sanity checks'''
     def __init__(self, project):
         AnalysisStep.__init__(self)
         self._project = project
@@ -163,7 +175,8 @@ class SanityCheckStep(AnalysisStep):
         return self._project
 
 
-class RunOutputQueriesStep(AnalysisStep):
+class _RunOutputQueriesStep(AnalysisStep):
+    '''Analysis step that runs output queries and exports them'''
     def __init__(self, project):
         AnalysisStep.__init__(self)
         self._project = project
@@ -197,7 +210,8 @@ class RunOutputQueriesStep(AnalysisStep):
         return self._project
 
 
-class UserOptionsStep(AnalysisStep):
+class _UserOptionsStep(AnalysisStep):
+    '''Analysis step that loads user configuration'''
     def __init__(self, options):
         AnalysisStep.__init__(self)
         self._options = list(options)

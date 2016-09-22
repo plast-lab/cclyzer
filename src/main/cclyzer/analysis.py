@@ -1,3 +1,4 @@
+import logging
 import os
 from .project import Project, ProjectManager
 from .analysis_steps import *
@@ -14,15 +15,15 @@ class Analysis(object):
 
         # Default pipeline of analysis steps
         pipeline = [
-            CleaningStep(),
-            FactGenerationStep(),
-            DatabaseCreationStep(),
-            SanityCheckStep(projects.schema),
-            UserOptionsStep(config.config_options('analysis')),
-            LoadProjectStep(projects.symbol_lookup),
-            LoadProjectStep(projects.callgraph),
-            LoadProjectStep(projects.debuginfo),
-            LoadProjectStep(config.points_to),
+            _CleaningStep(),
+            _FactGenerationStep(),
+            _DatabaseCreationStep(),
+            _SanityCheckStep(projects.schema),
+            _UserOptionsStep(config.config_options('analysis')),
+            _LoadProjectStep(projects.symbol_lookup),
+            _LoadProjectStep(projects.callgraph),
+            _LoadProjectStep(projects.debuginfo),
+            _LoadProjectStep(config.points_to),
         ]
 
         # List of required project modules
@@ -118,14 +119,14 @@ class Analysis(object):
         self.__check_deps(project, deps_only=True)
 
         # Load project
-        LoadProjectStep(project).apply(self)
+        _LoadProjectStep(project).apply(self)
         self._loaded_projects.append(step.project)
 
     def run(self):
         # Run each step of pipeline
         for step in self.pipeline:
             # Record loaded project
-            if isinstance(step, LoadProjectStep):
+            if isinstance(step, _LoadProjectStep):
                 self._loaded_projects.append(step.project)
             step.apply(self)
 
@@ -161,7 +162,7 @@ class Analysis(object):
         # Check project dependencies
         try:
             self.__check_deps(project)
-            self._pipeline.append(RunOutputQueriesStep(project))
+            self._pipeline.append(_RunOutputQueriesStep(project))
         except ProjectLoadError:
             self.logger.info('Exported facts were disabled')
 

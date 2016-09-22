@@ -13,15 +13,15 @@ class CustomAnalysis(Analysis):
 
         # Basic pipeline steps
         custom_pipeline = [
-            CleaningStep(),
-            FactGenerationStep(),
-            DatabaseCreationStep(),
-            SanityCheckStep(projects.SCHEMA),
+            _CleaningStep(),
+            _FactGenerationStep(),
+            _DatabaseCreationStep(),
+            _SanityCheckStep(projects.SCHEMA),
         ]
 
         # Add steps to custom pipeline based on config file
         for project in self._userconfig.projects:
-            step = LoadProjectStep(project)
+            step = _LoadProjectStep(project)
             custom_pipeline.append(step)
 
         # Customize pipeline
