@@ -1,5 +1,5 @@
 import os
-from .project import ProjectManager
+from .project import Project, ProjectManager
 from .analysis_steps import *
 from .analysis_stats import AnalysisStatisticsBuilder as StatBuilder
 
@@ -25,28 +25,48 @@ class Analysis(object):
             LoadProjectStep(config.points_to),
         ]
 
+        # List of required project modules
+        proj_whitelist = set(('schema', 'import',))
+
         # Decide if step should run in the actual pipeline
         def keep_step(step):
-            # TODO make method of AnalysisStep to be overriden at will
-            if isinstance(step, LoadProjectStep):
+            # Check if step is associated with project
+            if hasattr(step, 'project'):
+                project = step.project
+
                 # Transform project name to match canonicalized option
-                projname = step.project.name.replace('-', '_')
+                projname = project.name.replace('-', '_')
                 option = config.config_option('module', projname)
+
+                # User configuration disabled project load
+                usr_disabled = (option or '').lower() in ('off', 'no')
 
                 # Log inclusion check
                 self.logger.info("Checking inclusion for module %s: %s", projname, option)
 
-                # TODO check if project is dependency of another project
+                # Check if project is mark as required
+                if project.name in proj_whitelist:
+                    # Warn about ignoring user request
+                    if option and usr_disabled:
+                        self.logger.warn("Project %s could not be disabled" \
+                                         % project.name)
+                    return True
 
                 # Check if module was disabled by command-line option
-                if option and option.lower() in ('off', 'no'):
+                if usr_disabled:
                     return False
+
+                # Mark projects as required
+                proj_whitelist.add(project.name)
+                proj_whitelist.update(project.dependencies)
 
             # By default, keep step in the pipeline
             return True
 
-        # Filtered pipeline
-        self._pipeline = [step for step in pipeline if keep_step(step)]
+        # Filtered pipeline (in reverse order, to find dependencies)
+        self._pipeline = [step for step in reversed(pipeline) if keep_step(step)]
+        self._pipeline.reverse()
+        self.logger.info("Loaded modules %s", proj_whitelist)
 
     @property
     def loaded_projects(self):
@@ -88,7 +108,18 @@ class Analysis(object):
         return os.path.join(self.output_directory, 'results')
 
     def load_project(self, project):
+        project = self.__find_project(project)
+
+        # Check previous load
+        if project in self._loaded_projects:
+            raise ProjectLoadError("Already loaded", project)
+
+        # Check project dependencies
+        self.__check_deps(project, deps_only=True)
+
+        # Load project
         LoadProjectStep(project).apply(self)
+        self._loaded_projects.append(step.project)
 
     def run(self):
         # Run each step of pipeline
@@ -124,4 +155,46 @@ class Analysis(object):
     def enable_exports(self, project=None):
         if project is None:
             project = self._config.points_to
-        self._pipeline.append(RunOutputQueriesStep(project))
+
+        project = self.__find_project(project)
+
+        # Check project dependencies
+        try:
+            self.__check_deps(project)
+            self._pipeline.append(RunOutputQueriesStep(project))
+        except ProjectLoadError:
+            self.logger.info('Exported facts were disabled')
+
+    def __find_project(self, project):
+        # Find project instance, if string was given
+        if isinstance(project, basestring):
+            project = self._projects[project]
+
+        # Check type of project
+        if not isinstance(project, Project):
+            raise ValueError('Non-project argument')
+
+        return project
+
+    def __check_deps(self, project, deps_only=False):
+        '''Check that project dependencies are loaded'''
+        assert isinstance(project, Project)
+        deps = project.dependencies
+
+        # Check that project is loaded as well
+        if not deps_only:
+            deps += (project,)
+
+        # Check project dependencies
+        for dep in deps:
+            if self._projects[dep] not in self._loaded_projects:
+                raise ProjectLoadError("Missing dependency: " + dep, project)
+
+
+class ProjectLoadError(ValueError):
+    '''Raise when loading a project was unsuccessful'''
+    def __init__(self, message, project, *args):
+        assert isinstance(project, Project)
+        self.message = message
+        self.project = project
+        super(ProjectLoadError, self).__init__(message, project.name, *args)

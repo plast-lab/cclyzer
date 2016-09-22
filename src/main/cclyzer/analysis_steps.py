@@ -158,6 +158,10 @@ class SanityCheckStep(AnalysisStep):
     def message(self):
         return 'enable {} sanity checks'.format(self._project.name)
 
+    @property
+    def project(self):
+        return self._project
+
 
 class RunOutputQueriesStep(AnalysisStep):
     def __init__(self, project):
@@ -187,6 +191,10 @@ class RunOutputQueriesStep(AnalysisStep):
     @property
     def message(self):
         return 'run {} output queries'.format(self._project.name)
+
+    @property
+    def project(self):
+        return self._project
 
 
 class UserOptionsStep(AnalysisStep):
