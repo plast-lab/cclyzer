@@ -69,7 +69,7 @@ namespace cclyzer { namespace predicates
         static pred_t line;
         static pred_t column;
         static pred_t scope;
-    };
+    }; // TODO add missing ones, from locations
 
     // lexical block file entries
     struct di_lex_block_file : public predicate_group {
@@ -77,7 +77,7 @@ namespace cclyzer { namespace predicates
         static pred_t file;
         static pred_t discriminator;
         static pred_t scope;
-    };
+    }; // TODO add missing ones, from locations
 
     // subprogram entries
     struct di_subprogram : public predicate_group {
