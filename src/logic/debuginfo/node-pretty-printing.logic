@@ -107,7 +107,7 @@ di:structure_type_entry:to_string[DIStructType] = Prefix + TypeName <-
    di:type_entry:name[DIStructType] = TypeName,
    _di_type_scope_prefix[DIStructType] = Prefix.
 
-// Union types (Total 10)
+// Union types
 di:union_type_entry:to_string[DIUnionType] = Prefix + TypeName <-
    di:union_type_entry(DIUnionType),
    di:type_entry:name[DIUnionType] = TypeName,
@@ -217,10 +217,11 @@ di:union_type_entry:to_string[DIType] = ExtendedName <-
    __local_field_type(DIType, BaseTypeName, Descriptor),
    ExtendedName = BaseTypeName + "::<union " + Descriptor + " type>".
 
-di:struct_type_entry:to_string[DIType] = ExtendedName <-
+di:structure_type_entry:to_string[DIType] = ExtendedName <-
    di:structure_type_entry(DIType),
    __local_field_type(DIType, BaseTypeName, Descriptor),
    ExtendedName = BaseTypeName + "::<struct " + Descriptor + " type>".
+
 
 //-----------------------------------------------------------------
 // Propagate Representative Types
@@ -248,10 +249,11 @@ di:structure_type_entry:to_string[DIType] = TypeName <-
 
 
 //-----------------------------------------------------------------
-// Unnamed but typedef'd types
+// Unnamed but typedef'd composite types
 //-----------------------------------------------------------------
 
 _typedefd_type[DIType] = TypeName <-
+   di:composite_type_entry(DIType),
    typedefd_type[DITypedef, _] = DIType,
    !di:type_entry:name[DIType] = _,
    !_di_field_type(DIType),
