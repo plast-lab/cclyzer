@@ -17,11 +17,6 @@ namespace cclyzer { namespace predicates
         static entity_pred_t id;
     };
 
-    // typedef entries
-    struct di_typedef_entry : public predicate_group {
-        static entity_pred_t id;
-    };
-
     // variable entries
     struct di_variable : public predicate_group {
         static entity_pred_t id;

@@ -450,9 +450,6 @@ pred_t attribute::target_dependent("target_dependent_attribute");
 // Scope Entry
 entity_pred_t di_scope_entry::id("di:scope");
 
-// Typedef Entry
-entity_pred_t di_typedef_entry::id("di:typedef_entry");
-
 // File Entry
 entity_pred_t di_file::id("di:file");
 pred_t di_file::filename("di:file:filename");
