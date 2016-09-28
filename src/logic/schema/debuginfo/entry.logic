@@ -26,7 +26,6 @@ di:local_variable(Entry) -> di:variable(Entry).
 di:global_variable(Entry) -> di:variable(Entry).
 
 // Miscellaneous
-di:typedef_entry(Entry)   -> di:entry(Entry). // ?
 di:template_param(Entry) -> di:entry(Entry).
 di:enumerator(Entry) -> di:entry(Entry).
 di:subrange(Entry) -> di:entry(Entry).
@@ -38,7 +37,6 @@ lang:entity(`di:local_scope).
 lang:entity(`di:variable).
 lang:entity(`di:global_variable).
 lang:entity(`di:local_variable).
-lang:entity(`di:typedef_entry).
 lang:entity(`di:file).
 lang:entity(`di:namespace).
 lang:entity(`di:subprogram).
