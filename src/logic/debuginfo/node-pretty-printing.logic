@@ -1,0 +1,332 @@
+//------------------------------------------------------------------------------
+// [String Representation Protocol]
+//
+// We define relations that provide pretty printing for each kind of
+// debug-info nodes.
+//------------------------------------------------------------------------------
+
+// Declarations
+di:type_entry:to_string[DIType] = TypeName ->
+   di:type_entry(DIType), string(TypeName).
+
+di:basic_type_entry:to_string[DIType] = TypeName ->
+   di:basic_type_entry(DIType), string(TypeName).
+
+di:composite_type_entry:to_string[DIType] = TypeName ->
+   di:composite_type_entry(DIType), string(TypeName).
+
+di:derived_type_entry:to_string[DIType] = TypeName ->
+   di:derived_type_entry(DIType), string(TypeName).
+
+di:type_entry:to_string[DIType] = TypeName <-
+   di:basic_type_entry:to_string[DIType] = TypeName
+ ; di:composite_type_entry:to_string[DIType] = TypeName
+ ; di:derived_type_entry:to_string[DIType] = TypeName.
+
+di:namespace:to_string[DINamespace] = Name ->
+   di:namespace(DINamespace), string(Name).
+
+//-----------------------------------------------------------------
+// Auxiliary Scope Prefix Relation
+//-----------------------------------------------------------------
+
+_di_type_scope_prefix[DIType] = Prefix ->
+   di:type_entry(DIType), string(Prefix).
+
+// Defined in global namespace
+_di_type_scope_prefix[DIType] = "" <-
+   di:type_entry(DIType),
+   !di:type_entry:scope[DIType] = _,
+   !di:type_entry:raw_scope[DIType] = _.
+
+// Defined inside namespace
+_di_type_scope_prefix[DIType] = Prefix + "::" <-
+   di:type_entry:scope[DIType] = DINamespace,
+   di:namespace:to_string[DINamespace] = Prefix.
+
+// Defined inside composite type's namespace
+_di_type_scope_prefix[DIType] = Prefix + "::" <-
+   di:type_entry:raw_scope[DIType] = BaseTypeID,
+   di:repr_type_entry:by_id[BaseTypeID] = BaseType,
+   di:composite_type_entry:to_string[BaseType] = Prefix.
+
+// // Defined inside subprogram
+// _di_type_scope_prefix[DIType] = Prefix <-
+//    di:type_entry:scope[DIType] = DISubprogram,
+//    di:subprogram:to_string[DISubprogram] = Prefix.
+//    di:subprogram(DIScope).
+
+
+//-----------------------------------------------------------------
+// Namespace Debug Info Entries
+//-----------------------------------------------------------------
+
+di:namespace:to_string[DINamespace] = Name
+ <-
+   di:namespace:name[DINamespace] = Name,
+   !di:namespace:scope[DINamespace] = _.
+
+di:namespace:to_string[DINamespace] = BaseName + "::" + Name
+ <-
+   di:namespace:name[DINamespace] = Name,
+   di:namespace:scope[DINamespace] = DIBaseScope,
+   di:namespace:to_string[DIBaseScope] = BaseName.
+
+//-----------------------------------------------------------------
+// Basic Type Debug Info Entries
+//-----------------------------------------------------------------
+
+di:basic_type_entry:to_string[DIType] = TypeName <-
+   di:basic_type_entry(DIType),
+   di:type_entry:name[DIType] = TypeName.
+
+//-----------------------------------------------------------------
+// Composite Type Debug Info Entries
+//-----------------------------------------------------------------
+
+// Auxiliary relation that can be extended with more than the declared
+// names of types
+di:type_entry:__some_name[DIType] = Name <-
+   di:type_entry:name[DIType] = Name.
+
+// Array types
+di:array_type_entry:to_string[DIArrayType] = BaseTypeName + "[]" <-
+   di:array_type_entry(DIArrayType),
+   di:array_type_base[DIArrayType] = BaseType,
+   di:type_entry:to_string[BaseType] = BaseTypeName.
+
+// Class types
+di:class_type_entry:to_string[DIClassType] = Prefix + TypeName <-
+   di:class_type_entry(DIClassType),
+   di:type_entry:name[DIClassType] = TypeName,
+   _di_type_scope_prefix[DIClassType] = Prefix.
+
+// Struct types
+di:structure_type_entry:to_string[DIStructType] = Prefix + TypeName <-
+   di:structure_type_entry(DIStructType),
+   di:type_entry:name[DIStructType] = TypeName,
+   _di_type_scope_prefix[DIStructType] = Prefix.
+
+// Union types (Total 10)
+di:union_type_entry:to_string[DIUnionType] = Prefix + TypeName <-
+   di:union_type_entry(DIUnionType),
+   di:type_entry:name[DIUnionType] = TypeName,
+   _di_type_scope_prefix[DIUnionType] = Prefix.
+
+// Enum types
+di:enum_type_entry:to_string[DIEnumType] = Prefix + TypeName <-
+   di:enum_type_entry(DIEnumType),
+   di:type_entry:__some_name[DIEnumType] = TypeName,
+   _di_type_scope_prefix[DIEnumType] = Prefix.
+
+
+di:composite_type_entry:to_string[DIType] = TypeName <-
+   di:class_type_entry:to_string[DIType] = TypeName
+ ; di:structure_type_entry:to_string[DIType] = TypeName
+ ; di:union_type_entry:to_string[DIType] = TypeName
+ ; di:array_type_entry:to_string[DIType] = TypeName
+ ; di:enum_type_entry:to_string[DIType] = TypeName.
+
+
+//-----------------------------------------------------------------
+// Enumeration Type Debug Info Entries
+//-----------------------------------------------------------------
+
+// Compute alternative name for enum based on its contents
+di:enum_type_entry:max_printable_members[] = 10.
+
+_di_enum_contents_up_to_index[Entry, Index] = Repr ->
+   di:composite_type_entry(Entry), uint[64](Index), string(Repr).
+
+_di_enum_contents_up_to_index[Entry, 0] = Name <-
+   di:enum_type_entry(DIType),
+   !di:type_entry:name[DIType] = _,
+   di:composite_type_entry:enumerator[Entry, 0] = Enumerator,
+   di:enumerator:name[Enumerator] = Name.
+
+_di_enum_contents_up_to_index[Entry, i + 1] = Prev + ", " + Name <-
+   di:enum_type_entry:max_printable_members[] = MaxMembers,
+   _di_enum_contents_up_to_index[Entry, i] = Prev,
+   di:composite_type_entry:enumerator[Entry, i + 1] = Enumerator,
+   di:enumerator:name[Enumerator] = Name,
+   i <= MaxMembers.
+
+// Compute alternative name for enum based on its contents
+di:enum_type_entry:alt_name[DIEnum] = "enum { " + Contents + " }" <-
+   _di_enum_contents_up_to_index[DIEnum, i] = Contents,
+   !di:type_entry:name[DIEnum] = _,
+   !di:composite_type_entry:enumerator[DIEnum, i + 1] = _.
+
+di:enum_type_entry:alt_name[DIEnum] = "enum {...} (" + NumID + ")" <-
+   di:enum_type_entry(DIEnum),
+   di:entry:id(DIEnum:ID),
+   string:split[ID, ":", 1] = NumID,
+   !di:type_entry:name[DIEnum] = _,
+   di:composite_type_entry:enumerator[DIEnum, i + 1] = _,
+   !_di_enum_contents_up_to_index[DIEnum, i + 1] = _.
+
+// Use alternative name for enum type
+di:type_entry:__some_name[DIType] = Name <-
+   di:enum_type_entry:alt_name[DIType] = Name,
+   di:composite_type_entry:abi_id[DIType] = TypeID,
+   (di:repr_type_entry:by_id[TypeID] = DIType ; TypeID = ""),
+   !_di_field_type(DIType),
+   !typedefd_type[_, _] = DIType.
+
+
+//------------------------------------------------------------------------------
+// [Unnamed Types defined locally in fields]
+//
+// Note that even the name of the field can be empty:
+// see https://gcc.gnu.org/onlinedocs/gcc-4.0.4/gcc/Unnamed-Fields.html
+// see https://gcc.gnu.org/onlinedocs/gcc/Unnamed-Fields.html
+//------------------------------------------------------------------------------
+
+// Types used in fields
+_di_field_type(DIType) <-
+   di:type_contains_field(DIType, _, _, _).
+
+__local_field_type(DIType, BaseTypeName, Descriptor) <-
+   _di_field_type(DIType),
+   di:composite_type_entry(DIType),
+   !di:type_entry:name[DIType] = _,
+   di:type_contains_field(DIType, FieldName, Index, BaseType),
+   di:composite_type_entry:to_string[BaseType] = BaseTypeName,
+   int64:string:convert[Index] = IndexStr,
+   Descriptor = "field #" + IndexStr + " (" + FieldName + ")".
+
+__local_field_type(DIType, BaseTypeName, Descriptor) <-
+   __di_array_by_base(DIArray, DIType),
+   di:composite_type_entry(DIType),
+   !di:type_entry:name[DIType] = _,
+   di:type_contains_field(DIArray, FieldName, Index, BaseType),
+   di:composite_type_entry:to_string[BaseType] = BaseTypeName,
+   int64:string:convert[Index] = IndexStr,
+   Descriptor = "field #" + IndexStr + "[*] (" + FieldName + ")".
+
+__di_array_by_base(DIArray, BaseType) <-
+   di:array_type_base[DIArray] = BaseType.
+
+di:enum_type_entry:to_string[DIType] = ExtendedName <-
+   di:enum_type_entry(DIType),
+   __local_field_type(DIType, BaseTypeName, Descriptor),
+   ExtendedName = BaseTypeName + "::<enum " + Descriptor + " type>".
+
+di:union_type_entry:to_string[DIType] = ExtendedName <-
+   di:union_type_entry(DIType),
+   __local_field_type(DIType, BaseTypeName, Descriptor),
+   ExtendedName = BaseTypeName + "::<union " + Descriptor + " type>".
+
+di:struct_type_entry:to_string[DIType] = ExtendedName <-
+   di:structure_type_entry(DIType),
+   __local_field_type(DIType, BaseTypeName, Descriptor),
+   ExtendedName = BaseTypeName + "::<struct " + Descriptor + " type>".
+
+//-----------------------------------------------------------------
+// Propagate Representative Types
+//-----------------------------------------------------------------
+
+_non_repr_type[DIType] = TypeName <-
+   di:composite_type_entry:abi_id[DIType] = TypeID,
+   di:repr_type_entry:by_id[TypeID] = ReprType,
+   ReprType != DIType,
+   !_di_field_type(DIType),
+   !di:type_entry:__some_name[DIType] = _,
+   di:composite_type_entry:to_string[ReprType] = TypeName.
+
+di:enum_type_entry:to_string[DIType] = TypeName <-
+   di:enum_type_entry(DIType),
+   _non_repr_type[DIType] = TypeName.
+
+di:union_type_entry:to_string[DIType] = TypeName <-
+   di:union_type_entry(DIType),
+   _non_repr_type[DIType] = TypeName.
+
+di:structure_type_entry:to_string[DIType] = TypeName <-
+   di:structure_type_entry(DIType),
+   _non_repr_type[DIType] = TypeName.
+
+
+//-----------------------------------------------------------------
+// Unnamed but typedef'd types
+//-----------------------------------------------------------------
+
+_typedefd_type[DIType] = TypeName <-
+   typedefd_type[DITypedef, _] = DIType,
+   !di:type_entry:name[DIType] = _,
+   !_di_field_type(DIType),
+   di:typedef_type_entry:to_string[DITypedef] = TypeName.
+
+di:enum_type_entry:to_string[DIType] = TypeName <-
+   di:enum_type_entry(DIType),
+   _typedefd_type[DIType] = TypeName.
+
+di:union_type_entry:to_string[DIType] = TypeName <-
+   di:union_type_entry(DIType),
+   _typedefd_type[DIType] = TypeName.
+
+di:structure_type_entry:to_string[DIType] = TypeName <-
+   di:structure_type_entry(DIType),
+   _typedefd_type[DIType] = TypeName.
+
+
+//-----------------------------------------------------------------
+// Derived Type Debug Info Entries
+//-----------------------------------------------------------------
+
+// Pointer types
+di:ptr_type_entry:to_string[DIPtrType] = BaseTypeName + "*" <-
+   di:ptr_type_entry(DIPtrType),
+   di:derived_type_base[DIPtrType] = BaseType,
+   di:type_entry:to_string[BaseType] = BaseTypeName.
+
+// Reference types
+di:reference_type_entry:to_string[DIRefType] = BaseTypeName + "&" <-
+   di:reference_type_entry(DIRefType),
+   di:derived_type_base[DIRefType] = BaseType,
+   di:type_entry:to_string[BaseType] = BaseTypeName.
+
+// Volatile types
+di:volatile_type_entry:to_string[DIVolType] = "volatile " + BaseTypeName <-
+   di:volatile_type_entry(DIVolType),
+   di:derived_type_base[DIVolType] = BaseType,
+   di:type_entry:to_string[BaseType] = BaseTypeName.
+
+// Const types
+di:const_type_entry:to_string[DIConstType] = "const " + BaseTypeName <-
+   di:const_type_entry(DIConstType),
+   di:derived_type_base[DIConstType] = BaseType,
+   di:type_entry:to_string[BaseType] = BaseTypeName.
+
+// Typedefs
+di:typedef_type_entry:to_string[DITypedef] = Prefix + TypeName <-
+   di:typedef_type_entry(DITypedef),
+   di:type_entry:name[DITypedef] = TypeName,
+   _di_type_scope_prefix[DITypedef] = Prefix.
+
+// Restrict types
+di:restrict_type_entry:to_string[DIRestrictType] = "restrict " + BaseTypeName <-
+   di:restrict_type_entry(DIRestrictType),
+   di:derived_type_base[DIRestrictType] = BaseType,
+   di:type_entry:to_string[BaseType] = BaseTypeName.
+
+// Rvalue Reference types
+di:rvalue_ref_type_entry:to_string[DIRValRefType] = BaseTypeName + "&&" <-
+   di:rvalue_ref_type_entry(DIRValRefType),
+   di:derived_type_base[DIRValRefType] = BaseType,
+   di:type_entry:to_string[BaseType] = BaseTypeName.
+
+di:derived_type_entry:to_string[DIType] = TypeName <-
+   di:const_type_entry:to_string[DIType] = TypeName
+ ; di:typedef_type_entry:to_string[DIType] = TypeName
+ ; di:ptr_type_entry:to_string[DIType] = TypeName
+ ; di:reference_type_entry:to_string[DIType] = TypeName
+ ; di:rvalue_ref_type_entry:to_string[DIType] = TypeName
+ ; di:volatile_type_entry:to_string[DIType] = TypeName
+ ; di:restrict_type_entry:to_string[DIType] = TypeName.
+
+// TODO Handle pointer-to-member types
+
+//----------------------------------------------------------------------
+// Subroutine Types TODO
+//----------------------------------------------------------------------

@@ -5,7 +5,7 @@
 di:type_contains_field(FieldType, FieldName, Index, BaseType)
  <-
    di:member_type_entry(Field),
-   di:derived_type:__base_type[Field] = FieldType,
+   di:derived_type_base[Field] = FieldType,
    ( di:type_entry:name[Field] = FieldName
    ; (!di:type_entry:name[Field] = _, FieldName = "<empty>")),
    di:composite_type_entry:field[BaseType, Index] = Field.
@@ -13,5 +13,5 @@ di:type_contains_field(FieldType, FieldName, Index, BaseType)
 di:type_inheritance[DerivedType, Index] = BaseType
  <-
    di:inheritance_type_entry(DIInheritance),
-   di:derived_type:__base_type[DIInheritance] = BaseType,
+   di:derived_type_base[DIInheritance] = BaseType,
    di:composite_type_entry:field[DerivedType, Index] = DIInheritance.

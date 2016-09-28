@@ -72,9 +72,19 @@ typedefd_type[DITypedef, TypeName] = BaseType <-
 // Base Type and Scope Relations
 //---------------------------------------------------------------------
 
-di:derived_type:__base_type[DIType] = BaseType <-
+di:derived_type_base[DIType] = BaseType <-
    di:derived_type_entry:raw_base_type[DIType] = BaseTypeID,
    di:repr_type_entry:by_id[BaseTypeID] = BaseType.
 
-di_derived_type:__base_type[DIType] = BaseType <-
+di:derived_type_base[DIType] = BaseType <-
    di:derived_type_entry:base_type[DIType] = BaseType.
+
+// Array base type
+di:array_type_base[DIArray] = BaseType <-
+   di:array_type_entry(DIArray),
+   di:composite_type_entry:raw_base_type[DIArray] = BaseTypeID,
+   di:repr_type_entry:by_id[BaseTypeID] = BaseType.
+
+di:array_type_base[DIArray] = BaseType <-
+   di:array_type_entry(DIArray),
+   di:composite_type_entry:base_type[DIArray] = BaseType.
