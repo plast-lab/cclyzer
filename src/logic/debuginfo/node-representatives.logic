@@ -66,3 +66,15 @@ typedefd_type[DITypedef, TypeName] = BaseType <-
    di:typedef_type_entry(DITypedef),
    di:type_entry:name[DITypedef] = TypeName,
    di:derived_type_entry:base_type[DITypedef] = BaseType.
+
+
+//---------------------------------------------------------------------
+// Base Type and Scope Relations
+//---------------------------------------------------------------------
+
+di:derived_type:__base_type[DIType] = BaseType <-
+   di:derived_type_entry:raw_base_type[DIType] = BaseTypeID,
+   di:repr_type_entry:by_id[BaseTypeID] = BaseType.
+
+di_derived_type:__base_type[DIType] = BaseType <-
+   di:derived_type_entry:base_type[DIType] = BaseType.
