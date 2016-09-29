@@ -123,6 +123,19 @@ class Analysis(object):
         with open(self.pickle_file, 'wb') as f:
             pickle.dump(self, f)
 
+    @staticmethod
+    def load(path):
+        pickle_file = os.path.join(path, 'analysis.pickle')
+
+        # Open analysis pickle file
+        with open(pickle_file, 'rb') as f:
+            analysis = pickle.load(f)
+            _logger.info('Loaded analysis %s', analysis)
+            _logger.info('Setting output directory to %s', path)
+            analysis.output_directory = path
+
+        return analysis
+
     def load_project(self, project):
         project = self.__find_project(project)
 

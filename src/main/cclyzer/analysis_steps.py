@@ -47,7 +47,8 @@ class AnalysisStep(object):
         # Copy object's state
         state = self.__dict__.copy()
         # Do not store environment and callable entries
-        del state['_env']
+        if '_env' in state:     # TODO check why this is needed
+            del state['_env']
         state = { k:v for k,v in state.iteritems() if not callable(v) }
         return state
 
