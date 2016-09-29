@@ -22,8 +22,8 @@ class Project(object):
         """Return canonicalized name of project."""
         return self.canonicalized_name(self.name)
 
-    @classmethod
-    def canonicalized_name(cls, pname):
+    @staticmethod
+    def canonicalized_name(pname):
         return pname.replace('-', '_')
 
     @property

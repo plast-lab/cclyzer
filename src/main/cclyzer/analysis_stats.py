@@ -75,7 +75,8 @@ class AnalysisStatisticsBuilder(object):
         """
         # Loaded projects
         projects = self.analysis.loaded_projects
-        project_names = [p.cname for p in projects]
+        project_names = [p.name for p in projects]
+        project_names += [p.cname for p in projects]
 
         # Project can be part of predicate name, delimited by '|'
         if not project and '|' in predicate:
