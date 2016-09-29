@@ -24,7 +24,10 @@ class AnalysisStatistics(object):
         self._rows = rows
 
     def __str__(self):
-        return '\n'.join(self._rows)
+        return unicode(self).encode('utf-8')
+
+    def __unicode__(self):
+        return u'\n'.join(self._rows)
 
 
 class AnalysisStatisticsBuilder(object):
