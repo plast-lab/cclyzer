@@ -39,7 +39,7 @@ class Project(object):
         return self._deps
 
     def __eq__(self, other):
-        if not isinstance(other, Project):
+        if not isinstance(other, self.__class__):
             return NotImplemented
 
         if self.name != other.name:

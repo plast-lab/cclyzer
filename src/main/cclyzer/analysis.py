@@ -139,6 +139,8 @@ class Analysis(object):
             # Record loaded project
             if isinstance(step, _LoadProjectStep):
                 self._loaded_projects.append(step.project)
+            if isinstance(step, _DatabaseCreationStep):
+                self._loaded_projects.append(self._projects.schema)
             step.apply(self)
 
         # Report loaded projects
