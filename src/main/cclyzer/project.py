@@ -7,6 +7,9 @@ from . import settings
 from .runtime import FileManager
 from .resource import unpacked_project
 
+# Initialize logger for this module
+_logger = logging.getLogger(__name__)
+
 
 class Project(object):
     def __init__(self, name, *dependencies):
@@ -90,8 +93,7 @@ class ProjectManager(object):
 
     def __init__(self):
         """Initialize the project manager."""
-        self.logger = logging.getLogger(__name__)
-        self.logger.info("Initializing project manager")
+        _logger.info("Initializing project manager")
         self._projects = {}
 
         metadata = {}           # a dict from internal names to project name, dependencies
@@ -136,7 +138,7 @@ class ProjectManager(object):
             p.internal_name = i
             self._projects[project] = p
             setattr(self, project.replace('-', '_'), p)
-            self.logger.info("Found project %s that depends on: %s", project, p.dependencies)
+            _logger.info("Found project %s that depends on: %s", project, p.dependencies)
 
     def __extract_metadata(self, filename):
         # The fields to be searched

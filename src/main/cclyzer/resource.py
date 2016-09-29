@@ -6,6 +6,8 @@ from pkg_resources import resource_isdir, resource_listdir, resource_stream
 from . import runtime
 from . import settings
 
+# Initialize logger for this module
+_logger = logging.getLogger(__name__)
 
 class unpacked_binary(object):
     """A context manager that unpacks a binary resource to a temporary
@@ -15,7 +17,6 @@ class unpacked_binary(object):
     def __init__(self, resource):
         self._resource = resource
         self._pkg = settings.RESOURCE_PKG
-        self.logger = logging.getLogger(__name__)
 
     def __enter__(self):
         # Compute resource path
@@ -37,7 +38,7 @@ class unpacked_binary(object):
             # safer than simply truncating it.
             unlink(path_to_file)
 
-        self.logger.info("Extracting binary %s to %s", resource, path_to_file)
+        _logger.info("Extracting binary %s to %s", resource, path_to_file)
 
         # Create parent directory
         parent_dir = path.dirname(path_to_file)
@@ -69,7 +70,6 @@ class unpacked_project(object):
     def __init__(self, project):
         self._project = project                      # project name
         self._pkg = settings.LOGIC_RESOURCE_PKG      # logic resources package name
-        self.logger = logging.getLogger(__name__)
 
     def __enter__(self):
         # Compute resource path
@@ -95,7 +95,7 @@ class unpacked_project(object):
             # remove stale cached project
             shutil.rmtree(cached_proj_dir)
 
-        self.logger.info("Extracting project %s to %s", project, cached_proj_dir)
+        _logger.info("Extracting project %s to %s", project, cached_proj_dir)
 
         resource_dirs = [project]
 
@@ -119,7 +119,7 @@ class unpacked_project(object):
                     resource_dirs.append(path_to_resource)
                     continue
 
-                self.logger.debug("Extracting project file %s", path_to_resource)
+                _logger.debug("Extracting project file %s", path_to_resource)
 
                 # Create parent directory
                 parent_dir = path.dirname(path_to_file)

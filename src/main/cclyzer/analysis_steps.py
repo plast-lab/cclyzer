@@ -10,6 +10,10 @@ from . import runtime
 from .resource import unpacked_binary, unpacked_project
 from .project import UnpackedProject
 
+# Initialize logger and file manager
+_logger = logging.getLogger(__name__)
+files = runtime.FileManager()
+
 # Export all analysis steps
 __all__ = [
     'AnalysisStep', '_CleaningStep', '_FactGenerationStep', '_DatabaseCreationStep',
@@ -22,9 +26,7 @@ class AnalysisStep(object):
     __metaclass__ = abc.ABCMeta
 
     def __init__(self):
-        self.manager = runtime.FileManager()
         self.env = runtime.Environment()
-        self.logger = logging.getLogger(__name__)
 
     def check(self):
         return self
@@ -44,8 +46,8 @@ class _FactGenerationStep(AnalysisStep):
         input_files = analysis.input_files
         outdir = analysis.facts_directory
 
-        self.logger.info("LLVM Bitcode Input: %s", ', '.join(input_files))
-        self.logger.info("Exporting facts to %s ...", outdir)
+        _logger.info("LLVM Bitcode Input: %s", ', '.join(input_files))
+        _logger.info("Exporting facts to %s ...", outdir)
 
         # Create empty directory
         os.makedirs(outdir)
@@ -53,7 +55,7 @@ class _FactGenerationStep(AnalysisStep):
         # Generate facts
         factgen.run(input_files, outdir)
 
-        self.logger.info("Stored facts into %s", outdir)
+        _logger.info("Stored facts into %s", outdir)
 
     @property
     def message(self):
@@ -66,7 +68,7 @@ class _DatabaseCreationStep(AnalysisStep):
         dbdir = analysis.database_directory
         factdir = analysis.facts_directory
 
-        self.logger.info("Loading data from %s ...", factdir)
+        _logger.info("Loading data from %s ...", factdir)
 
         # Unpack required projects
         with unpacked_project('schema') as schema_project:
@@ -76,12 +78,12 @@ class _DatabaseCreationStep(AnalysisStep):
                     # Execute script while ignoring output
                     blox.LoadSchemaScript(
                         workspace=dbdir,
-                        script_path=self.manager.mktemp(suffix='.lb'),
+                        script_path=files.mktemp(suffix='.lb'),
                         schema_path=schema_project,
                         import_path=import_project
                     ).run()
 
-        self.logger.info("Stored database in %s", dbdir)
+        _logger.info("Stored database in %s", dbdir)
 
     @property
     def message(self):
@@ -114,13 +116,13 @@ class _LoadProjectStep(AnalysisStep):
         if not unpacked_deps:   # All dependencies have been extracted
             with UnpackedProject(project) as project:
                 # Log project installation event
-                self.logger.info("Installing project %s ...", project.name)
+                _logger.info("Installing project %s ...", project.name)
 
                 # Execute script while ignoring output
                 return (
                     blox.LoadProjectScript(
                         workspace=analysis.database_directory,
-                        script_path=self.manager.mktemp(suffix='.lb'),
+                        script_path=files.mktemp(suffix='.lb'),
                         project_path=project.path,
                         library_path=libpath
                     ).run()
@@ -195,7 +197,7 @@ class _RunOutputQueriesStep(AnalysisStep):
 
         # Compute query block name
         blockname = '{}-queries'.format(self._project.name)
-        self.logger.info("Executing named block %s", blockname)
+        _logger.info("Executing named block %s", blockname)
 
         # Execute relevant block
         with cd(outdir):
@@ -259,12 +261,12 @@ class _UserOptionsStep(AnalysisStep):
         # Compute logic
         lines = [self.declare_option(opt, val) for (opt, val) in self._options]
         logic = '\n'.join(lines)
-        self.logger.info("Adding logic:\n%s", logic)
+        _logger.info("Adding logic:\n%s", logic)
         connector.add_logic(logic)
 
         lines = [self.enable_option(opt, val) for (opt, val) in self._options]
         logic = '\n'.join(lines)
-        self.logger.info("Executing logic:\n%s", logic)
+        _logger.info("Executing logic:\n%s", logic)
 
         # Execute relevant logic
         connector.execute_logic(logic)

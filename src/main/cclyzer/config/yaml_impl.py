@@ -13,6 +13,9 @@ CORRUPTED_METADATA_WARNING = '''
 Configuration files contains corrupted project metadata. You should remove it!
 '''
 
+# Initialize logger for this module
+_logger = logging.getLogger(__name__)
+
 
 class YamlConfiguration(object):
     __metaclass__ = singleton.Singleton
@@ -39,7 +42,6 @@ class YamlConfiguration(object):
         self._config = Environment().user_config_file
         self._projects = projects
         self._data = None
-        self._logger = logging.getLogger(__name__)
 
         # Install default configuration
         if not os.path.exists(self._config):
@@ -51,7 +53,7 @@ class YamlConfiguration(object):
 
     def install_default_config(self):
         resources, default_conf = settings.RESOURCE_PKG, 'default_config.yaml'
-        self._logger.info("Installing configuration file to %s", self._config)
+        _logger.info("Installing configuration file to %s", self._config)
 
         with open(self._config, 'w') as conf:
             default_conf = resource_stream(resources, default_conf)
@@ -87,7 +89,7 @@ class YamlConfiguration(object):
 
             # Perform sanity check
             if other is not None and project != other:
-                self._logger.warning(CORRUPTED_METADATA_WARNING)
+                _logger.warning(CORRUPTED_METADATA_WARNING)
                 print >> sys.stderr, CORRUPTED_METADATA_WARNING
                 project = other
 

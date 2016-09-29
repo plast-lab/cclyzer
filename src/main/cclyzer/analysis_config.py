@@ -3,9 +3,12 @@ import logging
 from .runtime import Environment
 from .project import ProjectManager
 
+# Initialize logger for this module
+_logger = logging.getLogger(__name__)
+
+
 class AnalysisConfig(object):
     def __init__(self, *inputfiles, **kwargs):
-        self._logger = logging.getLogger(__name__)
         self._projects = ProjectManager()
         self._env = Environment()
         self._input_files = list(inputfiles)
@@ -32,7 +35,6 @@ class AnalysisConfig(object):
         # Copy object's state
         state = self.__dict__.copy()
         # Remove unpicklable entries
-        del state['_logger']
         del state['_projects']
         return state
 
@@ -40,7 +42,6 @@ class AnalysisConfig(object):
         # Restore instance attributes
         self.__dict__.update(state)
         # Restore unpicklable entries
-        self._logger = logging.getLogger(__name__)
         self._projects = ProjectManager()
 
     def __repr__(self):
@@ -90,7 +91,7 @@ class AnalysisConfig(object):
         # Canonicalize option name and then set its value
         option = option.replace('-', '_')
         self._confopt.setdefault(section, {})[option] = value
-        self._logger.info("Config [%s]: %s = %s", section, option, value)
+        _logger.info("Config [%s]: %s = %s", section, option, value)
 
     def config_option(self, section, option):
         return self._confopt.get(section, {}).get(option, None)

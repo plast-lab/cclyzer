@@ -6,6 +6,8 @@ from .environment import Environment
 from tempfile import mkdtemp, mkstemp
 from utils import singleton
 
+# Initialize logger for this module
+_logger = logging.getLogger(__name__)
 
 class FileManager(object):
     __metaclass__ = singleton.Singleton
@@ -15,8 +17,7 @@ class FileManager(object):
         env = Environment()
         self._tmpdir = mkdtemp(prefix='', dir=env.user_runtime_dir)
         self._cachedir = env.user_cache_dir
-        self.logger = logging.getLogger(__name__)
-        self.logger.info("Initializing file manager, rooted at %s", self._tmpdir)
+        _logger.info("Initializing file manager, rooted at %s", self._tmpdir)
 
     def cleanup(self):
         shutil.rmtree(self._tmpdir)

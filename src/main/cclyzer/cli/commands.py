@@ -40,7 +40,6 @@ class CliCommand(object):
     __metaclass__ = CliCommandMeta
 
     def __init__(self, args):
-        self.logger = logging.getLogger(__name__)
         self._args = args
 
     @classmethod

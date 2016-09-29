@@ -2,6 +2,12 @@
 from os import path
 from .commands import CliCommand
 from ..runtime import Environment as env
+import logging
+
+
+# Initialize logger for this module
+_logger = logging.getLogger(__name__)
+
 
 class Option(object):
     @classmethod
@@ -86,7 +92,7 @@ class ConfigCommand(CliCommand):
         of the tool.
 
         """
-        self.logger.info('Writing to configuration file %s', self.configfile)
+        _logger.info('Writing to configuration file %s', self.configfile)
 
         with open(self.configfile, 'w') as config:
             config.write("[Analysis]\n")

@@ -5,7 +5,7 @@ from .analysis_steps import *
 from .analysis_stats import AnalysisStatisticsBuilder as StatBuilder
 
 # Logger for this module
-logger = logging.getLogger(__name__)
+_logger = logging.getLogger(__name__)
 
 class Analysis(object):
     def __init__(self, config, projects=ProjectManager()):
@@ -44,14 +44,14 @@ class Analysis(object):
                 usr_disabled = (option or '').lower() in ('off', 'no')
 
                 # Log inclusion check
-                logger.info("Checking inclusion for module %s: %s", projname, option)
+                _logger.info("Checking inclusion for module %s: %s", projname, option)
 
                 # Check if project is mark as required
                 if project.name in proj_whitelist:
                     # Warn about ignoring user request
                     if option and usr_disabled:
-                        logger.warn("Project %s could not be disabled" \
-                                    % project.name)
+                        _logger.warn("Project %s could not be disabled" \
+                                     % project.name)
                     return True
 
                 # Check if module was disabled by command-line option
@@ -68,7 +68,7 @@ class Analysis(object):
         # Filtered pipeline (in reverse order, to find dependencies)
         self._pipeline = [step for step in reversed(pipeline) if keep_step(step)]
         self._pipeline.reverse()
-        logger.info("Loaded modules %s", proj_whitelist)
+        _logger.info("Loaded modules %s", proj_whitelist)
 
     @property
     def loaded_projects(self):
@@ -133,7 +133,7 @@ class Analysis(object):
 
         # Report loaded projects
         projects = [p.name for p in self.loaded_projects]
-        logger.info('Projects loaded: %s', projects)
+        _logger.info('Projects loaded: %s', projects)
 
         # Compute stats
         self.compute_stats()
@@ -169,7 +169,7 @@ class Analysis(object):
             self.__check_deps(project)
             self._pipeline.append(_RunOutputQueriesStep(project))
         except ProjectLoadError:
-            logger.info('Exported facts were disabled')
+            _logger.info('Exported facts were disabled')
 
     def __find_project(self, project):
         # Find project instance, if string was given
