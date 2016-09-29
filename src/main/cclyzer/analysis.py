@@ -1,5 +1,6 @@
 import logging
 import os
+import pickle
 from .project import Project, ProjectManager
 from .analysis_steps import *
 from .analysis_stats import AnalysisStatisticsBuilder as StatBuilder
@@ -109,6 +110,14 @@ class Analysis(object):
     @property
     def results_directory(self):
         return os.path.join(self.output_directory, 'results')
+
+    @property
+    def pickle_file(self):
+        return os.path.join(self.output_directory, 'analysis.pickle')
+
+    def save(self):
+        with open(self.pickle_file, 'wb') as f:
+            pickle.dump(self, f)
 
     def load_project(self, project):
         project = self.__find_project(project)

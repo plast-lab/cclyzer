@@ -21,6 +21,14 @@ __all__ = [
 ]
 
 
+# Method decorator that saves analysis after calling apply
+def autosave(apply_func):
+    def apply_and_save(step, analysis):
+        apply_func(step, analysis)
+        analysis.save()
+    return apply_and_save
+
+
 class AnalysisStep(object):
     '''Base class that all analysis steps should extend'''
     __metaclass__ = abc.ABCMeta
@@ -30,6 +38,13 @@ class AnalysisStep(object):
 
     def check(self):
         return self
+
+    def __getstate__(self):
+        # Copy object's state
+        state = self.__dict__.copy()
+        # Filter out callable entries
+        state = { k:v for k,v in state.iteritems() if not callable(v) }
+        return state
 
     @abc.abstractmethod
     def apply(self, analysis):
@@ -42,6 +57,7 @@ class AnalysisStep(object):
 
 class _FactGenerationStep(AnalysisStep):
     '''Analysis step that performs fact generation'''
+    @autosave
     def apply(self, analysis):
         input_files = analysis.input_files
         outdir = analysis.facts_directory
@@ -54,7 +70,6 @@ class _FactGenerationStep(AnalysisStep):
 
         # Generate facts
         factgen.run(input_files, outdir)
-
         _logger.info("Stored facts into %s", outdir)
 
     @property
@@ -64,6 +79,7 @@ class _FactGenerationStep(AnalysisStep):
 
 class _DatabaseCreationStep(AnalysisStep):
     '''Analysis step that creates database and imports generated facts'''
+    @autosave
     def apply(self, analysis):
         dbdir = analysis.database_directory
         factdir = analysis.facts_directory
@@ -103,6 +119,7 @@ class _LoadProjectStep(AnalysisStep):
         AnalysisStep.__init__(self)
         self._project = project
 
+    @autosave
     def apply(self, analysis):
         self.extract_then_apply(analysis)
 
@@ -183,6 +200,7 @@ class _RunOutputQueriesStep(AnalysisStep):
         AnalysisStep.__init__(self)
         self._project = project
 
+    @autosave
     def apply(self, analysis):
         # Do nothing if project is not loaded
         if self._project not in analysis.loaded_projects:
@@ -251,6 +269,7 @@ class _UserOptionsStep(AnalysisStep):
 
         return '{0}() -> .'.format(predicate)
 
+    @autosave
     def apply(self, analysis):
         # Do nothing when no options are given
         if not self._options: return
