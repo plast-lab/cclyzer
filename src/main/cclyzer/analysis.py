@@ -36,7 +36,7 @@ class Analysis(object):
                 project = step.project
 
                 # Transform project name to match canonicalized option
-                projname = project.name.replace('-', '_')
+                projname = project.cname
                 option = config.config_option('module', projname)
 
                 # User configuration disabled project load
