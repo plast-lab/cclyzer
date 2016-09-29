@@ -1,7 +1,7 @@
 import blox.connect
 import collections
 
-Statistic = collections.namedtuple("Statistic", ["header", "value"])
+Statistic = collections.namedtuple("Statistic", ["header", "key", "value"])
 
 
 class AnalysisStatistics(object):
@@ -22,6 +22,11 @@ class AnalysisStatistics(object):
             )
 
         self._rows = rows
+        self._stats = dict((s.key, s.value) for s in builder.stats)
+
+
+    def __getitem__(self, key):
+        return self._stats[key]
 
     def __str__(self):
         return unicode(self).encode('utf-8')
@@ -54,7 +59,7 @@ class AnalysisStatisticsBuilder(object):
         """
         # Loaded projects
         projects = self.analysis.loaded_projects
-        project_names = [p.name for p in projects]
+        project_names = [p.cname for p in projects]
 
         # Project can be part of predicate name, delimited by '|'
         if not project and '|' in predicate:
@@ -88,7 +93,7 @@ class AnalysisStatisticsBuilder(object):
 
         def make_stat(pred):
             hdr, val = self._headers[pred], counters[pred]
-            return Statistic(header=hdr, value=val)
+            return Statistic(header=hdr, key=pred, value=val)
 
         # Store statistics
         self._stats = [make_stat(p) for p in self._counted_preds]
