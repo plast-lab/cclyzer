@@ -18,6 +18,15 @@ class Project(object):
         return self._name
 
     @property
+    def cname(self):
+        """Return canonicalized name of project."""
+        return self.canonicalized_name(self.name)
+
+    @classmethod
+    def canonicalized_name(cls, pname):
+        return pname.replace('-', '_')
+
+    @property
     def dependencies(self):
         return self._deps
 
