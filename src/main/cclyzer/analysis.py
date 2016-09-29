@@ -7,6 +7,7 @@ from .analysis_stats import AnalysisStatisticsBuilder as StatBuilder
 # Logger for this module
 _logger = logging.getLogger(__name__)
 
+
 class Analysis(object):
     def __init__(self, config, projects=ProjectManager()):
         self._config = config
@@ -50,8 +51,8 @@ class Analysis(object):
                 if project.name in proj_whitelist:
                     # Warn about ignoring user request
                     if option and usr_disabled:
-                        _logger.warn("Project %s could not be disabled" \
-                                     % project.name)
+                        _logger.warn(
+                            "Project %s could not be disabled" % project.name)
                     return True
 
                 # Check if module was disabled by command-line option
