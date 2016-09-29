@@ -24,6 +24,17 @@ class AnalysisStatistics(object):
         self._rows = rows
         self._stats = dict((s.key, s.value) for s in builder.stats)
 
+    def __getstate__(self):
+        # Copy object's state
+        state = self.__dict__.copy()
+        # Remove unpicklable entries
+        del state['_analysis']
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__.update(state)
+        self._analysis = None
+
 
     def __getitem__(self, key):
         return self._stats[key]
