@@ -28,6 +28,21 @@ class AnalysisConfig(object):
         self.configure(kwargs.pop('config', []), configfiles)
         self._options = kwargs
 
+    def __repr__(self):
+        return (
+            "{}("
+            "inputfiles={input_files!r}, "
+            "output_dir={output_dir!r}, "
+            "config={config!r}"
+            ")"
+        ).format(
+            self.__class__.__name__,
+            # Fields of interest
+            input_files = self.input_files,
+            output_dir = self.output_directory,
+            config = self._confopt
+        )
+
     @property
     def input_files(self):
         return self._input_files
