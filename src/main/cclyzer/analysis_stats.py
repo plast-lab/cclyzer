@@ -35,6 +35,11 @@ class AnalysisStatistics(object):
         self.__dict__.update(state)
         self._analysis = None
 
+    def __repr__(self):
+        return "{}({})".format(
+            self.__class__.__name__,
+            ', '.join('{}={!r}'.format(k,v) for k,v in self._stats.iteritems())
+        )
 
     def __getitem__(self, key):
         return self._stats[key]
