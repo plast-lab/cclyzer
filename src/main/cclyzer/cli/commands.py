@@ -1,5 +1,6 @@
 import argparse
 import logging
+import re
 import sys
 from abc import ABCMeta, abstractmethod
 from .logging_utils import setup_logging
@@ -22,7 +23,8 @@ class CliCommandMeta(ABCMeta):
             assert name.endswith('Command')
 
             # this is a derived class.  Add cls to the registry
-            subcommand_id = name[:-len('Command')].lower()
+            class_prefix = name[:-len('Command')]
+            subcommand_id = re.sub('(?!^)([A-Z]+)', r'-\1', class_prefix).lower()
             cls.registry[subcommand_id] = cls
 
             # Create and initialize subparser
