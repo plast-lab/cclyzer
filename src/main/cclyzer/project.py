@@ -13,6 +13,11 @@ class Project(object):
         self._name = name
         self._deps = tuple(dependencies)
 
+    def __repr__(self):
+        return (
+            "{0}(name={1.name!r}, dependencies={1.dependencies!r})"
+        ).format(self.__class__.__name__, self)
+
     @property
     def name(self):
         return self._name
