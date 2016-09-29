@@ -135,7 +135,7 @@ class Analysis(object):
 
         # Load project
         _LoadProjectStep(project).apply(self)
-        self._loaded_projects.append(step.project)
+        self._loaded_projects.append(project)
 
     def run(self):
         # Run each step of pipeline
