@@ -34,7 +34,11 @@ class AnalysisStep(object):
     __metaclass__ = abc.ABCMeta
 
     def __init__(self):
-        self.env = runtime.Environment()
+        self._env = runtime.Environment()
+
+    @property
+    def env(self):
+        return self._env
 
     def check(self):
         return self
@@ -42,9 +46,16 @@ class AnalysisStep(object):
     def __getstate__(self):
         # Copy object's state
         state = self.__dict__.copy()
-        # Filter out callable entries
+        # Do not store environment and callable entries
+        del state['_env']
         state = { k:v for k,v in state.iteritems() if not callable(v) }
         return state
+
+    def __setstate__(self, state):
+        # Restore instance attributes
+        self.__dict__.update(state)
+        # Restore unpicklable entries
+        self._env = runtime.Environment()
 
     @abc.abstractmethod
     def apply(self, analysis):

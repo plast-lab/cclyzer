@@ -36,6 +36,7 @@ class AnalysisConfig(object):
         state = self.__dict__.copy()
         # Remove unpicklable entries
         del state['_projects']
+        del state['_env']
         return state
 
     def __setstate__(self, state):
@@ -43,6 +44,7 @@ class AnalysisConfig(object):
         self.__dict__.update(state)
         # Restore unpicklable entries
         self._projects = ProjectManager()
+        self._env = Environment()
 
     def __repr__(self):
         return (
