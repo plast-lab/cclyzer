@@ -69,6 +69,10 @@ class AnalysisConfig(object):
     def output_directory(self):
         return self._output_dir
 
+    @output_directory.setter
+    def output_directory(self, value):
+        self._output_dir = value
+
     @property
     def points_to(self):
         return getattr(self._projects, self._points_to)

@@ -95,6 +95,10 @@ class Analysis(object):
     def output_directory(self):
         return os.path.abspath(self._config.output_directory)
 
+    @output_directory.setter
+    def output_directory(self, value):
+        self._config.output_directory = value
+
     @property
     def facts_directory(self):
         return os.path.join(self.output_directory, 'facts')
