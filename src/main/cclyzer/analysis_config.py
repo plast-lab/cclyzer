@@ -28,6 +28,21 @@ class AnalysisConfig(object):
         self.configure(kwargs.pop('config', []), configfiles)
         self._options = kwargs
 
+    def __getstate__(self):
+        # Copy object's state
+        state = self.__dict__.copy()
+        # Remove unpicklable entries
+        del state['_logger']
+        del state['_projects']
+        return state
+
+    def __setstate__(self, state):
+        # Restore instance attributes
+        self.__dict__.update(state)
+        # Restore unpicklable entries
+        self._logger = logging.getLogger(__name__)
+        self._projects = ProjectManager()
+
     def __repr__(self):
         return (
             "{}("
