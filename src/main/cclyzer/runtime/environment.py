@@ -57,7 +57,28 @@ class Environment():
             return appdir
         return wrapped
 
+    def __repr__(self):
+        return (
+            "{}("
+            "cache_dir={cache_dir!r}, "
+            "data_dir={data_dir!r}, "
+            "config_dir={config_dir!r}, "
+            "runtime_dir={runtime_dir!r}, "
+            "logicblox_home={logicblox_home!r}"
+            ")"
+        ).format(
+            self.__class__.__name__,
+            # Fields of interest
+            cache_dir = self._cache_dir,
+            data_dir = self._data_dir,
+            config_dir = self._config_dir,
+            runtime_dir = self._runtime_dir,
+            logicblox_home = self._logicblox_home
+        )
+
+    #---------------------------------------------------------------------------
     # Define directory-returning properties
+    #---------------------------------------------------------------------------
 
     @property
     @mkdirs
