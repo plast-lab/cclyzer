@@ -19,23 +19,76 @@ di:match_type(Type, DIType) ->
 //------------------------------------------------------------------------------
 
 // Match global variables
-
 di:match_global_variable[DIVar] = Var <-
    di:global_variable:resolved_name[DIVar] = Name,
    global_variable:by_name[Name] = Var.
 
 
 // Match local variables
-
 di:match_variable(Var, DIVar) <-
    di:local_variable_declaration(DIVar, Var).
 
 
 // Match function parameters
-
 di:match_variable(Param, DIParam) <-
    di:local_variable:is_parameter(DIParam),
    di:local_variable:arg_num[DIParam] = Index,
    di:variable:scope[DIParam] = DIScope,
    di:subprogram:function[DIScope] = Func,
    function:param[Func, Index - 1] = Param.
+
+
+//------------------------------------------------------------------------------
+// Matching types to debug-info nodes
+//------------------------------------------------------------------------------
+
+di:match_type(Type, DIType) ->
+   type(Type), di:type_entry(DIType).
+
+// Match global variable types
+_di_possible_match_type(Type, DIType) <-
+   di:match_global_variable[DIVar] = Var,
+   di:variable:type[DIVar] = DIType,
+   global_variable:type[Var] = Type.
+
+// Match local variable types
+_di_possible_match_type(Type, DIType) <-
+   di:match_variable(Var, DIVar),
+   di:variable:type[DIVar] = DIType,
+   variable:type[Var] = Type.
+
+// Match after `unconsting`
+_di_possible_match_type(Type, DIType) <-
+   _di_possible_match_type(Type, DIConstType),
+   di:const_type_entry(DIConstType),
+   di:derived_type_base[DIConstType] = DIType.
+
+// Match component of pointer types
+_di_possible_match_type(CompType, DICompType) <-
+   _di_possible_match_type(PtrType, DIPtrType),
+   di:ptr_type_entry(DIPtrType),
+   di:derived_type_base[DIPtrType] = DICompType,
+   pointer_type:component[PtrType] = CompType.
+
+// Match component of reference types
+_di_possible_match_type(CompType, DICompType) <-
+   _di_possible_match_type(PtrType, DIRefType),
+   di:reference_type_entry(DIRefType),
+   di:derived_type_base[DIRefType] = DICompType,
+   pointer_type:component[PtrType] = CompType.
+
+// Match component of array types
+_di_possible_match_type(CompType, DICompType) <-
+   _di_possible_match_type(ArrayType, DIArrayType),
+   di:array_type_entry(DIArrayType),
+   di:array_type_base[DIArrayType] = DICompType,
+   array_type:component[ArrayType] = CompType.
+
+// Match typedef'd types
+_di_possible_match_type(Type, DITypedefdType) <-
+   _di_possible_match_type(Type, DIType),
+   typedefd_type[DIType, _] = DITypedefdType.
+
+_di_possible_match_type(Type, DIType) <-
+   _di_possible_match_type(Type, DITypedefdType),
+   typedefd_type[DIType, _] = DITypedefdType.
