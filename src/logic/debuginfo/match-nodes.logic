@@ -122,6 +122,13 @@ di:match_type[Type] = DIType  <-
    _di_match_types_by_name(DIType, Type),
    !_multiple_types(Type).
 
+
+//---------------------------------------------------------------
+// Compute field names and inheritance, by offset
+//---------------------------------------------------------------
+
+// Field Names
+
 _di_field_name_at_offset(DIType, Offset, FieldName) <-
    di:type:field_name[DIType, Index] = FieldName,
    di:type:field_offset[DIType, Index] = Offset,
@@ -134,8 +141,15 @@ _type_field_conflict(Type, Offset) <-
    _di_field_name_at_offset(DIType2, Offset, FieldName2),
    FieldName1 != FieldName2.
 
-// This should replace struct_type:field_name_at_offset
+// TODO This should replace struct_type:field_name_at_offset
 _field_name_at_offset[Type, Offset] = FieldName <-
    _di_match_types_by_name(DIType, Type),
    _di_field_name_at_offset(DIType, Offset, FieldName),
    !_type_field_conflict(Type, Offset).
+
+
+// Inheritance
+
+_di_inherits_at_offset(DIType, Offset, DIBaseType) <-
+   di:type:inheritance_type[DIType, Index] = DIBaseType,
+   di:type:inheritance_offset[DIType, Index] = Offset.
