@@ -100,6 +100,11 @@ _aggregate_type_by_stripped_name(StrippedName, Type) <-
    string:split[TypeID, ".", 1] = StrippedName.
 
 _di_match_types_by_name(Type, DIType) <-
-   _aggregate_type_by_stripped_name(StrippedName, Type),
    di:composite_type_entry(DIType),
-   di_template_type:stripped_name[DIType] = StrippedName.
+   di_template_type:stripped_name[DIType] = StrippedName,
+   _aggregate_type_by_stripped_name(StrippedName, Type).
+
+_di_match_types_by_name(Type, DIType) <-
+   di:composite_type_entry(DIType), !di_template_type(DIType),
+   di:type_entry:to_string[DIType] = ScopedName,
+   _aggregate_type_by_stripped_name(ScopedName, Type).
