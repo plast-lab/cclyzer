@@ -92,3 +92,14 @@ _di_possible_match_type(Type, DITypedefdType) <-
 _di_possible_match_type(Type, DIType) <-
    _di_possible_match_type(Type, DITypedefdType),
    typedefd_type[DIType, _] = DITypedefdType.
+
+// Compute matching types, by name only
+_aggregate_type_by_stripped_name(StrippedName, Type) <-
+   aggregate_type(Type), !array_type(Type),
+   type:id(Type:TypeID),
+   string:split[TypeID, ".", 1] = StrippedName.
+
+_di_match_types_by_name(Type, DIType) <-
+   _aggregate_type_by_stripped_name(StrippedName, Type),
+   di:composite_type_entry(DIType),
+   di_template_type:stripped_name[DIType] = StrippedName.
