@@ -10,7 +10,7 @@ di:match_variable(Var, DIVar) ->
 di:match_global_variable[DIVar] = Var ->
    global_variable(Var), di:variable(DIVar).
 
-di:match_type(Type, DIType) ->
+di:match_type[Type] = DIType ->
    type(Type), di:type_entry(DIType).
 
 
@@ -42,7 +42,7 @@ di:match_variable(Param, DIParam) <-
 // Matching types to debug-info nodes
 //------------------------------------------------------------------------------
 
-di:match_type(Type, DIType) ->
+di:match_type[Type] = DIType ->
    type(Type), di:type_entry(DIType).
 
 // Match global variable types
@@ -103,12 +103,31 @@ _aggregate_type_by_stripped_name(StrippedName, Type) <-
    type:id(Type:TypeID),
    string:split[TypeID, ".", 1] = StrippedName.
 
-_di_match_types_by_name(Type, DIType) <-
+_di_match_types_by_name(DIType, Type) <-
    di:composite_type_entry(DIType),
    di_template_type:stripped_name[DIType] = StrippedName,
    _aggregate_type_by_stripped_name(StrippedName, Type).
 
-_di_match_types_by_name(Type, DIType) <-
+_di_match_types_by_name(DIType, Type) <-
    di:composite_type_entry(DIType), !di_template_type(DIType),
    di:type_entry:to_string[DIType] = ScopedName,
    _aggregate_type_by_stripped_name(ScopedName, Type).
+
+_multiple_types(Type) <-
+   _di_match_types_by_name(DIType1, Type),
+   _di_match_types_by_name(DIType2, Type),
+   DIType1 != DIType2.
+
+di:match_type[Type] = DIType  <-
+   _di_match_types_by_name(DIType, Type),
+   !_multiple_types(Type).
+
+_di_field_name_at_offset(DIType, Offset, FieldName) <-
+   di:type_contains_field(_, FieldName, Offset, _, DIType).
+
+_type_field_conflict(Type, Offset) <-
+   _di_match_types_by_name(DIType1, Type),
+   _di_match_types_by_name(DIType2, Type),
+   _di_field_name_at_offset(DIType1, Offset, FieldName1),
+   _di_field_name_at_offset(DIType2, Offset, FieldName2),
+   FieldName1 != FieldName2.
