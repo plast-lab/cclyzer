@@ -123,7 +123,9 @@ di:match_type[Type] = DIType  <-
    !_multiple_types(Type).
 
 _di_field_name_at_offset(DIType, Offset, FieldName) <-
-   di:type_contains_field(_, FieldName, Offset, _, DIType).
+   di:type:field_name[DIType, Index] = FieldName,
+   di:type:field_offset[DIType, Index] = Offset,
+   !di:type:static_field[DIType, Index] = _.
 
 _type_field_conflict(Type, Offset) <-
    _di_match_types_by_name(DIType1, Type),
@@ -131,3 +133,9 @@ _type_field_conflict(Type, Offset) <-
    _di_field_name_at_offset(DIType1, Offset, FieldName1),
    _di_field_name_at_offset(DIType2, Offset, FieldName2),
    FieldName1 != FieldName2.
+
+// This should replace struct_type:field_name_at_offset
+_field_name_at_offset[Type, Offset] = FieldName <-
+   _di_match_types_by_name(DIType, Type),
+   _di_field_name_at_offset(DIType, Offset, FieldName),
+   !_type_field_conflict(Type, Offset).

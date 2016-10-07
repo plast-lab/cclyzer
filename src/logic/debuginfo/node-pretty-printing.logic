@@ -184,13 +184,14 @@ di:type_entry:__some_name[DIType] = Name <-
 
 // Types used in fields
 _di_field_type(DIType) <-
-   di:type_contains_field(DIType, _, _, _, _).
+   di_member(_, _, DIType, _).
 
 __local_field_type(DIType, BaseTypeName, Descriptor) <-
    _di_field_type(DIType),
    di:composite_type_entry(DIType),
    !di:type_entry:name[DIType] = _,
-   di:type_contains_field(DIType, FieldName, _, Index, BaseType),
+   di:type:field_name[BaseType, Index] = FieldName,
+   di:type:field_type[BaseType, Index] = DIType,
    di:composite_type_entry:to_string[BaseType] = BaseTypeName,
    int64:string:convert[Index] = IndexStr,
    Descriptor = "field #" + IndexStr + " (" + FieldName + ")".
@@ -199,7 +200,8 @@ __local_field_type(DIType, BaseTypeName, Descriptor) <-
    __di_array_by_base(DIArray, DIType),
    di:composite_type_entry(DIType),
    !di:type_entry:name[DIType] = _,
-   di:type_contains_field(DIArray, FieldName, _, Index, BaseType),
+   di:type:field_name[BaseType, Index] = FieldName,
+   di:type:field_type[BaseType, Index] = DIArray,
    di:composite_type_entry:to_string[BaseType] = BaseTypeName,
    int64:string:convert[Index] = IndexStr,
    Descriptor = "field #" + IndexStr + "[*] (" + FieldName + ")".
