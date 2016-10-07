@@ -36,6 +36,9 @@ di:type_entry:bit_offset[Entry] = Offset ->
 di:type_entry:is_forward_decl(Entry) <-
    _di:type_entry:by_flag("DIFlagFwdDecl", Entry).
 
+di:type_entry:is_static_member(Entry) <-
+   _di:type_entry:by_flag("DIFlagStaticMember", Entry).
+
 // Constraints
 di:type_entry:name[_] = Name -> Name != "".
 
