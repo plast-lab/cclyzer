@@ -1,0 +1,21 @@
+//------------------------------------------------------------------------------
+// Identify Template Types
+//------------------------------------------------------------------------------
+
+di_template_type(DIType) <-
+   di:composite_type_entry:template_param[DIType, _] = _.
+
+
+// Extract the name without the template part.  Note that the
+// namespace might also include its own template part, which should
+// not be excluded.
+
+di_template_type:stripped_name[DIType] = StrippedName <-
+   di_template_type(DIType),
+   di:type_entry:name[DIType] = Name,
+   di:type_entry:to_string[DIType] = DITypeStr,
+   string:like(DITypeStr, "%<%>"),
+   string:split[Name, "<", 0] = BaseName,
+   string:length[DITypeStr] = Len,
+   TplPartLen = string:length[Name] - string:length[BaseName],
+   string:substring[DITypeStr, 0, Len - TplPartLen] = StrippedName.
