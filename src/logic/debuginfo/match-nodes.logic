@@ -168,6 +168,41 @@ di:match_type[DIType] = Type <-
    _di_match_types_by_name_and_size_inv__(Type, DIType),
    !_multiple_types_by_name_and_size(DIType).
 
+// Match array types
+di:match_type[DIArrayType] = ArrayType <-
+   di:array_type_entry(DIArrayType),
+   di:array_type_base[DIArrayType] = DICompType,
+   di:match_type[DICompType] = CompType,
+   array_type:component[ArrayType] = CompType,
+   array_type:size[ArrayType] = Size,
+   di:composite_type_entry:subrange[DIArrayType, 0] = DISubrange,
+   di:subrange:count[DISubrange] = Size.
+
+// Match after `unconsting`
+di:match_type[DIConstType] = Type <-
+   di:const_type_entry(DIConstType),
+   di:derived_type_base[DIConstType] = DIType,
+   di:match_type[DIType] = Type.
+
+// Match pointer types
+di:match_type[DIPtrType] = PtrType <-
+   di:ptr_type_entry(DIPtrType),
+   di:derived_type_base[DIPtrType] = DICompType,
+   di:match_type[DICompType] = CompType,
+   pointer_type:component[PtrType] = CompType.
+
+// Match reference types
+di:match_type[DIRefType] = PtrType <-
+   di:reference_type_entry(DIRefType),
+   di:derived_type_base[DIRefType] = DICompType,
+   di:match_type[DICompType] = CompType,
+   pointer_type:component[PtrType] = CompType.
+
+// Match typedef'd types
+di:match_type[DITypeAlias] = Type <-
+   typedefd_type[DITypeAlias, _] = DIType,
+   di:match_type[DIType] = Type.
+
 
 //------------------------------------------------------------------------------
 // Compute field names and inheritance, by offset
