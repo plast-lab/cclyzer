@@ -113,19 +113,58 @@ _di_match_types_by_name(DIType, Type) <-
    di:type_entry:to_string[DIType] = ScopedName,
    _aggregate_type_by_stripped_name(ScopedName, Type).
 
-_multiple_types(Type) <-
+_di_match_types_by_name_and_size(DIType, Type) <-
+   di:type_entry:bit_size[DIType] = BitSize,
+   type:size[Type] = ByteSize,
+   type:unpadded_size[Type] = UnpaddedByteSize,
+   ( BitSize = 8 * ByteSize
+   ; BitSize = 8 * UnpaddedByteSize
+   ; !di_template_type(DIType)),
+   _di_match_types_by_name(DIType, Type).
+
+_multiple_types_by_name(Type) <-
    _di_match_types_by_name(DIType1, Type),
    _di_match_types_by_name(DIType2, Type),
    DIType1 != DIType2.
 
+_multiple_types_by_name_and_size(Type) <-
+   _di_match_types_by_name_and_size(DIType1, Type),
+   _di_match_types_by_name_and_size(DIType2, Type),
+   DIType1 != DIType2.
+
 di:match_type[Type] = DIType  <-
    _di_match_types_by_name(DIType, Type),
-   !_multiple_types(Type).
+   !_multiple_types_by_name(Type).
+
+di:match_type[Type] = DIType  <-
+   _di_match_types_by_name_and_size(DIType, Type),
+   !_multiple_types_by_name_and_size(Type).
 
 
-//---------------------------------------------------------------
+
+//------------------------------------------------------------------------------
 // Compute field names and inheritance, by offset
-//---------------------------------------------------------------
+//
+// Note that a union type may have two different field names at the
+// same offset. Hence, the predicate is not functional.
+//------------------------------------------------------------------------------
+
+// Bypass typedefs
+
+_true_type[DIType] = DITrueType <-
+   typedefd_type[DIType, _] = DITrueType,
+   !typedefd_type[DITrueType, _] = _.
+
+_true_type[DIType] = DITrueType <-
+   typedefd_type[DIType, _] = DIAnotherType,
+   _true_type[DIAnotherType] = DITrueType.
+
+_true_type_or_self[DIType] = DITrueType <-
+   _true_type[DIType] = DITrueType.
+
+_true_type_or_self[DIType] = DIType <-
+   di:composite_type_entry(DIType),
+   !typedefd_type[DIType, _] = _.
 
 // Field Names
 
