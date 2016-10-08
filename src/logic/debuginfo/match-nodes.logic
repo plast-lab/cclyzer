@@ -10,7 +10,10 @@ di:match_variable(Var, DIVar) ->
 di:match_global_variable[DIVar] = Var ->
    global_variable(Var), di:variable(DIVar).
 
-di:match_type[Type] = DIType ->
+di:match_type[DIType] = Type ->
+   type(Type), di:type_entry(DIType).
+
+type:di_entry[Type] = DIType ->
    type(Type), di:type_entry(DIType).
 
 
@@ -41,9 +44,6 @@ di:match_variable(Param, DIParam) <-
 //------------------------------------------------------------------------------
 // Matching types to debug-info nodes
 //------------------------------------------------------------------------------
-
-di:match_type[Type] = DIType ->
-   type(Type), di:type_entry(DIType).
 
 // Match global variable types
 _di_possible_match_type(Type, DIType) <-
@@ -98,6 +98,7 @@ _di_possible_match_type(Type, DIType) <-
 // Compute matching types, by name only
 //---------------------------------------------------------------
 
+// Simple type matching filters
 _aggregate_type_by_stripped_name(StrippedName, Type) <-
    aggregate_type(Type), !array_type(Type),
    type:id(Type:TypeID),
@@ -122,24 +123,50 @@ _di_match_types_by_name_and_size(DIType, Type) <-
    ; !di_template_type(DIType)),
    _di_match_types_by_name(DIType, Type).
 
-_multiple_types_by_name(Type) <-
+// Inverted Indices
+_di_match_types_by_name_inv__(Type, DIType) <-
+   _di_match_types_by_name(DIType, Type).
+
+_di_match_types_by_name_and_size_inv__(Type, DIType) <-
+   _di_match_types_by_name_and_size(DIType, Type).
+
+// No resolution yet
+_multiple_types_by_name(DIType) <-
+   _di_match_types_by_name_inv__(Type1, DIType),
+   _di_match_types_by_name_inv__(Type2, DIType),
+   Type1 != Type2.
+
+_multiple_di_types_by_name(Type) <-
    _di_match_types_by_name(DIType1, Type),
    _di_match_types_by_name(DIType2, Type),
    DIType1 != DIType2.
 
-_multiple_types_by_name_and_size(Type) <-
+_multiple_types_by_name_and_size(DIType) <-
+   _di_match_types_by_name_and_size_inv__(Type1, DIType),
+   _di_match_types_by_name_and_size_inv__(Type2, DIType),
+   Type1 != Type2.
+
+_multiple_di_types_by_name_and_size(Type) <-
    _di_match_types_by_name_and_size(DIType1, Type),
    _di_match_types_by_name_and_size(DIType2, Type),
    DIType1 != DIType2.
 
-di:match_type[Type] = DIType  <-
+// Resolved
+type:di_entry[Type] = DIType <-
    _di_match_types_by_name(DIType, Type),
-   !_multiple_types_by_name(Type).
+   !_multiple_di_types_by_name(Type).
 
-di:match_type[Type] = DIType  <-
+type:di_entry[Type] = DIType <-
    _di_match_types_by_name_and_size(DIType, Type),
-   !_multiple_types_by_name_and_size(Type).
+   !_multiple_di_types_by_name_and_size(Type).
 
+di:match_type[DIType] = Type <-
+   _di_match_types_by_name_inv__(Type, DIType),
+   !_multiple_types_by_name(DIType).
+
+di:match_type[DIType] = Type <-
+   _di_match_types_by_name_and_size_inv__(Type, DIType),
+   !_multiple_types_by_name_and_size(DIType).
 
 
 //------------------------------------------------------------------------------
