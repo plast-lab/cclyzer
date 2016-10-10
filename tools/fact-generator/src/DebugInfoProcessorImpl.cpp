@@ -190,8 +190,8 @@ DebugInfoProcessor::Impl::generateDebugInfo(
                       // super-classes of zero size would be mapped to
                       // offset 0.
 
-                      writeFact(pred::struct_type::inheritance,
-                                refmode, bitOffset, basename);
+                      // writeFact(pred::struct_type::inheritance,
+                      //           refmode, bitOffset, basename);
                   }
               }
               break;
@@ -317,8 +317,8 @@ DebugInfoProcessor::Impl::postProcessType(
                 continue;
             }
 
-            writeFact(pred::struct_type::field_name,
-                      refmode, bitOffset, fieldName);
+            // writeFact(pred::struct_type::field_name,
+            //           refmode, bitOffset, fieldName);
         }
     }
 }

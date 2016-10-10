@@ -14,6 +14,8 @@ calling_convention
 attribute
 schema:sanity
 instruction:id:_$inverse
+struct_type:field_name_at_offset
+struct_type:inherits_at_offset
 di:entry
 di:tag
 di:local_scope

@@ -235,23 +235,24 @@ _true_type_or_self[DIType] = DIType <-
 
 // Field Names
 
-_di_field_name_at_offset(DIType, Offset, FieldName) <-
+_di_field_name_at_offset(DIType, Offset, FieldName, DIFieldType) <-
    di:type:field_name[DIType, Index] = FieldName,
    di:type:field_offset[DIType, Index] = Offset,
+   di:type:field_type[DIType, Index] = DIFieldType,
    !di:type:static_field[DIType, Index] = _.
 
 _type_field_conflict(Type, Offset) <-
    _di_match_types_by_name(DIType1, Type),
    _di_match_types_by_name(DIType2, Type),
-   _di_field_name_at_offset(DIType1, Offset, FieldName1),
-   _di_field_name_at_offset(DIType2, Offset, FieldName2),
+   _di_field_name_at_offset(DIType1, Offset, FieldName1, _),
+   _di_field_name_at_offset(DIType2, Offset, FieldName2, _),
    FieldName1 != FieldName2.
 
-// TODO This should replace struct_type:field_name_at_offset
-_field_name_at_offset[Type, Offset] = FieldName <-
-   _di_match_types_by_name(DIType, Type),
-   _di_field_name_at_offset(DIType, Offset, FieldName),
-   !_type_field_conflict(Type, Offset).
+struct_type:field_name_at_offset[Type, Offset] = FieldName <-
+   struct_type:field_bit_offset[Type, _] = Offset,
+   _di_match_types_by_name_and_size(DIType, Type),
+   _di_field_name_at_offset(DIType, Offset, FieldName, _),
+   struct_type(Type), !_type_field_conflict(Type, Offset).
 
 
 // Inheritance
@@ -260,8 +261,7 @@ _di_inherits_at_offset(DIType, Offset, DIBaseType) <-
    di:type:inheritance_type[DIType, Index] = DIBaseType,
    di:type:inheritance_offset[DIType, Index] = Offset.
 
-// TODO This should replace struct_type:inherits_at_offset$non_empty
-_inherits_at_offset[Type, Offset] = BaseTypeName <-
+struct_type:inherits_at_offset[Type, Offset] = BaseTypeName <-
    struct_type:field_bit_offset[Type, Index] = Offset,
    struct_type:field[Type, Index] = FieldType,
    struct_type(FieldType),
@@ -271,7 +271,7 @@ _inherits_at_offset[Type, Offset] = BaseTypeName <-
    !di_template_type(DIBaseType),
    di:type_entry:to_string[DIBaseType] = BaseTypeName.
 
-_inherits_at_offset[Type, Offset] = StrippedBaseTypeName <-
+struct_type:inherits_at_offset[Type, Offset] = StrippedBaseTypeName <-
    struct_type:field_bit_offset[Type, Index] = Offset,
    struct_type:field[Type, Index] = FieldType,
    struct_type(FieldType),

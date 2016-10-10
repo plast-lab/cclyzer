@@ -50,36 +50,19 @@ struct_type:field_offset[Type, Index] = Offset ->
 struct_type:field_bit_offset[Type, Index] = Offset ->
    struct_type(Type), int[64](Index), int[64](Offset).
 
-// We record field names at specific bit offsets, given the dwarf
-// debug info
+
+// [DEBUG INFORMATION]
+//
+// We record field names and inherited types at specific bit
+// offsets. These predicates will be empty, unless the debug-info
+// module is loaded.
+
 struct_type:field_name_at_offset[Type, Offset] = Name ->
    struct_type(Type), int[64](Offset), string(Name).
 
-// Same for inherited types. Notice that there is no functional
-// constraint here since a type may inherit more than one types at
-// offset 0, since some of them may be of zero size (e.g.,
-// trait-like types).
-struct_type:inherits_at_offset(Type, Offset, Name) ->
+struct_type:inherits_at_offset[Type, Offset] = Name ->
    struct_type(Type), int[64](Offset), string(Name).
 
-// Prune empty inherited types
-struct_type:inherits_at_offset$non_empty[Type, Offset] = Name ->
-   struct_type(Type), int[64](Offset), string(Name).
-
-struct_type:inherits_at_offset$non_empty[Type, Offset] = Name <-
-   struct_type:inherits_at_offset(Type, Offset, Name),
-   Offset > 0.
-
-struct_type:inherits_at_offset$non_empty[Type, 0] = Name <-
-   struct_type:inherits_at_offset(Type, 0, Name),
-   struct_type:field_bit_offset[Type, 0] = 0,
-   struct_type:field[Type, 0] = FieldType,
-   struct_type(FieldType),
-   type:id(FieldType:FieldTypeID),
-   ( string:like(FieldTypeID, "%%class." + Name)
-   ; string:like(FieldTypeID, "%%struct." + Name)
-   ; string:like(FieldTypeID, "%%class." + Name + ".base")
-   ; string:like(FieldTypeID, "%%struct." + Name + ".base")).
 
 //-----------------------------------------------------------------------
 // [Retrieving field names]
@@ -98,7 +81,7 @@ struct_type:field_name[Type, Index] = Name <-
    struct_type:field_bit_offset[Type, Index] = Offset.
 
 struct_type:field_name[Type, Index] = "_subobj$" + BaseName <-
-   struct_type:inherits_at_offset$non_empty[Type, Offset] = BaseName,
+   struct_type:inherits_at_offset[Type, Offset] = BaseName,
    struct_type:field_bit_offset[Type, Index] = Offset.
 
 // A derived type may include extra byte fields that account for the
@@ -118,7 +101,7 @@ struct_type:field_name[UnpaddedType, Index] = Name <-
    UnpaddedSign = Sign + ".base".
 
 struct_type:field_name[UnpaddedType, Index] = "_subobj$" + Name <-
-   struct_type:inherits_at_offset$non_empty[Type, Offset] = Name,
+   struct_type:inherits_at_offset[Type, Offset] = Name,
    struct_type:field_bit_offset[Type, Index] = Offset,
    struct_type:field_bit_offset[UnpaddedType, Index] = Offset,
    type:id(Type:Sign),
