@@ -36,7 +36,7 @@ class Analysis(object):
         ]
 
         # List of required project modules
-        proj_whitelist = set(('schema', 'import',))
+        self._projects_to_load = proj_whitelist = set(('schema', 'import',))
 
         # Decide if step should run in the actual pipeline
         def keep_step(step):
@@ -234,11 +234,17 @@ class Analysis(object):
 
         # Check that project is loaded as well
         if not deps_only:
-            deps += (project,)
+            deps += (project.name,)
+
+        # Find analysis modules depending on state
+        if self._state == State.Finished:
+            modules = [p.name for p in self.loaded_projects]
+        else:
+            modules = self._projects_to_load
 
         # Check project dependencies
         for dep in deps:
-            if self._projects[dep] not in self._loaded_projects:
+            if dep not in modules:
                 raise ProjectLoadError("Missing dependency: " + dep, project)
 
 
