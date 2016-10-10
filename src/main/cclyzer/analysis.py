@@ -76,7 +76,7 @@ class Analysis(object):
         # Filtered pipeline (in reverse order, to find dependencies)
         self._pipeline = [step for step in reversed(pipeline) if keep_step(step)]
         self._pipeline.reverse()
-        _logger.info("Loaded modules %s", proj_whitelist)
+        _logger.info("Modules to be loaded: %s", ', '.join(proj_whitelist))
 
         # Set analysis state to initialized
         self._state = State.Initialized
@@ -149,7 +149,7 @@ class Analysis(object):
         project = self.__find_project(project)
 
         # Check previous load
-        if project in self._loaded_projects:
+        if project in self.loaded_projects:
             raise ProjectLoadError("Already loaded", project)
 
         # Check project dependencies
@@ -173,8 +173,8 @@ class Analysis(object):
             step.apply(self)
 
         # Report loaded projects
-        projects = [p.name for p in self.loaded_projects]
-        _logger.info('Projects loaded: %s', projects)
+        projects = ', '.join(p.name for p in self.loaded_projects)
+        _logger.info('Modules loaded: %s', projects)
 
         # Compute stats
         self.compute_stats()
