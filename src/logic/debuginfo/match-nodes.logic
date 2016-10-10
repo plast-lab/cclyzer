@@ -205,10 +205,15 @@ di:match_type[DITypeAlias] = Type <-
 
 
 //------------------------------------------------------------------------------
-// Compute field names and inheritance, by offset
+// [Compute field names and inheritance, by offset]
 //
 // Note that a union type may have two different field names at the
-// same offset. Hence, the predicate is not functional.
+// same offset. Hence, the debuginfo FIELD-NAME-AT-OFFSET relation
+// cannot be declared functional.
+//
+// Also, a struct/class type may inherit multiple types at offset 0,
+// if all but one of them are of zero size. Hence, neither the
+// debuginfo INHERITS-AT-OFFSET relation can be declared functional.
 //------------------------------------------------------------------------------
 
 // Bypass typedefs
