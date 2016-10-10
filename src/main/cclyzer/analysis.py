@@ -9,7 +9,13 @@ from .analysis_stats import AnalysisStatisticsBuilder as StatBuilder
 _logger = logging.getLogger(__name__)
 
 
+class State:
+    """Analysis State"""
+    Initialized, Running, Finished = range(3)
+
+
 class Analysis(object):
+    """Runnable analysis instance"""
     def __init__(self, config, projects=ProjectManager()):
         self._config = config
         self._stats = None
@@ -71,6 +77,9 @@ class Analysis(object):
         self._pipeline = [step for step in reversed(pipeline) if keep_step(step)]
         self._pipeline.reverse()
         _logger.info("Loaded modules %s", proj_whitelist)
+
+        # Set analysis state to initialized
+        self._state = State.Initialized
 
     @property
     def loaded_projects(self):
@@ -151,6 +160,9 @@ class Analysis(object):
         self._loaded_projects.append(project)
 
     def run(self):
+        # Set state to running
+        self._state = State.Running
+
         # Run each step of pipeline
         for step in self.pipeline:
             # Record loaded project
@@ -166,6 +178,9 @@ class Analysis(object):
 
         # Compute stats
         self.compute_stats()
+
+        # Set state to finished
+        self._state = State.Finished
 
     def compute_stats(self):
         self._stats = (
