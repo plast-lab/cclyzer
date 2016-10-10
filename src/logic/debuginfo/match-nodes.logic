@@ -254,3 +254,23 @@ _field_name_at_offset[Type, Offset] = FieldName <-
 _di_inherits_at_offset(DIType, Offset, DIBaseType) <-
    di:type:inheritance_type[DIType, Index] = DIBaseType,
    di:type:inheritance_offset[DIType, Index] = Offset.
+
+// TODO This should replace struct_type:inherits_at_offset$non_empty
+_inherits_at_offset[Type, Offset] = BaseTypeName <-
+   struct_type:field_bit_offset[Type, Index] = Offset,
+   struct_type:field[Type, Index] = FieldType,
+   struct_type(FieldType),
+   _di_match_types_by_name_and_size(DIType, Type),
+   _di_match_types_by_name_and_size(DIBaseType, FieldType),
+   _di_inherits_at_offset(DIType, Offset, DIBaseType),
+   !di_template_type(DIBaseType),
+   di:type_entry:to_string[DIBaseType] = BaseTypeName.
+
+_inherits_at_offset[Type, Offset] = StrippedBaseTypeName <-
+   struct_type:field_bit_offset[Type, Index] = Offset,
+   struct_type:field[Type, Index] = FieldType,
+   struct_type(FieldType),
+   _di_match_types_by_name_and_size(DIType, Type),
+   _di_match_types_by_name_and_size(DIBaseType, FieldType),
+   _di_inherits_at_offset(DIType, Offset, DIBaseType),
+   di_template_type:stripped_name[DIBaseType] = StrippedBaseTypeName.
