@@ -13,6 +13,8 @@ class Pair {
 
 int main(int argc, char *argv[])
 {
+    Pair<int,double> pp1;
+    Pair<int,int> pp2;
     Pair<int,double>::Inner<char> p;
     Pair<int,double>::Inner<long> p2;
     Pair<int,int>::Inner<char> p3;
