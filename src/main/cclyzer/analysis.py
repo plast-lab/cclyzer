@@ -212,8 +212,9 @@ class Analysis(object):
         try:
             self.__check_deps(project)
             self._pipeline.append(_RunOutputQueriesStep(project))
-        except ProjectLoadError:
-            _logger.info('Exported facts were disabled')
+        except ProjectLoadError as err:
+            _logger.warn('Exported facts were disabled')
+            _logger.warn(err.message)
 
     def __find_project(self, project):
         # Find project instance, if string was given
