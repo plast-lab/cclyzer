@@ -11,6 +11,7 @@
 
 namespace cclyzer
 {
+    // Class that encapsulates any state that the refmode engine needs
     class ContextManager
     {
         // Single context item

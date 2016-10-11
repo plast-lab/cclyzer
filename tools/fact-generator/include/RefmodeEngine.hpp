@@ -92,8 +92,7 @@ namespace cclyzer {
         const llvm::AtomicOrdering & ) const;
 
     extern template refmode_t
-    RefmodeEngine::refmode<llvm::DINode>(
-        const llvm::DINode & ) const;
+    RefmodeEngine::refmode<llvm::DINode>(const llvm::DINode & ) const;
 
 } // end of namespace cclyzer
 
