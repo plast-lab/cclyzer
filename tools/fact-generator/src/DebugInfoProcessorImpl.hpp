@@ -176,17 +176,6 @@ class cclyzer::DebugInfoProcessor::Impl
     void
     generateDebugInfo(const llvm::Module &, const std::string &);
 
-    void
-    postProcessType(const llvm::DICompositeType &, const std::string &);
-
-    void
-    postProcessType(const llvm::DICompositeType &tp) {
-        postProcessType(tp, "");
-    }
-
-    void
-    postProcessTypedef(const llvm::DIDerivedType &, const std::string &);
-
   protected:
 
     /* Helper method to write common type attributes */
@@ -205,26 +194,9 @@ class cclyzer::DebugInfoProcessor::Impl
     /* Write all local variable associations */
     void write_local_var_assocs();
 
-    // Construct a mapping from type ID to type name
-    void CollectTypeIDs();
-
-    // Append debug info scope to stream
-    template<typename Stream>
-    void printScope(Stream &stream, const llvm::DIScopeRef &outerScope);
-
-    // Generate refmode for debug info composite type
-    refmode_t refmodeOf(const llvm::DICompositeType &,
-                        const std::string &altName = "");
-
-    // Generate refmode for debug info global variable
-    refmode_t refmodeOf(const llvm::DIGlobalVariable &,
-                        const std::string &);
   private:
     /* Debug Info */
     llvm::DebugInfoFinder debugInfoFinder;
-
-    /* Mapping from DIType ID to type name  */
-    std::map<std::string, refmode_t> typeNameByID;
 
     /* Mapping from DI Local Variable to LLVM variable */
     typedef std::multimap<const llvm::DILocalVariable *, refmode_t> LocalVarMap;
