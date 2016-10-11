@@ -135,6 +135,10 @@ schema:sanity()
  ->
    array_type:size[Type] = _.
 
+array_type:i8(Type) <-
+   array_type:component[Type] = Comp,
+   int8_type[] = Comp.
+
 
 //----------------------
 // Function type
