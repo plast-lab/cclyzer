@@ -764,7 +764,7 @@ InstructionVisitor::visitDbgDeclareInst(const llvm::DbgDeclareInst &DDI)
     }
 
     // Get debug location if available
-    if (const llvm::DebugLoc &location = DDI.getDebugLoc()) {
+    if (const llvm::DebugLoc& location = DDI.getDebugLoc()) {
         unsigned line = location.getLine();
         unsigned column = location.getCol();
 
