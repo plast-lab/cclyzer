@@ -190,6 +190,8 @@ namespace cclyzer { namespace predicates
 
     struct di_template_value_param : public predicate_group {
         static entity_pred_t id;
+        static pred_t value;
+        static pred_t elements;
     };
 
     // enumerator entries

@@ -1,7 +1,9 @@
+#include <llvm/Support/raw_ostream.h>
 #include "DebugInfoProcessorImpl.hpp"
 #include "debuginfo_predicate_groups.hpp"
+#include "FactGenerator.hpp"
 
-
+using cclyzer::FactGenerator;
 using cclyzer::DebugInfoProcessor;
 using cclyzer::refmode_t;
 using llvm::cast;
@@ -9,7 +11,6 @@ using llvm::dyn_cast;
 using std::string;
 namespace pred = cclyzer::predicates;
 namespace dwarf = llvm::dwarf;
-
 
 
 //----------------------------------------------------------------------------
@@ -44,6 +45,7 @@ DebugInfoProcessor::Impl::write_di_tpl_param::write(
     }
 }
 
+
 void
 DebugInfoProcessor::Impl::write_di_tpl_type_param::write(
     const llvm::DITemplateTypeParameter& diparam, const refmode_t& nodeId, DIProc& proc)
@@ -51,10 +53,63 @@ DebugInfoProcessor::Impl::write_di_tpl_type_param::write(
     proc.writeFact(pred::di_template_type_param::id, nodeId);
 }
 
+
 void
 DebugInfoProcessor::Impl::write_di_tpl_value_param::write(
     const llvm::DITemplateValueParameter& diparam, const refmode_t& nodeId, DIProc& proc)
 {
     const llvm::Metadata *value = diparam.getValue();
     proc.writeFact(pred::di_template_value_param::id, nodeId);
+
+    // Record value
+    if (const auto *mdtuple = dyn_cast<llvm::MDTuple>(value))
+    {
+        size_t index = 0;
+
+        for (auto it = mdtuple->op_begin(),
+                 end = mdtuple->op_end(); it != end; ++it, ++index)
+        {
+            const llvm::Metadata& item = **it;
+
+            if (const auto *tplItem = dyn_cast<llvm::DITemplateParameter>(&item))
+            {
+                refmode_t itemId =
+                    record_di_template_param::record(*tplItem, proc);
+
+                proc.writeFact(pred::di_template_value_param::elements,
+                               nodeId, index, itemId);
+            } else {
+                llvm::errs() << "Unhandled template value item of node "
+                             << nodeId
+                             << " at slot: " << index << '\n';
+            }
+        }
+    }
+    else if (const auto *mds = dyn_cast<llvm::MDString>(value))
+    {
+        std::string value = mds->getString();
+        llvm::errs() << "Unhandled template value parameter "
+                     << '(' << value << ')'
+                     << " for node: " << nodeId
+                     << " of type MDString\n";
+    }
+    else if (const auto *mdVal = dyn_cast<llvm::ConstantAsMetadata>(value))
+    {
+        if (const llvm::Constant *value = mdVal->getValue()) {
+            refmode_t cref = proc.recordConstant(*value);
+            proc.writeFact(pred::di_template_value_param::value, nodeId, cref);
+        }
+    }
+    else {
+        llvm::errs() << "Unhandled template value parameter"
+                     << " for node: " << nodeId << '\n';
+    }
+}
+
+
+refmode_t
+DebugInfoProcessor::Impl::recordConstant(const llvm::Constant& constant)
+{
+    FactGenerator& gen = FactGenerator::getInstance(getWriter());
+    return gen.writeConstant(constant);
 }

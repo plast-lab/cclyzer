@@ -17,6 +17,13 @@ using llvm::isa;
 namespace pred = cclyzer::predicates;
 
 
+FactGenerator&
+FactGenerator::getInstance(FactWriter & writer) {
+    static FactGenerator thisInstance(writer);
+    return thisInstance;
+}
+
+
 void
 FactGenerator::processModule(const llvm::Module &Mod, const std::string& path)
 {

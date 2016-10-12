@@ -34,18 +34,31 @@ class cclyzer::FactGenerator
     friend class TypeVisitor;
     using RefmodeEngine::refmode;
 
+  public:
+    /* Get fact generator instance for a given fact writer */
+    static FactGenerator& getInstance(FactWriter & );
+
+    /* Fact Writing Methods */
+    refmode_t writeConstant(const llvm::Constant&);
+    refmode_t writeAsm(const llvm::InlineAsm&);
+
+    void processModule(const llvm::Module &Mod, const std::string& path);
+    void writeOperands(const llvm::DataLayout &layout);
+
   protected:
-
     /* Common type aliases */
-
     typedef boost::unordered_map<std::string, const llvm::Type *> type_cache_t;
     typedef predicates::pred_t pred_t;
     typedef predicates::entity_pred_t entity_pred_t;
     typedef predicates::operand_pred_t operand_pred_t;
 
+    /* Constructor must initialize output file streams */
+    FactGenerator(FactWriter &writer)
+        : ForwardingFactWriter(writer)
+        , debugInfoProcessor(writer, static_cast<RefmodeEngine&>(*this))
+    {}
 
     /* Recording variables and types */
-
     void recordVariable(std::string id, const llvm::Type *type) {
         variableTypes[id] = type;
     }
@@ -55,40 +68,30 @@ class cclyzer::FactGenerator
         return refmode<llvm::Type>(*type);
     }
 
-    /* Fact writing methods */
+
+    /* Auxiliary fact writing methods */
 
     template<typename PredGroup>
     void writeFnAttributes(const refmode_t&, const llvm::AttributeSet);
+
+    template<typename PredGroup, class ConstantType>
+    void writeConstantWithOperands(const ConstantType&, const refmode_t&);
 
     void writeFunction(const llvm::Function&, const refmode_t&);
     void writeConstantArray(const llvm::ConstantArray&, const refmode_t&);
     void writeConstantStruct(const llvm::ConstantStruct&, const refmode_t&);
     void writeConstantVector(const llvm::ConstantVector&, const refmode_t&);
     void writeConstantExpr(const llvm::ConstantExpr&, const refmode_t&);
-    refmode_t writeConstant(const llvm::Constant&);
-    refmode_t writeAsm(const llvm::InlineAsm&);
-
-    template<typename PredGroup, class ConstantType>
-    void writeConstantWithOperands(const ConstantType&, const refmode_t&);
-
-  public:
-    /* Constructor must initialize output file streams */
-    FactGenerator(FactWriter &writer)
-        : ForwardingFactWriter(writer)
-        , debugInfoProcessor(writer, static_cast<RefmodeEngine&>(*this))
-    {}
-
-    /* Global fact writing methods */
-
     void writeGlobalAlias(const llvm::GlobalAlias & , const refmode_t & );
     void writeGlobalVar(const llvm::GlobalVariable &, const refmode_t & );
+
     void visitNamedMDNode(const llvm::NamedMDNode & );
 
-
-    void processModule(const llvm::Module &Mod, const std::string& path);
-    void writeOperands(const llvm::DataLayout &layout);
-
   private:
+    /* Non-copyable */
+    FactGenerator(FactGenerator const&) = delete;
+    FactGenerator& operator= (FactGenerator const&) = delete;
+
     /* Initialize output file streams */
     void initStreams();
 

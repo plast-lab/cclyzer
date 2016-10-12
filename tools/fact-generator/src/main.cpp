@@ -23,14 +23,17 @@ template<typename FileIt> void
 cclyzer::factgen(FileIt firstFile, FileIt endFile,
                  fs::path outputDir, std::string delim)
 {
+    using cclyzer::FactGenerator;
+    using cclyzer::FactWriter;
+
     llvm::LLVMContext &context = llvm::getGlobalContext();
     llvm::SMDiagnostic err;
 
     // Create fact writer
-    cclyzer::FactWriter writer(outputDir, delim);
+    FactWriter writer(outputDir, delim);
 
     // Create CSV generator
-    cclyzer::FactGenerator gen(writer);
+    FactGenerator& gen = FactGenerator::getInstance(writer);
 
     // Loop over each input file
     for(FileIt it = firstFile; it != endFile; ++it)

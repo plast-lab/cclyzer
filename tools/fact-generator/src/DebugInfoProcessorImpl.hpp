@@ -188,6 +188,9 @@ class cclyzer::DebugInfoProcessor::Impl
     /* Helper method to write bit flags */
     void recordFlags(const Predicate &, const refmode_t &, unsigned);
 
+    /* Helper method to write constant */
+    refmode_t recordConstant(const llvm::Constant & );
+
     /* Record association between DI Node and LLVM local variable */
     void record_local_var_assoc(const llvm::DbgDeclareInst & );
 

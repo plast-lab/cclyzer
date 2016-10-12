@@ -544,6 +544,8 @@ pred_t di_template_param::type::raw("di:template_param:raw_type");
 
 entity_pred_t di_template_type_param::id("di:template_type_param");
 entity_pred_t di_template_value_param::id("di:template_value_param");
+pred_t di_template_value_param::value("di:template_value_param:value");
+pred_t di_template_value_param::elements("di:template_value_param:elements");
 
 // Variable Entry
 entity_pred_t di_variable::id("di:variable");

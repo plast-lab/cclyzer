@@ -29,6 +29,11 @@ namespace cclyzer
             writer.writeFact(pred, refmode, val, vals...);
         }
 
+      protected:
+        FactWriter& getWriter() {
+            return writer;
+        }
+
       private:
         /* Delegate CSV Writer */
         FactWriter& writer;
