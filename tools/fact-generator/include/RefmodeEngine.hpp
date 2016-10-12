@@ -94,6 +94,9 @@ namespace cclyzer {
     extern template refmode_t
     RefmodeEngine::refmode<llvm::DINode>(const llvm::DINode & ) const;
 
+    extern template refmode_t
+    RefmodeEngine::refmode<llvm::MDNode>(const llvm::MDNode & ) const;
+
 } // end of namespace cclyzer
 
 #endif /* REFMODE_ENGINE_HPP__ */

@@ -228,7 +228,11 @@ namespace cclyzer { namespace predicates
 
     // location entries
     struct di_location : public predicate_group {
-        // TODO
+        static entity_pred_t id;
+        static pred_t line;
+        static pred_t column;
+        static pred_t scope;
+        static pred_t inlined_at;
     };
 
 

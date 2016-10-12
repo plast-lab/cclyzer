@@ -44,8 +44,8 @@ DebugInfoProcessor::Impl::generateDebugInfo(
     for (di_global_var_iterator iVar = allVars.begin(), E = allVars.end();
          iVar != E; ++iVar)
     {
-        const llvm::DIGlobalVariable &dbgGlobalVar = **iVar;
-        record_di_variable::record(**iVar, *this);
+        const llvm::DIGlobalVariable &divar = **iVar;
+        record_di_variable::record(divar, *this);
     }
 
     // Get subprogram iterator

@@ -49,7 +49,7 @@ class cclyzer::DebugInfoProcessor::Impl
         static refmode_t
         record(const T& dinode, DIProc& proc)
         {
-            const llvm::DINode& node = llvm::cast<llvm::DINode>(dinode);
+            const llvm::MDNode& node = llvm::cast<llvm::MDNode>(dinode);
             auto& nodeIds = proc.nodeIds;
             auto& eng = proc.refmEngine;
 
@@ -60,7 +60,7 @@ class cclyzer::DebugInfoProcessor::Impl
                 return search->second;
 
             // Generate refmode for this node
-            refmode_t nodeId = eng.refmode<llvm::DINode>(node);
+            refmode_t nodeId = eng.refmode<llvm::MDNode>(node);
 
             // Cache the generated refmode and *then* process it
             // (i.e., record all its attributes, etc), so that it gets
@@ -159,6 +159,10 @@ class cclyzer::DebugInfoProcessor::Impl
         static void write(const llvm::DIImportedEntity &, const refmode_t &, DIProc &);
     };
 
+    struct write_di_location : public write_di_node {
+        static void write(const llvm::DILocation &, const refmode_t &, DIProc &);
+    };
+
 
     /* Type aliases for common recording operations */
 
@@ -172,6 +176,7 @@ class cclyzer::DebugInfoProcessor::Impl
     typedef di_recorder<llvm::DIEnumerator, write_di_enumerator> record_di_enumerator;
     typedef di_recorder<llvm::DISubrange, write_di_subrange> record_di_subrange;
     typedef di_recorder<llvm::DIImportedEntity, write_di_imported_entity> record_di_imported_entity;
+    typedef di_recorder<llvm::DILocation, write_di_location> record_di_location;
 
     void
     generateDebugInfo(const llvm::Module &, const std::string &);
@@ -212,7 +217,7 @@ class cclyzer::DebugInfoProcessor::Impl
     RefmodeEngine &refmEngine;
 
     /* Cache of processed nodes */
-    std::map<const llvm::DINode *, refmode_t> nodeIds;
+    std::map<const llvm::MDNode *, refmode_t> nodeIds;
 };
 
 #endif /* DEBUG_INFO_PROCESSOR_IMPL_HPP__ */

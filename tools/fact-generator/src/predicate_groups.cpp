@@ -585,3 +585,10 @@ pred_t di_imported_entity::line("di:imported_entity:line");
 pred_t di_imported_entity::scope("di:imported_entity:scope");
 pred_t di_imported_entity::entity::node("di:imported_entity:entity");
 pred_t di_imported_entity::entity::raw("di:imported_entity:raw_entity");
+
+// Location Entry
+entity_pred_t di_location::id("di:location");
+pred_t di_location::line("di:location:line");
+pred_t di_location::column("di:location:column");
+pred_t di_location::scope("di:location:scope");
+pred_t di_location::inlined_at("di:location:inlined_at");

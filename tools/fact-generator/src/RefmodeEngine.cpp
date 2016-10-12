@@ -154,6 +154,20 @@ namespace cclyzer {
         withGlobalContext(refmode) << rso.str();
         return refmode.str();
     }
+
+
+    template<> refmode_t
+    RefmodeEngine::Impl::refmode(const llvm::MDNode& node) // const
+    {
+        std::ostringstream refmode;
+
+        string rv;
+        raw_string_ostream rso(rv);
+        appendMetadataId(rso, node);
+
+        withGlobalContext(refmode) << rso.str();
+        return refmode.str();
+    }
 }
 
 
@@ -241,3 +255,7 @@ RefmodeEngine::refmode<llvm::AtomicOrdering>(
 template refmode_t
 RefmodeEngine::refmode<llvm::DINode>(
     const llvm::DINode & ) const;
+
+template refmode_t
+RefmodeEngine::refmode<llvm::MDNode>(
+    const llvm::MDNode & ) const;
