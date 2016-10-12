@@ -346,6 +346,18 @@ lang:physical:filePath[`_di:local_variable] = "facts/di-local_variable.dlm".
 
 
 
+_di:location(v0) -> string(v0).
+
+lang:physical:delimiter[`_di:location] = "\t".
+lang:physical:filePath[`_di:location] = "facts/di-location.dlm".
+
++di:location:id(e0:v0),
++di:location(e0)
+<-
+   _di:location(v0).
+
+
+
 _di:namespace(v0) -> string(v0).
 
 lang:physical:delimiter[`_di:namespace] = "\t".

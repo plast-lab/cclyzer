@@ -136,11 +136,16 @@ FactGenerator::processModule(const llvm::Module &Mod, const std::string& path)
 
                     // TODO process metadata node
                     // Get debug location if available
-                    if (const llvm::DebugLoc &location = instr.getDebugLoc()) {
+                    if (const llvm::DebugLoc& location = instr.getDebugLoc()) {
                         unsigned line = location.getLine();
                         unsigned column = location.getCol();
 
                         writeFact(pred::instruction::pos, iref, line, column);
+
+                        refmode_t locref =
+                            debugInfoProcessor.record_di_location(*location);
+
+                        writeFact(pred::instruction::location, iref, locref);
                     }
                 }
 

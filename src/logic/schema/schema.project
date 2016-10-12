@@ -89,3 +89,4 @@ debuginfo/subrange.logic, active
 debuginfo/subprogram.logic, active
 debuginfo/lexical_scopes.logic, active
 debuginfo/imports.logic, active
+debuginfo/location.logic, active

@@ -116,6 +116,7 @@ namespace cclyzer
             static pred_t function;
             static entity_pred_t unreachable; // terminator also
             static pred_t pos;
+            static pred_t location;
         };
 
         // Binary Instructions

@@ -1582,6 +1582,62 @@ lang:physical:filePath[`_di:local_variable_declaration] = "facts/di-local_variab
 
 
 
+_di:location:column(v0, v1) -> string(v0), uint[64](v1).
+
+lang:physical:delimiter[`_di:location:column] = "\t".
+lang:physical:filePath[`_di:location:column] = "facts/di-location-column.dlm".
+
++di:location:id(e0:v0),
++di:location(e0),
++di:location:column[e0] = v1
+<-
+   _di:location:column(v0, v1).
+
+
+
+_di:location:inlined_at(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_di:location:inlined_at] = "\t".
+lang:physical:filePath[`_di:location:inlined_at] = "facts/di-location-inlined_at.dlm".
+
++di:location:id(e0:v0),
++di:location(e0),
++di:location:id(e1:v1),
++di:location(e1),
++di:location:inlined_at[e0] = e1
+<-
+   _di:location:inlined_at(v0, v1).
+
+
+
+_di:location:line(v0, v1) -> string(v0), uint[64](v1).
+
+lang:physical:delimiter[`_di:location:line] = "\t".
+lang:physical:filePath[`_di:location:line] = "facts/di-location-line.dlm".
+
++di:location:id(e0:v0),
++di:location(e0),
++di:location:line[e0] = v1
+<-
+   _di:location:line(v0, v1).
+
+
+
+_di:location:scope(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_di:location:scope] = "\t".
+lang:physical:filePath[`_di:location:scope] = "facts/di-location-scope.dlm".
+
++di:location:id(e0:v0),
++di:location(e0),
++di:entry:id(e1:v1),
++di:local_scope(e1),
++di:location:scope[e0] = e1
+<-
+   _di:location:scope(v0, v1).
+
+
+
 _di:namespace:file(v0, v1) -> string(v0), string(v1).
 
 lang:physical:delimiter[`_di:namespace:file] = "\t".
@@ -3942,6 +3998,21 @@ lang:physical:filePath[`_instruction:function] = "facts/instruction-function.dlm
 +instruction:function[e0] = e1
 <-
    _instruction:function(v0, v1).
+
+
+
+_instruction:location(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_instruction:location] = "\t".
+lang:physical:filePath[`_instruction:location] = "facts/instruction-location.dlm".
+
++instruction:id(e0:v0),
++instruction(e0),
++di:location:id(e1:v1),
++di:location(e1),
++instruction:location[e0] = e1
+<-
+   _instruction:location(v0, v1).
 
 
 
