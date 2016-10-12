@@ -2022,29 +2022,33 @@ lang:physical:filePath[`_di:template_param:type] = "facts/di-template_param-type
 
 
 
-_di:template_type_param(v0) -> string(v0).
+_di:template_value_param:elements(v0, v1, v2) -> string(v0), uint[64](v1), string(v2).
 
-lang:physical:delimiter[`_di:template_type_param] = "\t".
-lang:physical:filePath[`_di:template_type_param] = "facts/di-template_type_param.dlm".
-
-+di:entry:id(e0:v0),
-+di:template_param(e0),
-+di:template_type_param(e0)
-<-
-   _di:template_type_param(v0).
-
-
-
-_di:template_value_param(v0) -> string(v0).
-
-lang:physical:delimiter[`_di:template_value_param] = "\t".
-lang:physical:filePath[`_di:template_value_param] = "facts/di-template_value_param.dlm".
+lang:physical:delimiter[`_di:template_value_param:elements] = "\t".
+lang:physical:filePath[`_di:template_value_param:elements] = "facts/di-template_value_param-elements.dlm".
 
 +di:entry:id(e0:v0),
-+di:template_param(e0),
-+di:template_value_param(e0)
++di:template_value_param(e0),
++di:entry:id(e1:v2),
++di:entry(e1),
++di:template_value_param:elements[e0,v1] = e1
 <-
-   _di:template_value_param(v0).
+   _di:template_value_param:elements(v0, v1, v2).
+
+
+
+_di:template_value_param:value(v0, v1) -> string(v0), string(v1).
+
+lang:physical:delimiter[`_di:template_value_param:value] = "\t".
+lang:physical:filePath[`_di:template_value_param:value] = "facts/di-template_value_param-value.dlm".
+
++di:entry:id(e0:v0),
++di:template_value_param(e0),
++constant:id(e1:v1),
++constant(e1),
++di:template_value_param:value[e0] = e1
+<-
+   _di:template_value_param:value(v0, v1).
 
 
 

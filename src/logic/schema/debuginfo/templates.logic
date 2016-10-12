@@ -2,17 +2,40 @@
 // Debug Info - Template Parameters
 //-----------------------------------------------------------
 
-di:template_param(Entry) -> di:entry(Entry).
+di:template_param(DIParam) -> di:entry(DIParam).
 
-di:template_param:name[Entry] = Name ->
-   di:template_param(Entry), string(Name).
+di:template_param:name[DIParam] = Name ->
+   di:template_param(DIParam), string(Name).
 
 // Type of template parameter
-di:template_param:type[Entry] = Type ->
-   di:template_param(Entry), di:type_entry(Type).
+di:template_param:type[DIParam] = Type ->
+   di:template_param(DIParam), di:type_entry(Type).
 
-di:template_param:raw_type[Entry] = Type ->
-   di:template_param(Entry), string(Type).
+di:template_param:raw_type[DIParam] = Type ->
+   di:template_param(DIParam), string(Type).
 
-di:template_type_param(Entry) -> di:template_param(Entry).
-di:template_value_param(Entry) -> di:template_param(Entry).
+// Two kinds of template parameters
+di:template_type_param(DIParam) -> di:template_param(DIParam).
+di:template_value_param(DIParam) -> di:template_param(DIParam).
+
+lang:entity(`di:template_type_param).
+lang:entity(`di:template_value_param).
+
+
+//------------------------------------------------------
+// Template Value Parameter
+//------------------------------------------------------
+
+// Single constant value
+di:template_value_param:value[DIParam] = Value ->
+   di:template_value_param(DIParam), constant(Value).
+
+// Value is a tuple of debug-info nodes
+di:template_value_param:elements[DIParam, Index] = ValElem ->
+   di:template_value_param(DIParam), uint[64](Index), di:entry(ValElem).
+
+// The two predicates above are mutually exclusive
+schema:sanity()
+ , di:template_value_param:value[DIParam] = _
+ , di:template_value_param:elements[DIParam, _] = _
+ -> .
