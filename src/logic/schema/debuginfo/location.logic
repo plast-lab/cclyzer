@@ -1,0 +1,33 @@
+//-----------------------------------------------------------
+// Debug Info - Locations
+//-----------------------------------------------------------
+
+di:location(DILoc), di:location:id(DILoc:Ref) -> string(Ref).
+lang:physical:capacity[`di:location] = 1048576.
+
+di:location:line[DILoc] = Line ->
+   di:location(DILoc), uint[64](Line).
+
+di:location:column[DILoc] = Column ->
+   di:location(DILoc), uint[64](Column).
+
+di:location:inlined_at[DILoc] = InlineLoc ->
+   di:location(DILoc), di:location(InlineLoc).
+
+di:location:scope[DILoc] = Scope ->
+   di:location(DILoc), di:local_scope(Scope).
+
+
+schema:sanity()
+ , di:location(DILoc)
+ ->
+   di:location:line[DILoc] = _.
+
+schema:sanity()
+ , di:location(DILoc)
+ ->
+   di:location:column[DILoc] = _.
+
+
+instruction:location[Instr] = DILoc ->
+   instruction(Instr), di:location(DILoc).
