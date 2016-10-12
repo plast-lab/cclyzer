@@ -748,6 +748,7 @@ InstructionVisitor::visitDbgDeclareInst(const llvm::DbgDeclareInst &DDI)
     // Process debug info
     gen.debugInfoProcessor.processDeclare(module, &DDI);
 
+    // TODO Move the entire debug location logic to debuginfo_variables.cpp
     const llvm::Value *address = DDI.getAddress();
 
     // Skip undefined values

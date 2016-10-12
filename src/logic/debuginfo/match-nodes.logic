@@ -40,6 +40,10 @@ di:match_variable(Param, DIParam) <-
    di:subprogram:function[DIScope] = Func,
    function:param[Func, Index - 1] = Param.
 
+// TODO this could replace the current predicate import
+// variable:debug:source_name[Var] = Name <-
+//    di:match_variable(Var, DIVar),
+//    di:variable:name[DIVar] = Name.
 
 //------------------------------------------------------------------------------
 // Matching types to debug-info nodes

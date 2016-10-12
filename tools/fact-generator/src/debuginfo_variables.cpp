@@ -119,7 +119,8 @@ DebugInfoProcessor::Impl::write_di_local_variable::write(
 }
 
 
-void DebugInfoProcessor::Impl::record_local_var_assoc(
+void
+DebugInfoProcessor::Impl::record_local_var_assoc(
     const llvm::DbgDeclareInst& inst)
 {
     const llvm::Value *address = inst.getAddress();
@@ -144,9 +145,11 @@ void DebugInfoProcessor::Impl::record_local_var_assoc(
 }
 
 
-void DebugInfoProcessor::Impl::write_local_var_assocs()
+void
+DebugInfoProcessor::Impl::write_local_var_assocs()
 {
-    for (LocalVarMap::const_iterator it = localVars.begin(), end = localVars.end();
+    for (LocalVarMap::const_iterator
+             it = localVars.begin(), end = localVars.end();
          it != end; ++it )
     {
         const llvm::DILocalVariable *divar = it->first;
@@ -156,8 +159,9 @@ void DebugInfoProcessor::Impl::write_local_var_assocs()
         writeFact(pred::di_local_var::variable, nodeId, varId);
     }
 
-    for (list<const llvm::DILocalVariable *>::iterator it = undefVars.begin(),
-             end = undefVars.end(); it != end; ++it )
+    for (list<const llvm::DILocalVariable *>::iterator
+             it = undefVars.begin(), end = undefVars.end();
+         it != end; ++it )
     {
         const llvm::DILocalVariable *divar = *it;
         record_di_variable::record(*divar, *this);
