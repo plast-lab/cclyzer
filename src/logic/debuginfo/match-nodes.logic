@@ -244,6 +244,61 @@ di:match_type[DIType] = Type <-
    !_multiple_types_by_layout(DIType).
 
 
+// Filter 4: Match types by layout and type association.
+//
+// This filter may be too strict and prune many true type
+// associations. However, we can still use it to infer new 1-to-1
+// associations, when all the previous filters have failed.
+
+_di_type_at_offset(DIType, Offset, DIFieldType) <-
+   di:type:field_offset[DIType, Index] = Offset,
+   di:type:field_type[DIType, Index] = DIFieldType.
+
+_di_type_at_offset(DIType, Offset, DIBaseType) <-
+   di:type:inheritance_offset[DIType, Index] = Offset,
+   di:type:inheritance_type[DIType, Index] = DIBaseType.
+
+_component_match(DIType, Type, Offset) <-
+   _di_match_types_by_layout(DIType, Type),
+   _di_type_at_offset(DIType, Offset, DIOffsetType),
+   struct_type:field_bit_offset[Type, Index] = Offset,
+   struct_type:field[Type, Index] = FieldType,
+   _di_possible_match_type(FieldType, DIOffsetType).
+
+_component_conflict(DIType, Type) <-
+   _di_match_types_by_layout(DIType, Type),
+   _di_type_at_offset(DIType, Offset, _),
+   struct_type:field_bit_offset[Type, _] = Offset,
+   !_component_match(DIType, Type, Offset).
+
+_di_match_types_by_usage(DIType, Type) <-
+   _di_match_types_by_layout(DIType, Type),
+   !_component_conflict(DIType, Type).
+
+_di_match_types_by_usage_inv__(Type, DIType) <-
+   _di_match_types_by_usage(DIType, Type).
+
+// No resolution yet
+_multiple_types_by_usage(DIType) <-
+   _di_match_types_by_usage_inv__(Type1, DIType),
+   _di_match_types_by_usage_inv__(Type2, DIType),
+   Type1 != Type2.
+
+_multiple_di_types_by_usage(Type) <-
+   _di_match_types_by_usage(DIType1, Type),
+   _di_match_types_by_usage(DIType2, Type),
+   DIType1 != DIType2.
+
+// Resolved by this filter
+type:di_entry[Type] = DIType <-
+   _di_match_types_by_usage(DIType, Type),
+   !_multiple_di_types_by_usage(Type).
+
+di:match_type[DIType] = Type <-
+   _di_match_types_by_usage_inv__(Type, DIType),
+   !_multiple_types_by_usage(DIType).
+
+
 //--------------------------------------------------------------------
 // Match Propagation
 //--------------------------------------------------------------------
