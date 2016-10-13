@@ -5,6 +5,9 @@ class Pair {
     Second second;
 
   public:
+
+    virtual ~Pair() {}
+
     template<typename Third>
     class Inner {
         Third third;
