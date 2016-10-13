@@ -199,6 +199,7 @@ template_typeinfo(TypeInfo) <-
    template_type_name(Name),
    _typeinfo_by_class_name[Name] = TypeInfo.
 
+// Fallback when no debug info has been loaded
 template_typeinfo(TypeInfo) <-
    !debuginfo:loaded(),
    string:like(Name, "%<%>"),
