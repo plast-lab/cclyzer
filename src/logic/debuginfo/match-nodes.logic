@@ -414,3 +414,44 @@ struct_type:inherits_at_offset[Type, Offset] = StrippedBaseTypeName <-
    _di_match_types_by_layout(DIBaseType, FieldType),
    _di_inherits_at_offset(DIType, Offset, DIBaseType),
    di_template_type:stripped_name[DIBaseType] = StrippedBaseTypeName.
+
+
+//------------------------------------------------------------------------------
+// Class Type - Name Parsing
+//------------------------------------------------------------------------------
+
+class_type(Type) -> struct_type(Type).
+
+class_type(ClassType) <-
+   struct_type(ClassType),
+   _di_match_types_by_name(DIType, ClassType),
+   di:class_type_entry(DIType).
+
+class_type:name[ClassType] = ClassName <-
+   struct_type(ClassType),
+   type:di_entry[ClassType] = DIType,
+   di:composite_type_entry(DIType),
+   di:type_entry:to_string[DIType] = ClassName.
+
+class_type:name[ClassType] = ScopedName <-
+   struct_type(ClassType),
+   !type:di_entry[ClassType] = _,
+   _di_match_types_by_name(DIType, ClassType),
+   di:composite_type_entry(DIType), !di_template_type(DIType),
+   di:type_entry:to_string[DIType] = ScopedName.
+
+class_type:stripped_name[ClassType] = ClassName <-
+   struct_type(ClassType),
+   _di_match_types_by_name(DIType, ClassType),
+   di:composite_type_entry(DIType),
+   di_template_type:stripped_name[DIType] = ClassName.
+
+class_type:stripped_name[ClassType] = ClassName <-
+   struct_type(ClassType),
+   _di_match_types_by_name(DIType, ClassType),
+   di:composite_type_entry(DIType), !di_template_type(DIType),
+   di:type_entry:to_string[DIType] = ClassName.
+
+template_type_name(Name) <-
+   di_template_type(DIType),
+   di:type_entry:to_string[DIType] = Name.

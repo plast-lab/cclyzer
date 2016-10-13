@@ -155,7 +155,7 @@ cxx:throws(Dtor, TypeInfo, ExcObj, ThrowInsn)
    cxx:throw_instruction:exception(ExcObj, ThrowInsn),
    cxx:throw_instruction:typeinfo(TypeInfo, ThrowInsn),
    cxx:throw_instruction:destructor(Dtor, ThrowInsn),
-   vtable:typeinfo[VTable] = TypeInfo,
-   vtable:class_type[VTable] = Type,
+   ( class_type:typeinfo[Type] = TypeInfo
+   ; external_typeinfo(TypeInfo) ),
    allocation:type[ExcObj] = Type,
    class_type:destructor(Dtor, Type).

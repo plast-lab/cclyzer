@@ -168,15 +168,17 @@ class_instance:vtable[Alloc] = VTable
 // constructor function, hence we now have the association between the
 // class type and its vtable too.
 
-vtable:class_type[VTable] = Type
- <-
-   init_by_ctor(Type, Ctor, _, Alloc),
-   instruction:function[StoreInsn] = Ctor,
-   store_instruction:value[StoreInsn] = Value,
-   store_instruction:address[StoreInsn] = Pointer,
-   operand_points_to(Alloc, Pointer),
-   operand:as_constant[Value] = Constant,
-   constant_contains_vptr(VTable, Constant).
+// This does not always work. TODO: fix
+
+// vtable:class_type[VTable] = Type
+//  <-
+//    init_by_ctor(Type, Ctor, _, Alloc),
+//    instruction:function[StoreInsn] = Ctor,
+//    store_instruction:value[StoreInsn] = Value,
+//    store_instruction:address[StoreInsn] = Pointer,
+//    operand_points_to(Alloc, Pointer),
+//    operand:as_constant[Value] = Constant,
+//    constant_contains_vptr(VTable, Constant).
 
 
 // Note !!! Load instructions on class instances will return the

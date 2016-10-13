@@ -3,43 +3,53 @@
 //-----------------
 
 // Class types are a subset of struct types
-
 class_type(Type) -> struct_type(Type).
 
-
 // The name (as it appears in source code) of the class
-
+// type, including any template parameters
 class_type:name[Type] = Name ->
-   class_type(Type), string(Name).
+   struct_type(Type), string(Name).
 
-// We follow a heuristic approach to identify class types, by
-// searching for struct types with a specific prefix (namely,
-// `%class.`).
+// Unless debug info has been loaded, we follow a heuristic approach
+// to identify class types, by searching for struct types with a
+// specific prefix (namely, `%class.`).
+class_type(Type) <-
+   !debuginfo:loaded(),
+   struct_type(Type), type:id(Type:FQName), string:like(FQName, "%%class.%").
 
-class_type(Type), class_type:name[Type] = Name
- <-
-   struct_type(Type),
+class_type:name[Type] = Name <-
+   !debuginfo:loaded(),
+   struct_type(Type), !template_type(Type),
    type:id(Type:FQName),
    string:like(FQName, "%%class.%"),
    string:length[FQName] = N,
-   string:substring[FQName, 7, N - 7] = Name. // 7 is the length of the prefix "%class."
+   string:substring[FQName, 7, N - 7] = Name.
 
-class_type:by_name[Name] = Type <-
-   class_type:name[Type] = Name.
-
-// TODO: Augment with struct types
+class_type:name[Type] = Name <-
+   !debuginfo:loaded(),
+   struct_type(Type), !template_type(Type),
+   type:id(Type:FQName),
+   string:like(FQName, "%%struct.%"),
+   string:length[FQName] = N,
+   string:substring[FQName, 8, N - 8] = Name.
 
 
 //------------------------------------------------------------------------------
 // Virtual Table - Type Info - Class Type Associations
 //------------------------------------------------------------------------------
 
-// `typeinfo of v-table` : defined in virtual-tables.logic
-vtable:typeinfo[VT] = TypeInfo ->
+vtable:typeinfo[VT] = TypeInfo -> // defined in virtual-tables.logic
    global_variable(VT), global_variable(TypeInfo).
 
+class_type:vtable[ClassType] = VT ->
+   struct_type(ClassType), global_variable(VT).
+
+class_type:typeinfo[ClassType] = TypeInfo ->
+   struct_type(ClassType), global_variable(TypeInfo).
+
+
 // Extract class name from unmangled type info name. The latter is of
-// the form: typeinfo for /CLASSNAME/
+// the form: typeinfo for CLASS-NAME
 _typeinfo_class_name[TypeInfo] = ClassName <-
    typeinfo(TypeInfo),
    global_variable:unmangled_name[TypeInfo] = TIName,
@@ -47,14 +57,17 @@ _typeinfo_class_name[TypeInfo] = ClassName <-
    string:length[TIName] = N,
    string:substring[TIName, 13, N - 13] = ClassName.
 
-// `typeinfo of class`
+_typeinfo_by_class_name[ClassName] = TypeInfo <-
+   _typeinfo_class_name[TypeInfo] = ClassName.
+
+// typeinfo of class
 class_type:typeinfo[ClassType] = TypeInfo <-
-   _typeinfo_class_name[TypeInfo] = ClassName,
-   class_type:by_name[ClassName] = ClassType.
+   class_type:name[ClassType] = ClassName,
+   _typeinfo_by_class_name[ClassName] = TypeInfo.
 
 
-// Extract class name from unmangled vtable name. The latter is of
-// the form: vtable for /CLASSNAME/
+// Extract class name from unmangled vtable name. The latter is of the
+// form: vtable for CLASS-NAME
 _vtable_class_name[VTable] = ClassName <-
    vtable(VTable, _),
    global_variable:unmangled_name[VTable] = UnmangledName,
@@ -62,10 +75,20 @@ _vtable_class_name[VTable] = ClassName <-
    string:length[UnmangledName] = N,
    string:substring[UnmangledName, 11, N - 11] = ClassName.
 
-// `v-table of class`
+_vtable_by_class_name[ClassName] = VTable <-
+   _vtable_class_name[VTable] = ClassName.
+
+// v-table of class
 class_type:vtable[ClassType] = VTable <-
+   class_type:name[ClassType] = ClassName,
    _vtable_class_name[VTable] = ClassName,
-   class_type:by_name[ClassName] = ClassType.
+   _vtable_by_class_name[ClassName] = VTable.
+
+// Sanity check
+class_type:vtable[ClassType] = VTable
+ , vtable:typeinfo[VTable] = TypeInfo
+ ->
+   class_type:typeinfo[ClassType] = TypeInfo.
 
 
 //------------------------------------------------------------------------------
@@ -78,8 +101,17 @@ primary_superclass[Type] = Supertype ->
 secondary_superclass(Supertype, Type) ->
    struct_type(Type), struct_type(Supertype).
 
+// From typeinfo to class type
+_typeinfo_class_type[TypeInfo] = ClassType <-
+   !unpadded_struct_type(ClassType),
+   !template_typeinfo(TypeInfo),
+   !template_type(ClassType),
+   class_type:typeinfo[ClassType] = TypeInfo.
 
 _typeinfo_class_type[TypeInfo] = ClassType <-
+   !unpadded_struct_type(ClassType),
+   template_typeinfo(TypeInfo),
+   template_type(ClassType),
    class_type:typeinfo[ClassType] = TypeInfo.
 
 primary_superclass[Type] = Supertype <-
@@ -95,14 +127,12 @@ secondary_superclass(Supertype, Type) <-
 
 
 // Union of the above two kinds of superclasses
-
 direct_superclass(Supertype, Type) <-
    primary_superclass[Type] = Supertype
  ; secondary_superclass(Supertype, Type).
 
 
 // Inverse relation
-
 direct_subclass(Subtype, Type) <-
    direct_superclass(Type, Subtype).
 
@@ -137,82 +167,42 @@ typeinfo:single_inheritance(TypeInfo)
 // Class Type Name Parsing
 //------------------------------------------------------------------------------
 
-// Class types that are template instantiations
-class_type:template_instance(Type) <-
-   class_type:name[Type] = FQName,
-   string:like(FQName, "%<%>").
+_struct_type_dot_split(Type, N) <-
+   struct_type(Type), type:id(Type:TypeSignature),
+   string:split[TypeSignature, ".", N] = _.
 
-// Name without the template part
+_struct_type_dot_splits[Type] = M <-
+   agg<<M = max(N)>> _struct_type_dot_split(Type, N).
 
-class_type:no_tpl_part[Type] = NoTplPart
- <-
-   class_type:name[Type] = FQName,
-   class_type:template_instance(Type),
-   string:split[FQName, "<", 0] = NoTplPart.
+_struct_type_dotsuffix[Type] = DotSuffix <-
+   type:id(Type:TypeSignature),
+   _struct_type_dot_splits[Type] = M, M > 1,
+   string:split[TypeSignature, ".", M] = DotSuffix.
 
-class_type:no_tpl_part[Type] = FQName
- <-
-   class_type:name[Type] = FQName,
-   !class_type:template_instance(Type).
+// Types that are template instantiations
+template_type(Type) <-
+   _struct_type_dotsuffix[Type] = DotSuffix,
+   DotSuffix != "base".
 
+// Types that are unpadded versions of their originals, to be used as
+// base types via inheritance
+unpadded_struct_type(Type) <-
+   struct_type(Type), type:id(Type:TypeSignature),
+   string:like(TypeSignature, "%.base").
 
-// Template part of name
+// Defined in debuginfo module
+template_type_name(Name) -> string(Name).
 
-class_type:tpl_part[Type] = TplPart
- <-
-   class_type:name[Type] = FQName,
-   class_type:template_instance(Type),
-   class_type:no_tpl_part[Type] = NoTplPart,
-   string:length[NoTplPart] = PrefixLength,
-   string:length[FQName] = Length,
-   SuffixLength = Length - PrefixLength,
-   string:substring[FQName, PrefixLength, SuffixLength] = TplPart.
+// Typeinfo objects of template types
+template_typeinfo(TypeInfo) <-
+   debuginfo:loaded(),
+   template_type_name(Name),
+   _typeinfo_by_class_name[Name] = TypeInfo.
 
-
-// Name without namespace qualifier
-
-class_type:unqualified_name[Type] = NoTplPart
- <-
-   class_type:no_tpl_part[Type] = NoTplPart,
-   string:notlike(NoTplPart, "%::%").
-
-class_type:unqualified_name[Type] = Component
- <-
-   class_type:no_tpl_part[Type] = NoTplPart,
-   string:split[NoTplPart, ":", _] = Component,
-   string:length[Component] = N,
-   N > 0,
-   string:like(NoTplPart, "%::" + Component).
-
-
-// Drop the LLVM version suffix (e.g., '.145')
-
-class_type:simple_name[Type] = SimpleName
- <-
-   class_type:unqualified_name[Type] = Name,
-   string:split[Name, ".", 0] = SimpleName.
-
-class_type:simple_name[Type] = Name
- <-
-   class_type:unqualified_name[Type] = Name,
-   string:notlike(Name, "%.%").
-
-
-// Namespace
-
-class_type:namespace[Type] = ""
- <-
-   class_type:no_tpl_part[Type] = Name,
-   string:notlike(Name, "%::%").
-
-class_type:namespace[Type] = Namespace
- <-
-   class_type:no_tpl_part[Type] = FQName,
-   class_type:unqualified_name[Type] = Name,
-   string:like(FQName, "%::%"),
-   string:length[FQName] = Length,
-   string:length[Name] = N,
-   string:substring[FQName, 0, Length - N - 2] = Namespace.
+template_typeinfo(TypeInfo) <-
+   !debuginfo:loaded(),
+   string:like(Name, "%<%>"),
+   _typeinfo_by_class_name[Name] = TypeInfo.
 
 
 //------------------------------------------------------------------------------
@@ -220,17 +210,17 @@ class_type:namespace[Type] = Namespace
 //------------------------------------------------------------------------------
 
 class_type:constructor(Ctor, Type) ->
-   class_type(Type), function_decl(Ctor).
+   struct_type(Type), function_decl(Ctor).
 
 class_type:destructor(Dtor, Type) ->
-   class_type(Type), function_decl(Dtor).
+   struct_type(Type), function_decl(Dtor).
 
 
 // To identify constructors we rely on the Itanium ABI mangling rules
 
 class_type:constructor(Ctor, Type)
  <-
-   class_type(Type),
+   struct_type(Type),
    function:name[Ctor] = FuncName,
    function:type[Ctor] = FType,
    function_type:param[FType, 0] = PtrType,
@@ -242,16 +232,10 @@ class_type:constructor(Ctor, Type)
 
 class_type:destructor(Dtor, Type)
  <-
-   class_type(Type),
+   struct_type(Type),
    function:name[Dtor] = FuncName,
    function:type[Dtor] = FType,
    function_type:param[FType, 0] = PtrType,
    pointer_type:component[PtrType] = Type,
    ( string:like(FuncName, "%D1%")
    ; string:like(FuncName, "%D2%")).
-
-
-// Mandatory properties of class types
-
-class_type(Type) ->
-   class_type:name[Type] = _.
