@@ -1,6 +1,5 @@
 // Flag to mark that debug information has been loaded
 debuginfo:loaded() -> .
-debuginfo:loaded() <- di:entry(_).
 
 //--------------------------------------------------------
 // Debug Information Entry - Type Hierarchy

@@ -6,3 +6,4 @@ type-layout.logic, active
 node-pretty-printing.logic, active
 templates.logic, active
 match-nodes.logic, active
+load.logic, active
