@@ -10,8 +10,8 @@ $target: export LB_LIBRARY_PATH := $libpath
 $target: $prerequisites
 '''
 
-def project_base(projectfile):
-    return os.path.basename(os.path.dirname(projectfile))
+def project_root(projectfile, logicdir):
+    return os.path.relpath(os.path.dirname(projectfile), logicdir)
 
 def project_property(projectfile, propname):
     with open(projectfile) as proj:
@@ -36,32 +36,32 @@ def collect_project_files(logicdir):
 
 def collect_project_names(logicdir):
     for proj in collect_project_files(logicdir):
-        projbase = project_base(proj)
+        projroot = project_root(proj, logicdir)
         projname = project_name(proj)
-        yield (projname, projbase)
+        yield (projname, projroot)
 
 def create_mk_segment(logicdir, projectfile, checksumfile):
     # Collect project names recursively
     projmeta = dict(collect_project_names(logicdir))
 
     # Parse given project file
-    projbase = project_base(projectfile)
+    projroot = project_root(projectfile, logicdir)
     projname = project_name(projectfile)
     dependencies = project_dependencies(projectfile)
 
     # Transform dependencies to refer to project base
     dependencies = [projmeta[d] for d in dependencies]
-    checksumbase = os.path.basename(checksumfile)
 
     # Create prerequisites
-    prereqs = [checksumfile.replace(projbase, d) for d in dependencies]
+    prereqs = [os.path.relpath(checksumfile.replace(projroot, d), logicdir)
+               for d in dependencies]
     libdirs = [os.path.dirname(p) for p in prereqs]
 
     # Create Makefile segment from template
     tpl = string.Template(MAKEFILE_TEMPLATE)
 
     # Perform template substitutions
-    segment = tpl.substitute(target = checksumfile,
+    segment = tpl.substitute(target = os.path.relpath(checksumfile, logicdir),
                              libpath = ':'.join(libdirs),
                              prerequisites = ' '.join(prereqs))
     return segment
