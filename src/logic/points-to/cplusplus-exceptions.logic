@@ -150,12 +150,48 @@ cxx:throw_instruction:no_dtor(ThrowInsn) <-
 // object triplets. Each triplet contains compatible elements.
 //-------------------------------------------------------------------------
 
+// Note that the typeinfo registered in the throw instruction may be
+// one of a non-existing LLVM type, that has been removed altogehter
+// due to some optimization. Hence, we can only rely on the type of
+// the destructor's receiver to obtain and verify the type of the
+// exception object being thrown. However, the original type of the
+// exception is recorded in the typeinfo argument, so that we may
+// match exceptions and catch clauses reliably, even if the original
+// exception type has been optimized away.
+
+_typeinfo_no_class(TypeInfo) <-
+   typeinfo(TypeInfo),
+   !class_type:typeinfo[_] = TypeInfo.
+
 cxx:throws(Dtor, TypeInfo, ExcObj, ThrowInsn)
  <-
    cxx:throw_instruction:exception(ExcObj, ThrowInsn),
    cxx:throw_instruction:typeinfo(TypeInfo, ThrowInsn),
    cxx:throw_instruction:destructor(Dtor, ThrowInsn),
-   ( class_type:typeinfo[Type] = TypeInfo
-   ; external_typeinfo(TypeInfo) ),
+   allocation:type[ExcObj] = Type,
+   class_type:typeinfo[Type] = TypeInfo,
+   class_type:destructor(Dtor, Type).
+
+cxx:throws(Dtor, TypeInfo, ExcObj, ThrowInsn)
+ <-
+   cxx:throw_instruction:exception(ExcObj, ThrowInsn),
+   cxx:throw_instruction:typeinfo(TypeInfo, ThrowInsn),
+   cxx:throw_instruction:destructor(Dtor, ThrowInsn),
+   _typeinfo_no_class(TypeInfo),
    allocation:type[ExcObj] = Type,
    class_type:destructor(Dtor, Type).
+
+cxx:throws_no_dtor(TypeInfo, ExcObj, ThrowInsn)
+ <-
+   cxx:throw_instruction:exception(ExcObj, ThrowInsn),
+   cxx:throw_instruction:typeinfo(TypeInfo, ThrowInsn),
+   cxx:throw_instruction:no_dtor(ThrowInsn),
+   _typeinfo_no_class(TypeInfo).
+
+cxx:throws_no_dtor(TypeInfo, ExcObj, ThrowInsn)
+ <-
+   cxx:throw_instruction:exception(ExcObj, ThrowInsn),
+   cxx:throw_instruction:typeinfo(TypeInfo, ThrowInsn),
+   cxx:throw_instruction:no_dtor(ThrowInsn),
+   allocation:type[ExcObj] = Type,
+   class_type:typeinfo[Type] = TypeInfo.
