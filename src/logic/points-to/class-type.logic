@@ -36,6 +36,10 @@ class_type:name[Type] = Name <-
 
 //------------------------------------------------------------------------------
 // Virtual Table - Type Info - Class Type Associations
+//
+// Note that we cannot associate typeinfo with a class type via its
+// v-table. Such an approach would not work for external typeinfo
+// symbols, since they lack any v-table.
 //------------------------------------------------------------------------------
 
 vtable:typeinfo[VT] = TypeInfo -> // defined in virtual-tables.logic
