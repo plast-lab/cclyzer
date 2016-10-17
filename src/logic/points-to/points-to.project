@@ -9,39 +9,32 @@ llvm:callgraph, library
 allocations-decl.logic, active
 points-to-decl.logic, active
 
+// User options
+points-to-options.logic, active
 
 // Core logic
-
 type-compatibility.logic, active
 allocations.logic, active
 allocations-sizes.logic, active
 core.logic, active
 interprocedural.logic, active
 
-
 // Field Sensitivity
-
 allocations-subobjects.logic, active
 allocations-subobjects-aliases.logic, active
 field-sensitivity.logic, active
 memcpy.logic, active
 constant-init.logic, active
 constant-exprs.logic, active
-
 type-back-propagation.logic, active
 
 // C++ extensions
-
 virtual-tables.logic, active
 class-type.logic, active
 cplusplus.logic, active
 cplusplus-exceptions.logic, active
 cplusplus-atexit.logic, active
 
-
 // Common queries
 points-to-statistics.logic, active
 points-to-queries.logic, inactive
-
-// User options
-points-to-options.logic, active

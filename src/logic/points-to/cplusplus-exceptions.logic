@@ -46,11 +46,27 @@ sized_alloc_instr[Insn] = Size <-
 
 // Infer its type
 allocation:type[ExcObj] = Type <-
+   !inlined_constructors(),
    instruction:function[AllocInsn] = InFunction,
    heap_allocation:by_alloc_exc[AllocInsn] = ExcObj,
    allocation:size[ExcObj] = Size,
    type:size[Type] = Size,
    init_by_ctor(Type, _, InFunction, ExcObj).
+
+// In the case of inlined constructors, we mark the exception object
+// as untyped and rely on the type back-propagation
+// technique. However, we can supply more type hints that specifically
+// target exception throwing (see below).
+
+untyped_allocation(Insn, ExcObj) <-
+   inlined_constructors(),
+   heap_allocation:by_alloc_exc[Insn] = ExcObj.
+
+exception_object(TypedExcObj)
+ <-
+   inlined_constructors(),
+   heap_allocation:by_alloc_exc[Insn] = _,
+   heap_allocation:by_type_instruction[_, Insn] = TypedExcObj.
 
 
 //-------------------------------------------------------------------------
@@ -149,6 +165,24 @@ cxx:throw_instruction:no_dtor(ThrowInsn) <-
 // each throw instruction multiple destructor - typeinfo - exception
 // object triplets. Each triplet contains compatible elements.
 //-------------------------------------------------------------------------
+
+// We can use the destructor and the typeinfo object supplied to a
+// throw instruction, as type indications for the exception object.
+
+type_indication(Type, ExcObj)
+ <-
+   untyped_allocation(_, ExcObj),
+   cxx:throw_instruction:exception(ExcObj, ThrowInsn),
+   cxx:throw_instruction:destructor(Dtor, ThrowInsn),
+   destructor:class_type[Dtor] = Type.
+
+type_indication(ClassType, ExcObj)
+ <-
+   untyped_allocation(_, ExcObj),
+   cxx:throw_instruction:exception(ExcObj, ThrowInsn),
+   cxx:throw_instruction:typeinfo(TypeInfo, ThrowInsn),
+   class_type:typeinfo[ClassType] = TypeInfo.
+
 
 // Note that the typeinfo registered in the throw instruction may be
 // one of a non-existing LLVM type, that has been removed altogehter
