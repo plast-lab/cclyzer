@@ -2,26 +2,6 @@
 // [Basic predicate declarations]
 //--------------------------------------------------------------------
 
-// Subset of reachable functions
-reachable_function(Func) -> function_decl(Func).
-lang:isEntity[`reachable_function] = false.
-
-// Subset of reachable instructions
-reachable_instruction(Insn) -> instruction(Insn).
-
-reachable_instruction(Insn) <-
-   reachable_function(Func),
-   function_contains(Insn, Func).
-
-lang:isEntity[`reachable_instruction] = false.
-// lang:derivationType[`reachable_instruction] = "Derived".
-
-
-// Entry points; functions reachable by definition (call-graph roots)
-entry_point(Func) -> function(Func).
-lang:isEntity[`entry_point] = false.
-
-
 // Call-graph edge from instruction to callee function
 
 callgraph:edge(Callee, CallerInsn) ->
@@ -39,30 +19,6 @@ callgraph:fn_edge(Callee, Caller) <-
    callgraph:edge(Callee, CallerInsn),
    instruction:function[CallerInsn] = Caller.
 
-
-//-------------------------------
-// [Entry Points]
-//-------------------------------
-
-// Base Case: The @main function is our entry point.
-
-entry_point(Main) <-
-   function:by_name["@main"] = Main,
-   function(Main).
-
-// C Runtime performs initializations before running main() by calling
-// functions (e.g., global constructors) insided special sections.
-
-entry_point(Func) <-
-   function:section[Func] = ".text.startup".
-
-
-// Entry points are reachable by definition
-
-reachable_function(Func) <-
-   entry_point(Func).
-
-
 //-------------------------------
 // [Reachability Constraints]
 //-------------------------------
@@ -73,28 +29,14 @@ callgraph:fn_edge(Callee, Caller) ->
 
 
 //--------------------------------------------------------------------
-// [Recursive logic, and other special cases]
+// Simple call-graph construction
 //--------------------------------------------------------------------
 
-// Recursive Case: if a call instruction is reachable, then the callee
-// function is also reachable. This accounts for the static part of
-// the call-graph.
+// If a call instruction is reachable, then the callee function is
+// also reachable. This accounts for the static part of the
+// call-graph.
 
 callgraph:edge(Callee, CallerInsn), reachable_function(Callee)
  <-
    reachable_instruction(CallerInsn),
    call_instruction:function[CallerInsn] = Callee.
-
-
-// Functions registered to @atexit are also reachable if the @atexit
-// call is reachable.
-
-reachable_function(Callback) <-
-   callgraph:edge(AtExit, Insn),
-   function:name[AtExit] = "@atexit",
-   call_instruction:arg[Insn, 0] = Operand,
-   // the following is a simplified version of logic that can only
-   // work with direct function calls
-   operand:as_constant[Operand] = Constant,
-   constant:value[Constant] = FuncName,
-   function:by_name[FuncName] = Callback.

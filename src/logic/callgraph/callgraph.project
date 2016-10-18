@@ -2,4 +2,7 @@ llvm:callgraph, projectname
 llvm:schema, library
 llvm:lookup, library
 
+reachability.logic, active
+entry-points.logic, active
 callgraph.logic, active
+at-exit.logic, active

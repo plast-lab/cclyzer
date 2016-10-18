@@ -1,0 +1,19 @@
+// Functions registered to @atexit are also reachable if the @atexit
+// call is reachable.
+
+called_at_exit(Func) -> function_decl(Func).
+lang:isEntity[`called_at_exit] = false.
+
+called_at_exit(Callback)
+ <-
+   callgraph:edge(AtExit, Insn),
+   function:name[AtExit] = "@atexit",
+   call_instruction:arg[Insn, 0] = Operand,
+   // the following is a simplified version of logic that can only
+   // work with direct function calls
+   operand:as_constant[Operand] = Constant,
+   constant:value[Constant] = FuncName,
+   function:by_name[FuncName] = Callback.
+
+reachable_function(Callback) <-
+   called_at_exit(Callback).

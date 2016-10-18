@@ -1,0 +1,13 @@
+// Subset of reachable functions
+reachable_function(Func) -> function_decl(Func).
+lang:isEntity[`reachable_function] = false.
+
+// Subset of reachable instructions
+reachable_instruction(Insn) -> instruction(Insn).
+
+reachable_instruction(Insn) <-
+   reachable_function(Func),
+   function_contains(Insn, Func).
+
+lang:isEntity[`reachable_instruction] = false.
+// lang:derivationType[`reachable_instruction] = "Derived".

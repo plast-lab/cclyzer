@@ -1,0 +1,34 @@
+// Entry points; functions reachable by definition (call-graph roots)
+entry_point(Func) -> function_decl(Func).
+lang:isEntity[`entry_point] = false.
+
+//-----------------------------------------------------------------------
+// Main function
+//-----------------------------------------------------------------------
+
+main_function[] = Main <-
+   function:by_name["@main"] = Main,
+   function(Main).
+
+//-----------------------------------------------------------------------
+// C Runtime performs initializations before running main() by calling
+// functions (e.g., global constructors) insided special sections.
+//-----------------------------------------------------------------------
+
+called_at_startup(Func) -> function_decl(Func).
+lang:isEntity[`called_at_startup] = false.
+
+called_at_startup(Func) <-
+   function:section[Func] = ".text.startup".
+
+
+// The main function and any other functions called automatically at
+// startup, are our program's entry points
+
+entry_point(Func) <-
+   main_function[] = Func
+ ; called_at_startup(Func).
+
+
+reachable_function(Func) <-
+   entry_point(Func).
