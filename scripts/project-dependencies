@@ -40,6 +40,27 @@ def collect_project_names(logicdir):
         projname = project_name(proj)
         yield (projname, projroot)
 
+def analyze_dependencies(projectfile, logicdir):
+    # Read dependencies of every project
+    alldeps = {}
+    for proj in collect_project_files(logicdir):
+        projname = project_name(proj)
+        deps = project_dependencies(proj)
+        alldeps[projname] = deps
+
+    # Compute transitive closure of dependencies
+    dependencies = set(alldeps[project_name(projectfile)])
+
+    while True:
+        new_deps = set(x for d in dependencies for x in alldeps[d])
+        deps_until_now = dependencies | new_deps
+
+        if deps_until_now == dependencies:
+            break
+
+        dependencies = deps_until_now
+    return list(dependencies)
+
 def create_mk_segment(logicdir, projectfile, checksumfile):
     # Collect project names recursively
     projmeta = dict(collect_project_names(logicdir))
@@ -47,15 +68,17 @@ def create_mk_segment(logicdir, projectfile, checksumfile):
     # Parse given project file
     projroot = project_root(projectfile, logicdir)
     projname = project_name(projectfile)
-    dependencies = project_dependencies(projectfile)
 
-    # Transform dependencies to refer to project base
-    dependencies = [projmeta[d] for d in dependencies]
+    # Read dependencies (both explicit and transitive)
+    deps = [projmeta[d] for d in project_dependencies(projectfile)]
+    alldeps = [projmeta[d] for d in analyze_dependencies(projectfile, logicdir)]
+
+    def relativize(dep):
+        return os.path.relpath(checksumfile.replace(projroot, dep), logicdir)
 
     # Create prerequisites
-    prereqs = [os.path.relpath(checksumfile.replace(projroot, d), logicdir)
-               for d in dependencies]
-    libdirs = [os.path.dirname(p) for p in prereqs]
+    prereqs = [relativize(dep) for dep in deps]
+    libdirs = [os.path.dirname(relativize(dep)) for dep in alldeps]
 
     # Create Makefile segment from template
     tpl = string.Template(MAKEFILE_TEMPLATE)
