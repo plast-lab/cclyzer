@@ -1,0 +1,18 @@
+//------------------------------------------------------------------------------
+// Context and allocation declarations and storage properties
+//------------------------------------------------------------------------------
+
+allocation(Alloc) -> .
+lang:physical:storageModel[`allocation] = "ScalableSparse".
+lang:physical:capacity[`allocation] = 16777216. // 2 ^ 24
+
+context(Ctx) -> .
+alloc_context(ACtx) -> .
+
+lang:entity(`context).
+lang:physical:storageModel[`context] = "ScalableSparse".
+lang:physical:capacity[`context] = 16777216. // 2 ^ 24
+
+lang:entity(`alloc_context).
+lang:physical:storageModel[`alloc_context] = "ScalableSparse".
+lang:physical:capacity[`alloc_context] = 16777216. // 2 ^ 24
