@@ -1,0 +1,36 @@
+//------------------------------------------------------------------------------
+// [1 Call-site Sensitive + Heap Analysis]
+//
+// In this analysis, context and alocation context is in both cases
+// the latest invocation instruction.
+//------------------------------------------------------------------------------
+
+context(Ctx) -> .
+alloc_context(ACtx) -> .
+
+// Constructors
+context:new[Invoc] = Ctx ->
+   instruction(Invoc), context(Ctx).
+
+alloc_context:new[Invoc] = ACtx ->
+   instruction(Invoc), alloc_context(ACtx).
+
+lang:constructor(`context:new).
+lang:constructor(`alloc_context:new).
+
+// // Macro-constructors
+// record[Ctx, Alloc] = ACtx ->
+//    context(Ctx), allocation(Alloc), alloc_context(ACtx).
+
+// merge[CallerCtx, Invoc, ACtx, Alloc] = CalleeCtx ->
+//    context(CallerCtx), context(CalleeCtx),
+//    instruction(Invoc), alloc_context(ACtx), allocation(Alloc).
+
+// // Macro-definitions
+// alloc_context:new[Invoc] = ACtx <-
+//    record[Ctx, _] = ACtx,
+//    context:new[Invoc] = Ctx.
+
+// context:new[Invoc] = CalleeCtx <-
+//    merge[CallerCtx, Invoc, _, _] = CalleeCtx,
+//    context:new[_] = CallerCtx.
