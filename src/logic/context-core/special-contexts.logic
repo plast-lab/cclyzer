@@ -10,11 +10,12 @@ main_context[] = Ctx -> context(Ctx).
 //------------------------------------------------------------------------------
 // [Empty Context]
 //
-// This is an empty context that is useful for entities that would not
-// benefit from keeping any context.
+// These are empty contexts that are useful for entities that would
+// not benefit from keeping any context in the first place.
 //------------------------------------------------------------------------------
 
 empty_context[] = Ctx -> context(Ctx).
+empty_alloc_context[] = Ctx -> alloc_context(Ctx).
 
 //------------------------------------------------------------------------------
 // [Startup Context]
