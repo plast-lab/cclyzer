@@ -8,17 +8,47 @@
 context(Ctx) -> .
 alloc_context(ACtx) -> .
 
-// Constructors
-context:new[Invoc] = Ctx ->
-   instruction(Invoc), context(Ctx).
+//-----------------------------------------------------
+// Context Constructors
+//-----------------------------------------------------
 
-alloc_context:new[Invoc] = ACtx ->
-   instruction(Invoc), alloc_context(ACtx).
+context:new[Item] = Ctx ->
+   context_item(Item), context(Ctx).
+
+alloc_context:new[Item] = ACtx ->
+   context_item(Item), alloc_context(ACtx).
 
 lang:constructor(`context:new).
 lang:constructor(`alloc_context:new).
 
-// // Macro-constructors
+//-----------------------------------------------------
+// Context Item Constructors
+//-----------------------------------------------------
+
+context_item:by_invoc[Invoc] = CtxItem ->
+   instruction(Invoc), context_item(CtxItem).
+
+lang:constructor(`context_item:by_invoc).
+
+context_item:invoc[CtxItem] = Invoc <-
+   context_item:by_invoc[Invoc] = CtxItem.
+
+context_item(CtxItem)
+ , context_item:by_invoc[Instr] = CtxItem
+ <-
+   call_instruction(Instr) ; invoke_instruction(Instr).
+
+
+// Dummy context items (needed for empty contexts)
+dummy_context_item:by_str[Str] = CtxItem ->
+   string(Str), context_item(CtxItem).
+
+lang:constructor(`dummy_context_item:by_str).
+
+//-----------------------------------------------------
+// Macro-constructors
+//-----------------------------------------------------
+
 // record[Ctx, Alloc] = ACtx ->
 //    context(Ctx), allocation(Alloc), alloc_context(ACtx).
 
@@ -27,10 +57,29 @@ lang:constructor(`alloc_context:new).
 //    instruction(Invoc), alloc_context(ACtx), allocation(Alloc).
 
 // // Macro-definitions
-// alloc_context:new[Invoc] = ACtx <-
+// alloc_context:new[Item] = ACtx <-
 //    record[Ctx, _] = ACtx,
-//    context:new[Invoc] = Ctx.
+//    context:new[Item] = Ctx.
 
-// context:new[Invoc] = CalleeCtx <-
+// context:new[NewItem] = CalleeCtx <-
 //    merge[CallerCtx, Invoc, _, _] = CalleeCtx,
-//    context:new[_] = CallerCtx.
+//    context:new[_] = CallerCtx,
+//    context_item:by_invoc[Invoc] = NewItem.
+
+//-----------------------------------------------------
+// Unpacking context items
+//-----------------------------------------------------
+
+context:__getitem__[Ctx] = Item <-
+   context:new[Item] = Ctx.
+
+context:__getinvoc__[Ctx] = Invoc <-
+   context:__getitem__[Ctx] = Item,
+   context_item:invoc[Item] = Invoc.
+
+alloc_context:__getitem__[Ctx] = Item <-
+   alloc_context:new[Item] = Ctx.
+
+alloc_context:__getinvoc__[Ctx] = Invoc <-
+   alloc_context:__getitem__[Ctx] = Item,
+   context_item:invoc[Item] = Invoc.

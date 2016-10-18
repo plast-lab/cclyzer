@@ -27,6 +27,21 @@ lang:physical:capacity[`alloc_context] = 16777216. // 2 ^ 24
 
 
 //------------------------------------------------------------------------------
+// [Context Item]
+//
+// A context consists of a number of context items. The exact number
+// of items per context, and the nature of the context items itself
+// depends on the flavor of context sensitivity chosen.
+//------------------------------------------------------------------------------
+
+context_item(CtxItem) -> .
+
+lang:entity(`context_item).
+lang:physical:storageModel[`context_item] = "ScalableSparse".
+lang:physical:capacity[`context_item] = 16777216. // 2 ^ 24
+
+
+//------------------------------------------------------------------------------
 // [Context Reachability]
 //
 // A function is reachable at a given context.

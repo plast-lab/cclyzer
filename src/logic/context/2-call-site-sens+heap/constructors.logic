@@ -9,17 +9,47 @@
 context(Ctx) -> .
 alloc_context(ACtx) -> .
 
-// Constructors
-context:new[Invoc1, Invoc2] = Ctx ->
-   instruction(Invoc1), instruction(Invoc2), context(Ctx).
+//-----------------------------------------------------
+// Context Constructors
+//-----------------------------------------------------
 
-alloc_context:new[Invoc] = ACtx ->
-   instruction(Invoc), alloc_context(ACtx).
+context:new[Item1, Item2] = Ctx ->
+   context_item(Item1), context_item(Item2), context(Ctx).
+
+alloc_context:new[Item] = ACtx ->
+   context_item(Item), alloc_context(ACtx).
 
 lang:constructor(`context:new).
 lang:constructor(`alloc_context:new).
 
-// // Macro-constructors
+//-----------------------------------------------------
+// Context Item Constructors
+//-----------------------------------------------------
+
+context_item:by_invoc[Invoc] = CtxItem ->
+   instruction(Invoc), context_item(CtxItem).
+
+lang:constructor(`context_item:by_invoc).
+
+context_item:invoc[CtxItem] = Invoc <-
+   context_item:by_invoc[Invoc] = CtxItem.
+
+context_item(CtxItem)
+ , context_item:by_invoc[Instr] = CtxItem
+ <-
+   call_instruction(Instr) ; invoke_instruction(Instr).
+
+
+// Dummy context items (needed for empty contexts)
+dummy_context_item:by_str[Str] = CtxItem ->
+   string(Str), context_item(CtxItem).
+
+lang:constructor(`dummy_context_item:by_str).
+
+//-----------------------------------------------------
+// Macro-constructors
+//-----------------------------------------------------
+
 // record[Ctx, Alloc] = ACtx ->
 //    context(Ctx), allocation(Alloc), alloc_context(ACtx).
 
@@ -28,10 +58,36 @@ lang:constructor(`alloc_context:new).
 //    instruction(Invoc), alloc_context(ACtx), allocation(Alloc).
 
 // // Macro-definitions
-// alloc_context:new[Invoc] = ACtx <-
+// alloc_context:new[Item] = ACtx <-
 //    record[Ctx, _] = ACtx,
-//    context:new[_, Invoc] = Ctx.
+//    context:new[_, Item] = Ctx.
 
-// context:new[LastInvoc, Invoc] = CalleeCtx <-
+// context:new[LastItem, NewItem] = CalleeCtx <-
 //    merge[CallerCtx, Invoc, _, _] = CalleeCtx,
-//    context:new[_, LastInvoc] = CallerCtx.
+//    context:new[_, LastItem] = CallerCtx,
+//    context_item:by_invoc[Invoc] = NewItem.
+
+//-----------------------------------------------------
+// Unpacking context items
+//-----------------------------------------------------
+
+context:__getitem0__[Ctx] = Item <-
+   context:new[_, Item] = Ctx.
+
+context:__getitem1__[Ctx] = Item <-
+   context:new[Item, _] = Ctx.
+
+context:__getinvoc0__[Ctx] = Invoc <-
+   context:__getitem0__[Ctx] = Item,
+   context_item:invoc[Item] = Invoc.
+
+context:__getinvoc1__[Ctx] = Invoc <-
+   context:__getitem1__[Ctx] = Item,
+   context_item:invoc[Item] = Invoc.
+
+alloc_context:__getitem__[Ctx] = Item <-
+   alloc_context:new[Item] = Ctx.
+
+alloc_context:__getinvoc__[Ctx] = Invoc <-
+   alloc_context:__getitem__[Ctx] = Item,
+   context_item:invoc[Item] = Invoc.
