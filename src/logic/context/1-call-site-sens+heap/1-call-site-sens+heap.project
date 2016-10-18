@@ -2,5 +2,7 @@ ctx:1_callsite_plus_1_heap, projectname
 
 llvm:schema, library
 ctx:core, library
+llvm:callgraph, library
 
 constructors.logic, active
+bootstrap.logic, active

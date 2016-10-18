@@ -1,0 +1,60 @@
+//---------------------------------------------------------
+// Empty Contexts
+//---------------------------------------------------------
+
+// Generic empty context
+context_item(CtxItem)
+ , dummy_context_item:by_str["<<empty-context>>"] = CtxItem <- .
+
+empty_context[] = Ctx
+ , context(Ctx)
+ , context:new[CtxItem, CtxItem] = Ctx
+ <-
+   dummy_context_item:by_str["<<empty-context>>"] = CtxItem.
+
+// Special context for when called from main
+context_item(CtxItem)
+ , dummy_context_item:by_str["<<main-context>>"] = CtxItem <- .
+
+main_context[] = Ctx
+ , context(Ctx)
+ , context:new[CtxItem, CtxItem] = Ctx
+ <-
+   dummy_context_item:by_str["<<main-context>>"] = CtxItem.
+
+// Special context for when called at startup
+context_item(CtxItem)
+ , dummy_context_item:by_str["<<startup-context>>"] = CtxItem <- .
+
+startup_context[] = Ctx
+ , context(Ctx)
+ , context:new[CtxItem, CtxItem] = Ctx
+ <-
+   dummy_context_item:by_str["<<startup-context>>"] = CtxItem.
+
+// Special context for when called at exit
+context_item(CtxItem)
+ , dummy_context_item:by_str["<<exit-context>>"] = CtxItem <- .
+
+exit_context[] = Ctx
+ , context(Ctx)
+ , context:new[CtxItem, CtxItem] = Ctx
+ <-
+   dummy_context_item:by_str["<<exit-context>>"] = CtxItem.
+
+
+//---------------------------------------------------------
+// Bootstrap the analysis
+//---------------------------------------------------------
+
+reachable_context(Ctx, Main) <-
+   main_function[] = Main,
+   main_context[] = Ctx.
+
+reachable_context(Ctx, StartupFunc) <-
+   called_at_startup(StartupFunc),
+   startup_context[] = Ctx.
+
+reachable_context(Ctx, ExitFunc) <-
+   called_at_exit(ExitFunc),
+   exit_context[] = Ctx.
