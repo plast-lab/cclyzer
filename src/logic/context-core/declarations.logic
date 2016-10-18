@@ -6,6 +6,14 @@ allocation(Alloc) -> .
 lang:physical:storageModel[`allocation] = "ScalableSparse".
 lang:physical:capacity[`allocation] = 16777216. // 2 ^ 24
 
+
+//------------------------------------------------------------------------------
+// [Context]
+//
+// We have 2 types of context, (i) one for instructions, and (ii) one
+// for allocations.
+//------------------------------------------------------------------------------
+
 context(Ctx) -> .
 alloc_context(ACtx) -> .
 
@@ -16,3 +24,12 @@ lang:physical:capacity[`context] = 16777216. // 2 ^ 24
 lang:entity(`alloc_context).
 lang:physical:storageModel[`alloc_context] = "ScalableSparse".
 lang:physical:capacity[`alloc_context] = 16777216. // 2 ^ 24
+
+
+//------------------------------------------------------------------------------
+// [Context Reachability]
+//
+// A function is reachable at a given context.
+//------------------------------------------------------------------------------
+
+reachable_context(Ctx, Func) -> context(Ctx), function_decl(Func).
