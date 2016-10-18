@@ -1,0 +1,37 @@
+//------------------------------------------------------------------------------
+// [2 Call-site Sensitive + Heap Analysis]
+//
+// In this analysis, context is the cons of the latest 2 invocation
+// instructions, whereas the allocation context consists of just the
+// latest invocation instruction.
+//------------------------------------------------------------------------------
+
+context(Ctx) -> .
+alloc_context(ACtx) -> .
+
+// Constructors
+context:new[Invoc1, Invoc2] = Ctx ->
+   instruction(Invoc1), instruction(Invoc2), context(Ctx).
+
+alloc_context:new[Invoc] = ACtx ->
+   instruction(Invoc), alloc_context(ACtx).
+
+lang:constructor(`context:new).
+lang:constructor(`alloc_context:new).
+
+// // Macro-constructors
+// record[Ctx, Alloc] = ACtx ->
+//    context(Ctx), allocation(Alloc), alloc_context(ACtx).
+
+// merge[CallerCtx, Invoc, ACtx, Alloc] = CalleeCtx ->
+//    context(CallerCtx), context(CalleeCtx),
+//    instruction(Invoc), alloc_context(ACtx), allocation(Alloc).
+
+// // Macro-definitions
+// alloc_context:new[Invoc] = ACtx <-
+//    record[Ctx, _] = ACtx,
+//    context:new[_, Invoc] = Ctx.
+
+// context:new[LastInvoc, Invoc] = CalleeCtx <-
+//    merge[CallerCtx, Invoc, _, _] = CalleeCtx,
+//    context:new[_, LastInvoc] = CallerCtx.
