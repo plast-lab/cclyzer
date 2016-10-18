@@ -2,3 +2,4 @@ ctx:core, projectname
 llvm:schema, library
 
 declarations.logic, active
+special-contexts.logic, active
