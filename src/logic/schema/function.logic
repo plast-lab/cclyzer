@@ -63,10 +63,21 @@ operand:in_function[Operand] = Function <-
    constant:in_function[Constant] = Function.
 
 // Mandatory property (variable only, since constants may be global)
-
-variable(Var)
+schema:sanity()
+ , variable(Var)
  ->
    variable:in_function[Var] = _.
+
+// Operands are created lazily by the fact-generator, whenever it
+// records an instruction. Hence, operands can only be encountered
+// inside functions and, thus, their enclosing functions should always
+// be recorded.
+
+schema:sanity()
+ , operand(Operand)
+ ->
+   operand:in_function[Operand] = _.
+
 
 
 //-----------------------------------------------------------------

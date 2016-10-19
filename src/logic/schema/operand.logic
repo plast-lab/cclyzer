@@ -126,7 +126,6 @@ operand:type[Operand] = Type <-
    operand:by_constant[C] = Operand,
    constant:type[C] = Type.
 
-
 // View predicates
 operand:as_variable[Operand] = Var <-
    operand:by_variable[Var] = Operand.
