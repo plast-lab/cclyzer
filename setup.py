@@ -47,9 +47,15 @@ setup(
         'resources.logic' : [
             '*/*.lbb',
             '*/*/*.lbb',
+            '*/*/*/*.lbb',
+            '*/*/*/*/*.lbb',
+            '*/*/*/*/*/*.lbb',
             '*/*.lbp',
+            '*/*/*.lbp',
             '*/*.project',
+            '*/*/*.project',
             '*/checksum',
+            '*/*/checksum',
         ],
         'resources' : [
             '*.yaml',

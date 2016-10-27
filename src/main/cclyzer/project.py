@@ -99,37 +99,51 @@ class ProjectManager(object):
         metadata = {}           # a dict from internal names to project name, dependencies
         logic_resource_pkg = settings.LOGIC_RESOURCE_PKG
 
-        # Iterate over all project files
-        for project in resource_listdir(logic_resource_pkg, '.'):
-            # Skip empty resource paths (apparently, that can happen!!)
-            if not project:
-                continue
+        # Queue of directories that may contain logic projects
+        dirqueue = ['.']
 
-            # Skip ordinary files
-            if not resource_isdir(logic_resource_pkg, project):
-                continue
+        # Repeat while there are directories to examine
+        while dirqueue:
+            nextdir = dirqueue.pop()
 
-            # Construct project path
-            project_dir = project
+            # Iterate over all project files in directory
+            for diritem in resource_listdir(logic_resource_pkg, nextdir):
+                # Skip empty resource paths (apparently, that can happen!!)
+                if not diritem:
+                    continue
 
-            # Find project file
-            for resource in resource_listdir(logic_resource_pkg, project_dir):
-                if resource.endswith(".project"):
-                    # Compute path to resource
-                    path_to_resource = path.join(project_dir, resource)
-                    path_to_file = FileManager().mktemp()
+                # Construct project path
+                project_dir = path.join(nextdir, diritem)
 
-                    # Read contents of project file
-                    with open(path_to_file, 'w') as f:
-                        # Copy contents from resource stream
-                        for byte in resource_stream(logic_resource_pkg, path_to_resource):
-                            f.write(byte)
+                # Skip ordinary files
+                if not resource_isdir(logic_resource_pkg, project_dir):
+                    continue
 
-                    # Extract metadata from project file
-                    internal_name, deps = self.__extract_metadata(path_to_file)
-                    metadata[internal_name] = Metadata(project, deps)
+                # Find project file
+                for resource in resource_listdir(logic_resource_pkg, project_dir):
+                    if resource.endswith(".project"):
+                        _logger.info("Found project: %s", project_dir)
 
-                    break
+                        # Compute path to resource
+                        path_to_resource = path.join(project_dir, resource)
+                        path_to_file = FileManager().mktemp()
+
+                        # Read contents of project file
+                        with open(path_to_file, 'w') as f:
+                            # Copy contents from resource stream
+                            for byte in resource_stream(logic_resource_pkg, path_to_resource):
+                                f.write(byte)
+
+                        # Extract metadata from project file
+                        internal_name, deps = self.__extract_metadata(path_to_file)
+                        project_name = path.normpath(project_dir)
+
+                        # Store project metadata
+                        metadata[internal_name] = Metadata(project_name, deps)
+                        break
+                else:
+                    # not a project directory after all
+                    dirqueue.insert(0, project_dir)
 
         # 2nd pass to create and store projects. This way the internal
         # names are entirely hidden from the user.
@@ -137,8 +151,12 @@ class ProjectManager(object):
             p = Project(project, *[metadata[d].project for d in deps])
             p.internal_name = i
             self._projects[project] = p
-            setattr(self, project.replace('-', '_'), p)
+
             _logger.info("Found project %s that depends on: %s", project, p.dependencies)
+
+            # Store as attribute
+            attrname = project.replace('-', '_').replace(path.sep, '_D_')
+            setattr(self, attrname, p)
 
     def __extract_metadata(self, filename):
         # The fields to be searched
