@@ -12,6 +12,12 @@ empty_context[] = Ctx
  <-
    dummy_context_item:by_str["<<empty-context>>"] = CtxItem.
 
+empty_alloc_context[] = ACtx
+ , alloc_context(ACtx)
+ , alloc_context:new[CtxItem] = ACtx
+ <-
+   dummy_context_item:by_str["<<empty-context>>"] = CtxItem.
+
 // Special context for when called from main
 context_item(CtxItem)
  , dummy_context_item:by_str["<<main-context>>"] = CtxItem <- .
