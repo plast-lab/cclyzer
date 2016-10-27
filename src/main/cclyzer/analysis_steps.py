@@ -147,15 +147,24 @@ class _LoadProjectStep(AnalysisStep):
                 # Log project installation event
                 _logger.info("Installing project %s ...", project.name)
 
+                script = files.mktemp(suffix='.lb')
+
                 # Execute script while ignoring output
-                return (
-                    blox.LoadProjectScript(
-                        workspace=analysis.database_directory,
-                        script_path=files.mktemp(suffix='.lb'),
-                        project_path=project.path,
-                        library_path=libpath
-                    ).run()
-                )
+                try:
+                    return (
+                        blox.LoadProjectScript(
+                            workspace=analysis.database_directory,
+                            script_path=script,
+                            project_path=project.path,
+                            library_path=libpath
+                        ).run()
+                    )
+                except subprocess.CalledProcessError as err:
+                    shutil.copy(script, 'failing.script')
+                    _logger.error('Script failed to install project %s', project.name)
+                    _logger.error('Try running "%s" to reproduce error.',
+                                  'bloxbatch -script failing.script')
+                    raise err
         else:                   # We have remaining dependencies
             with unpacked_project(unpacked_deps.pop()) as dep_path:
                 # Add unpacked project to library path
