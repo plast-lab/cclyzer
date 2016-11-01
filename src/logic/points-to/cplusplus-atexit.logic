@@ -29,22 +29,21 @@ cxx:atexit_function[] = Func <-
    pointer_type:integer(Type3),
    function_type:nparams[FType] = 3.
 
-registers_dtor_atexit(DtorOperand, RecvOperand) <-
+registers_dtor_atexit(CallCtx, DtorOperand, RecvOperand) <-
    cxx:atexit_function[] = AtExit,
-   callgraph:edge(AtExit, Insn),
-   callgraph:inv_edge(Insn, AtExit), // redundant OPT clause
-   call_instruction:arg[Insn, 0] = DtorOperand,
-   call_instruction:arg[Insn, 1] = RecvOperand.
+   callgraph:inv_edge(CallCtx, CallInstr, _, AtExit),
+   call_instruction:arg[CallInstr, 0] = DtorOperand,
+   call_instruction:arg[CallInstr, 1] = RecvOperand.
 
 
 // Model effects of `__cxa_atexit`
 
-reachable_function(Dtor)
- , __dtor_accepts_recv(RecvObj, Dtor)
+called_at_exit(Dtor)
+ , __dtor_accepts_recv(ACtx, RecvObj, Dtor)
  <-
-   registers_dtor_atexit(DtorOperand, RecvOperand),
-   operand_points_to(DtorObj, DtorOperand),
-   operand_points_to(SomeObj, RecvOperand),
+   registers_dtor_atexit(Ctx, DtorOperand, RecvOperand),
+   operand_points_to(_, DtorObj, Ctx, DtorOperand),
+   operand_points_to(ACtx, SomeObj, Ctx, RecvOperand),
    alloc_aliases(RecvObj, SomeObj),
    allocation:type[RecvObj] = RecvType,
    function:by_location[DtorObj] = Dtor,
@@ -52,6 +51,8 @@ reachable_function(Dtor)
    function_type:param[DtorType, 0] = PtrType,
    pointer_type:component[PtrType] = RecvType.
 
-var_points_to(RecvObj, This) <-
-   __dtor_accepts_recv(RecvObj, Dtor),
+var_points_to(ACtx, RecvObj, ExitCtx, This) <-
+   exit_context[] = ExitCtx,
+   __dtor_accepts_recv(ACtx, RecvObj, Dtor),
+   reachable_context(ExitCtx, Dtor),
    function:param[Dtor, 0] = This.

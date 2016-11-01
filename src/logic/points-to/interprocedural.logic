@@ -1,117 +1,183 @@
-//---------------------------------------
+//------------------------------------------------------------------------------
 //  [Interprocedural Logic]
-//---------------------------------------
+//------------------------------------------------------------------------------
 
-// Flow of actual arguments regardless of instruction type
-function:actual_arg(Callee, Index, Argument) ->
-   function_decl(Callee), int[64](Index), operand(Argument).
+callgraph:edge(CalleeCtx, Callee, CallerCtx, CallerInstr) ->
+   context(CallerCtx), instruction(CallerInstr),
+   context(CalleeCtx), function_decl(Callee).
 
-function:actual_arg(Callee, Index, Argument) <-
-   call_instruction:arg[CallInsn, Index] = Argument,
-   callgraph:edge(Callee, CallInsn).
+callgraph:inv_edge(CallerCtx, CallerInstr, CalleeCtx, Callee) <-
+   callgraph:edge(CalleeCtx, Callee, CallerCtx, CallerInstr).
 
-function:actual_arg(Callee, Index, Argument) <-
-   invoke_instruction:arg[InvokeInsn, Index] = Argument,
-   callgraph:edge(Callee, InvokeInsn).
+reachable_context(CalleeCtx, Callee) <-
+   callgraph:inv_edge(_, _, CalleeCtx, Callee).
 
-// Identify variable arguments for variadic functions
-function:va_actual_arg(Callee, Index, Argument) <-
-   function:actual_arg(Callee, Index, Argument),
-   function:type[Callee] = Type,
-   function_type:varargs(Type),
-   function_type:nparams[Type] = N,
-   Index >= N.
+function:by_location[Alloc] = Callee <-
+   global_allocation:by_function[Callee] = Alloc.
 
-// Forward reference
-memcpy:to_var(Insn, To, From) ->
-   instruction(Insn), variable(To), operand(From).
+// Direct function calls
+context(CalleeCtx)
+ , context:new[NewItem] = CalleeCtx
+ , callgraph:edge(CalleeCtx, Callee, CallerCtx, CallerInstr)
+ <-
+   direct_call_instruction(CallerInstr),
+   call_instruction:function[CallerInstr] = Callee,
+   instruction:function[CallerInstr] = InstrFunc,
+   reachable_context(CallerCtx, InstrFunc),
+   // Extra
+   context:new[_] = CallerCtx,
+   context_item:by_invoc[CallerInstr] = NewItem.
 
-// actual arg to formal parameter
-assign_instruction(Param, Argument) <-
-   function:actual_arg(Callee, Index, Argument),
+context(CalleeCtx)
+ , context:new[NewItem] = CalleeCtx
+ , callgraph:edge(CalleeCtx, Callee, CallerCtx, CallerInstr)
+ <-
+   direct_invoke_instruction(CallerInstr),
+   invoke_instruction:function[CallerInstr] = Callee,
+   instruction:function[CallerInstr] = InstrFunc,
+   reachable_context(CallerCtx, InstrFunc),
+   // Extra
+   context:new[_] = CallerCtx,
+   context_item:by_invoc[CallerInstr] = NewItem.
+
+// Indirect function calls (via function pointers)
+context(CalleeCtx)
+ , context:new[NewItem] = CalleeCtx
+ , callgraph:edge(CalleeCtx, Callee, CallerCtx, CallerInstr)
+ <-
+   indirect_call_instruction(CallerInstr),
+   call_instruction:__function[CallerInstr] = FuncOp,
+   instruction:function[CallerInstr] = InstrFunc,
+   reachable_context(CallerCtx, InstrFunc),
+   operand_points_to(_, FuncLoc, CallerCtx, FuncOp),
+   function:by_location[FuncLoc] = Callee,
+   function:type[Callee] = ActualType,
+   operand:type[FuncOp] = FuncOpType,
+   pointer_type:component[FuncOpType] = DeclaredType,
+   type_compatible(ActualType, DeclaredType),
+   // Extra
+   context:new[_] = CallerCtx,
+   context_item:by_invoc[CallerInstr] = NewItem.
+
+context(CalleeCtx)
+ , context:new[NewItem] = CalleeCtx
+ , callgraph:edge(CalleeCtx, Callee, CallerCtx, CallerInstr)
+ <-
+   invoke_instruction(CallerInstr),
+   invoke_instruction:__function[CallerInstr] = FuncOp,
+   instruction:function[CallerInstr] = InstrFunc,
+   reachable_context(CallerCtx, InstrFunc),
+   operand_points_to(_, FuncLoc, CallerCtx, FuncOp),
+   function:by_location[FuncLoc] = Callee,
+   function:type[Callee] = ActualType,
+   operand:type[FuncOp] = FuncOpType,
+   pointer_type:component[FuncOpType] = DeclaredType,
+   type_compatible(ActualType, DeclaredType),
+   // Extra
+   context:new[_] = CallerCtx,
+   context_item:by_invoc[CallerInstr] = NewItem.
+
+
+//------------------------------------------------------------------------------
+//  Interprocedural Assignments
+//------------------------------------------------------------------------------
+
+// Interprocedural assignment due to function call
+interp_assignment(ToCtx, ToVar, FromCtx, FromValue) ->
+   context(ToCtx), variable(ToVar), context(FromCtx), operand(FromValue).
+
+var_points_to(ACtx, Alloc, ToCtx, ToVar) <-
+   interp_assignment(ToCtx, ToVar, FromCtx, FromValue),
+   operand_points_to(ACtx, Alloc, FromCtx, FromValue).
+
+// Actual argument of function call
+actual_arg[Instr, Index] = Argument ->
+   instruction(Instr), int[64](Index), operand(Argument).
+
+actual_arg[InvokeInstr, Index] = Argument <-
+   invoke_instruction:arg[InvokeInstr, Index] = Argument.
+
+actual_arg[CallInstr, Index] = Argument <-
+   call_instruction:arg[CallInstr, Index] = Argument.
+
+// Actual argument to formal parameter `assignment`
+interp_assignment(CalleeCtx, Param, CallerCtx, Argument) <-
+   callgraph:edge(CalleeCtx, Callee, CallerCtx, CallerInstr),
+   callgraph:inv_edge(CallerCtx, CallerInstr, CalleeCtx, Callee),
+   actual_arg[CallerInstr, Index] = Argument,
    function:param[Callee, Index] = Param,
    // Attribute is not passed by value
    !function:param_by_value(Callee, Index).
 
-// same with pass-by-value semantics: model it as a memcpy instruction
-memcpy:to_var(Insn, Param, Argument) <-
-   ( call_instruction:arg[Insn, Index] = Argument
-   ; invoke_instruction:arg[Insn, Index] = Argument ),
-   callgraph:edge(Callee, Insn),
-   function:param[Callee, Index] = Param,
-   // Attribute is passed by value
-   function:param_by_value(Callee, Index).
-
-// `return` instruction to `call` instruction target
-assign_instruction(ToVar, RetValue) <-
-   call_instruction(CallInsn),  // do not model `invoke` instructions yet
-   callgraph:edge(Callee, CallInsn),
+// Returned value to target variable `assignment`
+interp_assignment(CallerCtx, ToVar, CalleeCtx, RetValue) <-
+   call_instruction(CallerInstr),  // do not model `invoke` instructions yet
+   callgraph:edge(CalleeCtx, Callee, CallerCtx, CallerInstr),
+   callgraph:inv_edge(CallerCtx, CallerInstr, CalleeCtx, Callee),
    function_returns_value(RetValue, Callee),
-   instruction:to[CallInsn] = ToVar.
+   instruction:to[CallerInstr] = ToVar.
 
 function_returns_value(RetValue, InFunction) <-
    ret_instruction:value[RetInsn] = RetValue,
    instruction:function[RetInsn] = InFunction.
+
+//------------------------------------------------------------------------------
+//  Variadic Functions
+//------------------------------------------------------------------------------
 
 // `va_arg` instruction
 //
 // TODO: model target-specific value `va_list` and calls to related
 // LLVM intrinsic functions. Right now this may produce nothing
 
-assign_instruction(ToVar, Argument) <-
-   va_arg_instruction:type[VArgInsn] = ArgType,
-   instruction:to[VArgInsn] = ToVar,
-   instruction:function[VArgInsn] = Callee,
-   function:va_actual_arg(Callee, _, Argument),
+va_arg_target(ToVar, ArgType, Callee) <-
+   va_arg_instruction(VAArgInstr),
+   va_arg_instruction:type[VAArgInstr] = ArgType,
+   instruction:to[VAArgInstr] = ToVar,
+   instruction:function[VAArgInstr] = Callee.
+
+interp_assignment(CalleeCtx, ToVar, CallerCtx, Argument) <-
+   va_arg_target(ToVar, ArgType, Callee),
+   function:type[Callee] = Type,
+   function_type:varargs(Type),
+   function_type:nparams[Type] = N,
+   callgraph:inv_edge(CallerCtx, CallerInstr, CalleeCtx, Callee),
+   actual_arg[CallerInstr, Index] = Argument, Index >= N,
    operand:type[Argument] = ArgType.
 
+//------------------------------------------------------------------------------
+//  Pass-by-value Semantics
+//------------------------------------------------------------------------------
 
-// Augment call-graph by adding edges for function pointers
+// Interprocedural memcpy due to function call
+memcpy_pass_by_value(Instr, ToCtx, ToVar, FromCtx, FromValue) ->
+   instruction(Instr), context(ToCtx), variable(ToVar),
+   context(FromCtx), operand(FromValue).
 
-function:by_location[Alloc] = Callee <-
-   global_allocation:by_function[Callee] = Alloc.
-
-callgraph:edge(Callee, CallerInsn), reachable_function(Callee)
+// Model as memcpy instruction
+memcpy_pass_by_value(CallerInstr, CalleeCtx, Param, CallerCtx, Argument)
  <-
-   reachable_instruction(CallerInsn),
-   indirect_call_instruction(CallerInsn),
-   call_instruction:__function[CallerInsn] = Op,
-   operand_points_to(Alloc, Op),
-   function:by_location[Alloc] = Callee,
-   function:type[Callee] = ActualType,
-   operand:type[Op] = OpType,
-   pointer_type:component[OpType] = DeclaredType,
-   type_compatible(ActualType, DeclaredType).
+   callgraph:edge(CalleeCtx, Callee, CallerCtx, CallerInstr),
+   callgraph:inv_edge(CallerCtx, CallerInstr, CalleeCtx, Callee),
+   actual_arg[CallerInstr, Index] = Argument,
+   function:param[Callee, Index] = Param,
+   // Attribute is passed by value
+   function:param_by_value(Callee, Index).
 
-// Augment call-graph by adding edges for `invoke` instructions
-
-callgraph:edge(Callee, CallerInsn), reachable_function(Callee)
- <-
-   reachable_instruction(CallerInsn),
-   invoke_instruction(CallerInsn),
-   invoke_instruction:__function[CallerInsn] = Op,
-   operand_points_to(Alloc, Op),
-   function:by_location[Alloc] = Callee,
-   function:type[Callee] = ActualType,
-   operand:type[Op] = OpType,
-   pointer_type:component[OpType] = DeclaredType,
-   type_compatible(ActualType, DeclaredType).
-
+//------------------------------------------------------------------------------
+//  Functions called at exit
+//------------------------------------------------------------------------------
 
 // The following rule augments the logic about identifying functions
 // registered to run at program exit, so that it also works with
 // function pointers.
 
-callgraph:inv_edge(Insn, Func) <-
-   callgraph:edge(Func, Insn).
-
-registers_atexit(Operand) <-
+registers_atexit(CallerCtx, FuncOp) <-
    function:by_name["@atexit"] = AtExit,
-   callgraph:edge(AtExit, Insn),
-   callgraph:inv_edge(Insn, AtExit), // redundant OPT clause
-   call_instruction:arg[Insn, 0] = Operand.
+   callgraph:inv_edge(CallerCtx, CallerInstr, _, AtExit),
+   actual_arg[CallerInstr, 0] = FuncOp.
 
-reachable_function(Callback) <-
-   registers_atexit(Operand),
-   operand_points_to(Alloc, Operand),
+called_at_exit(Callback) <-
+   registers_atexit(Ctx, FuncOp),
+   operand_points_to(_, Alloc, Ctx, FuncOp),
    function:by_location[Alloc] = Callback.

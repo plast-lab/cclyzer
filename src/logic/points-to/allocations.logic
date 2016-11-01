@@ -25,13 +25,18 @@ stack_allocation(Alloc) -> allocation:type[Alloc] = _.
 
 /// 1. Alloca Instructions
 
-stack_allocation(StackAlloc),
-stack_allocation:by_instruction[Insn] = StackAlloc,
-var_points_to(StackAlloc, Var)
+alloc_context(ACtx)
+ , alloc_context:new[Item] = ACtx
+ , stack_allocation(StackAlloc)
+ , stack_allocation:by_instruction[Instr] = StackAlloc
+ , var_points_to(ACtx, StackAlloc, Ctx, Var)
  <-
-   alloca_instruction(Insn),
-   reachable_instruction(Insn),
-   instruction:to[Insn] = Var.
+   alloca_instruction(Instr),
+   instruction:to[Instr] = Var,
+   instruction:function[Instr] = InstrFunc,
+   reachable_context(Ctx, InstrFunc),
+   // Extra
+   context:__getitem__[Ctx] = Item.
 
 
 allocation:type[StackAlloc] = Type <-
@@ -39,15 +44,21 @@ allocation:type[StackAlloc] = Type <-
    alloca_instruction:type[Insn] = Type,
    stack_allocation:by_instruction[Insn] = StackAlloc.
 
+
 /// 2. Parameters with pass-by-value semantics
 
-stack_allocation(StackAlloc),
-stack_allocation:by_parameter[Func, Index] = StackAlloc,
-var_points_to(StackAlloc, Param)
+alloc_context(ACtx)
+ , alloc_context:new[Item] = ACtx
+ , stack_allocation(StackAlloc)
+ , stack_allocation:by_parameter[Func, Index] = StackAlloc
+ , var_points_to(ACtx, StackAlloc, Ctx, Param)
  <-
    function:param_by_value(Func, Index),
    function:param[Func, Index] = Param,
-   reachable_function(Func).
+   reachable_context(Ctx, Func),
+   // Extra
+   context:__getitem__[Ctx] = Item.
+
 
 allocation:type[StackAlloc] = Type <-
    stack_allocation:by_parameter[Func, Index] = StackAlloc,
@@ -64,15 +75,20 @@ allocation:type[StackAlloc] = Type <-
 // heap is not always associated with a type (at least locally).
 //---------------------------------------------------------------------
 
-heap_allocation(HeapAlloc),
-heap_allocation:by_instruction[Insn] = HeapAlloc,
-var_points_to(HeapAlloc, Var)
+alloc_context(ACtx)
+ , alloc_context:new[Item] = ACtx
+ , heap_allocation(HeapAlloc)
+ , heap_allocation:by_instruction[Instr] = HeapAlloc
+ , var_points_to(ACtx, HeapAlloc, Ctx, Var)
  <-
    heap_alloc_function(Func),
-   ( call_instruction:function[Insn] = Func
-   ; invoke_instruction:function[Insn] = Func),
-   reachable_instruction(Insn),
-   instruction:to[Insn] = Var.
+   ( call_instruction:function[Instr] = Func
+   ; invoke_instruction:function[Instr] = Func),
+   instruction:to[Instr] = Var,
+   instruction:function[Instr] = InstrFunc,
+   reachable_context(Ctx, InstrFunc),
+   // Extra
+   context:__getitem__[Ctx] = Item.
 
 // Functions that allocate memory on heap
 heap_alloc_function(Func) -> function_decl(Func).
@@ -110,9 +126,9 @@ heap_allocation:by_realloc[Insn] = HeapAlloc <-
 // all sorts of places that have nothing to do with each other, and
 // will probably involve many heterogeneous types.
 
-heap_allocation:types(Type, HeapAlloc) <-
+heap_allocation:types(Type, ACtx, HeapAlloc) <-
    heap_allocation(HeapAlloc),
-   operand_points_to(HeapAlloc, Var),
+   operand_points_to(ACtx, HeapAlloc, _, Var),
    operand:type[Var] = PtrType,
    pointer_type:component[PtrType] = Type.
 
@@ -173,10 +189,15 @@ unknown_location[] = Unknown
 
 // An unknown location points to an unknown location
 
-ptr_points_to(Unknown, Unknown) <-
+ptr_points_to(ACtx, Unknown, ACtx, Unknown) <-
+   empty_alloc_context[] = ACtx,
    unknown_location[] = Unknown.
 
-unknown_location[] = Unknown, ptr_points_to(To, Unknown) -> To = Unknown.
+unknown_location[] = Unknown
+ , empty_alloc_context[] = EmptyCtx
+ , ptr_points_to(ACtx, To, _, Unknown)
+ ->
+   To = Unknown, ACtx = EmptyCtx.
 
 
 /// 2. Null Special Object
@@ -188,7 +209,41 @@ null_location[] = Null
 
 // Null cannot point to anything
 
-null_location[] = Null -> !ptr_points_to(_, Null).
+null_location[] = Null -> !ptr_points_to(_, _, _, Null).
+
+
+//------------------------------------------------------------------------------
+// [Sanity checks]
+//
+// Only empty contexts are associated with global and pseudo-allocs.
+//------------------------------------------------------------------------------
+
+_allocation_with_context(ACtx, Alloc) <-
+   var_points_to(ACtx, Alloc, _, _).
+
+_allocation_with_context(ACtx, Alloc) <-
+   ptr_points_to(ACtx, Alloc, _, _).
+
+_allocation_with_context(ACtx, Alloc) <-
+   ptr_points_to(_, _, ACtx, Alloc).
+
+unknown_location[] = Unknown
+ , empty_alloc_context[] = EmptyContext
+ , _allocation_with_context(ACtx, Unknown)
+ ->
+   ACtx = EmptyContext.
+
+null_location[] = Null
+ , empty_alloc_context[] = EmptyContext
+ , _allocation_with_context(ACtx, Null)
+ ->
+   ACtx = EmptyContext.
+
+global_allocation(Alloc)
+ , empty_alloc_context[] = EmptyContext
+ , _allocation_with_context(ACtx, Alloc)
+ ->
+   ACtx = EmptyContext.
 
 
 //------------------------------------------------

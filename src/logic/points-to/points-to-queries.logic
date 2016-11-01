@@ -49,7 +49,7 @@ lang:physical:filePath[`_dereferences] = "pointer-dereferences.tsv".
 lang:physical:columnNames[`_dereferences] = "SourcePointer	Target".
 
 _dereferences(SrcAllocStr, DestAllocStr) <-
-   ptr_points_to$no_zero_aliases(DestAlloc, SrcAlloc),
+   stripctx_filtered_ptr_points_to(DestAlloc, SrcAlloc),
    allocation:to_string[SrcAlloc] = SrcAllocStr,
    allocation:to_string[DestAlloc] = DestAllocStr.
 
@@ -62,7 +62,8 @@ lang:physical:filePath[`_cg] = "call-graph.tsv".
 lang:physical:columnNames[`_cg] = "Caller	Callee".
 
 _cg(CallerSign, CalleeSign) <-
-   callgraph:fn_edge(Callee, Caller),
+   callgraph:edge(_, Callee, _, CallerInstr),
+   instruction:function[CallerInstr] = Caller,
    function:signature[Callee] = CalleeSign,
    function:signature[Caller] = CallerSign.
 
@@ -105,7 +106,7 @@ _nallocs_per_pt_size$tmp[0] = NPtrs <-
 
 
 _var_points_to(FuncSign, VarName, AllocStr, Type) <-
-   var_points_to(Alloc, Var),
+   stripctx_var_points_to(Alloc, Var),
    variable:descriptor(Var, _, FuncSign, _, VarName),
    allocation:to_string[Alloc] = AllocStr,
    allocation:type[Alloc] = Type.
@@ -126,7 +127,7 @@ _constant_points_to(Constant, ConstantValue, ConstantType, AllocStr, AllocType)
 
 _typed_dereferences(SrcAllocStr, SrcAllocType, DestAllocStr, DestAllocType)
  <-
-   ptr_points_to(DestAlloc, SrcAlloc),
+   stripctx_ptr_points_to(DestAlloc, SrcAlloc),
    allocation:to_string[SrcAlloc] = SrcAllocStr,
    allocation:to_string[DestAlloc] = DestAllocStr,
    allocation:type[SrcAlloc] = SrcAllocType,
@@ -134,7 +135,7 @@ _typed_dereferences(SrcAllocStr, SrcAllocType, DestAllocStr, DestAllocType)
 
 _tp_gep_points_to(Func, Var, Index, DeclaredType, AllocStr, TypeName)
  <-
-   gep_points_to(Insn, Index, Alloc),
+   gep_points_to(Insn, Index, _, Alloc),
    getelementptr_instruction:interm_type[Insn, Index] = DeclaredType,
    instruction:to[Insn] = To,
    allocation:to_string[Alloc] = AllocStr,
@@ -145,7 +146,7 @@ _tp_gep_points_to(Func, Var, Index, DeclaredType, AllocStr, TypeName)
       !allocation:type[Alloc] = _)).
 
 _gep_points_to(Func, Var, Index, AllocStr, TypeName) <-
-   gep_points_to(Insn, Index, Alloc),
+   gep_points_to(Insn, Index, _, Alloc),
    instruction:to[Insn] = To,
    allocation:to_string[Alloc] = AllocStr,
    variable:descriptor(To, _, Func, _, Var),
@@ -159,7 +160,7 @@ _typed_alloc(AllocStr, Type) <-
    allocation:type[Alloc] = Type.
 
 _memcpy(Insn, ToStr, ToType, FromStr, FromType) <-
-   memcpy(Insn, To, From),
+   memcpy(Insn, _, To, _, From),
    allocation:to_string[From] = FromStr,
    allocation:to_string[To] = ToStr,
    allocation:type[To] = ToType,

@@ -1,5 +1,6 @@
 ctx:core, projectname
 llvm:schema, library
+llvm:callgraph, library
 
 declarations.logic, active
 special-contexts.logic, active

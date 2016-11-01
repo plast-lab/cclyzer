@@ -38,48 +38,56 @@ constant_points_to[Constant] = Alloc <-
 // result of the `call instruction`.
 //----------------------------------------------------------------------
 
-assign_instruction(To, Value) ->
-   variable(To), operand(Value).
+assign_instruction(InstrFunc, To, Value) ->
+   function(InstrFunc), variable(To), operand(Value).
 
-var_points_to(Alloc, ToVar) <-
-   assign_instruction(ToVar, Value),
-   operand_points_to(Alloc, Value). // TODO: consider adding type check
+var_points_to(ACtx, Alloc, Ctx, ToVar) <-
+   assign_instruction(InstrFunc, ToVar, Value),
+   operand_points_to(ACtx, Alloc, Ctx, Value), // TODO: consider adding type check
+   reachable_context(Ctx, InstrFunc).
 
 // `bitcast` instructions
-assign_instruction(ToVar, Value) <-
-   reachable_instruction(Insn),
-   bitcast_instruction:from[Insn] = Value,  // TODO: consider adding type check
-   instruction:to[Insn] = ToVar.
+assign_instruction(InstrFunc, ToVar, Value) <-
+   reachable_function(InstrFunc),
+   bitcast_instruction:from[Instr] = Value,  // TODO: consider adding type check
+   instruction:to[Instr] = ToVar,
+   instruction:function[Instr] = InstrFunc.
 
 // `ptrtoint` instructions
-assign_instruction(ToVar, Value) <-
-   reachable_instruction(Insn),
-   ptrtoint_instruction:from[Insn] = Value,
-   instruction:to[Insn] = ToVar.
+assign_instruction(InstrFunc, ToVar, Value) <-
+   reachable_function(InstrFunc),
+   ptrtoint_instruction:from[Instr] = Value,
+   instruction:to[Instr] = ToVar,
+   instruction:function[Instr] = InstrFunc.
 
 // `inttoptr` instructions
-var_points_to(Unknown, ToVar) <-
+var_points_to(ACtx, Unknown, Ctx, ToVar) <-
+   empty_alloc_context[] = ACtx,
    unknown_location[] = Unknown,
-   reachable_instruction(Insn),
-   inttoptr_instruction(Insn),
-   instruction:to[Insn] = ToVar.
+   inttoptr_instruction(Instr),
+   instruction:to[Instr] = ToVar,
+   instruction:function[Instr] = InstrFunc,
+   reachable_function(InstrFunc),
+   reachable_context(Ctx, InstrFunc).
 
 // `phi` instructions: treat every possible pair value as a potential
 // assignment to the target variable
-assign_instruction(ToVar, Value) <-
-   reachable_instruction(Insn),
-   phi_instruction:pair:value[Insn, _] = Value,
-   instruction:to[Insn] = ToVar.
+assign_instruction(InstrFunc, ToVar, Value) <-
+   reachable_function(InstrFunc),
+   phi_instruction:pair:value[Instr, _] = Value,
+   instruction:to[Instr] = ToVar,
+   instruction:function[Instr] = InstrFunc.
 
 
 // `select` instructions; similar to `phi` instructions
-assign_instruction(ToVar, Value) <-
-   reachable_instruction(Insn),
-   select_instruction(Insn),
-   ( select_instruction:first_operand[Insn]  = Value
-   ; select_instruction:second_operand[Insn] = Value ),
-   instruction:to[Insn] = ToVar,
-   instruction:type[Insn] = Type,
+assign_instruction(InstrFunc, ToVar, Value) <-
+   reachable_function(InstrFunc),
+   select_instruction(Instr),
+   ( select_instruction:first_operand[Instr]  = Value
+   ; select_instruction:second_operand[Instr] = Value ),
+   instruction:to[Instr] = ToVar,
+   instruction:type[Instr] = Type,
+   instruction:function[Instr] = InstrFunc,
    !vector_type(Type).
 
 // // A simple field-insensitive approach (just ignore indices of
@@ -98,29 +106,33 @@ assign_instruction(ToVar, Value) <-
 // [Load/Store Instructions]
 //----------------------------------------------------------------------
 
-reachable_store(ToAddress, Value) ->
-   operand(Value), operand(ToAddress).
+reachable_store(InstrFunc, ToAddress, Value) ->
+   function(InstrFunc), operand(Value), operand(ToAddress).
 
-reachable_store(ToAddress, Value) <-
-   reachable_instruction(Insn),
-   store_instruction:value[Insn] = Value,
-   store_instruction:address[Insn] = ToAddress.
+reachable_store(InstrFunc, ToAddress, Value) <-
+   reachable_function(InstrFunc),
+   store_instruction:value[Instr] = Value,
+   store_instruction:address[Instr] = ToAddress,
+   instruction:function[Instr] = InstrFunc.
 
-ptr_points_to(Alloc, BaseAlloc) <-
-   reachable_store(ToAddress, Value),
-   operand_points_to(Alloc, Value),
-   operand_points_to(BaseAlloc, ToAddress),
+ptr_points_to(ACtx, Alloc, BaseACtx, BaseAlloc) <-
+   reachable_store(InstrFunc, ToAddress, Value),
+   reachable_context(Ctx, InstrFunc),
+   operand_points_to(ACtx, Alloc, Ctx, Value),
+   operand_points_to(BaseACtx, BaseAlloc, Ctx, ToAddress),
    ptr_compatible_allocation(BaseAlloc).
 
-reachable_load(ToVar, FromAddres) ->
-   variable(ToVar), operand(FromAddres).
+reachable_load(InstrFunc, ToVar, FromAddres) ->
+   function(InstrFunc), variable(ToVar), operand(FromAddres).
 
-reachable_load(ToVar, FromAddress) <-
-   reachable_instruction(Insn),
-   instruction:to[Insn] = ToVar,
-   load_instruction:address[Insn] = FromAddress.
+reachable_load(InstrFunc, ToVar, FromAddress) <-
+   reachable_function(InstrFunc),
+   load_instruction:address[Instr] = FromAddress,
+   instruction:to[Instr] = ToVar,
+   instruction:function[Instr] = InstrFunc.
 
-var_points_to(Alloc, ToVar) <-
-   reachable_load(ToVar, FromAddress),
-   operand_points_to(BaseAlloc, FromAddress),
-   ptr_points_to(Alloc, BaseAlloc). // TODO: consider adding type check
+var_points_to(ACtx, Alloc, Ctx, ToVar) <-
+   reachable_load(InstrFunc, ToVar, FromAddress),
+   reachable_context(Ctx, InstrFunc),
+   operand_points_to(BaseACtx, BaseAlloc, Ctx, FromAddress),
+   ptr_points_to(ACtx, Alloc, BaseACtx, BaseAlloc). // TODO: consider adding type check

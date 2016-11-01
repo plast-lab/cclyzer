@@ -137,10 +137,10 @@ allocation_zeroalias(NewAlloc)
    allocation:type[NewAlloc] = Type,
    allocation:type[Alloc] = Type.
 
-ptr_points_to$no_zero_aliases(to, from) <-
-   ptr_points_to(to, from),
-   !allocation_zeroalias(to),
-   !allocation_zeroalias(from).
+ptr_points_to$no_zero_aliases(ToCtx, To, FromCtx, From) <-
+   ptr_points_to(ToCtx, To, FromCtx, From),
+   !allocation_zeroalias(To),
+   !allocation_zeroalias(From).
 
 
 // Create star array index expression, once type for base object is

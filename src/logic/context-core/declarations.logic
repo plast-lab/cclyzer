@@ -48,3 +48,7 @@ lang:physical:capacity[`context_item] = 16777216. // 2 ^ 24
 //------------------------------------------------------------------------------
 
 reachable_context(Ctx, Func) -> context(Ctx), function_decl(Func).
+reachable_function(Func) -> function_decl(Func).
+
+reachable_function(Func) <-
+   reachable_context(_, Func).

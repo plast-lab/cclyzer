@@ -32,6 +32,8 @@ class Analysis(object):
             _LoadProjectStep(projects.symbol_lookup),
             _LoadProjectStep(projects.callgraph),
             _LoadProjectStep(projects.debuginfo),
+            _LoadProjectStep(projects.context_core),
+            _LoadProjectStep(projects['context/1-call-site-sens+heap']),
             _LoadProjectStep(config.points_to),
         ]
 
@@ -190,9 +192,13 @@ class Analysis(object):
             .count('function', title='app functions')
             .count('callgraph|reachable_function')
             .count('callgraph|callgraph:fn_edge', title='call-graph edges')
+            .count('callgraph|callgraph:edge', title='call-graph edges')
+            .count('callgraph|stripctx_callgraph:edge', title='call-graph edges (no ctx)')
             .count('points_to|var_points_to', title='var-points-to')
+            .count('points_to|stripctx_var_points_to', title='var-points-to (no ctx)')
             .count('points_to|constant_points_to', title='constant-points-to')
             .count('points_to|ptr_points_to', title='deref-points-to')
+            .count('points_to|stripctx_ptr_points_to', title='deref-points-to (no ctx)')
             .count('points_to|stack_allocation')
             .count('points_to|heap_allocation')
             .count('points_to|global_allocation')

@@ -2,12 +2,15 @@ llvm:points_to, projectname
 llvm:schema, library
 llvm:lookup, library
 llvm:callgraph, library
+ctx:core, library
+ctx:1_callsite_plus_1_heap, library
 
 
 // Basic Declarations
 
 allocations-decl.logic, active
 points-to-decl.logic, active
+strip-context-projections.logic, active
 
 // User options
 points-to-options.logic, active

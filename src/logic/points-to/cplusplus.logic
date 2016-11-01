@@ -58,18 +58,19 @@ constructor:class_type[Ctor] = ClassType <-
 destructor:class_type[Dtor] = ClassType <-
    class_type:destructor(Dtor, ClassType).
 
-// We have a call to a constructor function (associated with type
-// `Type`) inside function `InFunction`, where `this` points to
+// We have a direct call to a constructor function (associated with
+// type `Type`) inside function `InFunction`, where `this` points to
 // `Alloc`. Note that the latter may be initialized by many
 // constructors, unless it is of a base type.
 
 init_by_ctor(Type, Ctor, InFunction, Alloc)
  <-
-   instruction:function[InitInsn] = InFunction,
-   callgraph:edge(Ctor, InitInsn),
+   ( call_instruction:function[InitInstr] = Ctor
+   ; invoke_instruction:function[InitInstr] = Ctor ),
    constructor:class_type[Ctor] = Type,
-   function:actual_arg(Ctor, 0, This),
-   operand_points_to(Alloc, This).
+   instruction:function[InitInstr] = InFunction,
+   actual_arg[InitInstr, 0] = This,
+   stripctx_operand_points_to(Alloc, This).
 
 
 // The actual type of the object must match its size, and the relevant
@@ -130,6 +131,7 @@ secondary_superclass(Supertype, Type) ->
 primary_superclass[Type] = Supertype <-
    class_instance:constructor[Alloc] = Ctor,
    constructor:class_type[Ctor] = Type,
+   // TODO: could we leverage context here?
    init_by_ctor(Supertype, _, Ctor, Alloc),
    struct_type:field[Type, 0] = UnpaddedType,
    struct_type:nfields[UnpaddedType] = NFields,
@@ -146,6 +148,7 @@ secondary_superclass(Supertype, Type) <-
    alloc_aliases(BaseAlloc, BaseAlloc0),     // redundant opt clause
    alloc_subregion:base[Alloc] = BaseAlloc0, // reduntant opt clause
    alloc_subregion:at_field[BaseAlloc0, Index] = Alloc,
+   // TODO: could we leverage context here?
    init_by_ctor(Supertype, _, Ctor, Alloc),
    struct_type:field[Type, Index] = UnpaddedType,
    struct_type:nfields[UnpaddedType] = NFields,
@@ -163,7 +166,7 @@ class_instance:vtable[Alloc] = VTable
    instruction:function[StoreInsn] = Ctor,
    store_instruction:value[StoreInsn] = Value,
    store_instruction:address[StoreInsn] = Pointer,
-   operand_points_to(Alloc, Pointer),
+   stripctx_operand_points_to(Alloc, Pointer),
    operand:as_constant[Value] = Constant,
    constant_contains_vptr(VTable, Constant).
 

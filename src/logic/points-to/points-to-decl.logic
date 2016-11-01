@@ -6,8 +6,8 @@
 // variables. Named variables will point to their respective stack
 // allocations.
 
-var_points_to(Alloc, Var) ->
-   allocation(Alloc), variable(Var).
+var_points_to(ACtx, Alloc, Ctx, Var) ->
+   alloc_context(ACtx), allocation(Alloc), context(Ctx), variable(Var).
 
 
 // This is the equivalent relation that tracks flow of allocations
@@ -29,17 +29,30 @@ constant_points_to[Constant] = Alloc ->
 
 // Intermediate relations
 
-operand_points_to(Alloc, Operand) ->
-   allocation(Alloc), operand(Operand).
+operand_points_to(ACtx, Alloc, Ctx, Operand) ->
+   alloc_context(ACtx), allocation(Alloc), context(Ctx), operand(Operand).
 
-operand_points_to(Alloc, VarOperand) <-
+operand_points_to(ACtx, Alloc, Ctx, VarOperand) <-
    operand:as_variable[VarOperand] = PtrVar,
-   var_points_to(Alloc, PtrVar).
+   var_points_to(ACtx, Alloc, Ctx, PtrVar).
 
-operand_points_to(Alloc, ConstantOperand) <-
+operand_points_to(ACtx, Alloc, Ctx, ConstantOperand) <-
+   empty_alloc_context[] = ACtx,
    operand:as_constant[ConstantOperand] = Constant,
-   constant_points_to[Constant] = Alloc.
+   operand:in_function[ConstantOperand] = EnclosingFunc,
+   constant_points_to[Constant] = Alloc,
+   reachable_context(Ctx, EnclosingFunc).
 
+// Sanity checks
+var_points_to(_, _, Ctx, Var)
+ , variable:in_function[Var] = EnclosingFunc
+ ->
+   reachable_context(Ctx, EnclosingFunc).
+
+operand_points_to(_, _, Ctx, Operand)
+ , operand:in_function[Operand] = EnclosingFunc
+ ->
+   reachable_context(Ctx, EnclosingFunc).
 
 //----------------------------
 // Dereferencing Pointers
@@ -49,5 +62,15 @@ operand_points_to(Alloc, ConstantOperand) <-
 // an allocation will point to another memory allocation when
 // dereferenced.
 
-ptr_points_to(Alloc, PtrAlloc) ->
-   allocation(Alloc), allocation(PtrAlloc).
+ptr_points_to(ACtx, Alloc, PtrACtx, PtrAlloc) ->
+   alloc_context(ACtx), allocation(Alloc),
+   alloc_context(PtrACtx), allocation(PtrAlloc).
+
+
+//----------------------------
+// Call-Graph
+//----------------------------
+
+callgraph:edge(CalleeCtx, Callee, CallerCtx, CallerInstr) ->
+   context(CallerCtx), instruction(CallerInstr),
+   context(CalleeCtx), function_decl(Callee).

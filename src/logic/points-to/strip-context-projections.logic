@@ -1,0 +1,23 @@
+//------------------------------------------------------------------------------
+// Context-Insensitive Projections of core relations
+//------------------------------------------------------------------------------
+
+stripctx_callgraph:edge(Callee, CallerInstr) <-
+   callgraph:edge(_, Callee, _, CallerInstr).
+
+stripctx_var_points_to(Alloc, Var) <-
+   var_points_to(_, Alloc, _, Var).
+
+stripctx_ptr_points_to(To, From) <-
+   ptr_points_to(_, To, _, From).
+
+stripctx_operand_points_to(To, From) <-
+   operand_points_to(_, To, _, From).
+
+// Forward declaration
+ptr_points_to$no_zero_aliases(ACtx, Alloc, PtrACtx, PtrAlloc) ->
+   alloc_context(ACtx), allocation(Alloc),
+   alloc_context(PtrACtx), allocation(PtrAlloc).
+
+stripctx_filtered_ptr_points_to(To, From) <-
+   ptr_points_to$no_zero_aliases(_, To, _, From).

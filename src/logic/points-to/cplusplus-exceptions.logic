@@ -37,6 +37,13 @@ heap_allocation:by_alloc_exc[Insn] = HeapAlloc
    call_instruction:function[Insn] = Func,
    heap_allocation:by_instruction[Insn] = HeapAlloc.
 
+heap_allocation:by_alloc_exc[Insn] = HeapAlloc
+ , exception_object(HeapAlloc)
+ <-
+   cxx:alloc_exception[] = Func,
+   invoke_instruction:function[Insn] = Func,
+   heap_allocation:by_instruction[Insn] = HeapAlloc.
+
 // Compute allocation size
 sized_alloc_instr[Insn] = Size <-
    cxx:alloc_exception[] = Func,
@@ -109,13 +116,13 @@ cxx:throw_function[] = Func <-
 
 cxx:throw_instruction(ThrowInsn) <-
    cxx:throw_function[] = ThrowFunc,
-   callgraph:inv_edge(ThrowInsn, ThrowFunc).
+   callgraph:inv_edge(_, ThrowInsn, _, ThrowFunc).
 
 cxx:throw_instruction:exception(ExcObj, ThrowInsn) <-
    cxx:throw_instruction(ThrowInsn),
    ( call_instruction:arg[ThrowInsn, 0] = Exc
    ; invoke_instruction:arg[ThrowInsn, 0] = Exc ),
-   operand_points_to(ExcObj, Exc).
+   stripctx_operand_points_to(ExcObj, Exc).
 
 //------------------------------------------------
 // * Throw Instr associates typeinfo object
@@ -125,7 +132,7 @@ cxx:throw_instruction:typeinfo(ExcTypeInfo, ThrowInsn) <-
    cxx:throw_instruction(ThrowInsn),
    ( call_instruction:arg[ThrowInsn, 1] = TypeInfoArg
    ; invoke_instruction:arg[ThrowInsn, 1] = TypeInfoArg ),
-   operand_points_to(TypeInfoObj, TypeInfoArg),
+   stripctx_operand_points_to(TypeInfoObj, TypeInfoArg),
    _type_info_by_alloc[TypeInfoObj] = ExcTypeInfo.
 
 _type_info_by_alloc[Obj] = ExcTypeInfo <-
@@ -150,7 +157,7 @@ cxx:throw_instruction:destructor(Dtor, ThrowInsn) <-
    cxx:throw_instruction(ThrowInsn),
    ( call_instruction:arg[ThrowInsn, 2] = DtorArg
    ; invoke_instruction:arg[ThrowInsn, 2] = DtorArg ),
-   operand_points_to(Alloc, DtorArg),
+   stripctx_operand_points_to(Alloc, DtorArg),
    function:by_location[Alloc] = Dtor.
 
 cxx:throw_instruction:no_dtor(ThrowInsn) <-
@@ -158,7 +165,7 @@ cxx:throw_instruction:no_dtor(ThrowInsn) <-
    cxx:throw_instruction(ThrowInsn),
    ( call_instruction:arg[ThrowInsn, 2] = DtorArg
    ; invoke_instruction:arg[ThrowInsn, 2] = DtorArg ),
-   operand_points_to(Null, DtorArg).
+   stripctx_operand_points_to(Null, DtorArg).
 
 //-------------------------------------------------------------------------
 // The following is a generic catch-all relation that associates with

@@ -1,88 +1,89 @@
-//-------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // [Memcpy instructions]
 //
 //  We must treat `memcpy` instructions in such a way as to ensure
 //  that it may change the points-to set of any subregion of memory
 //  that is being copied.
-//-------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
-// Overloaded `memcpy` predicates that will trigger the deep copy
-// semantics for the corresponding allocations they point to
+// Two kinds of `memcpy` predicates that will trigger the deep copy
+// semantics for the corresponding allocations they point to.
+//
+// The first one is for ordinary memcpy calls, while the second one is
+// intended to simulate pass-by-value copy semantics.
 
-memcpy:to_operand(Insn, To, From) ->
-   instruction(Insn), operand(To), operand(From).
+memcpy_call(Instr, Ctx, To, From) ->
+   instruction(Instr), context(Ctx), operand(To), operand(From).
 
-memcpy:to_var(Insn, To, From) ->
-   instruction(Insn), variable(To), operand(From).
-
-// Bitwise copy semantics that respect type information
-
-memcpy(Insn, To, From) ->
-   instruction(Insn), allocation(To), allocation(From).
-
-// Lose instruction and invert FROM and TO for optimal indexing
-_memcpy_without_insn(From, To) <-
-   memcpy(_, To, From).
-
-_memcpy_to_ptr(To, From) <-
-   _memcpy_without_insn(From, To),
-   ptr_compatible_allocation(To).
-
-// Copy points-to set of copied objects
-
-ptr_points_to(Alloc, To) <-
-   _memcpy_to_ptr(To, From),
-   ptr_points_to(Alloc, From).
-
-// Base case of `memcpy` call instructions It should handle syntactic
-// aliases. For instance `memcpy(to,from)` is equivalent to
-// `memcpy(to, &from[0])`. We consider all possible aliases of the
-// base objects that flow to the operands of the @memcpy instruction,
-// but only keep type compatible pairs.
-
-memcpy:to_operand(CallInsn, To, From) <-
+memcpy_call(MemcpyInstr, CallerCtx, To, From) <-
    function:name[Callee] = Name,
    ( string:like(Name, "@memcpy%")
    ; string:like(Name, "@llvm.memcpy%") ),
-   callgraph:edge(Callee, CallInsn),
-   call_instruction:arg[CallInsn, 0] = To,
-   call_instruction:arg[CallInsn, 1] = From.
+   callgraph:edge(_, Callee, CallerCtx, MemcpyInstr),
+   actual_arg[MemcpyInstr, 0] = To,
+   actual_arg[MemcpyInstr, 1] = From.
 
-memcpy(CallInsn, AliasedTo, AliasedFrom) <-
-   memcpy:to_operand(CallInsn, To, From),
-   operand_points_to(FromAlloc, From),
-   operand_points_to(ToAlloc, To),
-   // consider any possible aliases
-   alloc_aliases(AliasedTo, ToAlloc),
-   alloc_aliases(AliasedFrom, FromAlloc),
-   // check type compatibility
-   allocation:type[AliasedTo] = ToType,
-   allocation:type[AliasedFrom] = FromType,
-   type_compatible(FromType, ToType).
+memcpy_pass_by_value(Instr, ToCtx, ToVar, FromCtx, FromValue) ->
+   instruction(Instr), context(ToCtx), variable(ToVar),
+   context(FromCtx), operand(FromValue).
 
-memcpy(CallInsn, AliasedTo, AliasedFrom) <-
-   memcpy:to_var(CallInsn, To, From),
-   operand_points_to(FromAlloc, From),
-   var_points_to(ToAlloc, To),
-   // consider any possible aliases
-   alloc_aliases(AliasedTo, ToAlloc),
-   alloc_aliases(AliasedFrom, FromAlloc),
-   // check type compatibility
-   allocation:type[AliasedTo] = ToType,
-   allocation:type[AliasedFrom] = FromType,
-   type_compatible(FromType, ToType).
+// Logic should handle syntactic aliases. For instance
+// `memcpy(to,from)` is equivalent to `memcpy(to, &from[0])`. We
+// consider all possible aliases of the base objects that flow to the
+// operands of the @memcpy instruction, but only keep type compatible
+// pairs.
 
+// Bitwise copy semantics that respect type information
+memcpy(Insn, ToCtx, To, FromCtx, From) ->
+   instruction(Insn),
+   alloc_context(ToCtx), allocation(To),
+   alloc_context(FromCtx), allocation(From).
 
-// Recursive case for `memcpy` call instructions
-//
-// !! Note that in the following cases we have to create the
-// destination subobject if it does not exist already, since we cannot
-// afford to miss its points-to set because it may be copied to more
-// generic objects that contain star expressions !!
-
-memcpy(Insn, DestSubobject, SrcSubobject)
+memcpy(Instr, ToACtx, ToALias, FromACtx, FromAlias)
  <-
-   memcpy(Insn, DestObject, SrcObject),
+   memcpy_call(Instr, Ctx, To, From),
+   operand_points_to(FromACtx, FromAlloc, Ctx, From),
+   operand_points_to(ToACtx, ToAlloc, Ctx, To),
+   // consider any possible aliases
+   alloc_aliases(ToALias, ToAlloc),
+   alloc_aliases(FromAlias, FromAlloc),
+   // check type compatibility
+   allocation:type[ToALias] = ToType,
+   allocation:type[FromAlias] = FromType,
+   type_compatible(FromType, ToType).
+
+memcpy(Instr, ToACtx, ToAlias, FromACtx, FromAlias)
+ <-
+   memcpy_pass_by_value(Instr, ToCtx, To, FromCtx, From),
+   operand_points_to(FromACtx, FromAlloc, FromCtx, From),
+   var_points_to(ToACtx, ToAlloc, ToCtx, To),
+   // consider any possible aliases
+   alloc_aliases(ToAlias, ToAlloc),
+   alloc_aliases(FromAlias, FromAlloc),
+   // check type compatibility
+   allocation:type[ToAlias] = ToType,
+   allocation:type[FromAlias] = FromType,
+   type_compatible(FromType, ToType).
+
+
+//------------------------------------------------------------------------------
+// [Recursive Memory Copying]
+//
+// Memory copy may extend to subobjects. As an optimization, we do not
+// keep track of context during the recursive computation of memcopied
+// pairs, since we can take it back from their respective base
+// objects.
+//------------------------------------------------------------------------------
+
+_rec_memcpy(Insn, To, From) ->
+   instruction(Insn), allocation(To), allocation(From).
+
+_rec_memcpy(Insn, To, From) <-
+   memcpy(Insn, _, To, _, From).
+
+_rec_memcpy(Insn, DestSubobject, SrcSubobject)
+ <-
+   _rec_memcpy(Insn, DestObject, SrcObject),
    // get source and destination subobjects for given field
    alloc_subregion:at_field[SrcObject, Field] = SrcSubobject,
    alloc_subregion:at_field[DestObject, Field] = DestSubobject,
@@ -91,10 +92,9 @@ memcpy(Insn, DestSubobject, SrcSubobject)
    allocation:type[DestSubobject] = DestType,
    type_compatible(SrcType, DestType).
 
-
-memcpy(Insn, DestSubobject, SrcSubobject)
+_rec_memcpy(Insn, DestSubobject, SrcSubobject)
  <-
-   memcpy(Insn, DestObject, SrcObject),
+   _rec_memcpy(Insn, DestObject, SrcObject),
    // get source and destination subobjects
    alloc_subregion:at_array_index[SrcObject, Index] = SrcSubobject,
    alloc_subregion:at_array_index[DestObject, Index] = DestSubobject,
@@ -103,10 +103,9 @@ memcpy(Insn, DestSubobject, SrcSubobject)
    allocation:type[DestSubobject] = DestType,
    type_compatible(SrcType, DestType).
 
-
-memcpy(Insn, DestSubobject, SrcSubobject)
+_rec_memcpy(Insn, DestSubobject, SrcSubobject)
  <-
-   memcpy(Insn, DestObject, SrcObject),
+   _rec_memcpy(Insn, DestObject, SrcObject),
    // get source and destination subobjects for star index
    alloc_subregion:at_any_array_index[SrcObject] = SrcSubobject,
    alloc_subregion:at_any_array_index[DestObject] = DestSubobject,
@@ -114,3 +113,30 @@ memcpy(Insn, DestSubobject, SrcSubobject)
    allocation:type[SrcSubobject] = SrcType,
    allocation:type[DestSubobject] = DestType,
    type_compatible(SrcType, DestType).
+
+
+//------------------------------------------------------------------------------
+// Copying pointer contents for memcopied objects
+//------------------------------------------------------------------------------
+
+// Lose instruction and invert FROM and TO for optimal indexing
+_rec_memcpy_without_insn(From, To) <-
+   _rec_memcpy(_, To, From).
+
+_rec_memcpy_to_ptr(Instr, To, From) <-
+   _rec_memcpy(Instr, To, From),
+   _rec_memcpy_without_insn(From, To),
+   ptr_compatible_allocation(To).
+
+// Copy points-to set of copied objects
+ptr_points_to(ACtx, Alloc, ToCtx, To) <-
+   _rec_memcpy_to_ptr(Instr, To, From),
+   region_contains(ToOuter, To),
+   region_contains(FromOuter, From),
+   memcpy(Instr, ToCtx, ToOuter, FromCtx, FromOuter),
+   ptr_points_to(ACtx, Alloc, FromCtx, From).
+
+ptr_points_to(ACtx, Alloc, ToCtx, To) <-
+   _rec_memcpy_to_ptr(Instr, To, From),
+   memcpy(Instr, ToCtx, To, FromCtx, From),
+   ptr_points_to(ACtx, Alloc, FromCtx, From).

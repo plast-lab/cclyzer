@@ -33,15 +33,15 @@ alloc_aliases(Alloc1, Alloc2) <-
 
 // Aliases have the same points-to sets
 
-ptr_points_to(Alloc, BaseAlloc1) <-
-   ptr_points_to(Alloc, BaseAlloc2),
+ptr_points_to(ACtx, Alloc, BaseACtx, BaseAlloc1) <-
+   ptr_points_to(ACtx, Alloc, BaseACtx, BaseAlloc2),
    alloc_aliases(BaseAlloc1, BaseAlloc2).
 
 // When a pointer points to an allocation, it must also point to all
 // of its aliases
 
-ptr_points_to(Alloc1, BaseAlloc) <-
-   ptr_points_to(Alloc2, BaseAlloc),
+ptr_points_to(ACtx, Alloc1, BaseACtx, BaseAlloc) <-
+   ptr_points_to(ACtx, Alloc2, BaseACtx, BaseAlloc),
    alloc_aliases(Alloc1, Alloc2).
 
 
@@ -122,17 +122,18 @@ alloc_matches(Alloc1, Alloc2) <-
 // When loading from an allocation we must also consider the more
 // specific matching allocations and merge their points-to sets also.
 
-var_points_to(Alloc, ToVar) <-
-   reachable_load(ToVar, FromAddress),
-   operand_points_to(OrigAlloc, FromAddress),
+var_points_to(ACtx, Alloc, Ctx, ToVar) <-
+   reachable_load(InstrFunc, ToVar, FromAddress),
+   reachable_context(Ctx, InstrFunc),
+   operand_points_to(BaseACtx, OrigAlloc, Ctx, FromAddress),
    alloc_matches(LessGenericAlloc, OrigAlloc),
-   ptr_points_to(Alloc, LessGenericAlloc).
+   ptr_points_to(ACtx, Alloc, BaseACtx, LessGenericAlloc).
 
 // We must also ensure that matching is considered in the opposite
 // direction. We do that by extending the points-to set of an
 // allocation by the points-to sets of all more generic allocations,
 // ie, those that can pattern match it.
 
-ptr_points_to(Alloc, OrigAlloc) <-
-   ptr_points_to(Alloc, MoreGenericAlloc),
+ptr_points_to(ACtx, Alloc, PtrACtx, OrigAlloc) <-
+   ptr_points_to(ACtx, Alloc, PtrACtx, MoreGenericAlloc),
    alloc_matches(OrigAlloc, MoreGenericAlloc).
