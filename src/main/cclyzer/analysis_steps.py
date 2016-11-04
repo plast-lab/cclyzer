@@ -127,9 +127,10 @@ class _DatabaseCreationStep(AnalysisStep):
 
 class _LoadProjectStep(AnalysisStep):
     '''Analysis step that loads a project module'''
-    def __init__(self, project):
+    def __init__(self, project, message=None):
         AnalysisStep.__init__(self)
         self._project = project
+        self._message = message
 
     @autosave
     def apply(self, analysis):
@@ -178,7 +179,9 @@ class _LoadProjectStep(AnalysisStep):
 
     @property
     def message(self):
-        return 'installed %s project' % self._project.name
+        if self._message:
+            return self._message
+        return 'installed %s module' % self._project.name
 
 
 class _CleaningStep(AnalysisStep):
