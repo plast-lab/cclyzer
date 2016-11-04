@@ -62,7 +62,7 @@ lang:physical:filePath[`_cg] = "call-graph.tsv".
 lang:physical:columnNames[`_cg] = "Caller	Callee".
 
 _cg(CallerSign, CalleeSign) <-
-   callgraph:edge(_, Callee, _, CallerInstr),
+   stripctx_callgraph:edge(Callee, CallerInstr),
    instruction:function[CallerInstr] = Caller,
    function:signature[Callee] = CalleeSign,
    function:signature[Caller] = CallerSign.

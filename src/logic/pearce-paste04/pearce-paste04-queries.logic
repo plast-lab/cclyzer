@@ -21,7 +21,8 @@ lang:physical:delimiter[`_cg] = "\t".
 lang:physical:filePath[`_cg] = "call-graph.tsv".
 
 _cg(CallerSign, CalleeSign) <-
-   callgraph:fn_edge(Callee, Caller),
+   callgraph:edge(Callee, CallerInstr),
+   instruction:function[CallerInstr] = Caller,
    function:signature[Callee] = CalleeSign,
    function:signature[Caller] = CallerSign.
 
