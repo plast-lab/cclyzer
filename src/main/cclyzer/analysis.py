@@ -33,7 +33,9 @@ class Analysis(object):
             _LoadProjectStep(projects.callgraph),
             _LoadProjectStep(projects.debuginfo),
             _LoadProjectStep(projects.context_core),
-            _LoadProjectStep(projects['context/1-call-site-sens+heap']),
+            _LoadProjectStep(projects['context/1-call-site-sens+heap'],
+                             message='installed 1 Call-site Sens + Heap'),
+
             _LoadProjectStep(config.points_to),
         ]
 

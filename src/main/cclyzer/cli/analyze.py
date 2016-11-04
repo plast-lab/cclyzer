@@ -50,17 +50,24 @@ class AnalyzeCommand(CliCommand):
         """
         analysis = self._analysis
 
+        # Find max message length
+        max_message_length = 0
+        for step in analysis.pipeline:
+            length = len(step.message)
+            if length > max_message_length:
+                max_message_length = length
+
         # Dynamically decorate each analysis step
         for step in analysis.pipeline:
             # Time step plus redirect stdout to /dev/null
-            step.apply = task_timing(step.message)(
+            step.apply = task_timing(step.message, length=max_message_length)(
                 stdout_redirected()(
                     step.apply
                 )
             )
 
         # Run analysis while timing each step, plus total time
-        with task_timing('total time'):
+        with task_timing('total time', length=max_message_length):
             analysis.run()
 
         # Print statistics
