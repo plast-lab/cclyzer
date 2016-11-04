@@ -129,6 +129,11 @@ cxx:throw_instruction:exception(ExcObj, ThrowInsn) <-
    actual_arg[ThrowInsn, 0] = Exc,
    stripctx_operand_points_to(ExcObj, Exc).
 
+cxx:throw_instruction:full_exception(ACtx, ExcObj, ThrowInsn) <-
+   cxx:throw_instruction(ThrowInsn),
+   actual_arg[ThrowInsn, 0] = Exc,
+   operand_points_to(ACtx, ExcObj, _, Exc).
+
 //------------------------------------------------
 // * Throw Instr associates typeinfo object
 //------------------------------------------------
@@ -178,17 +183,17 @@ cxx:throw_instruction:no_dtor(ThrowInsn) <-
 // We can use the destructor and the typeinfo object supplied to a
 // throw instruction, as type indications for the exception object.
 
-type_indication(Type, ExcObj)
+type_indication(Type, ACtx, ExcObj)
  <-
    untyped_allocation(_, ExcObj),
-   cxx:throw_instruction:exception(ExcObj, ThrowInsn),
+   cxx:throw_instruction:full_exception(ACtx, ExcObj, ThrowInsn),
    cxx:throw_instruction:destructor(Dtor, ThrowInsn),
    destructor:class_type[Dtor] = Type.
 
-type_indication(ClassType, ExcObj)
+type_indication(ClassType, ACtx, ExcObj)
  <-
    untyped_allocation(_, ExcObj),
-   cxx:throw_instruction:exception(ExcObj, ThrowInsn),
+   cxx:throw_instruction:full_exception(ACtx, ExcObj, ThrowInsn),
    cxx:throw_instruction:typeinfo(TypeInfo, ThrowInsn),
    class_type:typeinfo[ClassType] = TypeInfo.
 
