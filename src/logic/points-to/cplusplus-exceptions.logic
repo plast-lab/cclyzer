@@ -120,8 +120,7 @@ cxx:throw_instruction(ThrowInsn) <-
 
 cxx:throw_instruction:exception(ExcObj, ThrowInsn) <-
    cxx:throw_instruction(ThrowInsn),
-   ( call_instruction:arg[ThrowInsn, 0] = Exc
-   ; invoke_instruction:arg[ThrowInsn, 0] = Exc ),
+   actual_arg[ThrowInsn, 0] = Exc,
    stripctx_operand_points_to(ExcObj, Exc).
 
 //------------------------------------------------
@@ -130,8 +129,7 @@ cxx:throw_instruction:exception(ExcObj, ThrowInsn) <-
 
 cxx:throw_instruction:typeinfo(ExcTypeInfo, ThrowInsn) <-
    cxx:throw_instruction(ThrowInsn),
-   ( call_instruction:arg[ThrowInsn, 1] = TypeInfoArg
-   ; invoke_instruction:arg[ThrowInsn, 1] = TypeInfoArg ),
+   actual_arg[ThrowInsn, 1] = TypeInfoArg,
    stripctx_operand_points_to(TypeInfoObj, TypeInfoArg),
    _type_info_by_alloc[TypeInfoObj] = ExcTypeInfo.
 
@@ -155,16 +153,14 @@ typeinfo(Var), external_typeinfo(Var) <-
 
 cxx:throw_instruction:destructor(Dtor, ThrowInsn) <-
    cxx:throw_instruction(ThrowInsn),
-   ( call_instruction:arg[ThrowInsn, 2] = DtorArg
-   ; invoke_instruction:arg[ThrowInsn, 2] = DtorArg ),
+   actual_arg[ThrowInsn, 2] = DtorArg,
    stripctx_operand_points_to(Alloc, DtorArg),
    function:by_location[Alloc] = Dtor.
 
 cxx:throw_instruction:no_dtor(ThrowInsn) <-
    null_location[] = Null,
    cxx:throw_instruction(ThrowInsn),
-   ( call_instruction:arg[ThrowInsn, 2] = DtorArg
-   ; invoke_instruction:arg[ThrowInsn, 2] = DtorArg ),
+   actual_arg[ThrowInsn, 2] = DtorArg,
    stripctx_operand_points_to(Null, DtorArg).
 
 //-------------------------------------------------------------------------
