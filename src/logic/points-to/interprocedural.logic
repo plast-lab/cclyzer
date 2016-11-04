@@ -47,8 +47,6 @@ context(CalleeCtx)
  <-
    indirect_call_instruction(CallerInstr),
    call_instruction:__function[CallerInstr] = FuncOp,
-   instruction:function[CallerInstr] = InstrFunc,
-   reachable_context(CallerCtx, InstrFunc),
    operand_points_to(_, FuncLoc, CallerCtx, FuncOp),
    function:by_location[FuncLoc] = Callee,
    function:type[Callee] = ActualType,
@@ -65,8 +63,6 @@ context(CalleeCtx)
  <-
    invoke_instruction(CallerInstr),
    invoke_instruction:__function[CallerInstr] = FuncOp,
-   instruction:function[CallerInstr] = InstrFunc,
-   reachable_context(CallerCtx, InstrFunc),
    operand_points_to(_, FuncLoc, CallerCtx, FuncOp),
    function:by_location[FuncLoc] = Callee,
    function:type[Callee] = ActualType,
