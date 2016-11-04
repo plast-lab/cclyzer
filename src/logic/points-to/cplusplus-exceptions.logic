@@ -51,6 +51,12 @@ sized_alloc_instr[Insn] = Size <-
    call_instruction:arg[Insn, 0] = SizeOp,
    operand:to_int[SizeOp] = Size.
 
+sized_alloc_instr[Insn] = Size <-
+   cxx:alloc_exception[] = Func,
+   invoke_instruction:function[Insn] = Func,
+   invoke_instruction:arg[Insn, 0] = SizeOp,
+   operand:to_int[SizeOp] = Size.
+
 // Infer its type
 allocation:type[ExcObj] = Type <-
    !inlined_constructors(),
