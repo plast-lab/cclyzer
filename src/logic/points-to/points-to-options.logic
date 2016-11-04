@@ -9,7 +9,8 @@
 
 user_options:entrypoints[] = Value -> string(Value).
 
-reachable_function(F) <-
+reachable_context(Ctx, F) <-
+   empty_context[] = Ctx,
    user_options:entrypoints[] = "library", function(F).
 
 
