@@ -26,19 +26,30 @@
 
 // Retrieve function names from constants
 
-_constant_references_function[FC] = FuncDecl
+constant_references_function[FC] = FuncDecl
  <-
   function_constant(FC),
-  constant:value[FC] = FuncName,
+  function_constant:function_name[FC] = FuncName,
   function:by_name[FuncName] = FuncDecl.
 
-// A function constant may be enclosed by a bitcast constant
+// Retrieve variable names from constants
+
+constant_references_variable[GC] = GVar
+ <-
+  global_variable_constant(GC),
+  global_variable_constant:name[GC] = Name,
+  global_variable:by_name[Name] = GVar.
+
+// A constant may be enclosed by a bitcast constant
 // expression
 
-_constant_references_function[Outer] = FuncDecl
- <-
+constant_references_function[Outer] = FuncDecl <-
    bitcast_constant_expression:from[Outer] = Inner,
-   _constant_references_function[Inner] = FuncDecl.
+   constant_references_function[Inner] = FuncDecl.
+
+constant_references_variable[Outer] = GVar <-
+   bitcast_constant_expression:from[Outer] = Inner,
+   constant_references_variable[Inner] = GVar.
 
 //-------------------------------------------------------------
 // [Aliases]
@@ -70,10 +81,15 @@ aliased_constants(OtherConstant, Constant) <-
    _alias(OtherConstant, Alias),
    _aliasee(Constant, Alias).
 
-_constant_references_function[OtherConstant] = FuncDecl
+constant_references_function[OtherConstant] = FuncDecl
  <-
    aliased_constants(OtherConstant, Constant),
-   _constant_references_function[Constant] = FuncDecl.
+   constant_references_function[Constant] = FuncDecl.
+
+constant_references_variable[OtherConstant] = GVar
+ <-
+   aliased_constants(OtherConstant, Constant),
+   constant_references_variable[Constant] = GVar.
 
 
 // Mapping from call instructions to function declarations
@@ -82,13 +98,13 @@ _instr_calls_func[Insn] = FuncDecl <-
    direct_call_instruction(Insn),
    call_instruction:__function[Insn] = Op,
    operand:as_constant[Op] = C,
-   _constant_references_function[C] = FuncDecl.
+   constant_references_function[C] = FuncDecl.
 
 _instr_calls_func[Insn] = FuncDecl <-
    direct_invoke_instruction(Insn),
    invoke_instruction:__function[Insn] = Op,
    operand:as_constant[Op] = C,
-   _constant_references_function[C] = FuncDecl.
+   constant_references_function[C] = FuncDecl.
 
 
 // Is this always true for our tests?
