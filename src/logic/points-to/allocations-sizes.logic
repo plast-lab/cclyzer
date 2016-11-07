@@ -100,7 +100,7 @@ sized_alloc_instr[Insn] = Size <-
    operand:to_int[Operand] = Size.
 
 sized_alloc_instr[Insn] = Size * Nmemb <-
-   function:by_name["@realloc"] = Func,
+   function:by_name["@calloc"] = Func,
    call_instruction:function[Insn] = Func,
    call_instruction:arg[Insn, 0] = NmembOp,
    call_instruction:arg[Insn, 1] = SizeOp,
@@ -108,7 +108,7 @@ sized_alloc_instr[Insn] = Size * Nmemb <-
    operand:to_int[SizeOp] = Size.
 
 sized_alloc_instr[Insn] = Size * Nmemb <-
-   function:by_name["@realloc"] = Func,
+   function:by_name["@calloc"] = Func,
    invoke_instruction:function[Insn] = Func,
    invoke_instruction:arg[Insn, 0] = NmembOp,
    invoke_instruction:arg[Insn, 1] = SizeOp,
