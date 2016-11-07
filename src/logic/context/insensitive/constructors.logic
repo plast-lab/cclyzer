@@ -1,0 +1,40 @@
+//------------------------------------------------------------------------------
+// [Context-Insensitive Analysis]
+//
+// In this analysis, both context and alocation context return
+// singletons.
+//------------------------------------------------------------------------------
+
+context(Ctx) -> .
+alloc_context(ACtx) -> .
+
+//-----------------------------------------------------
+// Context Constructors
+//-----------------------------------------------------
+
+context:new[] = Ctx ->
+   context(Ctx).
+
+alloc_context:new[] = ACtx ->
+   alloc_context(ACtx).
+
+lang:constructor(`context:new).
+lang:constructor(`alloc_context:new).
+
+//-----------------------------------------------------
+// Macro-constructors
+//-----------------------------------------------------
+
+// record[Ctx, Alloc] = ACtx ->
+//    context(Ctx), allocation(Alloc), alloc_context(ACtx).
+
+// merge[CallerCtx, Invoc, ACtx, Alloc] = CalleeCtx ->
+//    context(CallerCtx), context(CalleeCtx),
+//    instruction(Invoc), alloc_context(ACtx), allocation(Alloc).
+
+// // Macro-definitions
+// alloc_context:new[] = ACtx <-
+//    record[_, _] = ACtx.
+
+// context:new[] = CalleeCtx <-
+//    merge[_, _, _, _] = CalleeCtx.

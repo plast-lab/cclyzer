@@ -1,0 +1,49 @@
+//---------------------------------------------------------
+// Empty Contexts
+//---------------------------------------------------------
+
+// Generic empty context
+empty_context[] = Ctx
+ , context(Ctx)
+ , context:new[] = Ctx
+ <- .
+
+empty_alloc_context[] = ACtx
+ , alloc_context(ACtx)
+ , alloc_context:new[] = ACtx
+ <- .
+
+// Special context for when called from main
+main_context[] = Ctx
+ , context(Ctx)
+ , context:new[] = Ctx
+ <- .
+
+// Special context for when called at startup
+startup_context[] = Ctx
+ , context(Ctx)
+ , context:new[] = Ctx
+ <- .
+
+// Special context for when called at exit
+exit_context[] = Ctx
+ , context(Ctx)
+ , context:new[] = Ctx
+ <- .
+
+
+//---------------------------------------------------------
+// Bootstrap the analysis
+//---------------------------------------------------------
+
+reachable_context(Ctx, Main) <-
+   main_function[] = Main,
+   main_context[] = Ctx.
+
+reachable_context(Ctx, StartupFunc) <-
+   called_at_startup(StartupFunc),
+   startup_context[] = Ctx.
+
+reachable_context(Ctx, ExitFunc) <-
+   called_at_exit(ExitFunc),
+   exit_context[] = Ctx.

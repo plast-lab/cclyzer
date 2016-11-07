@@ -1,0 +1,8 @@
+ctx:insens, projectname
+
+llvm:schema, library
+llvm:callgraph, library
+ctx:core, library
+
+constructors.logic, active
+bootstrap.logic, active
