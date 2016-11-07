@@ -131,6 +131,7 @@ secondary_superclass(Supertype, Type) ->
 primary_superclass[Type] = Supertype <-
    class_instance:constructor[Alloc] = Ctor,
    constructor:class_type[Ctor] = Type,
+   !class_type:typeinfo[Type] = _,
    // TODO: could we leverage context here?
    init_by_ctor(Supertype, _, Ctor, Alloc),
    struct_type:field[Type, 0] = UnpaddedType,
@@ -139,11 +140,15 @@ primary_superclass[Type] = Supertype <-
 
 // Same thing for secondary superclasses, although the object that
 // flows to constructor will have some offset w.r.t the original
-// receiver object
+// receiver object.
+
+// TODO This is not entirely correct, as some fields may be labeled as
+// superclasses
 
 secondary_superclass(Supertype, Type) <-
    class_instance:constructor[BaseAlloc] = Ctor,
    constructor:class_type[Ctor] = Type,
+   !class_type:typeinfo[Type] = _,
    alloc_aliases(BaseAlloc0, BaseAlloc),
    alloc_aliases(BaseAlloc, BaseAlloc0),     // redundant opt clause
    alloc_subregion:base[Alloc] = BaseAlloc0, // reduntant opt clause
