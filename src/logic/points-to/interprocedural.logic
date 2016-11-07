@@ -25,7 +25,6 @@ context(CalleeCtx)
    instruction:function[CallerInstr] = InstrFunc,
    reachable_context(CallerCtx, InstrFunc),
    // Extra
-   context:new[_] = CallerCtx,
    context_item:by_invoc[CallerInstr] = NewItem.
 
 context(CalleeCtx)
@@ -37,7 +36,6 @@ context(CalleeCtx)
    instruction:function[CallerInstr] = InstrFunc,
    reachable_context(CallerCtx, InstrFunc),
    // Extra
-   context:new[_] = CallerCtx,
    context_item:by_invoc[CallerInstr] = NewItem.
 
 // Indirect function calls (via function pointers)
@@ -54,7 +52,6 @@ context(CalleeCtx)
    pointer_type:component[FuncOpType] = DeclaredType,
    type_compatible(ActualType, DeclaredType),
    // Extra
-   context:new[_] = CallerCtx,
    context_item:by_invoc[CallerInstr] = NewItem.
 
 context(CalleeCtx)
@@ -70,7 +67,6 @@ context(CalleeCtx)
    pointer_type:component[FuncOpType] = DeclaredType,
    type_compatible(ActualType, DeclaredType),
    // Extra
-   context:new[_] = CallerCtx,
    context_item:by_invoc[CallerInstr] = NewItem.
 
 

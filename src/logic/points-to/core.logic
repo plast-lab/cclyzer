@@ -123,8 +123,12 @@ reachable_store(InstrFunc, ToAddress, Value) <-
    store_instruction:address[Instr] = ToAddress,
    instruction:function[Instr] = InstrFunc.
 
+_inv_reachable_store_(InstrFunc, Value, ToAddress) <-
+   reachable_store(InstrFunc, ToAddress, Value).
+
 ptr_points_to(ACtx, Alloc, BaseACtx, BaseAlloc) <-
    reachable_store(InstrFunc, ToAddress, Value),
+   _inv_reachable_store_(InstrFunc, Value, ToAddress), // redundant OPT clause
    reachable_context(Ctx, InstrFunc),
    operand_points_to(ACtx, Alloc, Ctx, Value),
    operand_points_to(BaseACtx, BaseAlloc, Ctx, ToAddress),
