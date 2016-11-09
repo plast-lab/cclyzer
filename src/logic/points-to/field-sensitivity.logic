@@ -316,16 +316,19 @@ gep_points_to(Insn, NextIndex, BaseAlloc, AllocField)
 
 
 // The destination variable holds the allocation pointed by the last
-// index of the associated `getelementptr` instruction
+// index of the associated `getelementptr` instruction. We take the
+// context from the address operand.
 
-_inv_gep_base(Insn, Base) <-
-   getelementptr_instruction:base[Insn] = Base.
-
-var_points_to(ACtx, Alloc, Ctx, ToVar) <-
+_gep_last_index_points_to(Alloc, BaseAlloc, Insn) <-
    gep_points_to(Insn, Total, BaseAlloc, Alloc),
-   getelementptr_instruction:nindices[Insn] = Total,
-   instruction:to[Insn] = ToVar,
+   getelementptr_instruction:nindices[Insn] = Total.
+
+_gep_address_ctx_points_to(Ctx, ACtx, BaseAlloc, Insn) <-
    getelementptr_instruction:base[Insn] = Base,
-   _inv_gep_base(Insn, Base),   // redundant OPT clause
    operand_points_to(ACtx, BaseAlloc, Ctx, Base).
+
 // TODO type compatibility
+var_points_to(ACtx, Alloc, Ctx, ToVar) <-
+   _gep_last_index_points_to(Alloc, BaseAlloc, Insn),
+   _gep_address_ctx_points_to(Ctx, ACtx, BaseAlloc, Insn),
+   instruction:to[Insn] = ToVar.
