@@ -128,15 +128,15 @@ secondary_superclass(Supertype, Type) ->
 // call to some constructor of class A inside the B constructor, that
 // is invoked on the receiver object
 
-primary_superclass[Type] = Supertype <-
-   class_instance:constructor[Alloc] = Ctor,
-   constructor:class_type[Ctor] = Type,
-   !class_type:typeinfo[Type] = _,
-   // TODO: could we leverage context here?
-   init_by_ctor(Supertype, _, Ctor, Alloc),
-   struct_type:field[Type, 0] = UnpaddedType,
-   struct_type:nfields[UnpaddedType] = NFields,
-   type_compatible:up_to_field(Supertype, UnpaddedType, NFields - 1).
+// primary_superclass[Type] = Supertype <-
+//    class_instance:constructor[Alloc] = Ctor,
+//    constructor:class_type[Ctor] = Type,
+//    !class_type:typeinfo[Type] = _,
+//    // TODO: could we leverage context here?
+//    init_by_ctor(Supertype, _, Ctor, Alloc),
+//    struct_type:field[Type, 0] = UnpaddedType,
+//    struct_type:nfields[UnpaddedType] = NFields,
+//    type_compatible:up_to_field(Supertype, UnpaddedType, NFields - 1).
 
 // Same thing for secondary superclasses, although the object that
 // flows to constructor will have some offset w.r.t the original
@@ -145,20 +145,20 @@ primary_superclass[Type] = Supertype <-
 // TODO This is not entirely correct, as some fields may be labeled as
 // superclasses
 
-secondary_superclass(Supertype, Type) <-
-   class_instance:constructor[BaseAlloc] = Ctor,
-   constructor:class_type[Ctor] = Type,
-   !class_type:typeinfo[Type] = _,
-   alloc_aliases(BaseAlloc0, BaseAlloc),
-   alloc_aliases(BaseAlloc, BaseAlloc0),     // redundant opt clause
-   alloc_subregion:base[Alloc] = BaseAlloc0, // reduntant opt clause
-   alloc_subregion:at_field[BaseAlloc0, Index] = Alloc,
-   // TODO: could we leverage context here?
-   init_by_ctor(Supertype, _, Ctor, Alloc),
-   struct_type:field[Type, Index] = UnpaddedType,
-   struct_type:nfields[UnpaddedType] = NFields,
-   type_compatible:up_to_field(Supertype, UnpaddedType, NFields - 1),
-   Index != 0.
+// secondary_superclass(Supertype, Type) <-
+//    class_instance:constructor[BaseAlloc] = Ctor,
+//    constructor:class_type[Ctor] = Type,
+//    !class_type:typeinfo[Type] = _,
+//    alloc_aliases(BaseAlloc0, BaseAlloc),
+//    alloc_aliases(BaseAlloc, BaseAlloc0),     // redundant opt clause
+//    alloc_subregion:base[Alloc] = BaseAlloc0, // reduntant opt clause
+//    alloc_subregion:at_field[BaseAlloc0, Index] = Alloc,
+//    // TODO: could we leverage context here?
+//    init_by_ctor(Supertype, _, Ctor, Alloc),
+//    struct_type:field[Type, Index] = UnpaddedType,
+//    struct_type:nfields[UnpaddedType] = NFields,
+//    type_compatible:up_to_field(Supertype, UnpaddedType, NFields - 1),
+//    Index != 0.
 
 
 //----------------------------------------------------
@@ -219,11 +219,16 @@ class_instance:vtable[Alloc] = VTable
 // some subclass be used in the place of the pointer to the
 // superclass!!
 
-_type_expands_base_type(Supertype, Type) <-
-   primary_superclass[Type] = Supertype.
+_eligible_base_type(Supertype, Type) <-
+   struct_type:field[Type, 0] = UnpaddedType,
+   struct_type:nfields[UnpaddedType] = NFields,
+   type_compatible:up_to_field(Supertype, UnpaddedType, NFields - 1).
 
 _type_expands_base_type(Supertype, Type) <-
-   primary_superclass[IntermType] = Supertype,
+   _eligible_base_type(Supertype, Type).
+
+_type_expands_base_type(Supertype, Type) <-
+   _eligible_base_type(Supertype, IntermType),
    _type_expands_base_type(IntermType, Type).
 
 type_compatible(PtrActualType, PtrDeclaredType) <-
