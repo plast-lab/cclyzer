@@ -213,6 +213,16 @@ schema:sanity()
    !label_type[] = Comp.
 
 
+// Get to the base component
+pointer_type:base_component[Type] = BaseComp <-
+   pointer_type:component[Type] = BaseComp,
+   !pointer_type(BaseComp).
+
+pointer_type:base_component[Type] = BaseComp <-
+   pointer_type:component[Type] = Comp,
+   pointer_type:base_component[Comp] = BaseComp.
+
+
 //----------------------
 // Vector type
 //----------------------

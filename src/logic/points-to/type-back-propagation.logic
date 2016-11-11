@@ -45,6 +45,23 @@ type_indication(Type, ACtx, Alloc) <-
    sized_alloc_instr[AllocInstr] = Size,
    type:size[Type] = Size.
 
+// In case of known size, we must also allow pointer types whose base
+// component may perfectly divide the known size of the allocation.
+type_indication(Type, ACtx, Alloc) <-
+   reachable_instruction(Instr),
+   bitcast_instruction:to_type[Instr] = PtrType,
+   bitcast_instruction:from[Instr] = FromOperand,
+   instruction:function[Instr] = InstrFunc,
+   reachable_context(Ctx, InstrFunc),
+   operand_points_to(ACtx, Alloc, Ctx, FromOperand),
+   untyped_allocation(AllocInstr, Alloc),
+   pointer_type:component[PtrType] = Type,
+   pointer_type:base_component[PtrType] = BaseType,
+   sized_alloc_instr[AllocInstr] = Size,
+   type:size[BaseType] = BaseSize,
+   NumElements = Size / BaseSize,
+   Size = NumElements * BaseSize.
+
 
 heap_allocation(TypedAlloc)
  , heap_allocation:by_type_instruction[Type, AllocInstr] = TypedAlloc
