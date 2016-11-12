@@ -12,6 +12,13 @@ template <typename T> std::set< const T* >& Registry<T>::all() {
     return *allInstances;
 }
 
+// Add explicit instantiations
+namespace cclyzer {
+    template std::set< const Predicate* >& Registry<Predicate>::all();
+    template std::set< const EntityPredicate* >& Registry<EntityPredicate>::all();
+    template std::set< const OperandPredicate* >& Registry<OperandPredicate>::all();
+}
+
 // Two suffixes for the two variants of each operand predicate
 const char *OperandPredicate::CONSTANT_SUFFIX = "by_constant";
 const char *OperandPredicate::VARIABLE_SUFFIX = "by_variable";

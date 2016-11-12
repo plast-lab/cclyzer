@@ -1,9 +1,7 @@
-#include <boost/make_unique.hpp>
 #include <llvm/IR/Module.h>
 #include "DebugInfoProcessor.hpp"
 #include "DebugInfoProcessorImpl.hpp"
 
-using boost::make_unique;
 using cclyzer::DebugInfoProcessor;
 using cclyzer::refmode_t;
 
@@ -12,7 +10,7 @@ using cclyzer::refmode_t;
 //------------------------------------------------------------------------------
 
 DebugInfoProcessor::DebugInfoProcessor(FactWriter& writer, RefmodeEngine& engine)
-    : impl(make_unique<Impl>(writer, engine))
+    : impl(new Impl(writer, engine))
 {}
 
 DebugInfoProcessor::~DebugInfoProcessor()
