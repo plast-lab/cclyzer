@@ -28,6 +28,8 @@ The LogicBlox engine needs to be installed. Download LogicBlox engine
 To acquire an academic license, fill out
 [this form](http://www.logicblox.com/learn/academic-license-request-form/).
 
+Alternatively, you can try the [PA-Datalog](http://snf-705535.vm.okeanos.grnet.gr/agreement.html) engine, which is a modified LogicBlox v3 engine, intended for use in program analysis projects.
+
 You must also set the environment variable `$LOGICBLOX_HOME` and
 augment your `$PATH` accordingly. The following additions to either
 your `.bashrc` or `.bash_profile` should suffice, assuming that you
