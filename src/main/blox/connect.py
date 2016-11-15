@@ -56,7 +56,7 @@ class Connector(object):
         errors = filter_errors(p.stderr)
 
         # Print the remaining warnings
-        if errors.strip() is not '':
+        if errors.strip():
             print >> sys.stderr, errors
 
         # Check return code and raise exception at failure indication
@@ -78,7 +78,7 @@ class Connector(object):
         errors = filter_errors(p.stderr)
 
         # Print the remaining warnings
-        if errors.strip() is not '':
+        if errors.strip():
             print >> sys.stderr, errors
 
         # Check return code and raise exception at failure indication
