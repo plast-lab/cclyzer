@@ -1,3 +1,4 @@
+#include <llvm/Config/llvm-config.h>
 #include "DebugInfoProcessorImpl.hpp"
 #include "debuginfo_predicate_groups.hpp"
 
@@ -123,11 +124,17 @@ DebugInfoProcessor::Impl::write_di_subprogram::write(
 
     proc.writeFact(pred::di_subprogram::id, nodeId);
 
+#if LLVM_VERSION_MAJOR == 3
+#if LLVM_VERSION_MINOR < 8
     // Record function subprogram
     if (const llvm::Function *func = disubprogram.getFunction()) {
         refmode_t funcref = proc.refmEngine.refmode<llvm::Function>(*func);
         proc.writeFact(pred::di_subprogram::function, nodeId, funcref);
     }
+#endif
+#else
+#error Unsupported LLVM version
+#endif
 
     //-----------------------------------------------------------------
     // Record generic scope properties
