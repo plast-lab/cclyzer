@@ -8,10 +8,10 @@ all:
 include $(LEVEL)/src/common.mk
 
 # Set warnings and other compilation options
-CXXFLAGS += -fvisibility-inlines-hidden -Wall -W -Wno-unused-parameter      \
-            -Wwrite-strings -Wcast-qual -Wmissing-field-initializers        \
-            -pedantic -Wno-long-long -Wnon-virtual-dtor -ffunction-sections \
-            -fdata-sections -O3
+CXXFLAGS += -fvisibility-inlines-hidden -Wall -W -Wno-unused-parameter    \
+            -Wwrite-strings -Wcast-qual -Wmissing-field-initializers      \
+            -pedantic -Wno-long-long -ffunction-sections -fdata-sections  \
+            -O3
 
 LLVM_CONFIG ?= llvm-config
 
