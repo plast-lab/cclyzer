@@ -26,7 +26,7 @@ cclyzer::factgen(FileIt firstFile, FileIt endFile,
     using cclyzer::FactGenerator;
     using cclyzer::FactWriter;
 
-    llvm::LLVMContext &context = llvm::getGlobalContext();
+    llvm::LLVMContext context;
     llvm::SMDiagnostic err;
 
     // Create fact writer

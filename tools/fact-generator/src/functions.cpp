@@ -73,8 +73,8 @@ FactGenerator::writeFunction(
     const std::string funcname = "@" + func.getName().str();
     writeFact(pred::function::name, funcref, funcname);
 
-    // Address not significant
-    if (func.hasUnnamedAddr())
+    // Address not significant TODO fix for llvm 3.9
+    if (func.hasGlobalUnnamedAddr())
         writeFact(pred::function::unnamed_addr, funcref);
 
     // Record function attributes TODO
@@ -99,7 +99,7 @@ FactGenerator::writeFunction(
 
     // Record section
     if(func.hasSection())
-        writeFact(pred::function::section, funcref, func.getSection());
+        writeFact(pred::function::section, funcref, func.getSection().str());
 
     // Record function parameters
     int index = 0;

@@ -123,18 +123,19 @@ string
 cclyzer::utils::to_string(llvm::AtomicOrdering ordering)
 {
     const char *atomic;
+    using llvm::AtomicOrdering;
 
     switch (ordering) {
-      case llvm::NotAtomic:              atomic = "";          break;
-      case llvm::Unordered:              atomic = "unordered"; break;
-      case llvm::Monotonic:              atomic = "monotonic"; break;
-      case llvm::Acquire:                atomic = "acquire";   break;
-      case llvm::Release:                atomic = "release";   break;
-      case llvm::AcquireRelease:         atomic = "acq_rel";   break;
-      case llvm::SequentiallyConsistent: atomic = "seq_cst";   break;
+      case AtomicOrdering::NotAtomic:              atomic = "";          break;
+      case AtomicOrdering::Unordered:              atomic = "unordered"; break;
+      case AtomicOrdering::Monotonic:              atomic = "monotonic"; break;
+      case AtomicOrdering::Acquire:                atomic = "acquire";   break;
+      case AtomicOrdering::Release:                atomic = "release";   break;
+      case AtomicOrdering::AcquireRelease:         atomic = "acq_rel";   break;
+      case AtomicOrdering::SequentiallyConsistent: atomic = "seq_cst";   break;
       default:
           llvm::errs() << "Unrecognized atomic ordering type: "
-                       << ordering << '\n';
+                       << static_cast<int>(ordering) << '\n';
           atomic = "<invalid atomic ordering>";
           break;
     }

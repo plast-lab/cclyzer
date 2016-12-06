@@ -112,7 +112,7 @@ FactGenerator::writeGlobalVar(const llvm::GlobalVariable& gv,
 
     // Record section
     if (gv.hasSection())
-        writeFact(pred::global_var::section, id, gv.getSection());
+        writeFact(pred::global_var::section, id, gv.getSection().str());
 
     // Record alignment
     if (gv.getAlignment())
