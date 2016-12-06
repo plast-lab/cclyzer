@@ -25,15 +25,15 @@ FactGenerator::writeFunction(
     refmode_t typeSignature = recordType(func.getFunctionType());
 
 #if LLVM_VERSION_MAJOR == 3
-#if LLVM_VERSION_MINOR >= 8
+# if LLVM_VERSION_MINOR >= 8
     // Record function subprogram
     if (const llvm::DISubprogram *subprogram = func.getSubprogram()) {
         refmode_t subprogramId = refmode<llvm::DINode>(*subprogram);
         writeFact(pred::di_subprogram::function, subprogramId, funcref);
     }
-#endif
+# endif
 #else
-#error Unsupported LLVM version
+# error Unsupported LLVM version
 #endif
 
     // Record function type signature
@@ -73,9 +73,20 @@ FactGenerator::writeFunction(
     const std::string funcname = "@" + func.getName().str();
     writeFact(pred::function::name, funcref, funcname);
 
-    // Address not significant TODO fix for llvm 3.9
-    if (func.hasGlobalUnnamedAddr())
+    // Address not significant
+#if LLVM_VERSION_MAJOR == 3 && LLVM_VERSION_MINOR >= 9
+    if (func.hasGlobalUnnamedAddr()) {
         writeFact(pred::function::unnamed_addr, funcref);
+    }
+
+    // TODO Record appropriately
+    if (func.hasAtLeastLocalUnnamedAddr()) {
+    }
+#else
+    if (func.hasUnnamedAddr()) {
+        writeFact(pred::function::unnamed_addr, funcref);
+    }
+#endif
 
     // Record function attributes TODO
     const llvm::AttributeSet &Attrs = func.getAttributes();
@@ -98,8 +109,13 @@ FactGenerator::writeFunction(
     writeFact(pred::function::id_defn, funcref);
 
     // Record section
-    if(func.hasSection())
+    if (func.hasSection()) {
+#if LLVM_VERSION_MAJOR == 3 && LLVM_VERSION_MINOR >= 9
         writeFact(pred::function::section, funcref, func.getSection().str());
+#else
+        writeFact(pred::function::section, funcref, func.getSection());
+#endif
+    }
 
     // Record function parameters
     int index = 0;

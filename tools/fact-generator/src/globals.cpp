@@ -1,3 +1,4 @@
+#include <llvm/Config/llvm-config.h>
 #include <llvm/IR/Constants.h>
 #include "predicate_groups.hpp"
 #include "FactGenerator.hpp"
@@ -111,8 +112,13 @@ FactGenerator::writeGlobalVar(const llvm::GlobalVariable& gv,
     }
 
     // Record section
-    if (gv.hasSection())
+    if (gv.hasSection()) {
+#if LLVM_VERSION_MAJOR == 3 && LLVM_VERSION_MINOR >= 9
         writeFact(pred::global_var::section, id, gv.getSection().str());
+#else
+        writeFact(pred::global_var::section, id, gv.getSection());
+#endif
+    }
 
     // Record alignment
     if (gv.getAlignment())
