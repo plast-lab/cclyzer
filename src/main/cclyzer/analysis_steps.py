@@ -30,7 +30,7 @@ def autosave(apply_func):
 
 
 class AnalysisStep(object):
-    '''Base class that all analysis steps should extend'''
+    '''Base class that all concrete analysis steps should extend.'''
     __metaclass__ = abc.ABCMeta
 
     def __init__(self):
@@ -60,15 +60,17 @@ class AnalysisStep(object):
 
     @abc.abstractmethod
     def apply(self, analysis):
+        """Apply the current step to `analysis`."""
         pass
 
     @abc.abstractproperty
     def message(self):
+        """A short message to describe what this step does."""
         pass
 
 
 class _FactGenerationStep(AnalysisStep):
-    '''Analysis step that performs fact generation'''
+    '''Analysis step that performs fact generation.'''
     @autosave
     def apply(self, analysis):
         input_files = analysis.input_files
@@ -90,7 +92,7 @@ class _FactGenerationStep(AnalysisStep):
 
 
 class _DatabaseCreationStep(AnalysisStep):
-    '''Analysis step that creates database and imports generated facts'''
+    '''Analysis step that creates database and imports generated facts.'''
     @autosave
     def apply(self, analysis):
         dbdir = analysis.database_directory
@@ -126,7 +128,7 @@ class _DatabaseCreationStep(AnalysisStep):
 
 
 class _LoadProjectStep(AnalysisStep):
-    '''Analysis step that loads a project module'''
+    '''Analysis step that loads a project module.'''
     def __init__(self, project):
         AnalysisStep.__init__(self)
         self._project = project
@@ -173,7 +175,7 @@ class _LoadProjectStep(AnalysisStep):
 
 
 class _CleaningStep(AnalysisStep):
-    '''Analysis step that cleans up output directory'''
+    '''Analysis step that cleans up output directory.'''
     def apply(self, analysis):
         # Remove previous analysis results
         if os.path.exists(analysis.output_directory):
@@ -185,7 +187,7 @@ class _CleaningStep(AnalysisStep):
 
 
 class _SanityCheckStep(AnalysisStep):
-    '''Analysis step that activates sanity checks'''
+    '''Analysis step that activates sanity checks.'''
     def __init__(self, project):
         AnalysisStep.__init__(self)
         self._project = project
@@ -207,7 +209,7 @@ class _SanityCheckStep(AnalysisStep):
 
 
 class _RunOutputQueriesStep(AnalysisStep):
-    '''Analysis step that runs output queries and exports them'''
+    '''Analysis step that runs output queries and exports them.'''
     def __init__(self, project):
         AnalysisStep.__init__(self)
         self._project = project
@@ -243,7 +245,7 @@ class _RunOutputQueriesStep(AnalysisStep):
 
 
 class _UserOptionsStep(AnalysisStep):
-    '''Analysis step that loads user configuration'''
+    '''Analysis step that loads user configuration.'''
     def __init__(self, options):
         AnalysisStep.__init__(self)
         self._options = list(options)
