@@ -1,13 +1,16 @@
+import logging
 from os import path
+
 from .commands import CliCommand
 from .. import Analysis
-from ..project import Project, ProjectManager
-import logging
+from ..project import ProjectManager
+from ..runtime import Environment as env
 
 
 # Initialize logger and project manager for this module
 _logger = logging.getLogger(__name__)
 _projects = ProjectManager()
+
 
 class LoadModuleCommand(CliCommand):
     description = 'Load logic module to analysis'

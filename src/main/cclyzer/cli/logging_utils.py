@@ -1,6 +1,5 @@
 import contextlib
 import logging
-import os
 import sys
 from logging import StreamHandler
 from logging.handlers import RotatingFileHandler, SysLogHandler

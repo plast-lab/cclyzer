@@ -9,6 +9,7 @@ from . import settings
 # Initialize logger for this module
 _logger = logging.getLogger(__name__)
 
+
 class unpacked_binary(object):
     """A context manager that unpacks a binary resource to a temporary
     location.
@@ -75,7 +76,7 @@ class unpacked_project(object):
         # Compute resource path
         project = self._project
         cached_logic_dir = runtime.FileManager().getpath('logic')
-        cached_proj_dir  = path.join(cached_logic_dir, project)
+        cached_proj_dir = path.join(cached_logic_dir, project)
 
         # Check if project has been extracted before
         if path.exists(cached_proj_dir):

@@ -32,6 +32,7 @@ def filter_errors(stream):
 
     return errors
 
+
 class Connector(object):
     def __init__(self, workspace):
         """A connector to a LogicBlox workspace."""

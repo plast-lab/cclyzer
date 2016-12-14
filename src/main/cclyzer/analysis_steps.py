@@ -4,10 +4,9 @@ import factgen
 import logging
 import os
 import shutil
-import subprocess
 from utils.contextlib2 import cd
 from . import runtime
-from .resource import unpacked_binary, unpacked_project
+from .resource import unpacked_project
 from .project import UnpackedProject
 
 # Initialize logger and file manager
@@ -16,8 +15,9 @@ files = runtime.FileManager()
 
 # Export all analysis steps
 __all__ = [
-    'AnalysisStep', '_CleaningStep', '_FactGenerationStep', '_DatabaseCreationStep',
-    '_LoadProjectStep', '_RunOutputQueriesStep', '_SanityCheckStep', '_UserOptionsStep',
+    'AnalysisStep', '_CleaningStep', '_FactGenerationStep',
+    '_DatabaseCreationStep', '_LoadProjectStep', '_RunOutputQueriesStep',
+    '_SanityCheckStep', '_UserOptionsStep',
 ]
 
 
@@ -49,7 +49,7 @@ class AnalysisStep(object):
         # Do not store environment and callable entries
         if '_env' in state:     # TODO check why this is needed
             del state['_env']
-        state = { k:v for k,v in state.iteritems() if not callable(v) }
+        state = {k: v for k, v in state.iteritems() if not callable(v)}
         return state
 
     def __setstate__(self, state):
@@ -286,7 +286,8 @@ class _UserOptionsStep(AnalysisStep):
     @autosave
     def apply(self, analysis):
         # Do nothing when no options are given
-        if not self._options: return
+        if not self._options:
+            return
 
         # Create database connector
         connector = blox.connect.Connector(analysis.database_directory)
