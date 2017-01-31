@@ -13,5 +13,6 @@
 /tools/fact-generator/GTAGS
 /bin/fact-generator
 /bin/import-generator
+/bin/json-ast-exporter
 /lib/factgen.so
 /venv/
