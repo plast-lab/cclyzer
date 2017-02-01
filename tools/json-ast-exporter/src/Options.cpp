@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <iostream>
 
+#include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/program_options.hpp>
 #include <boost/program_options/options_description.hpp>
@@ -13,6 +14,7 @@ namespace fs = boost::filesystem;
 namespace po = boost::program_options;
 
 using cclyzer::ast_exporter::Options;
+using boost::to_lower;
 
 
 Options::Options(int argc, char* argv[])
@@ -118,8 +120,34 @@ Options::set_input_files(FileIt file_begin, FileIt file_end, bool shouldRecurse)
         // Recurse into directories
         for (fs::recursive_directory_iterator iter(path), end; iter != end; ++iter)
         {
-            if (!fs::is_directory(iter->path()))
-                inputFiles.push_back(iter->path());
+            const fs::path& p = iter->path();
+
+            // Skip directories
+            if (fs::is_directory(p))
+                continue;
+
+            // Skip non C/C++ files
+            if (!p.has_extension())
+                continue;
+
+            std::string extension = p.extension().string();
+
+            // Downcase extension
+            to_lower(extension);
+
+            if (extension != ".c"   &&
+                extension != ".cc"  &&
+                extension != ".cp"  &&
+                extension != ".cpp" &&
+                extension != ".cxx" &&
+                extension != ".c++" &&
+                extension != ".h"   &&
+                extension != ".hpp")
+            {
+                continue;
+            }
+
+            inputFiles.push_back(iter->path());
         }
     }
 }
