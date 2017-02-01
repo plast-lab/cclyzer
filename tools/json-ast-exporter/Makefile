@@ -7,6 +7,9 @@ all:
 # Import common Makefile routines
 include $(LEVEL)/src/common.mk
 
+LLVM_CONFIG ?= llvm-config
+
+
 #-----------------------------------
 # Configure paths
 #-----------------------------------
@@ -21,13 +24,24 @@ include_dirs := ../jsoncons/src
 
 
 #-----------------------------------
-# Search in directories
+# Compilation flags
 #-----------------------------------
 
 CXXFLAGS += -fPIC -g -std=c++11
 CPPFLAGS += $(addprefix -I ,$(include_dirs))
-LDLIBS   += -lboost_program_options
-LDLIBS   += -lboost_system -lboost_filesystem
+LDLIBS   += -lboost_system -lboost_filesystem -lboost_program_options
+
+
+# LLVM specific flags
+
+CPPFLAGS += $(shell $(LLVM_CONFIG) --cppflags)
+LDFLAGS  += $(shell $(LLVM_CONFIG) --ldflags)
+LDLIBS   += -lclang
+
+
+#-----------------------------------
+# Search in directories
+#-----------------------------------
 
 vpath %.cpp $(srcdir)
 vpath %.h   $(include_dirs)
