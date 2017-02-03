@@ -7,9 +7,9 @@
 
 namespace cclyzer {
 
-    namespace ast {
+    namespace ast_exporter {
 
-        namespace json {
+        namespace jsonexport {
 
             typedef jsoncons::json json_t;
 
@@ -23,6 +23,7 @@ namespace cclyzer {
 
             // AST Node properties
             namespace node {
+                const std::string FILE = "file";
                 const std::string KIND = "kind";
                 const std::string DATA = "data";
 

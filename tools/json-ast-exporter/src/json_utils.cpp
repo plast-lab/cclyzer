@@ -4,7 +4,7 @@
 
 #include "json_utils.hpp"
 
-namespace ast_json = cclyzer::ast::json;
+namespace ast_json = cclyzer::ast_exporter::jsonexport;
 
 
 void
