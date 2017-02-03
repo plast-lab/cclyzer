@@ -36,6 +36,7 @@ namespace cclyzer {
                 const std::string END_OFFSET = "end_offset";
 
                 const std::string TOKENS = "tokens";
+                const std::string TREE = "ast";
             }
 
             // Lexical Token Properties

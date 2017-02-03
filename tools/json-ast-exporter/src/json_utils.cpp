@@ -89,9 +89,6 @@ ast_json::record_tokens(
 
     clang_tokenize(translation_unit, extent, &tokens, &nTokens);
 
-    // Tokens in JSON
-    json_t::array jsontokens;
-
     // JSONize every token
     for (unsigned i = 0; i < nTokens; i++)
     {
@@ -99,11 +96,8 @@ ast_json::record_tokens(
         json_t jsontoken;
 
         record_token(jsontoken, token, translation_unit);
-        jsontokens.add(jsontoken);
+        obj.add(jsontoken);
     }
-
-    // Record tokens
-    obj[node::TOKENS] = jsontokens;
 
     // Release tokens
     clang_disposeTokens(translation_unit, tokens, nTokens);

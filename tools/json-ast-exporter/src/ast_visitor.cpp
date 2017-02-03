@@ -34,7 +34,7 @@ ast_json::visit( CXCursor cursor, CXCursor parent, CXClientData clientData )
     clang_visitChildren(cursor, ast_json::visit, &children);
 
     if (children.size() > 0)
-        node["children"] = children;
+        node["children"] = std::move(children);
 
     // Add JSON object to JSON tree being constructed
     reinterpret_cast<json::array*>(clientData)->add(node);
