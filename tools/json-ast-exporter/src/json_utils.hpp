@@ -15,6 +15,7 @@ namespace cclyzer {
 
             // Recording routines
             void record_extent( json_t &, CXCursor );
+            void record_extent(json_t &, CXSourceRange );
             void record_kind( json_t &, CXCursor );
             void record_spelling( json_t &, CXCursor );
             void record_tokens( json_t &, CXCursor, CXTranslationUnit );

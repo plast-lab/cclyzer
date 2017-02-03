@@ -12,7 +12,13 @@ ast_json::record_extent(json_t& obj, CXCursor cursor)
 {
     // Get cursor extent
     CXSourceRange extent = clang_getCursorExtent( cursor );
+    record_extent(obj, extent);
+}
 
+
+void
+ast_json::record_extent(json_t& obj, CXSourceRange extent)
+{
     CXSourceLocation startlocation = clang_getRangeStart( extent );
     CXSourceLocation endlocation   = clang_getRangeEnd( extent );
 
@@ -129,21 +135,11 @@ ast_json::record_token(
 
     // Get attributes
     CXString spelling = clang_getTokenSpelling(translation_unit, token);
-    CXSourceLocation location = clang_getTokenLocation(translation_unit, token);
-
-    // Record spelling and location
-    CXString file;
-    unsigned int line, column, offset;
-
-    clang_getPresumedLocation(location, &file, &line, &column);
+    CXSourceRange extent = clang_getTokenExtent(translation_unit, token);
 
     obj[lex_token::DATA] = std::string(clang_getCString(spelling));
-    obj[lex_token::FILE] = std::string(clang_getCString(file));
-    obj[lex_token::LINE] = line;
-    obj[lex_token::COLUMN] = column;
-    obj[lex_token::OFFSET] = offset;
+    record_extent(obj, extent);
 
     // Reclaim memory
     clang_disposeString(spelling);
-    clang_disposeString(file);
 }
