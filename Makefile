@@ -8,7 +8,8 @@ all:
 module.logic   := logic
 module.facts   := fact-generator
 module.imports := import-generator
-modules        := $(module.logic) $(module.facts) $(module.imports)
+module.jsonast := json-ast-exporter
+modules        := $(module.logic) $(module.facts) $(module.imports) $(module.jsonast)
 modules.clean  := $(addsuffix .clean,$(modules))
 
 include $(LEVEL)/src/common.mk
@@ -19,6 +20,7 @@ include $(LEVEL)/src/common.mk
 $(addsuffix _PATH, $(module.logic))   := src/logic
 $(addsuffix _PATH, $(module.facts))   := tools/fact-generator
 $(addsuffix _PATH, $(module.imports)) := tools/import-generator
+$(addsuffix _PATH, $(module.jsonast)) := tools/json-ast-exporter
 
 
 # Accumulating Rules
