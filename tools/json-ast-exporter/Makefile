@@ -20,7 +20,8 @@ sources      := $(wildcard $(srcdir)/*.cpp)
 objects       = $(patsubst $(srcdir)/%.cpp,$(outdir)/%.o,$(sources))
 dependencies := $(patsubst $(srcdir)/%.cpp,$(outdir)/%.d,$(sources))
 program      := $(BINDIR)/json-ast-exporter
-include_dirs := ../jsoncons/src
+json_library := ../jsoncons/src
+include_dirs := $(json_library)
 
 
 #-----------------------------------
@@ -51,7 +52,7 @@ vpath %.h   $(include_dirs)
 # Basic Rules
 #-----------------------------------
 
-$(outdir)/%.o: %.cpp | $(outdir)
+$(outdir)/%.o: %.cpp | $(outdir) $(json_library)
 	$(QUIET) $(MKDIR) $(@D)
 	$(COMPILE.cc) -o $@ $<
 
@@ -87,8 +88,19 @@ ifeq (,$(filter $(MAKECMDGOALS),clean))
 
 endif
 
-$(outdir)/%.d: %.cpp | $(outdir)
+$(outdir)/%.d: %.cpp | $(outdir) $(json_library)
 	$(QUIET) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -M $< |  \
 	$(SED) 's,\($*.o\) *:,$(@D)/\1 $@: ,' > $@.tmp
 	$(QUIET) $(MV) $@.tmp $@
 	$(info Created dependency file: $@)
+
+
+#-----------------------------------
+# JSON-construction Library
+#-----------------------------------
+
+.PHONY: jsoncons
+jsonscons: $(json_library)
+
+$(json_library):
+	git submodule update --init
