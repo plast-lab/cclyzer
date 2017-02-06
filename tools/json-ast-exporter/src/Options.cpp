@@ -27,7 +27,7 @@ Options::Options(int argc, char* argv[])
 
     genericOpts.add_options()
         ("help,h", "Print help message")
-        ("out-dir,o", po::value<fs::path>(&outdir)->required(),
+        ("out-dir,o", po::value<fs::path>(&outdir),
          "Output directory for AST in JSON form")
         ("recursive,r", "Recurse into input directories")
         ("force,f", "Remove existing contents of output directory");
@@ -77,13 +77,15 @@ Options::Options(int argc, char* argv[])
     }
 
     // Sanity checks
-    assert(vm.count("out-dir"));
     assert(vm.count("input-files"));
 
     // Compute input files and create output directories
     std::vector<fs::path> paths = vm["input-files"].as<std::vector<fs::path> >();
-    set_output_dir(outdir, vm.count("force"));
     set_input_files(paths.begin(), paths.end(), vm.count("recursive"));
+
+    if (vm.count("out-dir")) {
+        set_output_dir(outdir, vm.count("force"));
+    }
 }
 
 

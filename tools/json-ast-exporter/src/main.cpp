@@ -21,9 +21,6 @@ int main(int argc, char *argv[])
     // Parse command line
     Options options(argc, argv);
 
-    // Get output directory
-    const fs::path outdir = options.output_dir();
-
     // Get source input iterators
     Options::input_file_iterator input_begin = options.input_file_begin();
     Options::input_file_iterator input_end = options.input_file_end();
@@ -69,16 +66,21 @@ int main(int argc, char *argv[])
         clang_disposeTranslationUnit(translation_unit);
         clang_disposeIndex(index);
 
-
-        // Construct output path for JSON
-        fs::path json_out = sourcefile.filename();
-        json_out = outdir / json_out;
-        json_out += ".json";
-
-        // Write to output file
+        // Get output directory
+        const fs::path outdir = options.output_dir();
         typedef boost::filesystem::ofstream ofstream;
-        ofstream output(json_out);
-        output << pretty_print(j) << std::endl;
+
+        // Write to output directory, if one was given
+        if (!outdir.empty()) {
+            // Construct output path for JSON
+            fs::path json_out = sourcefile.filename();
+            json_out = outdir / json_out;
+            json_out += ".json";
+
+            // Write to output file
+            ofstream output(json_out);
+            output << pretty_print(j) << std::endl;
+        }
     }
 
     return 0;
