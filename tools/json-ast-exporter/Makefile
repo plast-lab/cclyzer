@@ -37,6 +37,7 @@ LDLIBS   += -lboost_system -lboost_filesystem -lboost_program_options
 
 CPPFLAGS += $(shell $(LLVM_CONFIG) --cppflags)
 LDFLAGS  += $(shell $(LLVM_CONFIG) --ldflags)
+LDFLAGS  += -Wl,-rpath=$(shell $(LLVM_CONFIG) --libdir)
 LDLIBS   += -lclang
 
 
