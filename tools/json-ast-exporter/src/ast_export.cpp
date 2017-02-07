@@ -29,7 +29,11 @@ ast_json::export_ast(const Options& options)
         CXIndex index = clang_createIndex(1, 0);
 
         // Command line arguments required for parsing the TU
-        constexpr const char *args[] = {};
+        constexpr const char *args[] = {
+            "-std=c++11",
+            "-I/usr/include",
+            "-I/usr/local/include"
+        };
 
         // Speed up parsing by skipping function bodies
         CXTranslationUnit translation_unit = clang_parseTranslationUnit(
