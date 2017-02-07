@@ -61,19 +61,20 @@ Options::Options(int argc, char* argv[])
             std::cout << "Usage: " << appName
                       << " [OPTIONS] INPUT_FILE...\n\n" << genericOpts;
 
-            exit(EXIT_SUCCESS);
+            throw EXIT_SUCCESS;
         }
 
         // may throw error
         po::notify(vm);
     }
     catch(boost::program_options::required_option& e) {
-        std::cerr << e.what() << " from option: " << e.get_option_name() << std::endl;
-        exit(ERROR_IN_COMMAND_LINE);
+        std::cerr << e.what() << " from option: "
+                  << e.get_option_name() << std::endl;
+        throw ERROR_IN_COMMAND_LINE;
     }
     catch(boost::program_options::error& e) {
         std::cerr << e.what() << std::endl;
-        exit(ERROR_IN_COMMAND_LINE);
+        throw ERROR_IN_COMMAND_LINE;
     }
 
     // Sanity checks
@@ -103,7 +104,7 @@ Options::set_input_files(FileIt file_begin, FileIt file_end, bool shouldRecurse)
         // Check for existence
         if (!fs::exists(path)) {
             std::cerr << "Path does not exist: " << path << std::endl;
-            exit(ERROR_IN_COMMAND_LINE);
+            throw ERROR_IN_COMMAND_LINE;
         }
 
         // Add normal files
@@ -116,7 +117,7 @@ Options::set_input_files(FileIt file_begin, FileIt file_end, bool shouldRecurse)
             std::cerr << "Input directory given, without -r option: "
                       << path << std::endl;
 
-            exit(ERROR_IN_COMMAND_LINE);
+            throw ERROR_IN_COMMAND_LINE;
         }
 
         // Recurse into directories
@@ -164,7 +165,7 @@ Options::set_output_dir(fs::path path, bool shouldForce)
 
     if (!fs::is_directory(path)) {
         std::cerr << "Not a directory: " << path << std::endl;
-        exit(ERROR_IN_COMMAND_LINE);
+        throw ERROR_IN_COMMAND_LINE;
     }
 
     // Remove old contents
@@ -176,7 +177,7 @@ Options::set_output_dir(fs::path path, bool shouldForce)
     // Ensure output directory is empty
     if (!fs::is_empty(path)) {
         std::cerr << "Directory not empty: " << path << std::endl;
-        exit(ERROR_IN_COMMAND_LINE);
+        throw ERROR_IN_COMMAND_LINE;
     }
 
     // Store output directory (CHECK: should we canonicalize path)

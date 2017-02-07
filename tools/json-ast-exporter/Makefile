@@ -17,9 +17,10 @@ LLVM_CONFIG ?= llvm-config
 srcdir       := src
 outdir       := $(OUTDIR)
 sources      := $(wildcard $(srcdir)/*.cpp)
-objects       = $(patsubst $(srcdir)/%.cpp,$(outdir)/%.o,$(sources))
+objects      := $(patsubst $(srcdir)/%.cpp,$(outdir)/%.o,$(sources))
 dependencies := $(patsubst $(srcdir)/%.cpp,$(outdir)/%.d,$(sources))
 program      := $(BINDIR)/json-ast-exporter
+library      := $(LIBDIR)/astexport.so
 json_library := ../jsoncons/src
 include_dirs := $(json_library)
 
@@ -57,8 +58,11 @@ $(outdir)/%.o: %.cpp | $(outdir) $(json_library)
 	$(QUIET) $(MKDIR) $(@D)
 	$(COMPILE.cc) -o $@ $<
 
-$(program): $(objects) | $(BINDIR)
+$(program): $(filter-out $(outdir)/Py%.o, $(objects)) | $(BINDIR)
 	$(LINK.cc) -o $@ $^ $(LDLIBS)
+
+$(library): $(objects) | $(LIBDIR)
+	$(LINK.cpp) -shared -o $@ $^ $(LDLIBS)
 
 
 #-----------------------------------
@@ -66,7 +70,7 @@ $(program): $(objects) | $(BINDIR)
 #-----------------------------------
 
 .PHONY: all
-all: $(program)
+all: $(program) $(library)
 
 .PHONY: clean
 clean:
@@ -105,3 +109,17 @@ jsonscons: $(json_library)
 
 $(json_library):
 	git submodule update --init
+
+
+#-----------------------------------
+# Python specific flags
+#-----------------------------------
+
+py_sources := $(wildcard $(srcdir)/*.cpp)
+py_objects := $(patsubst $(srcdir)/%.cpp,$(outdir)/%.o,$(py_sources))
+py_objects += $(patsubst $(srcdir)/%.cpp,$(outdir)/%.d,$(py_sources))
+py_objects += $(library)
+
+$(py_objects): CXXFLAGS += $(shell python-config --includes)
+$(py_objects): LDFLAGS  += $(shell python-config --ldflags)
+$(py_objects): LDLIBS   += -lboost_python

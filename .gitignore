@@ -15,4 +15,5 @@
 /bin/import-generator
 /bin/json-ast-exporter
 /lib/factgen.so
+/lib/astexport.so
 /venv/
