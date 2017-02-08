@@ -80,6 +80,9 @@ clean:
 check-syntax:
 	$(COMPILE.cc) -Wall -Wextra -std=c++0x -pedantic -fsyntax-only $(sources)
 
+.PHONY: tags
+tags:
+	gtags
 
 #-----------------------------------
 # Automatic Dependency Generation

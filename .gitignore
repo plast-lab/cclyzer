@@ -11,6 +11,9 @@
 /tools/fact-generator/GPATH
 /tools/fact-generator/GRTAGS
 /tools/fact-generator/GTAGS
+/tools/json-ast-exporter/GPATH
+/tools/json-ast-exporter/GRTAGS
+/tools/json-ast-exporter/GTAGS
 /bin/fact-generator
 /bin/import-generator
 /bin/json-ast-exporter
