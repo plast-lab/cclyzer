@@ -32,6 +32,10 @@ class CliCommandMeta(ABCMeta):
                 description=dct.get('description')
             )
 
+            # Set prefix chars, if supplied
+            if 'prefix_chars' in dct:
+                cls.parser.prefix_chars = dct['prefix_chars']
+
             cls.init_parser_args(cls.parser)
 
         super(CliCommandMeta, cls).__init__(name, bases, dct)
