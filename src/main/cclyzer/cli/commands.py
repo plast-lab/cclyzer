@@ -18,12 +18,8 @@ class CliCommandMeta(ABCMeta):
                 title='subcommands'
             )
         else:
-            # Sanity check
-            assert name.endswith('Command')
-
             # this is a derived class.  Add cls to the registry
-            class_prefix = name[:-len('Command')]
-            subcommand_id = re.sub('(?!^)([A-Z]+)', r'-\1', class_prefix).lower()
+            subcommand_id = cls.__module__.split('.')[-1].replace('_', '-')
             cls.registry[subcommand_id] = cls
 
             # Create and initialize subparser
@@ -31,6 +27,10 @@ class CliCommandMeta(ABCMeta):
                 subcommand_id,
                 description=dct.get('description')
             )
+
+            # Set prefix chars, if supplied
+            if 'prefix_chars' in dct:
+                cls.parser.prefix_chars = dct['prefix_chars']
 
             cls.init_parser_args(cls.parser)
 
