@@ -109,9 +109,14 @@ class Environment():
         return os.path.join(".{}".format(self._app), "config")
 
     @property
+    @mkdirs
+    def user_log_dir(self):
+        return os.path.join(self.user_cache_dir, 'logs')
+
+    @property
     def user_log_file(self):
         logfile = "{}.log".format(self._app)
-        return os.path.join(self.user_cache_dir, logfile)
+        return os.path.join(self.user_log_dir, logfile)
 
     @property
     def logicblox_home(self):
