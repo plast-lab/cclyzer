@@ -37,11 +37,24 @@ heap_allocation:by_alloc_exc[Insn] = HeapAlloc
    call_instruction:function[Insn] = Func,
    heap_allocation:by_instruction[Insn] = HeapAlloc.
 
+heap_allocation:by_alloc_exc[Insn] = HeapAlloc
+ , exception_object(HeapAlloc)
+ <-
+   cxx:alloc_exception[] = Func,
+   invoke_instruction:function[Insn] = Func,
+   heap_allocation:by_instruction[Insn] = HeapAlloc.
+
 // Compute allocation size
 sized_alloc_instr[Insn] = Size <-
    cxx:alloc_exception[] = Func,
    call_instruction:function[Insn] = Func,
    call_instruction:arg[Insn, 0] = SizeOp,
+   operand:to_int[SizeOp] = Size.
+
+sized_alloc_instr[Insn] = Size <-
+   cxx:alloc_exception[] = Func,
+   invoke_instruction:function[Insn] = Func,
+   invoke_instruction:arg[Insn, 0] = SizeOp,
    operand:to_int[SizeOp] = Size.
 
 // Infer its type

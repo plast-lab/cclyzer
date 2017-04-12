@@ -12,8 +12,7 @@ called_at_exit(Callback)
    // the following is a simplified version of logic that can only
    // work with direct function calls
    operand:as_constant[Operand] = Constant,
-   constant:value[Constant] = FuncName,
-   function:by_name[FuncName] = Callback.
+   constant_references_function[Constant] = Callback.
 
 reachable_function(Callback) <-
    called_at_exit(Callback).

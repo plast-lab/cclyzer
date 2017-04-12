@@ -109,7 +109,8 @@ registers_atexit(Operand) <-
    function:by_name["@atexit"] = AtExit,
    callgraph:edge(AtExit, Insn),
    callgraph:inv_edge(Insn, AtExit), // redundant OPT clause
-   call_instruction:arg[Insn, 0] = Operand.
+   ( call_instruction:arg[Insn, 0] = Operand
+   ; invoke_instruction:arg[Insn, 0] = Operand).
 
 reachable_function(Callback) <-
    registers_atexit(Operand),
