@@ -56,9 +56,9 @@ class AnalysisConfig(object):
         ).format(
             self.__class__.__name__,
             # Fields of interest
-            input_files = self.input_files,
-            output_dir = self.output_directory,
-            config = self._confopt
+            input_files=self.input_files,
+            output_dir=self.output_directory,
+            config=self._confopt
         )
 
     @property
@@ -124,7 +124,8 @@ class AnalysisConfig(object):
 
     def read_config_file(self, configfile):
         # Check that configuration file exists
-        if not path.isfile(configfile): return
+        if not path.isfile(configfile):
+            return
 
         # Only import when configuration files exist
         from ConfigParser import SafeConfigParser as ConfigParser

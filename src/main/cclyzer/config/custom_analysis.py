@@ -1,8 +1,10 @@
-from .. import Analysis
-from ..analysis_steps import *
-from ..analysis_stats import AnalysisStatisticsBuilder as StatBuilder
-from ..project import ProjectManager
 from .yaml_impl import YamlConfiguration as UserConfiguration
+from .. import Analysis
+from ..project import ProjectManager
+from ..analysis_stats import AnalysisStatisticsBuilder as StatBuilder
+from ..analysis_steps import (
+    _CleaningStep, _FactGenerationStep, _DatabaseCreationStep,
+    _LoadProjectStep, _SanityCheckStep)
 
 
 class CustomAnalysis(Analysis):

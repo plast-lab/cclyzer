@@ -1,10 +1,9 @@
 from collections import deque
-from os import path
 import logging
-import shutil
 import sys
 from .commands import CliCommand
 from ..runtime import Environment
+
 
 class LogCommand(CliCommand):
     description = 'Display logged messages'

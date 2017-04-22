@@ -69,16 +69,16 @@ class Environment():
         ).format(
             self.__class__.__name__,
             # Fields of interest
-            cache_dir = self._cache_dir,
-            data_dir = self._data_dir,
-            config_dir = self._config_dir,
-            runtime_dir = self._runtime_dir,
-            logicblox_home = self._logicblox_home
+            cache_dir=self._cache_dir,
+            data_dir=self._data_dir,
+            config_dir=self._config_dir,
+            runtime_dir=self._runtime_dir,
+            logicblox_home=self._logicblox_home
         )
 
-    #---------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     # Define directory-returning properties
-    #---------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
 
     @property
     @mkdirs
@@ -109,9 +109,14 @@ class Environment():
         return os.path.join(".{}".format(self._app), "config")
 
     @property
+    @mkdirs
+    def user_log_dir(self):
+        return os.path.join(self.user_cache_dir, 'logs')
+
+    @property
     def user_log_file(self):
         logfile = "{}.log".format(self._app)
-        return os.path.join(self.user_cache_dir, logfile)
+        return os.path.join(self.user_log_dir, logfile)
 
     @property
     def logicblox_home(self):

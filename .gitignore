@@ -1,4 +1,5 @@
 /build
+/docs/build/
 *.pyc
 /tools/import-generator/src/blox/common/Common.pb.cc
 /tools/import-generator/src/blox/compiler/BloxCompiler.pb.cc
@@ -10,7 +11,12 @@
 /tools/fact-generator/GPATH
 /tools/fact-generator/GRTAGS
 /tools/fact-generator/GTAGS
+/tools/json-ast-exporter/GPATH
+/tools/json-ast-exporter/GRTAGS
+/tools/json-ast-exporter/GTAGS
 /bin/fact-generator
 /bin/import-generator
+/bin/json-ast-exporter
 /lib/factgen.so
+/lib/astexport.so
 /venv/

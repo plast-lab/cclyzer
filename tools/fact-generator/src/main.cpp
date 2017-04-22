@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <boost/filesystem.hpp>
+#include <llvm/Config/llvm-config.h>
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Module.h>
 #include <llvm/IRReader/IRReader.h>
@@ -26,7 +27,11 @@ cclyzer::factgen(FileIt firstFile, FileIt endFile,
     using cclyzer::FactGenerator;
     using cclyzer::FactWriter;
 
+#if LLVM_VERSION_MAJOR == 3 && LLVM_VERSION_MINOR >= 9
+    llvm::LLVMContext context;
+#else
     llvm::LLVMContext &context = llvm::getGlobalContext();
+#endif
     llvm::SMDiagnostic err;
 
     // Create fact writer

@@ -9,6 +9,7 @@ from utils import singleton
 # Initialize logger for this module
 _logger = logging.getLogger(__name__)
 
+
 class FileManager(object):
     __metaclass__ = singleton.Singleton
 

@@ -1,6 +1,8 @@
+#include <llvm/Config/llvm-config.h>
 #include <llvm/IR/Attributes.h>
 #include <llvm/IR/Constants.h>
 #include <llvm/IR/Function.h>
+#include "debuginfo_predicate_groups.hpp"
 #include "predicate_groups.hpp"
 #include "FactGenerator.hpp"
 
@@ -21,6 +23,18 @@ FactGenerator::writeFunction(
     refmode_t visibility = refmode(func.getVisibility());
     refmode_t linkage = refmode(func.getLinkage());
     refmode_t typeSignature = recordType(func.getFunctionType());
+
+#if LLVM_VERSION_MAJOR == 3
+# if LLVM_VERSION_MINOR >= 8
+    // Record function subprogram
+    if (const llvm::DISubprogram *subprogram = func.getSubprogram()) {
+        refmode_t subprogramId = refmode<llvm::DINode>(*subprogram);
+        writeFact(pred::di_subprogram::function, subprogramId, funcref);
+    }
+# endif
+#else
+# error Unsupported LLVM version
+#endif
 
     // Record function type signature
     writeFact(pred::function::type, funcref, typeSignature);
@@ -60,8 +74,19 @@ FactGenerator::writeFunction(
     writeFact(pred::function::name, funcref, funcname);
 
     // Address not significant
-    if (func.hasUnnamedAddr())
+#if LLVM_VERSION_MAJOR == 3 && LLVM_VERSION_MINOR >= 9
+    if (func.hasGlobalUnnamedAddr()) {
         writeFact(pred::function::unnamed_addr, funcref);
+    }
+
+    // TODO Record appropriately
+    if (func.hasAtLeastLocalUnnamedAddr()) {
+    }
+#else
+    if (func.hasUnnamedAddr()) {
+        writeFact(pred::function::unnamed_addr, funcref);
+    }
+#endif
 
     // Record function attributes TODO
     const llvm::AttributeSet &Attrs = func.getAttributes();
@@ -84,8 +109,13 @@ FactGenerator::writeFunction(
     writeFact(pred::function::id_defn, funcref);
 
     // Record section
-    if(func.hasSection())
+    if (func.hasSection()) {
+#if LLVM_VERSION_MAJOR == 3 && LLVM_VERSION_MINOR >= 9
+        writeFact(pred::function::section, funcref, func.getSection().str());
+#else
         writeFact(pred::function::section, funcref, func.getSection());
+#endif
+    }
 
     // Record function parameters
     int index = 0;

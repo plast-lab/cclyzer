@@ -43,11 +43,13 @@ constant_references_variable[GC] = GVar
 // A constant may be enclosed by a bitcast constant
 // expression
 
-constant_references_function[Outer] = FuncDecl <-
+constant_references_function[Outer] = FuncDecl
+ <-
    bitcast_constant_expression:from[Outer] = Inner,
    constant_references_function[Inner] = FuncDecl.
 
-constant_references_variable[Outer] = GVar <-
+constant_references_variable[Outer] = GVar
+ <-
    bitcast_constant_expression:from[Outer] = Inner,
    constant_references_variable[Inner] = GVar.
 

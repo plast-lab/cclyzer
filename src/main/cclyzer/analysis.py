@@ -2,8 +2,10 @@ import logging
 import os
 import pickle
 from .project import Project, ProjectManager
-from .analysis_steps import *
 from .analysis_stats import AnalysisStatisticsBuilder as StatBuilder
+from .analysis_steps import (_CleaningStep, _FactGenerationStep, _DatabaseCreationStep,
+                             _SanityCheckStep, _UserOptionsStep, _LoadProjectStep,
+                             _RunOutputQueriesStep)
 
 # Logger for this module
 _logger = logging.getLogger(__name__)

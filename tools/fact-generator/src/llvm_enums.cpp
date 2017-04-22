@@ -124,7 +124,21 @@ cclyzer::utils::to_string(llvm::AtomicOrdering ordering)
 {
     const char *atomic;
 
+#if LLVM_VERSION_MAJOR == 3 && LLVM_VERSION_MINOR >= 9
+    using llvm::AtomicOrdering;
+#endif
+
+    // Newer LLVM versions use scoped enums
     switch (ordering) {
+#if LLVM_VERSION_MAJOR == 3 && LLVM_VERSION_MINOR >= 9
+      case AtomicOrdering::NotAtomic:              atomic = "";          break;
+      case AtomicOrdering::Unordered:              atomic = "unordered"; break;
+      case AtomicOrdering::Monotonic:              atomic = "monotonic"; break;
+      case AtomicOrdering::Acquire:                atomic = "acquire";   break;
+      case AtomicOrdering::Release:                atomic = "release";   break;
+      case AtomicOrdering::AcquireRelease:         atomic = "acq_rel";   break;
+      case AtomicOrdering::SequentiallyConsistent: atomic = "seq_cst";   break;
+#else
       case llvm::NotAtomic:              atomic = "";          break;
       case llvm::Unordered:              atomic = "unordered"; break;
       case llvm::Monotonic:              atomic = "monotonic"; break;
@@ -132,9 +146,10 @@ cclyzer::utils::to_string(llvm::AtomicOrdering ordering)
       case llvm::Release:                atomic = "release";   break;
       case llvm::AcquireRelease:         atomic = "acq_rel";   break;
       case llvm::SequentiallyConsistent: atomic = "seq_cst";   break;
+#endif
       default:
           llvm::errs() << "Unrecognized atomic ordering type: "
-                       << ordering << '\n';
+                       << static_cast<int>(ordering) << '\n';
           atomic = "<invalid atomic ordering>";
           break;
     }

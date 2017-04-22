@@ -1,5 +1,4 @@
 import argparse
-import logging
 import re
 import sys
 from abc import ABCMeta, abstractmethod
@@ -13,10 +12,10 @@ class CliCommandMeta(ABCMeta):
             cls.registry = {}
 
             # create the top level parser
-            cls.parser = argparse.ArgumentParser() # TODO add description
+            cls.parser = argparse.ArgumentParser()  # TODO add description
             cls.subparsers = cls.parser.add_subparsers(
-                dest = 'subcommand_name',
-                title = 'subcommands'
+                dest='subcommand_name',
+                title='subcommands'
             )
         else:
             # this is a derived class.  Add cls to the registry
@@ -26,8 +25,12 @@ class CliCommandMeta(ABCMeta):
             # Create and initialize subparser
             cls.parser = cls.subparsers.add_parser(
                 subcommand_id,
-                description = dct.get('description')
+                description=dct.get('description')
             )
+
+            # Set prefix chars, if supplied
+            if 'prefix_chars' in dct:
+                cls.parser.prefix_chars = dct['prefix_chars']
 
             cls.init_parser_args(cls.parser)
 
@@ -55,6 +58,7 @@ class CliCommand(object):
     @abstractmethod
     def run(self): pass
 
+
 def main():
     with setup_logging() as logger:
         try:
@@ -65,7 +69,7 @@ def main():
             logger.info('Started')
             command.run()
         except Exception as e:
-            logger.exception('')
+            logger.exception(e)
             print >> sys.stderr, 'Exiting ...'
             exit(1)
         finally:
