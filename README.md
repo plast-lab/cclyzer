@@ -63,7 +63,8 @@ You will also have to install the following packages:
 
 #### Fedora 24
 
-    # yum install boost-devel boost-python protobuf-devel python-pip python-devel llvm-devel
+    # dnf install boost-devel boost-python protobuf-devel python-pip python-devel
+    # dnf install llvm-devel clang-devel
 
 #### Ubuntu
 
