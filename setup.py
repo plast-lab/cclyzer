@@ -38,7 +38,7 @@ setup(
     # Packages to be included
     packages = [
         'blox', 'cclyzer', 'cclyzer.cli', 'cclyzer.config',
-        'cclyzer.runtime', 'resources', 'resources.logic',
+        'cclyzer.runtime', 'cclyzer.collect', 'resources', 'resources.logic',
         'utils'
     ],
 
