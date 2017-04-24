@@ -36,6 +36,9 @@ class JSONCollector(object):
 
         We define the following specifiers:
         - o : id of the owner object
+        - s : same as o, but domain is a superset of objects. This is helpful
+              when merging relations that belong to a supertype, to filter the
+              objects so that only the relevant subtype is considered
         - i : index into the property list
         - p : value of the property
         - P : value of the property. Multiple values are allowed and
@@ -71,10 +74,17 @@ class JSONCollector(object):
             nprocessed = 0
 
             # Find the object
-            objid = row[argspec.index('o')]
-            obj = objects.setdefault(objid, dict())
-            obj['id'] = objid
-            nprocessed += 1
+            if 's' in argspec:
+                objid = row[argspec.index('s')]
+                if objid not in objects:
+                    continue
+                obj = objects[objid]
+                nprocessed += 1
+            else:
+                objid = row[argspec.index('o')]
+                obj = objects.setdefault(objid, dict())
+                obj['id'] = objid
+                nprocessed += 1
 
             multival = False
 
@@ -94,7 +104,10 @@ class JSONCollector(object):
 
             # Inlined objects
             if 'n' in argspec or 'N' in argspec:
-                val = self.objects[self.canonpred(inlineby)][val]
+                try:
+                    val = self.objects[self.canonpred(inlineby)][val]
+                except KeyError:
+                    continue
 
             if not prop:
                 continue
@@ -177,6 +190,22 @@ class JSONCollector(object):
 
         self.consume_predicate('di:subprogram:function', 'no', entity='function',
                                property='debuginfo', inlineby='di:subprogram')
+
+        self.consume_predicate('di:location', 'o')
+        self.consume_predicate('di:location:line', 'op')
+        self.consume_predicate('di:location:column', 'op')
+        # TODO fix, may fail because of local scopes that are not subprograms
+        self.consume_predicate('di:location:scope', 'on', inlineby='di:subprogram')
+
+        self.consume_predicate('call_instruction', 'o')
+        self.consume_predicate('call_instruction:calling_convention', 'op')
+        self.consume_predicate('call_instruction:return_attribute', 'oP')
+        self.consume_predicate('call_instruction:fn_attribute', 'oP')
+        # self.consume_predicate('call_instruction:param_attribute', 'oiP')
+        # self.consume_predicate('call_instruction:signature', 'op')
+        # self.consume_predicate('call_instruction:return_type', 'op')
+        self.consume_predicate('instruction:location', 'sn', inlineby='di:location',
+                               entity='call_instruction', property='location')
 
         for key, value  in self.objects.iteritems():
             print 'Printing', key
