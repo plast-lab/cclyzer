@@ -321,19 +321,19 @@ class _ExportJsonStep(AnalysisStep):
         connector = blox.connect.Connector(analysis.database_directory)
 
         # Create empty directory
-        outdir = runtime.FileManager().mkdtemp()
-        os.makedirs(outdir)
+        tmpdir = runtime.FileManager().mkdtemp()
+        os.makedirs(tmpdir)
         _logger.info("Exporting CSV files to prepare JSON export")
 
         # Execute relevant block
-        with cd(outdir):
+        with cd(tmpdir):
             connector.execute_block('json_export')
 
         _logger.info("CSV files exported")
         _logger.info("Running collector")
 
         collector = JSONCollector(analysis)
-        collector.run()
+        collector.run(tmpdir)
 
     @property
     def message(self):
