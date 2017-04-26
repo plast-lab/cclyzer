@@ -314,6 +314,9 @@ class _ExportJsonStep(AnalysisStep):
     '''Analysis step that exports data to JSON.'''
     @autosave
     def apply(self, analysis):
+        # Dynamically import JSON collector
+        from .collect.json_collector import JSONCollector
+
         # Load JSON export logic module
         _LoadProjectStep(projects.json_export).apply(analysis)
 
