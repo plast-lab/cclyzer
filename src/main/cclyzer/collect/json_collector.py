@@ -84,6 +84,7 @@ class JSONCollector(object):
                 objid = row[argspec.index('o')]
                 obj = objects.setdefault(objid, dict())
                 obj['id'] = objid
+                obj['kind'] = entity
                 nprocessed += 1
 
             multival = False
@@ -191,11 +192,22 @@ class JSONCollector(object):
         self.consume_predicate('di:subprogram:function', 'no', entity='function',
                                property='debuginfo', inlineby='di:subprogram')
 
+        self.consume_predicate('di:lexical_block', 'o')
+        self.consume_predicate('di:lexical_block:file', 'on', inlineby='di:file')
+        self.consume_predicate('di:lexical_block:line', 'op')
+        self.consume_predicate('di:lexical_block:column', 'op')
+        self.consume_predicate('di:lexical_block:scope', 'on', inlineby='di:subprogram')
+
+        self.consume_predicate('di:lexical_block_file', 'o')
+        self.consume_predicate('di:lexical_block_file:discrim', 'op')
+        self.consume_predicate('di:lexical_block_file:file', 'on', inlineby='di:file')
+        self.consume_predicate('di:lexical_block_file:scope', 'on', inlineby='di:subprogram')
+
         self.consume_predicate('di:location', 'o')
         self.consume_predicate('di:location:line', 'op')
         self.consume_predicate('di:location:column', 'op')
-        # TODO fix, may fail because of local scopes that are not subprograms
         self.consume_predicate('di:location:scope', 'on', inlineby='di:subprogram')
+        self.consume_predicate('di:location:scope', 'on', inlineby='di:lexical_block_file')
 
         self.consume_predicate('call_instruction', 'o')
         self.consume_predicate('call_instruction:calling_convention', 'op')
