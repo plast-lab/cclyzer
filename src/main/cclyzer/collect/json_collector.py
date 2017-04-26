@@ -3,6 +3,10 @@ import json
 import pandas as pd
 import sys
 
+# Logger for this module
+_logger = logging.getLogger(__name__)
+
+
 class JSONCollector(object):
     def __init__(self, analysis):
         self.analysis = analysis
@@ -267,17 +271,15 @@ class JSONCollector(object):
         #                            names=(('source', 'call_instruction'),
         #                                   ('target', 'function')))
 
-        for key, value  in self.objects.iteritems():
-            print 'Printing', key
-            print
+        outdir = self.analysis.json_directory
 
-            items = list(value.itervalues())
-            print json.dumps(items, indent=4, separators=(',', ': '))
-            print
+        for key, value  in self.objects.iteritems():
+            _logger.info('Writing json objects of type: %s', key)
+            with open('{}.json'.format(key), 'w') as fp:
+                items = list(value.itervalues())
+                json.dump(items, fp, indent=4, separators=(',', ': '))
 
         for key, items  in self.relations.iteritems():
-            print 'Printing', key
-            print
-
-            print json.dumps(items, indent=4, separators=(',', ': '))
-            print
+            _logger.info('Writing json objects of type: %s', key)
+            with open('{}.json'.format(key), 'w') as fp:
+                json.dump(items, fp, indent=4, separators=(',', ': '))
