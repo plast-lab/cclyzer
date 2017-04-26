@@ -127,6 +127,10 @@ class Analysis(object):
         return os.path.join(self.output_directory, 'results')
 
     @property
+    def json_directory(self):
+        return os.path.join(self.output_directory, 'json')
+
+    @property
     def pickle_file(self):
         return os.path.join(self.output_directory, 'analysis.pickle')
 
@@ -216,6 +220,15 @@ class Analysis(object):
             self._pipeline.append(_RunOutputQueriesStep(project))
         except ProjectLoadError as err:
             _logger.warn('Exported facts were disabled')
+            _logger.warn(err.message)
+
+    def enable_json_exports(self):
+        try:
+            # Check project dependencies
+            self.__check_deps(self._projects.json_export)
+            self._pipeline.append(_ExportJsonStep())
+        except ProjectLoadError as err:
+            _logger.warn('Exporting json was disabled')
             _logger.warn(err.message)
 
     def __find_project(self, project):

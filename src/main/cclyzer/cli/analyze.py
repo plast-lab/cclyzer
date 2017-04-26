@@ -27,6 +27,8 @@ class AnalyzeCommand(CliCommand):
                             help='run Pearce points-to analysis')
         parser.add_argument('--config', nargs=2, metavar=('OPTION', 'VALUE'),
                             action='append', help='override configuration variable')
+        parser.add_argument('--json-out', dest='export_json', action='store_true',
+                            help='export analysis results to JSON')
         # Set default values
         parser.set_defaults(read_local_config=True, read_user_config=True, config=[])
 
@@ -40,6 +42,10 @@ class AnalyzeCommand(CliCommand):
         # Add query exporting steps
         if args.run_exports:
             analysis.enable_exports()
+
+        # Add json export step
+        if args.export_json:
+            analysis.enable_json_exports()
 
         self._analysis = analysis
 
