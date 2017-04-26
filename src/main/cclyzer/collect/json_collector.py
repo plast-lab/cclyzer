@@ -7,6 +7,7 @@ class JSONCollector(object):
     def __init__(self, analysis):
         self.analysis = analysis
         self.objects = {}
+        self.relations = {}
 
     def _read_facts(self, predicate, ncolumns):
         csvfile = self.analysis.facts_file(predicate)
@@ -17,6 +18,51 @@ class JSONCollector(object):
         if predicate.startswith('di:'):
             return 'debuginfo_' + predicate[3:]
         return predicate
+
+    def consume_rel_predicate(self, predicate, argspec, names, **kwargs):
+        assert 'o' not in argspec
+        assert 's' not in argspec
+        nargs = len(argspec)
+        dataframe = self._read_facts(predicate, nargs)
+
+        if len(names) != nargs:
+            raise ValueError('incompatible argspec and names')
+
+        # Compute name of relation
+        relation = kwargs.pop('relation', predicate.replace(':', '_'))
+
+        # Get objects under construction
+        relations = self.relations.setdefault(relation, [])
+
+        # Iterate over rows
+        for index, row in dataframe.iterrows():
+            if len(row) != nargs:
+                raise ValueError('invalid argument specifier')
+
+            # Create new record and add to relation
+            record = {}
+            relations.append(record)
+
+            for code, name, field in zip(argspec, names, row):
+                if code == 'n':
+                    try:
+                        inlineby = name
+
+                        # If tuple was given, split into name and predicate to inline by
+                        if isinstance(name, tuple):
+                            name, inlineby = name
+
+                        # Get object and store to record via inlining
+                        val = self.objects[self.canonpred(inlineby)][field]
+                        record[name] = val
+                    except KeyError:
+                        continue
+                elif code == 'i':
+                    record[name] = int(field)
+                elif code == 'p':
+                    record[name] = field
+                else:
+                    raise ValueError('invalid code in argspec: ' + code)
 
     def consume_predicate(self, predicate, argspec, **kwargs):
         """Feed a predicate to the collector.
@@ -66,8 +112,6 @@ class JSONCollector(object):
         # Iterate over rows
         for index, row in dataframe.iterrows():
             if len(row) != nargs:
-                print row
-                print len(row)
                 raise ValueError('invalid argument specifier')
 
             # Number of arguments processed so far
@@ -219,10 +263,21 @@ class JSONCollector(object):
         self.consume_predicate('instruction:location', 'sn', inlineby='di:location',
                                entity='call_instruction', property='location')
 
+        # self.consume_rel_predicate('callgraph_edge', 'nn',
+        #                            names=(('source', 'call_instruction'),
+        #                                   ('target', 'function')))
+
         for key, value  in self.objects.iteritems():
             print 'Printing', key
             print
 
             items = list(value.itervalues())
+            print json.dumps(items, indent=4, separators=(',', ': '))
+            print
+
+        for key, items  in self.relations.iteritems():
+            print 'Printing', key
+            print
+
             print json.dumps(items, indent=4, separators=(',', ': '))
             print
