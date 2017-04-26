@@ -1,0 +1,7 @@
+llvm:json_export, projectname
+llvm:schema, library
+llvm:lookup, library
+llvm:callgraph, library
+llvm:points_to, library
+
+json-export.logic, inactive

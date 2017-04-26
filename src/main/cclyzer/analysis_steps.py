@@ -308,3 +308,33 @@ class _UserOptionsStep(AnalysisStep):
     @property
     def message(self):
         return 'add user options'
+
+
+class _ExportJsonStep(AnalysisStep):
+    '''Analysis step that exports data to JSON.'''
+    @autosave
+    def apply(self, analysis):
+        # Load JSON export logic module
+        _LoadProjectStep(projects.json_export).apply(analysis)
+
+        # Create database connector
+        connector = blox.connect.Connector(analysis.database_directory)
+
+        # Create empty directory
+        outdir = runtime.FileManager().mkdtemp()
+        os.makedirs(outdir)
+        _logger.info("Exporting CSV files to prepare JSON export")
+
+        # Execute relevant block
+        with cd(outdir):
+            connector.execute_block('json_export')
+
+        _logger.info("CSV files exported")
+        _logger.info("Running collector")
+
+        collector = JSONCollector(analysis)
+        collector.run()
+
+    @property
+    def message(self):
+        return 'exported json'
