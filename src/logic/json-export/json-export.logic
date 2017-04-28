@@ -1,7 +1,11 @@
 // Call-graph
 
 lang:physical:delimiter[`_cg] = "\t".
-lang:physical:filePath[`_cg] = "callgraph_edge.tsv".
+lang:physical:filePath[`_cg] = "callgraph_edge.dlm".
 
-_cg(CallerInstr, Callee) <-
-   callgraph:edge(Callee, CallerInstr).
+_cg(CallerInstrRef, CalleeRef) <-
+   callgraph:edge(Callee, CallerInstr),
+   instruction:id(CallerInstr:CallerInstrRef),
+   function_decl:id(Callee:CalleeRef),
+   function:name[Callee] = CalleeName,
+   CalleeName != "@llvm.dbg.declare".

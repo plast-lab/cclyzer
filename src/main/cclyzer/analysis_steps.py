@@ -318,19 +318,18 @@ class _ExportJsonStep(AnalysisStep):
         from .collect.json_collector import JSONCollector
 
         # Load JSON export logic module
-        _LoadProjectStep(projects.json_export).apply(analysis)
+        analysis.load_project('json-export')
 
         # Create database connector
         connector = blox.connect.Connector(analysis.database_directory)
 
         # Create empty directory
         tmpdir = runtime.FileManager().mkdtemp()
-        os.makedirs(tmpdir)
         _logger.info("Exporting CSV files to prepare JSON export")
 
         # Execute relevant block
         with cd(tmpdir):
-            connector.execute_block('json_export')
+            connector.execute_block('json-export')
 
         _logger.info("CSV files exported")
         _logger.info("Running collector")

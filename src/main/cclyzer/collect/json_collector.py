@@ -1,5 +1,7 @@
 import blox.connect
 import json
+import logging
+import os
 import pandas as pd
 import sys
 
@@ -12,9 +14,18 @@ class JSONCollector(object):
         self.analysis = analysis
         self.objects = {}
         self.relations = {}
+        self.otherdirs = []
 
     def _read_facts(self, predicate, ncolumns):
-        csvfile = self.analysis.facts_file(predicate)
+        for otherdir in self.otherdirs:
+            csvfile = self.analysis.facts_file(predicate, basedir=otherdir)
+            if os.path.exists(csvfile):
+                break
+            else:
+                _logger.info('Failed to find predicate %s in directory %s',
+                             predicate, otherdir)
+        else:
+            csvfile = self.analysis.facts_file(predicate)
         hdr = ['col_{}'.format(i) for i in range(ncolumns)]
         return pd.read_csv(csvfile, header=None, sep='\t', names=hdr)
 
@@ -202,7 +213,10 @@ class JSONCollector(object):
         return
 
 
-    def run(self):
+    def run(self, csvdir):
+        # Add directory to lookup CSVs
+        self.otherdirs.append(csvdir)
+
         self.consume_predicate('function', 'o')
         self.consume_predicate('function_decl', 'o',
                                entity='function', property='is_declaration')
@@ -267,19 +281,23 @@ class JSONCollector(object):
         self.consume_predicate('instruction:location', 'sn', inlineby='di:location',
                                entity='call_instruction', property='location')
 
-        # self.consume_rel_predicate('callgraph_edge', 'nn',
-        #                            names=(('source', 'call_instruction'),
-        #                                   ('target', 'function')))
+        self.consume_rel_predicate('callgraph_edge', 'nn',
+                                   names=(('source', 'call_instruction'),
+                                          ('target', 'function')))
 
         outdir = self.analysis.json_directory
+        os.makedirs(outdir)
+
+        def predfile(predicate):
+            return os.path.join(outdir, '{}.json'.format(predicate))
 
         for key, value  in self.objects.iteritems():
             _logger.info('Writing json objects of type: %s', key)
-            with open('{}.json'.format(key), 'w') as fp:
+            with open(predfile(key), 'w') as fp:
                 items = list(value.itervalues())
                 json.dump(items, fp, indent=4, separators=(',', ': '))
 
         for key, items  in self.relations.iteritems():
             _logger.info('Writing json objects of type: %s', key)
-            with open('{}.json'.format(key), 'w') as fp:
+            with open(predfile(key), 'w') as fp:
                 json.dump(items, fp, indent=4, separators=(',', ': '))

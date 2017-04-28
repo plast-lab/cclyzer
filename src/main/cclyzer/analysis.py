@@ -5,7 +5,7 @@ from .project import Project, ProjectManager
 from .analysis_stats import AnalysisStatisticsBuilder as StatBuilder
 from .analysis_steps import (_CleaningStep, _FactGenerationStep, _DatabaseCreationStep,
                              _SanityCheckStep, _UserOptionsStep, _LoadProjectStep,
-                             _RunOutputQueriesStep)
+                             _RunOutputQueriesStep, _ExportJsonStep)
 
 # Logger for this module
 _logger = logging.getLogger(__name__)
@@ -114,9 +114,9 @@ class Analysis(object):
     def facts_directory(self):
         return os.path.join(self.output_directory, 'facts')
 
-    def facts_file(self, predicate):
+    def facts_file(self, predicate, basedir=None):
         filename = predicate.replace(':', '-') + '.dlm'
-        return os.path.join(self.facts_directory, filename)
+        return os.path.join(basedir or self.facts_directory, filename)
 
     @property
     def database_directory(self):
@@ -225,7 +225,7 @@ class Analysis(object):
     def enable_json_exports(self):
         try:
             # Check project dependencies
-            self.__check_deps(self._projects.json_export)
+            self.__check_deps(self._projects.json_export, deps_only=True)
             self._pipeline.append(_ExportJsonStep())
         except ProjectLoadError as err:
             _logger.warn('Exporting json was disabled')
@@ -267,6 +267,6 @@ class ProjectLoadError(ValueError):
     '''Raise when loading a project was unsuccessful'''
     def __init__(self, message, project, *args):
         assert isinstance(project, Project)
-        self.message = message
+        self.message = 'Error while loading module: {} - {}'.format(project.name, message)
         self.project = project
         super(ProjectLoadError, self).__init__(message, project.name, *args)
