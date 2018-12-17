@@ -36,7 +36,8 @@ alloc_context(ACtx)
    instruction:function[Instr] = InstrFunc,
    reachable_context(Ctx, InstrFunc),
    // Extra
-   context:__getitem__[Ctx] = Item.
+   (context:__getitem0__[Ctx] = Item;
+   context:__getitem1__[Ctx] = Item).
 
 
 allocation:type[StackAlloc] = Type <-
@@ -57,7 +58,8 @@ alloc_context(ACtx)
    function:param[Func, Index] = Param,
    reachable_context(Ctx, Func),
    // Extra
-   context:__getitem__[Ctx] = Item.
+   (context:__getitem0__[Ctx] = Item;
+   context:__getitem1__[Ctx] = Item).
 
 
 allocation:type[StackAlloc] = Type <-
@@ -88,7 +90,8 @@ alloc_context(ACtx)
    instruction:function[Instr] = InstrFunc,
    reachable_context(Ctx, InstrFunc),
    // Extra
-   context:__getitem__[Ctx] = Item.
+   (context:__getitem0__[Ctx] = Item;
+   context:__getitem1__[Ctx] = Item).
 
 // Functions that allocate memory on heap
 heap_alloc_function(Func) -> function_decl(Func).

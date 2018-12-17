@@ -38,3 +38,9 @@ lang:constructor(`alloc_context:new).
 
 // context:new[] = CalleeCtx <-
 //    merge[_, _, _, _] = CalleeCtx.
+
+context:__getitem__[Ctx] = Item -> context(Ctx), context_item(Item).
+
+context:__getitem__[Ctx] = Item <-
+   context:new[] = Ctx,
+   context_item(Item).

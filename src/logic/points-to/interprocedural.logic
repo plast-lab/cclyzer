@@ -17,7 +17,7 @@ function:by_location[Alloc] = Callee <-
 
 // Direct function calls
 context(CalleeCtx)
- , context:new[NewItem] = CalleeCtx
+ , context:new[Item, NewItem] = CalleeCtx
  , callgraph:edge(CalleeCtx, Callee, CallerCtx, CallerInstr)
  <-
    direct_call_instruction(CallerInstr),
@@ -25,10 +25,12 @@ context(CalleeCtx)
    instruction:function[CallerInstr] = InstrFunc,
    reachable_context(CallerCtx, InstrFunc),
    // Extra
-   context_item:by_invoc[CallerInstr] = NewItem.
+   context_item:by_invoc[CallerInstr] = NewItem,
+   context:__getitem0__[Ctx] = NewItem,
+   context:__getitem1__[Ctx] = Item.
 
 context(CalleeCtx)
- , context:new[NewItem] = CalleeCtx
+ , context:new[Item, NewItem] = CalleeCtx
  , callgraph:edge(CalleeCtx, Callee, CallerCtx, CallerInstr)
  <-
    direct_invoke_instruction(CallerInstr),
@@ -36,11 +38,13 @@ context(CalleeCtx)
    instruction:function[CallerInstr] = InstrFunc,
    reachable_context(CallerCtx, InstrFunc),
    // Extra
-   context_item:by_invoc[CallerInstr] = NewItem.
+   context_item:by_invoc[CallerInstr] = NewItem,
+   context:__getitem0__[Ctx] = NewItem,
+   context:__getitem1__[Ctx] = Item.
 
 // Indirect function calls (via function pointers)
 context(CalleeCtx)
- , context:new[NewItem] = CalleeCtx
+ , context:new[Item, NewItem] = CalleeCtx
  , callgraph:edge(CalleeCtx, Callee, CallerCtx, CallerInstr)
  <-
    indirect_call_instruction(CallerInstr),
@@ -52,10 +56,12 @@ context(CalleeCtx)
    pointer_type:component[FuncOpType] = DeclaredType,
    type_compatible(ActualType, DeclaredType),
    // Extra
-   context_item:by_invoc[CallerInstr] = NewItem.
+   context_item:by_invoc[CallerInstr] = NewItem,
+   context:__getitem0__[Ctx] = NewItem,
+   context:__getitem1__[Ctx] = Item.
 
 context(CalleeCtx)
- , context:new[NewItem] = CalleeCtx
+ , context:new[Item, NewItem] = CalleeCtx
  , callgraph:edge(CalleeCtx, Callee, CallerCtx, CallerInstr)
  <-
    invoke_instruction(CallerInstr),
@@ -67,7 +73,9 @@ context(CalleeCtx)
    pointer_type:component[FuncOpType] = DeclaredType,
    type_compatible(ActualType, DeclaredType),
    // Extra
-   context_item:by_invoc[CallerInstr] = NewItem.
+   context_item:by_invoc[CallerInstr] = NewItem,
+   context:__getitem0__[Ctx] = NewItem,
+   context:__getitem1__[Ctx] = Item.
 
 
 //------------------------------------------------------------------------------
