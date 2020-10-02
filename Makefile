@@ -46,8 +46,8 @@ clean: $(modules.clean)
 
 .PHONY: install
 install:
-	$(PIP) install -r requirements.txt
 	$(PYTHON) setup.py install
+	$(PIP) install -r requirements.txt
 
 
 #-----------------------------------------
