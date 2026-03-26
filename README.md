@@ -6,6 +6,8 @@
 A tool for analyzing LLVM bitcode (generated either by C or C++) using
 Datalog.
 
+YOU PROBABLY WANT TO CONSIDER THE [SOUFFLE VERSION OF CCLYZER, since the LogicBlox Datalog engine is currently unmaintained/unavailable](https://github.com/plast-lab/cclyzer-souffle)
+
 This project uses a commercial Datalog engine, developed by
 [LogicBlox Inc.](http://www.logicblox.com/).
 
